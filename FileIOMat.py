@@ -1,0 +1,78 @@
+#!/usr/bin/env python
+
+import pandas as pa
+import pickle as pickle
+import numpy as np
+
+
+cfg_file_type = 'msgpack'
+
+def fmt_file_type(this_type):
+    this_type = this_type.replace('feather','fe')
+    this_type = this_type.replace('parquet','par')
+    this_type = this_type.replace('msgpack','msg')
+    this_type = this_type.replace('pickle','p')
+    if '.' in this_type:
+        return this_type
+    else:
+        return '.'+this_type
+
+
+
+def WriteWithMeta(df_data,meta_data,this_file,file_type=cfg_file_type):
+    if 'to_' not in file_type:
+        file_type = 'to_'+file_type
+    file_ext = fmt_file_type(file_type.replace('to_',''))
+    if '.' not in file_ext:
+        file_ext = '.'+file_ext
+    if file_ext not in this_file:
+        this_file += file_ext
+    if file_ext in ['.csv','.json','.html']:
+        getattr(df_data,file_type)(this_file)
+        getattr(pa.DataFrame(meta_data),file_type)(this_file+'.meta')
+    else:
+        with open(this_file,'wb') as f:
+            pickle.dump(meta_data,f)
+            getattr(df_data,file_type)(f)
+
+
+def ReadWithMeta(this_file,file_type=cfg_file_type):
+    if 'read_' not in file_type:
+        file_type = 'read_'+file_type
+    file_ext = fmt_file_type(file_type.replace('read_',''))
+    if '.' not in file_ext:
+        file_ext = '.'+file_ext
+    if file_ext not in this_file:
+        this_file += file_ext
+    if file_ext in ['.csv','.json','.html']:
+        raise EnvironmentError('reading human readable types: csv, json, html not supported')
+        # meta_data = getattr(pa,file_type)(this_file+'.meta')
+        # df_data = getattr(pa,file_type)(this_file)
+    else:
+        with open(this_file,'rb') as f:
+            meta_data = pickle.load(f)
+            df_data = getattr(pa,file_type)(f)
+    return meta_data,df_data
+
+def ReadWithMeta_NP(this_file,file_type=cfg_file_type,data_type='Op'):
+    meta,data = ReadWithMeta(this_file,file_type=file_type)
+    outlist = []
+    if data_type not in data:
+        out_str = 'data_type not found for reading data\n'
+        out_str += data_type + '\n'
+        out_str += 'found in file:\n'
+        out_str += '\n'.join(list(data.columns))
+        raise IOError(out_str)
+    for ival in data[data_type].values:
+        outlist.append(list(ival))
+    return meta,np.array(outlist)
+
+
+if __name__ == '__main__':
+    import numpy as np
+    file_name = '/home/jackdra/PHD/CHROMA/TestVar/Scripts/Python_Analysis/Configs/FlowOps//RC32x64_kud1370000_ks1364000_-b-_Weinberg_Full.cfgs.msg'
+    metadata,data = ReadWithMeta(file_name)
+    configs = list(data['configs'].values)
+    data_values = np.array([np.array(ival) for ival in data['Op'].values])
+    metadata,data = ReadWithMeta_NP(file_name)
+    metadata,data = ReadWithMeta_NP(file_name,data_type='C2')
