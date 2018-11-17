@@ -19,6 +19,8 @@ if sys.version_info[0] < 3:
 
 this_machine = socket.gethostname()
 guess_dir = os.getcwd()
+if not os.path.isfile(guess_dir+'/Params.py'):
+    raise EnvironmentError('cwd: ' + guess_dir+'/Params.py Not present, please run code from directory where code is located')
 
 def Def_pdict():
     paramdict = OrderedDict()
