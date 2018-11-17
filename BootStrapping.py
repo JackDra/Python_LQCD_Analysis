@@ -962,3 +962,4 @@ def TestBlock(n_block=1):
 
 if __name__ == '__main__':
     data,data2,data3 = TestBoot()
+    print('testing data is in variables data, data2 and data3')
