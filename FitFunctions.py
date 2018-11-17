@@ -16,10 +16,12 @@ from PredefFitFuns import ConstFFDer,LinFFDer,C2OSFFDer,C2OSFFNoExpDer,C3OSFFDer
 from PredefFitFuns import C2TSFFDer,C2TSFFNoExpDer,C3MomTSFFDer,C2OSFAntiperDer
 from PredefFitFuns import TestTwoVarFFDer,FormFactorO2Der,FormFactorO1Der,FormFactorO3Der
 from PredefFitFuns import DPfitfunOneParDer,ParmDivXDer,ChitFitFunDer,ParmDivXPDer,LinFFDer_x0
+from PredefFitFuns import c3PFDer,c3PFDer2,c3PFDer3,c3PFDer_skip1,c3PFDer2_skip1,c3PFDer3_skip1
+from PredefFitFuns import c3EFFDer,c3EFFDer2,c3EFFDer_nosqrt,c3EFFDer2_nosqrt,c3EFFDer3_nosqrt
 from PredefFitFuns import DPfitfun2Der,DPfitfunDer,OORNFFDer,SquaredFFDer,SquaredFFDer_x0
-from PredefFitFuns import Chi_Prop_Der,Chi_Prop_Der_2exp,LinFFDer_2D,LogFFDer,LogFFDer_x0,c3FFDer,c3FFDer_V2
-from PredefFitFuns import Alpha_Prop_Der,Alpha_Prop_Der_2exp,RF_Prop_Der,Alpha_Prop_Der_plin
-from PredefFitFuns import SqPlLogFFDer,SqPlLogFFDer_x0
+from PredefFitFuns import Chi_Prop_Der,Chi_Prop_Der_2exp,LinFFDer_2D,LogFFDer,LogFFDer_x0,c3FFDer
+from PredefFitFuns import Alpha_Prop_Der,Alpha_Prop_Der_2exp,RF_Prop_Der,Alpha_Prop_Der_plin,c3FFDer_NoA
+from PredefFitFuns import SqPlLogFFDer,SqPlLogFFDer_x0,c3ContFFDer
 from PredefFitFuns import ContFFDer,ContFFDer_x0,ContPlLogFFDer,ContPlLogFFDer_x0
 from PredefFitFuns import ContFFDer_mix,ContFFDer_x0_mix,ContPlLogFFDer_mix,ContPlLogFFDer_x0_mix
 from MomParams import LatticeParameters
@@ -28,7 +30,8 @@ import numpy as np
 import pandas as pa
 import operator as op
 from MiscFuns import flip_fun_2arg
-
+from warnings import warn
+err_thresh = 0.00001
 """
 
 This class has methods for doing least squares fitting on regular and bootstrapped (see BootStrap.py) quantities.
@@ -265,11 +268,14 @@ class Fitting(object):
             for iyval in ydata:
                 self.yerr.append(iyval.Std)
                 self.yAvg.append(iyval.Avg)
-            self.yAvg,self.yerr = np.array(self.yAvg),np.array(self.yerr),
+            self.yAvg,self.yerr = np.array(self.yAvg),np.array(self.yerr)
         else:
             ## if no error is provided, error is just set to 1 (no weightings).
             self.yAvg = self.ydata
             self.yerr = [1.0]*len(ydata)
+        if any(self.yerr/np.abs(self.yAvg) < err_thresh):
+            warn('some errors were under the error theshold, removing weighted fit')
+            self.yerr = np.ones(self.yerr.shape)
 
     ## setting FunDer to 'None' implies estimating the derivative numerically
     def ImportFunction(self,Function,thisparlen,FunDer='None',thisparlab = 'PreDef',thisparunits='None'):
@@ -477,6 +483,9 @@ class Fitting(object):
         self.RemoveFuns()
         return True
 
+    def Get_Chi2DoF(self):
+        return self.fit_data['Chi2DoF'].iloc[0]
+
     def Eval_Function(self,*vals):
         self.GetFuns()
         outboot = self.Fun(vals,np.array(self.fit_data['Params'].values))
@@ -499,7 +508,8 @@ class Fitting(object):
 
     def PlotHairlineFun(self,otherXvals=[],xaxis=0,xdatarange='Data',thislineres=100,
                         color=None,shift=0.0,flowphys=False,ShowPar='None',ShowEval=None,
-                        x_scale=1.0,y_scale=1.0,plot_plane=None,suppress_key=False,x_fun=None,supress_legend=False):
+                        x_scale=1.0,y_scale=1.0,plot_plane=None,suppress_key=False,
+                        x_fun=None,supress_legend=False,extrap_fade=1.5):
         self.GetFuns()
         if y_scale != 1.0:
             self.scale_y = y_scale
@@ -517,10 +527,10 @@ class Fitting(object):
                 print(otherXvals,' is invalid for otherXvals, defaulting to first value')
                 first_Xvals = copy(np.swapaxes(self.xdata,0,1)[0])
                 first_Xvals = np.delete(first_Xvals,xaxis)
-                return self.PlotFunction(otherXvals=first_Xvals,xaxis=xaxis,xdatarange=xdatarange,
-                        thislineres=thislineres,
+                return self.PlotHairlineFun(otherXvals=first_Xvals,xaxis=xaxis,xdatarange=xdatarange,
+                        thislineres=thislineres,x_fun=x_fun,x_scale=x_scale,y_scale=y_scale,
                         color=color,shift=shift,flowphys=flowphys,ShowPar=ShowPar,ShowEval=ShowEval,
-                        plot_plane=plot_plane,suppress_key=suppress_key)
+                        plot_plane=plot_plane,suppress_key=suppress_key,extrap_fade=extrap_fade)
             otherXvals = list(map(float,otherXvals))
             thisxlist = []
             for icx,ix in enumerate(np.swapaxes(self.xdata,0,1)):
@@ -528,14 +538,28 @@ class Fitting(object):
                 thisix = np.delete(thisix,xaxis)
                 if ix[xaxis] not in thisxlist:
                     thisxlist.append(ix[xaxis])
+        pre_extrap,post_extrap = [],[]
         if xdatarange == 'Data':
             xdatarange = min(thisxlist),max(thisxlist)
         elif xdatarange[-1] == 'ToDataMax':
-            xdatarange = xdatarange[0],max(thisxlist)
+            xdatarange = float(xdatarange[0]),max(thisxlist)
+            if xdatarange[0] < min(thisxlist):
+                pre_extrap = np.linspace(min(thisxlist),xdatarange[0],thislineres)
         elif xdatarange[0] == 'FromDataMin':
-            xdatarange = min(thisxlist),xdatarange[-1]
-        xplot = np.linspace(xdatarange[0],xdatarange[1],thislineres)
+            xdatarange = min(thisxlist),float(xdatarange[-1])
+            if xdatarange[-1] > max(thisxlist):
+                post_extrap = np.linspace(xdatarange[-1],max(thisxlist),thislineres)
+        else:
+            xdatarange = float(xdatarange[0]),float(xdatarange[-1])
+            if xdatarange[-1] > max(thisxlist):
+                post_extrap = np.linspace(xdatarange[-1],max(thisxlist),thislineres)
+            if xdatarange[0] < min(thisxlist):
+                pre_extrap = np.linspace(min(thisxlist),xdatarange[0],thislineres)
+
+        xplot = np.linspace(min(thisxlist),max(thisxlist),thislineres)
         yplotBoot,yplotUp,yplotDown,yplotAvg,yplotStd = [],[],[],[],[]
+        yplotBoot_pre,yplotUp_pre,yplotDown_pre,yplotAvg_pre,yplotStd_pre = [],[],[],[],[]
+        yplotBoot_post,yplotUp_post,yplotDown_post,yplotAvg_post,yplotStd_post = [],[],[],[],[]
         for ix in xplot:
             ndxval = np.insert(otherXvals,xaxis,ix)
             evalBoot = self.Eval_Function(*ndxval)
@@ -544,11 +568,31 @@ class Fitting(object):
             yplotUp.append(yplotAvg[-1] + yplotStd[-1])
             yplotDown.append(yplotAvg[-1] - yplotStd[-1])
             yplotBoot.append(evalBoot.bootvals.values)
+        for ix in pre_extrap:
+            ndxval = np.insert(otherXvals,xaxis,ix)
+            evalBoot = self.Eval_Function(*ndxval)
+            yplotAvg_pre.append(evalBoot.Avg)
+            yplotStd_pre.append(evalBoot.Std)
+            yplotUp_pre.append(yplotAvg_pre[-1] + yplotStd_pre[-1])
+            yplotDown_pre.append(yplotAvg_pre[-1] - yplotStd_pre[-1])
+            yplotBoot_pre.append(evalBoot.bootvals.values)
+        for ix in post_extrap:
+            ndxval = np.insert(otherXvals,xaxis,ix)
+            evalBoot = self.Eval_Function(*ndxval)
+            yplotAvg_post.append(evalBoot.Avg)
+            yplotStd_post.append(evalBoot.Std)
+            yplotUp_post.append(yplotAvg_post[-1] + yplotStd_post[-1])
+            yplotDown_post.append(yplotAvg_post[-1] - yplotStd_post[-1])
+            yplotBoot_post.append(evalBoot.bootvals.values)
         yplotBoot = np.swapaxes(np.array(yplotBoot),0,1)
+        yplotBoot_pre = np.swapaxes(np.array(yplotBoot_pre),0,1)
+        yplotBoot_post = np.swapaxes(np.array(yplotBoot_post),0,1)
         # if scale is not None or scale != 1.0:
         #     xplot = scale*xplot
         if flowphys != False:
             xplot = TflowToPhys(xplot,flowphys)
+            pre_extrap = TflowToPhys(pre_extrap,flowphys)
+            post_extrap = TflowToPhys(post_extrap,flowphys)
         if suppress_key:
             thislab = ''
         else:
@@ -565,7 +609,9 @@ class Fitting(object):
                 if ShowPar in self.paramunits.index:
                     thisunits = self.paramunits[ShowPar]
 
-            thislab += ''.join([this_SP,'=',MakeValAndErr(self.fit_data.Params[ShowPar].Avg,self.fit_data.Params[ShowPar].Std,Dec=2,latex=True),thisunits])
+            thislab += ''.join([this_SP,'=',MakeValAndErr(self.fit_data.Params[ShowPar].Avg,
+                                                          self.fit_data.Params[ShowPar].Std,
+                                                          Dec=2,latex=True),thisunits])
             # if ShowPar in self.paramunits.index:
             #     thisunits = self.paramunits[ShowPar]
             # thislab += ''.join([ShowPar,'=',MakeValAndErr(self.fit_data.Params[ShowPar].Avg,self.fit_data.Params[ShowPar].Std,Dec=2,latex=True),thisunits])
@@ -602,21 +648,42 @@ class Fitting(object):
                 this_xfun = x_fun
             if this_xfun is not None and this_xfun is not False:
                 xplot = np.array([this_xfun(ix) for ix in xplot])
-            if self.scale_x != 1:
-                xplot = xplot*self.scale_x
+                pre_extrap = np.array([this_xfun(ix) for ix in pre_extrap])
+                post_extrap = np.array([this_xfun(ix) for ix in post_extrap])
+
             if ShowEval is not None and ShowEval is not False:
                 if this_xfun is not None and this_xfun is not False:
                     plot_plane.errorbar( this_xfun(ShowEval[xaxis]),[self.Eval_Fun_Avg(*ShowEval)],[self.Eval_Fun_Std(*ShowEval)],label=thislab,color=color,fmt='x',markersize='10')
                 else:
                     plot_plane.errorbar( ShowEval[xaxis],[self.Eval_Fun_Avg(*ShowEval)],[self.Eval_Fun_Std(*ShowEval)],label=thislab,color=color,fmt='x',markersize='10')
                 plot_plane.plot(    np.array(xplot)+shift,yplotAvg,color=color,linestyle=self.linestyle)
+                if len(pre_extrap) > 0:
+                    plot_plane.plot(    np.array(pre_extrap)+shift,yplotAvg_pre,color=color,linestyle='--')
+                if len(post_extrap) > 0:
+                    plot_plane.plot(    np.array(post_extrap)+shift,yplotAvg_post,color=color,linestyle='--')
             else:
                 plot_plane.plot(    np.array(xplot)+shift,yplotAvg,
                                 label=thislab,color=color,linestyle=self.linestyle)
+                if len(pre_extrap) > 0:
+                    plot_plane.plot(    np.array(pre_extrap)+shift,yplotAvg_pre,
+                                    color=color,linestyle='--')
+                if len(post_extrap) > 0:
+                    plot_plane.plot(    np.array(post_extrap)+shift,yplotAvg_post,
+                                    color=color,linestyle='--')
             plot_plane.plot(np.array(xplot)+shift,yplotUp,
                                 color=color,linestyle='--')
             plot_plane.plot(np.array(xplot)+shift,yplotDown,
                                 color=color,linestyle='--')
+            if len(pre_extrap) > 0:
+                plot_plane.plot(np.array(pre_extrap)+shift,yplotUp_pre,
+                                    color=color,linestyle='--')
+                plot_plane.plot(np.array(pre_extrap)+shift,yplotDown_pre,
+                                    color=color,linestyle='--')
+            if len(post_extrap) > 0:
+                plot_plane.plot(np.array(post_extrap)+shift,yplotUp_post,
+                                    color=color,linestyle='--')
+                plot_plane.plot(np.array(post_extrap)+shift,yplotDown_post,
+                                    color=color,linestyle='--')
             yplotAvg,yplotStd = np.array(yplotAvg),np.array(yplotStd)
             for iyboot in yplotBoot:
                 id = np.nanmean(np.abs((iyboot-yplotAvg)/yplotStd))
@@ -626,6 +693,28 @@ class Fitting(object):
                 #     print iyb,iyavg
                 plot_plane.plot(np.array(xplot)+shift,iyboot,alpha=this_alpha,
                                     color=color,linestyle=self.linestyle)
+
+            if len(pre_extrap) > 0:
+                yplotAvg_pre,yplotStd_pre = np.array(yplotAvg_pre),np.array(yplotStd_pre)
+                for iyboot in yplotBoot_pre:
+                    id = np.nanmean(np.abs((iyboot-yplotAvg_pre)/yplotStd_pre))
+                    this_alpha = self.hairline_alpha/(1+id*self.hairline_dropoff)
+                    # print 'DEBUG',id,this_alpha
+                    # for iyb,iyavg in zip(iyboot,yplotAvg):
+                    #     print iyb,iyavg
+                    plot_plane.plot(np.array(pre_extrap)+shift,iyboot,alpha=this_alpha/extrap_fade,
+                                        color=color,linestyle=self.linestyle)
+
+                yplotAvg,yplotStd = np.array(yplotAvg),np.array(yplotStd)
+            if len(post_extrap) > 0:
+                for iyboot in yplotBoot_post:
+                    id = np.nanmean(np.abs((iyboot-yplotAvg_post)/yplotStd_post))
+                    this_alpha = self.hairline_alpha/(1+id*self.hairline_dropoff)
+                    # print 'DEBUG',id,this_alpha
+                    # for iyb,iyavg in zip(iyboot,yplotAvg):
+                    #     print iyb,iyavg
+                    plot_plane.plot(np.array(post_extrap)+shift,iyboot,alpha=this_alpha/extrap_fade,
+                                        color=color,linestyle=self.linestyle)
             # self.RemoveFuns()
             return plot_plane
 
@@ -634,11 +723,11 @@ class Fitting(object):
     # def PlotFunction(self,otherXvals,xaxis=0,xdatarange='Data',thislineres=lineres):
     def PlotFunction(   self,otherXvals=[],xaxis=0,xdatarange='Data',thislineres=100,
                         color=None,shift=0.0,flowphys=False,ShowPar='None',ShowEval=None,
-                        x_scale=1.0,y_scale=1.0,plot_plane=None,suppress_key=False,x_fun=None,supress_legend=False,hairline=False):
+                        x_scale=1.0,y_scale=1.0,plot_plane=None,suppress_key=False,x_fun=None,supress_legend=False,hairline=False,extrap_fade=1.5):
         if hairline:
             return self.PlotHairlineFun(otherXvals=otherXvals,xaxis=xaxis,xdatarange=xdatarange,thislineres=thislineres,
                         color=color,shift=shift,flowphys=flowphys,ShowPar=ShowPar,ShowEval=ShowEval,
-                        y_scale=y_scale,x_scale=x_scale,plot_plane=plot_plane,suppress_key=suppress_key,x_fun=x_fun,supress_legend=supress_legend)
+                        y_scale=y_scale,x_scale=x_scale,plot_plane=plot_plane,suppress_key=suppress_key,x_fun=x_fun,supress_legend=supress_legend,extrap_fade=extrap_fade)
         self.GetFuns()
         if y_scale != 1.0:
             self.scale_y = y_scale
@@ -656,9 +745,12 @@ class Fitting(object):
                 first_Xvals = copy(np.swapaxes(self.xdata,0,1)[0])
                 first_Xvals = np.delete(first_Xvals,xaxis)
                 return self.PlotFunction(otherXvals=first_Xvals,xaxis=xaxis,xdatarange=xdatarange,
-                        thislineres=thislineres,
-                        color=color,shift=shift,flowphys=flowphys,ShowPar=ShowPar,ShowEval=ShowEval,
-                        plot_plane=plot_plane,suppress_key=suppress_key)
+                                        thislineres=thislineres,x_fun=x_fun,color=color,
+                                        shift=shift,flowphys=flowphys,ShowPar=ShowPar,
+                                        ShowEval=ShowEval,plot_plane=plot_plane,
+                                        suppress_key=suppress_key,x_scale=x_scale,
+                                        y_scale=y_scale,supress_legend=supress_legend,
+                                        hairline=hairline,extrap_fade=extrap_fade)
             otherXvals = list(map(float,otherXvals))
             thisxlist = []
             for icx,ix in enumerate(np.swapaxes(self.xdata,0,1)):
@@ -666,25 +758,54 @@ class Fitting(object):
                 thisix = np.delete(thisix,xaxis)
                 if ix[xaxis] not in thisxlist:
                     thisxlist.append(ix[xaxis])
+        pre_extrap,post_extrap = [],[]
         if xdatarange == 'Data':
             xdatarange = min(thisxlist),max(thisxlist)
         elif xdatarange[-1] == 'ToDataMax':
-            xdatarange = xdatarange[0],max(thisxlist)
+            xdatarange = float(xdatarange[0]),max(thisxlist)
+            if xdatarange[0] < min(thisxlist):
+                pre_extrap = np.linspace(min(thisxlist),xdatarange[0],thislineres)
         elif xdatarange[0] == 'FromDataMin':
-            xdatarange = min(thisxlist),xdatarange[-1]
-        xplot = np.linspace(xdatarange[0],xdatarange[1],thislineres)
+            xdatarange = min(thisxlist),float(xdatarange[-1])
+            if xdatarange[-1] > max(thisxlist):
+                post_extrap = np.linspace(xdatarange[-1],max(thisxlist),thislineres)
+        else:
+            xdatarange = float(xdatarange[0]),float(xdatarange[-1])
+            if xdatarange[-1] > max(thisxlist):
+                post_extrap = np.linspace(xdatarange[-1],max(thisxlist),thislineres)
+            if xdatarange[0] < min(thisxlist):
+                pre_extrap = np.linspace(min(thisxlist),xdatarange[0],thislineres)
+        xplot = np.linspace(min(thisxlist),max(thisxlist),thislineres)
         yplotUp,yplotDown,yplotAvg,yplotStd = [],[],[],[]
+        yplotUp_pre,yplotDown_pre,yplotAvg_pre,yplotStd_pre = [],[],[],[]
+        yplotUp_post,yplotDown_post,yplotAvg_post,yplotStd_post = [],[],[],[]
         for ix in xplot:
             ndxval = np.insert(otherXvals,xaxis,ix)
-            yplotBoot = self.Eval_Function(*ndxval)
-            yplotAvg.append(yplotBoot.Avg)
-            yplotStd.append(yplotBoot.Std)
+            evalBoot = self.Eval_Function(*ndxval)
+            yplotAvg.append(evalBoot.Avg)
+            yplotStd.append(evalBoot.Std)
             yplotUp.append(yplotAvg[-1] + yplotStd[-1])
             yplotDown.append(yplotAvg[-1] - yplotStd[-1])
+        for ix in pre_extrap:
+            ndxval = np.insert(otherXvals,xaxis,ix)
+            evalBoot = self.Eval_Function(*ndxval)
+            yplotAvg_pre.append(evalBoot.Avg)
+            yplotStd_pre.append(evalBoot.Std)
+            yplotUp_pre.append(yplotAvg_pre[-1] + yplotStd_pre[-1])
+            yplotDown_pre.append(yplotAvg_pre[-1] - yplotStd_pre[-1])
+        for ix in post_extrap:
+            ndxval = np.insert(otherXvals,xaxis,ix)
+            evalBoot = self.Eval_Function(*ndxval)
+            yplotAvg_post.append(evalBoot.Avg)
+            yplotStd_post.append(evalBoot.Std)
+            yplotUp_post.append(yplotAvg_post[-1] + yplotStd_post[-1])
+            yplotDown_post.append(yplotAvg_post[-1] - yplotStd_post[-1])
         # if scale is not None or scale != 1.0:
         #     xplot = scale*xplot
         if flowphys != False:
             xplot = TflowToPhys(xplot,flowphys)
+            pre_extrap = TflowToPhys(pre_extrap,flowphys)
+            post_extrap = TflowToPhys(post_extrap,flowphys)
         if suppress_key:
             thislab = ''
         else:
@@ -703,7 +824,9 @@ class Fitting(object):
                 if ShowPar in self.paramunits.index:
                     thisunits = self.paramunits[ShowPar]
 
-            thislab += ''.join([this_SP,'=',MakeValAndErr(self.fit_data.Params[ShowPar].Avg,self.fit_data.Params[ShowPar].Std,Dec=2,latex=True),thisunits])
+            thislab += ''.join([this_SP,'=',MakeValAndErr(self.fit_data.Params[ShowPar].Avg,
+                                                          self.fit_data.Params[ShowPar].Std,
+                                                          Dec=2,latex=True),thisunits])
 
             # print 'REMOVE THIS AFTER'
             # scale_param = self.fit_data.Params[ShowPar]*scale
@@ -745,19 +868,34 @@ class Fitting(object):
                         return val*self.scale_x
             else:
                 this_xfun = x_fun
-
             if this_xfun is not None and this_xfun is not False:
                 xplot = np.array([this_xfun(ix) for ix in xplot])
+                pre_extrap = np.array([this_xfun(ix) for ix in pre_extrap])
+                post_extrap = np.array([this_xfun(ix) for ix in post_extrap])
             if ShowEval is not None and ShowEval is not False:
                 if this_xfun is not None and this_xfun is not False:
                     plot_plane.errorbar( this_xfun(ShowEval[xaxis]),[self.Eval_Fun_Avg(*ShowEval)],[self.Eval_Fun_Std(*ShowEval)],label=thislab,color=color,fmt='x',markersize='10')
                 else:
                     plot_plane.errorbar( ShowEval[xaxis],[self.Eval_Fun_Avg(*ShowEval)],[self.Eval_Fun_Std(*ShowEval)],label=thislab,color=color,fmt='x',markersize='10')
                 plot_plane.plot(    np.array(xplot)+shift,yplotAvg,color=color,linestyle=self.linestyle)
+                if len(pre_extrap) > 0:
+                    plot_plane.plot(    np.array(pre_extrap)+shift,yplotAvg_pre,color=color,linestyle='--')
+                if len(post_extrap) > 0:
+                    plot_plane.plot(    np.array(post_extrap)+shift,yplotAvg_post,color=color,linestyle='--')
             else:
                 plot_plane.plot(    np.array(xplot)+shift,yplotAvg,
                                 label=thislab,color=color,linestyle=self.linestyle)
+                if len(pre_extrap) > 0:
+                    plot_plane.plot(    np.array(pre_extrap)+shift,yplotAvg_pre,
+                                    color=color,linestyle='--')
+                if len(post_extrap) > 0:
+                    plot_plane.plot(    np.array(post_extrap)+shift,yplotAvg_post,
+                                    color=color,linestyle='--')
             plot_plane.fill_between(np.array(xplot)+shift,yplotUp,yplotDown,alpha=fillalpha,edgecolor='none',color=color)
+            if len(pre_extrap) > 0:
+                plot_plane.fill_between(np.array(pre_extrap)+shift,yplotUp_pre,yplotDown_pre,alpha=fillalpha/extrap_fade,edgecolor='none',color=color)
+            if len(post_extrap) > 0:
+                plot_plane.fill_between(np.array(post_extrap)+shift,yplotUp_post,yplotDown_post,alpha=fillalpha/extrap_fade,edgecolor='none',color=color)
             # self.RemoveFuns()
             return plot_plane
 
@@ -907,6 +1045,8 @@ class Fitting(object):
             return 'None'
         if self.Fun.__name__ == 'ConstantFitFun':
             return [1]
+        elif self.Fun.__name__ == 'c3ContFitFun':
+            return [1,1,1]
         elif self.Fun.__name__ == 'SchiffFitFun':
             return [1,1,1]
         elif self.Fun.__name__ == 'LinearFitFun':
@@ -978,10 +1118,34 @@ class Fitting(object):
             return [1,1]
         elif self.Fun.__name__ == 'OneOnRootNFitFun':
             return [1]
+        elif self.Fun.__name__ == 'c3FitFun_NoA':
+            return [np.exp(2.8),np.exp(-0.11)]
+        elif self.Fun.__name__ == 'c3PolyFun':
+            return [-1]
+        elif self.Fun.__name__ == 'c3PolyFun2':
+            return [-1,-1]
+        elif self.Fun.__name__ == 'c3PolyFun3':
+            return [-1,-1,-1]
+        elif self.Fun.__name__ == 'c3PolyFun_skip1':
+            return [-1]
+        elif self.Fun.__name__ == 'c3PolyFun2_skip1':
+            return [-1,-1]
+        elif self.Fun.__name__ == 'c3PolyFun3_skip1':
+            return [-1,-1,-1]
         elif self.Fun.__name__ == 'c3FitFun':
             return [1,1,1]
-        elif self.Fun.__name__ == 'c3FitFun_V2':
-            return [1,1,1]
+        # elif self.Fun.__name__ == 'c3FitFun_V2':
+        #     return [2.8,-0.11,-1]
+        elif self.Fun.__name__ == 'c3ExpFitFun':
+            return [-5]
+        elif self.Fun.__name__ == 'c3ExpFitFun2':
+            return [-5,-10]
+        elif self.Fun.__name__ == 'c3ExpFitFun_nosqrt':
+            return [-5]
+        elif self.Fun.__name__ == 'c3ExpFitFun2_nosqrt':
+            return [-5,-10]
+        elif self.Fun.__name__ == 'c3ExpFitFun3_nosqrt':
+            return [-5,-10,-15]
         elif self.Fun.__name__ == 'Chi_Prop_Fit':
             return [0.20,1,1.]
         elif self.Fun.__name__ == 'Chi_Prop_Fit_2exp':
@@ -1003,6 +1167,8 @@ class Fitting(object):
             return 'Estimate'
         if self.Fun.__name__ == 'ConstantFitFun':
             return ConstFFDer
+        elif self.Fun.__name__ == 'c3ContFitFun':
+            return c3ContFFDer
         elif self.Fun.__name__ == 'SchiffFitFun':
             return SchiffFFDer
         elif self.Fun.__name__ == 'LinearFitFun':
@@ -1084,9 +1250,32 @@ class Fitting(object):
         elif self.Fun.__name__ == 'OneOnRootNFitFun':
             return OORNFFDer
         elif self.Fun.__name__ == 'c3FitFun':
+            # return 'Estimate'
             return c3FFDer
-        elif self.Fun.__name__ == 'c3FitFun_V2':
-            return c3FFDer_V2
+        elif self.Fun.__name__ == 'c3FitFun_NoA':
+            return c3FFDer_NoA
+        elif self.Fun.__name__ == 'c3PolyFun':
+            return c3PFDer
+        elif self.Fun.__name__ == 'c3PolyFun2':
+            return c3PFDer2
+        elif self.Fun.__name__ == 'c3PolyFun3':
+            return c3PFDer3
+        elif self.Fun.__name__ == 'c3PolyFun_skip1':
+            return c3PFDer_skip1
+        elif self.Fun.__name__ == 'c3PolyFun2_skip1':
+            return c3PFDer2_skip1
+        elif self.Fun.__name__ == 'c3PolyFun3_skip1':
+            return c3PFDer3_skip1
+        elif self.Fun.__name__ == 'c3ExpFitFun':
+            return c3EFFDer
+        elif self.Fun.__name__ == 'c3ExpFitFun2':
+            return c3EFFDer2
+        elif self.Fun.__name__ == 'c3ExpFitFun_nosqrt':
+            return c3EFFDer_nosqrt
+        elif self.Fun.__name__ == 'c3ExpFitFun2_nosqrt':
+            return c3EFFDer2_nosqrt
+        elif self.Fun.__name__ == 'c3ExpFitFun3_nosqrt':
+            return c3EFFDer3_nosqrt
         elif self.Fun.__name__ == 'Chi_Prop_Fit_2exp':
             return Chi_Prop_Der
         elif self.Fun.__name__ == 'Chi_Prop_Fit_2exp':
@@ -1108,8 +1297,10 @@ class Fitting(object):
             return 'Def'
         if self.Fun.__name__ == 'ConstantFitFun':
             return 'Def'
-        elif self.Fun.__name__ == 'SchiiffFitFun':
+        elif self.Fun.__name__ == 'SchiffFitFun':
             return 'Def'
+        elif self.Fun.__name__ == 'c3ContFitFun':
+            return 'c','mpi2_coeff','a_coeff'
         elif self.Fun.__name__ == 'LinearFitFun':
             return 'Def'
         elif self.Fun.__name__ == 'LinearFitFun_x0':
@@ -1192,10 +1383,36 @@ class Fitting(object):
             return 'F(0)','m_{EM}'
         elif self.Fun.__name__ == 'OneOnRootNFitFun':
             return 'Def'
+        elif self.Fun.__name__ == 'c3PolyFun':
+            return ['b']
+        elif self.Fun.__name__ == 'c3PolyFun2':
+            return ['b','c']
+        elif self.Fun.__name__ == 'c3PolyFun3':
+            return ['b','c','d']
+        elif self.Fun.__name__ == 'c3PolyFun_skip1':
+            return ['b']
+        elif self.Fun.__name__ == 'c3PolyFun2_skip1':
+            return ['b','c']
+        elif self.Fun.__name__ == 'c3PolyFun3_skip1':
+            return ['b','c','d']
+        elif self.Fun.__name__ == 'c3FitFun_NoA':
+            return ['b','c']
         elif self.Fun.__name__ == 'c3FitFun':
             return ['a','b','c']
-        elif self.Fun.__name__ == 'c3FitFun_V2':
+        # elif self.Fun.__name__ == 'c3FitFun_V2':
+        #     return ['b','c','d']
+        elif self.Fun.__name__ == 'c3ExpFitFun':
+            return ['a']
+        elif self.Fun.__name__ == 'c3ExpFitFun2':
+            return ['a','b']
+        elif self.Fun.__name__ == 'c3ExpFitFun_nosqrt':
+            return ['a']
+        elif self.Fun.__name__ == 'c3ExpFitFun2_nosqrt':
+            return ['a','b']
+        elif self.Fun.__name__ == 'c3ExpFitFun3_nosqrt':
             return ['a','b','c']
+        elif self.Fun.__name__ == 'c3FitFun_mine':
+            return ['a','b','c','d']
         elif self.Fun.__name__ == 'Chi_Prop_Fit':
             return ['A','B','E']
         elif self.Fun.__name__ == 'Chi_Prop_Fit_2exp':

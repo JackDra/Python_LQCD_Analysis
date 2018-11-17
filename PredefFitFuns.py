@@ -71,22 +71,208 @@ def Chi_Prop_Fit_2exp(x,p):
 
 def c3FitFun(x,p):
     try:
-        return 1+p[0] + p[1]/(1+p[2]*np.log(x[0]))
+        tf = np.sqrt(x[0])
     except:
-        return 1+p[0] + p[1]/(1+p[2]*x[0].Log())
+        tf = x[0].Sqrt()
+    return 1+p[0] + p[1]/tf + p[2]*tf
 
 def c3FFDer(x,p):
     try:
-        logx = np.log(x[0])
+        tf = np.sqrt(x[0])
     except:
-        logx = x[0].Log()
-    return [makexunit(x[0]),1/(1+p[2]*logx),(-p[1]*logx)/(1+p[2]*logx)**2]
+        tf = x[0].Sqrt()
+    return [makexunit(tf),1/tf,tf]
 
-def c3FitFun_V2(x,p):
-    return 1+p[0] + p[1]/(x[0]*(1+p[2]))
 
-def c3FFDer_V2(x,p):
-    return [makexunit(x[0]),1/(x[0]*(1+p[2])),(-p[1]*x[0])/(x[0]*(1+p[2]))**2]
+def c3PolyFun(x,p):
+    # try:
+    #     p0,p1,p2 = np.exp(p[0]),np.exp(p[1]),np.exp(p[2])
+    # except:
+    #     p0,p1,p2 = p[0].Exp(),p[1].Exp(),p[2].Exp()
+    p0 = p[0]
+    # return 1+p0*x[0]**2 + p1*x[0]**4+ p2*x[0]**6
+    return makexunit(x[0])+p0*(x[0])
+
+def c3PFDer(x,p):
+    # try:
+    #     p0,p1,p2 = np.exp(p[0]),np.exp(p[1]),np.exp(p[2])
+    # except:
+    #     p0,p1,p2 = p[0].Exp(),p[1].Exp(),p[2].Exp()
+    # return [p0*x[0]**2,p1*x[0]**4,p2*x[0]**6]
+    return [x[0]]
+
+def c3PolyFun2(x,p):
+    # try:
+    #     p0,p1,p2 = np.exp(p[0]),np.exp(p[1]),np.exp(p[2])
+    # except:
+    #     p0,p1,p2 = p[0].Exp(),p[1].Exp(),p[2].Exp()
+    p0,p1 = p[0],p[1]
+    # return 1+p0*x[0]**2 + p1*x[0]**4+ p2*x[0]**6
+    return makexunit(x[0])+p0*(x[0]) + p1*(x[0]**2)
+
+def c3PFDer2(x,p):
+    # try:
+    #     p0,p1,p2 = np.exp(p[0]),np.exp(p[1]),np.exp(p[2])
+    # except:
+    #     p0,p1,p2 = p[0].Exp(),p[1].Exp(),p[2].Exp()
+    # return [p0*x[0]**2,p1*x[0]**4,p2*x[0]**6]
+    return [x[0],x[0]**2]
+
+def c3PolyFun3(x,p):
+    # try:
+    #     p0,p1,p2 = np.exp(p[0]),np.exp(p[1]),np.exp(p[2])
+    # except:
+    #     p0,p1,p2 = p[0].Exp(),p[1].Exp(),p[2].Exp()
+    p0,p1,p2 = p[0],p[1],p[2]
+    # return 1+p0*x[0]**2 + p1*x[0]**4+ p2*x[0]**6
+    return makexunit(x[0])+p0*(x[0]) + p1*(x[0]**2)+ p2*(x[0]**3)
+
+def c3PFDer3(x,p):
+    # try:
+    #     p0,p1,p2 = np.exp(p[0]),np.exp(p[1]),np.exp(p[2])
+    # except:
+    #     p0,p1,p2 = p[0].Exp(),p[1].Exp(),p[2].Exp()
+    # return [p0*x[0]**2,p1*x[0]**4,p2*x[0]**6]
+    return [x[0],x[0]**2,x[0]**3]
+
+
+def c3PolyFun_skip1(x,p):
+    # try:
+    #     p0,p1,p2 = np.exp(p[0]),np.exp(p[1]),np.exp(p[2])
+    # except:
+    #     p0,p1,p2 = p[0].Exp(),p[1].Exp(),p[2].Exp()
+    p0 = p[0]
+    # return 1+p0*x[0]**2 + p1*x[0]**4+ p2*x[0]**6
+    return makexunit(x[0])+p0*(x[0]**2)
+
+def c3PFDer_skip1(x,p):
+    # try:
+    #     p0,p1,p2 = np.exp(p[0]),np.exp(p[1]),np.exp(p[2])
+    # except:
+    #     p0,p1,p2 = p[0].Exp(),p[1].Exp(),p[2].Exp()
+    # return [p0*x[0]**2,p1*x[0]**4,p2*x[0]**6]
+    return [x[0]**2]
+
+def c3PolyFun2_skip1(x,p):
+    # try:
+    #     p0,p1,p2 = np.exp(p[0]),np.exp(p[1]),np.exp(p[2])
+    # except:
+    #     p0,p1,p2 = p[0].Exp(),p[1].Exp(),p[2].Exp()
+    p0,p1 = p[0],p[1]
+    # return 1+p0*x[0]**2 + p1*x[0]**4+ p2*x[0]**6
+    return makexunit(x[0])+p0*(x[0]**2) + p1*(x[0]**4)
+
+def c3PFDer2_skip1(x,p):
+    # try:
+    #     p0,p1,p2 = np.exp(p[0]),np.exp(p[1]),np.exp(p[2])
+    # except:
+    #     p0,p1,p2 = p[0].Exp(),p[1].Exp(),p[2].Exp()
+    # return [p0*x[0]**2,p1*x[0]**4,p2*x[0]**6]
+    return [x[0]**2,x[0]**4]
+
+def c3PolyFun3_skip1(x,p):
+    # try:
+    #     p0,p1,p2 = np.exp(p[0]),np.exp(p[1]),np.exp(p[2])
+    # except:
+    #     p0,p1,p2 = p[0].Exp(),p[1].Exp(),p[2].Exp()
+    p0,p1,p2 = p[0],p[1],p[2]
+    # return 1+p0*x[0]**2 + p1*x[0]**4+ p2*x[0]**6
+    return makexunit(x[0])+p0*(x[0]**2) + p1*(x[0]**4)+ p2*(x[0]**6)
+
+def c3PFDer3_skip1(x,p):
+    # try:
+    #     p0,p1,p2 = np.exp(p[0]),np.exp(p[1]),np.exp(p[2])
+    # except:
+    #     p0,p1,p2 = p[0].Exp(),p[1].Exp(),p[2].Exp()
+    # return [p0*x[0]**2,p1*x[0]**4,p2*x[0]**6]
+    return [x[0]**2,x[0]**4,x[0]**6]
+
+l8 = np.log(8)
+def c3FitFun_NoA(x,p):
+    try:
+        logx = 2*np.log(x[0])-l8
+    except:
+        logx = 2*x[0].Log()-l8
+    try:
+        p0,p1 = np.exp(p[0]),np.exp(p[1])
+    except:
+        p0,p1 = p[0].Exp(),p[1].Exp()
+    return 1+ p0/(logx - p1)
+
+def c3FFDer_NoA(x,p):
+    try:
+        logx = 2*np.log(x[0])-l8
+    except:
+        logx = 2*x[0].Log()-l8
+    return [1/(p[1]+logx),-p[0]/(p[1]+logx)**2]
+
+def c3ExpFitFun2(x,p):
+    try:
+        return (np.exp(-p[0]*x[0]) + np.exp(-p[1]*x[0]))/2.
+    except:
+        return ((-p[0]*x[0]).Exp() + (-p[1]*x[0]).Exp())/2.
+
+def c3EFFDer2(x,p):
+    try:
+        return [-x[0]*np.exp(-p[0]*x[0])/2,-x[0]*np.exp(-p[1]*x[0])/2]
+    except:
+        return [-x[0]*(-p[0]*x[0]).Exp()/2,-x[0]*(-p[1]*x[0]).Exp()/2]
+
+def c3ExpFitFun2_nosqrt(x,p):
+
+    try:
+        return (np.exp(-p[0]*(x[0]**2)/8) + np.exp(-p[1]*(x[0]**2)/8))/2.
+    except:
+        return ((-p[0]*(x[0]**2)/8).Exp() + (-p[1]*(x[0]**2)/8).Exp())/2.
+
+def c3EFFDer2_nosqrt(x,p):
+    try:
+        return [np.exp(-p[0]*(x[0]**2)/8)*(-x[0]**2)/16,np.exp(-p[1]*(x[0]**2)/8)*(-x[0]**2)/16]
+    except:
+        return [(-p[0]*(x[0]**2)/8).Exp()*(-x[0]**2)/16,(-p[1]*(x[0]**2)/8).Exp()*(-x[0]**2)/16]
+
+def c3ExpFitFun3_nosqrt(x,p):
+
+    try:
+        return (np.exp(-p[0]*(x[0]**2)/8) + np.exp(-p[1]*(x[0]**2)/8)+ np.exp(-p[2]*(x[0]**2)/8))/3.
+    except:
+        return ((-p[0]*(x[0]**2)/8).Exp() + (-p[1]*(x[0]**2)/8).Exp()+ (-p[2]*(x[0]**2)/8).Exp())/3.
+
+def c3EFFDer3_nosqrt(x,p):
+    try:
+        return [np.exp(-p[0]*(x[0]**2)/8)*(-x[0]**2)/24,
+                np.exp(-p[1]*(x[0]**2)/8)*(-x[0]**2)/24,
+                np.exp(-p[2]*(x[0]**2)/8)*(-x[0]**2)/24]
+    except:
+        return [(-p[0]*(x[0]**2)/8).Exp()*(-x[0]**2)/24,
+                (-p[1]*(x[0]**2)/8).Exp()*(-x[0]**2)/24,
+                (-p[2]*(x[0]**2)/8).Exp()*(-x[0]**2)/24]
+
+
+def c3ExpFitFun(x,p):
+    try:
+        return np.exp(-p[0]*x[0])
+    except:
+        return (-p[0]*x[0]).Exp()
+
+def c3EFFDer(x,p):
+    try:
+        return [-x[0]*np.exp(-p[0]*x[0])]
+    except:
+        return [-x[0]*(-p[0]*x[0]).Exp()]
+
+def c3ExpFitFun_nosqrt(x,p):
+
+    try:
+        return np.exp(-p[0]*(x[0]**2)/8)
+    except:
+        return (-p[0]*(x[0]**2)/8).Exp()
+
+def c3EFFDer_nosqrt(x,p):
+    try:
+        return [np.exp(-p[0]*(x[0]**2)/8)*(-x[0]**2)/8]
+    except:
+        return [(-p[0](x[0]**2)/8).Exp()*(-x[0]**2)/8]
 
 
 def Chi_Prop_Der(x,p):
@@ -335,6 +521,12 @@ def SchiffFitFun(x,p):
 
 def SchiffFFDer(x,p):
     return [np.array(x[0])**2,np.array(x[1]),np.array(x[1])**2]
+
+def c3ContFitFun(x,p):
+    return p[0] + p[1]*np.array(x[0])**2 + p[2]*np.array(x[1])
+
+def c3ContFFDer(x,p):
+    return [makexunit(x[0]),np.array(x[0])**2,np.array(x[1])]
 
 
 def LinearFitFun(x,p):

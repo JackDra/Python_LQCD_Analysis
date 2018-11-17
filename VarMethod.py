@@ -341,26 +341,27 @@ def CreateTestData():
                            [0.1,0.2,0.4,0.8],
                            [0.1,1,10,100]]).T
 
-    coeff_err_per = 1
-    energy_err_per = 1
-    this_nboot = 200
-    this_ncfg = 1000
+    coeff_err_per = 0
+    energy_err_per = 2
+    this_nboot = 20
+    this_ncfg = 20
     nt = 50
     booted = True
     coeff_list = np.array([np.outer(ival,ival) for ival in coeff_list])
     coeff_list[1]
     coeff_err = coeff_list*coeff_err_per
-    coeff_err = np.random.normal(loc=1,scale=coeff_err_per,size=list(coeff_list.shape)+[this_ncfg])
-    energy_states_err = np.random.normal(loc=1,scale=energy_err_per,size=list(energy_states.shape)+[this_ncfg])
+    coeff_err = np.random.normal(loc=0,scale=coeff_err_per,size=list(coeff_list.shape)+[this_ncfg])
+    # energy_states_err = np.random.normal(loc=1,scale=energy_err_per,size=list(energy_states.shape)+[this_ncfg])
+    energy_states_err = np.random.normal(loc=0,scale=energy_err_per,size=list(energy_states.shape)+[this_ncfg])
     def exp_fun(val,ism,jsm,size):
-        rand_coeff = np.array([(icoeff+1)*iblist for iblist,icoeff in zip(coeff_list[:,ism,jsm],coeff_err[:,ism,jsm,:])])
-        rand_err = np.array([(val+ierr)*iblist for iblist,ierr in zip(energy_states,energy_states_err)])
+        rand_coeff = np.array([iblist+icoeff for iblist,icoeff in zip(coeff_list[:,ism,jsm],coeff_err[:,ism,jsm,:])])
+        rand_err = np.array([np.exp(-iblist*val)*np.exp(-ierr) for iblist,ierr in zip(energy_states,energy_states_err)])
         # rand_err_p1 = np.array([ierr + iblist*(val+1) for iblist,ierr in zip(energy_states,energy_states_err)])
         #     numer = rand_coeff[0]* np.exp(-rand_err[0])
         #     denom = rand_coeff[0]* np.exp(-rand_err_p1[0])
         #     print(np.log(np.mean(numer)/
         #                  np.mean(denom)),np.mean(rand_err[0]))
-        return np.sum( rand_coeff* np.exp(-rand_err),axis=0)
+        return np.sum( rand_coeff* rand_err,axis=0)
     # data_shape = [coeff_list.shape[1],coeff_list.shape[2],6]
     data_shape = [coeff_list.shape[1],coeff_list.shape[2],nt]
     values = []
@@ -390,9 +391,9 @@ def CreateTestData():
 
 if __name__ == '__main__':
     raw_data = CreateTestData()
-    test_class = VariationalMethod(matrix_corr=raw_data)
-    test_class.PerformVarMeth(t0=1,dt=1)
-    test_class.booted_mcorr
+    test_class = VariationalMethod(matrix_corr=raw_data,symetrize=False)
+    test_class.PerformVarMeth(t0=1,dt=5)
+    # test_class.booted_mcorr
     # test_class.eEnergy
     # test_class.left_evec
     this_info = pa.Series()

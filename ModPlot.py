@@ -94,11 +94,15 @@ class DataFrame( ta.HasTraits ):
     scale_y = ta.Float(1.0)
     fit_dim_pick = ta.Int(1)
     ShowEval = ta.List(ta.Float,[0])
+    extrap_fade = ta.Float(1.5)
     Hairline_plot = ta.Bool(False)
     line_alpha_scale = ta.Float(20)
     line_alpha_abs = ta.Float(1)
     Force_Param_Name = ta.Str('')
     Force_Param_Units = ta.Str('')
+    fit_custom_xrange = ta.Bool(False)
+    fit_x_min = ta.Str('FromDataMin')
+    fit_x_max = ta.Str('ToDataMax')
     suppress_key_index = ta.Bool(False)
     dim_list = ta.List([''])
     pick_dimension = ta.Enum(values='dim_list')
@@ -186,9 +190,13 @@ class DataFrame( ta.HasTraits ):
         ),tua.Group(
         tua.Item('this_key'),
         tua.Item('plot_this'),
+        tua.Item('extrap_fade'),
         tua.Item('Hairline_plot'),
         tua.Item('line_alpha_scale',visible_when='Hairline_plot'),
         tua.Item('line_alpha_abs',visible_when='Hairline_plot'),
+        tua.Item('fit_custom_xrange'),
+        tua.Item('fit_x_min',enabled_when='fit_custom_xrange'),
+        tua.Item('fit_x_max',enabled_when='fit_custom_xrange'),
         tua.Item('ShowEval'),
         tua.Item('fit_dim_pick'),
         tua.Item('Force_Param_Name'),
@@ -435,6 +443,10 @@ class DataFrame( ta.HasTraits ):
             self.Physical_Units = data_plot.plot_data.loc['phys_axies',self.this_key]
         else:
             self.Physical_Units = True
+        if 'extrap_fade' in data_plot.plot_data.index:
+            self.extrap_fade = data_plot.plot_data.loc['extrap_fade',self.this_key]
+        else:
+            self.extrap_fade = 1.5
         if 'hairline' in data_plot.plot_data.index:
             self.Hairline_plot = data_plot.plot_data.loc['hairline',self.this_key]
         else:
@@ -449,6 +461,14 @@ class DataFrame( ta.HasTraits ):
         else:
             self.line_alpha_scale = 20
             self.line_alpha_abs = 1
+        if 'xdatarange' in data_plot.plot_data.index:
+            if data_plot.plot_data.loc['xdatarange',self.this_key] == 'Data':
+                self.fit_custom_xrange = False
+            else:
+                self.fit_custom_xrange = True
+                self.fit_x_min,self.fit_x_max = data_plot.plot_data.loc['xdatarange',self.this_key]
+        else:
+            self.fit_custom_xrange = False
         if 'plot_err' in data_plot.plot_data.index:
             for itype in ['No','relative','absolute']:
                 if data_plot.plot_data.loc['plot_err',self.this_key].lower() in itype.lower():
@@ -633,6 +653,11 @@ class DataFrame( ta.HasTraits ):
 
         if self.Physical_Units != 'None':
             this_data.loc['phys_axies',self.this_key] = self.Physical_Units
+
+        if self.extrap_fade != 'None' and self.extrap_fade != 0:
+            this_data.loc['extrap_fade',self.this_key] = self.extrap_fade
+        else:
+            this_data.loc['extrap_fade',self.this_key] = 1.5
         if self.Hairline_plot != 'None':
             this_data.loc['hairline',self.this_key] = self.Hairline_plot
         alpha_hold = []
@@ -645,6 +670,10 @@ class DataFrame( ta.HasTraits ):
                 alpha_hold.append(this_data.loc['hair_alpha',self.this_key][0])
             else:
                 alpha_hold.append(this_data.loc['hair_alpha',self.this_key])
+        if self.fit_custom_xrange:
+            this_data.loc['xdatarange',self.this_key] = [self.fit_x_min,self.fit_x_max]
+        else:
+            this_data.loc['xdatarange',self.this_key] = 'Data'
         if self.line_alpha_abs != 'None':
             if 0 < self.line_alpha_abs > 1:
                 print('Warning, line_alpha_abs is between 0 and 1! breaks alpha scaling... assuming 1')
@@ -751,6 +780,9 @@ class InfoFrame( ta.HasTraits ):
     x_axis_max = ta.Str('None')
     y_axis_min = ta.Str('None')
     y_axis_max = ta.Str('None')
+    y_axis_max = ta.Str('None')
+    y_scale = ta.Enum(['None',"linear", "log", "symlog", "logit"])
+    x_scale = ta.Enum(['None',"linear", "log", "symlog", "logit"])
     x_zero_line = ta.Bool(False)
     x_zero_line_val = ta.Float(0)
     y_zero_line = ta.Bool(False)
@@ -792,8 +824,10 @@ class InfoFrame( ta.HasTraits ):
         tua.Item('error_cap_len'),
         tua.Item('x_axis_min'),
         tua.Item('x_axis_max'),
+        tua.Item('x_scale'),
         tua.Item('y_axis_min'),
         tua.Item('y_axis_max'),
+        tua.Item('y_scale'),
         tua.Item('Apply', show_label=False),
         tua.Item('Reset_Axies', show_label=False),
         label='Main'
@@ -906,6 +940,10 @@ class InfoFrame( ta.HasTraits ):
         else:
             self.y_axis_min = 'None'
             self.y_axis_max = 'None'
+        if 'x_plot_scale' in data_plot.plot_info:
+            self.x_scale = data_plot.plot_info['x_plot_scale']
+        if 'y_plot_scale' in data_plot.plot_info:
+            self.y_scale = data_plot.plot_info['y_plot_scale']
 
     def _Reset_Axies_fired(self):
         self.x_axis_min = 'None'
@@ -957,6 +995,8 @@ class InfoFrame( ta.HasTraits ):
         plot_info['xlims'] = [xmin,xmax]
 
         plot_info['ylims'] = [ymin,ymax]
+        plot_info['x_plot_scale'] = self.x_scale
+        plot_info['y_plot_scale'] = self.y_scale
         if self.xTick_inc > 0:
             plot_info['do_xTicks'] = True
             plot_info['xTick_min'] = self.xTick_min

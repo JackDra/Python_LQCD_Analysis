@@ -191,10 +191,17 @@ def GetCSHHeader(Jstring,job_params):
         outlist.append(r'# @ queue')
     else:
         if job_params['Scom'] == 'sbatch':
-            outlist.append(r'#SBATCH -p '+job_params['quetype'])
-            outlist.append(r'#SBATCH -n '+str(job_params['nproc']))
+            outlist.append(r'#SBATCH --nodes 1')
+            outlist.append(r'#SBATCH --cpus-per-task=1')
             outlist.append(r'#SBATCH --time='+job_params['time'])
             outlist.append(r'#SBATCH --mem='+job_params['memory'])
+            outlist.append(r'#SBATCH -J '+Jstring)
+            if 'RunPTG' in job_params and job_params['RunPTG']:
+                outlist.append(r'#SBATCH -A ptg')
+            # outlist.append(r'#SBATCH -p '+job_params['quetype'])
+            # outlist.append(r'#SBATCH -n '+str(job_params['nproc']))
+            # outlist.append(r'#SBATCH --time='+job_params['time'])
+            # outlist.append(r'#SBATCH --mem='+job_params['memory'])
         elif job_params['Scom'] == 'qsub':
             if 'email' in job_params:
                 outlist.append(r'#PBS -m bea')

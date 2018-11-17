@@ -4,10 +4,10 @@
 # IMPORT THIS FIRST, put in base import file
 import numpy as np
 import pandas as pa
+import warnings
 from XmlFormatting import MakeValAndErr
 from MiscFuns import human_format,logNA
 from Params import nboot,normed_histograms,percentile
-import warnings
 from Params import Debug_Mode
 # import matplotlib
 # matplotlib.use('Agg')  # Must be before importing matplotlib.pyplot or pylab!

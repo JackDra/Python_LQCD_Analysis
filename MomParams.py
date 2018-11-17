@@ -206,12 +206,15 @@ class LatticeParameters(object):
             print(self.PickleFile)
 
 
-    def LoadPickle(self,DefWipe=True):
+    def LoadPickle(self,DefWipe=True,no_write=False):
         if os.path.isfile(self.PickleFile) and not DefWipe:
             # print 'Loading Pickle for ' , self.name
             loadeddict = ReadPickleWrap(self.PickleFile)
             # loadeddict = self.FixDict(loadeddict)
             self.__dict__.update(loadeddict)
+        elif no_write:
+            self.Avgmomlist()
+            self.Chromamomlist()
         else:
             self.ReadAndWrite()
 

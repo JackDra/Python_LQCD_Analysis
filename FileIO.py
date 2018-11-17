@@ -449,17 +449,21 @@ def FormatXml(data):
         data = data.replace('</'+str(i)+'>','</cfg_'+str(i)+'>')
     data = data.replace('\\alpha','alpha')
     data = data.replace('^','_pow_')
+    data = data.replace('{','')
+    data = data.replace('}','')
+    data = data.replace(r'&lt;','<')
+    data = data.replace(r'&gt;','>')
     return data
 
 def ReadXml(thisfile,thisShowRead=ShowRead):
     if thisShowRead and 'Parameters' not in thisfile: print('Reading Pickled file ', thisfile)
-    try:
-        with open( thisfile, 'r' ) as xml_file:
-            # fcntl.flock(xml_file, fcntl.LOCK_EX)
-            parse_data = FormatXml(xml_file.read())
-            # fcntl.flock(xml_file, fcntl.LOCK_UN)
-        # print parse_data
-        return RecFTDAS(parse(parse_data))
+    # try:
+    with open( thisfile, 'r' ) as xml_file:
+        # fcntl.flock(xml_file, fcntl.LOCK_EX)
+        parse_data = FormatXml(xml_file.read())
+        # fcntl.flock(xml_file, fcntl.LOCK_UN)
+    # print parse_data
+    return RecFTDAS(parse(parse_data))
         # return RecFTDAS(parse(FormatXml(xml_file.read())))
-    except Exception as err:
-        raise IOError(str(err)+'\n Failed loading pickled file: \n'+thisfile)
+    # except Exception as err:
+    #     raise IOError(str(err)+'\n Failed loading xml file: \n'+thisfile)

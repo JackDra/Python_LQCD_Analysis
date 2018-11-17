@@ -21,6 +21,7 @@ from PredefFitFuns import C2OneStateFitFunNoExp,C2OneStateFitFun,C2TwoStateFitFu
 from PredefFitFuns import ConstantFitFun,Alpha_Prop_Fit_plin,C2OSFAntiperDer
 from Autocorr import AutoCorrelate
 from PlotData import null_series
+from warnings import warn
 import SetsOfFits as sff
 # import traceback
 
@@ -451,11 +452,13 @@ class TwoPointCorr(object):
 
 
     ## make sure all xlims are the same, because this sets the window of xlim (needed for calculating shifts)
-    def LogPlot(self,plot_class,xlims=defxlim,momlist=['p000'],
-                thiscol='PreDefine',thissym='PreDefine',thisshift='PreDefine',norm=True):
+    def LogPlot(self,plot_class,xlims='All',momlist=['p000'],
+                thiscol='PreDefine',thissym='PreDefine',thisshift='PreDefine',norm=False):
         self.CheckCol(thiscol)
         self.CheckSym(thissym)
         self.thisshiftscale = 'Not Set'
+        if xlims is 'All':
+            xlims = range(self.nt+1)
         thisshift = self.GetShift(xlims,thisshift)
         if len(momlist) == 0:
             momlist = self.C2_Stats.index.get_level_values('momentum')
@@ -474,7 +477,7 @@ class TwoPointCorr(object):
             else:
                 scale = 1.0
             for idata in databoot[xlims[0]:xlims[1]]:
-                logdata = idata.Log()/scale
+                logdata = idata.Log().__div__(scale)
                 logdata.Stats()
                 dataavg.append(logdata.Avg)
                 dataerr.append(logdata.Std)
@@ -500,49 +503,50 @@ class TwoPointCorr(object):
         # plot_class.get_xlim(*xlims)
 
     ## make sure all xlims are the same, because this sets the window of xlim (needed for calculating shifts)
-    def Plot(   self,plot_class,xlims=defxlim,momlist=['p000'],
-                thiscol='PreDefine',thissym='PreDefine',thisshift='PreDefine',norm=True):
+    def Plot(   self,plot_class,momlist=['p000'],
+                thiscol='PreDefine',thissym='PreDefine',thisshift='PreDefine',norm=False,log=False):
+
         self.CheckCol(thiscol)
         self.CheckSym(thissym)
+        ## resets thisshiftscale so that you can plot EffMass and Log plot next to eachother,
+
         self.thisshiftscale = 'Not Set'
-        thisshift = self.GetShift(xlims,thisshift)
+        # thisshift = self.GetShift(xlims,thisshift)
         if len(momlist) == 0:
-            momlist = self.C2_Stats.index.get_level_values('momentum')
-        for ip in momlist:
-            if 'All' in ip: ip = 'p000'
-            if ip not in self.C2_Stats['boot']:
-                print(ip, ' not found in effective mass list')
-                continue
-            pdata = self.C2_Stats['boot'].xs(ip, level='momentum')
-            tlist,databoot = pdata.index,pdata.values
-            dataavg,dataerr = [],[]
-            if norm:
-                scale = databoot[xlims[0]]
-                scale.Stats()
-                scale = scale.Avg
-            else:
-                scale = 1.0
-            for idata in databoot[xlims[0]:xlims[1]]:
-                data = idata/scale
-                data.Stats()
-                dataavg.append(data.Avg)
-                dataerr.append(data.Std)
-            tlist = tlist[xlims[0]:xlims[1]]
-            hold_series = pa.Series()
-            hold_series['x_data'] = np.array(list(map(untstr,tlist)))
-            hold_series['y_data'] = dataavg
-            hold_series['yerr_data'] = dataerr
-            hold_series['xerr_data'] = None
-            hold_series['type'] = 'error_bar'
-            hold_series['fit_class'] = None
-            hold_series['label'] = self.LegLab
-            hold_series['symbol'] = self.thissym
-            hold_series['color'] = self.thiscol
-            hold_series['shift'] = thisshift
-            hold_series['Phys'] = None
-            hold_series['fmt_class'] = KeyForamtting(self.latparams)
-            plot_class.AppendData(hold_series)
-            self.Scale=scale
+            momlist = self.pform
+        # m_getattr = lambda x, y: getattr(y,x)
+        ip = momlist[0]
+        if 'All' in ip: ip = 'p000'
+        if ip not in self.pform:
+            print(ip, ' not found in effective mass list')
+            return plot_class
+        # pdata = self.C2_Stats['EffM'].xs(ip, level='momentum')
+        pdata = self.C2_Stats['boot']
+        if log:
+            pdata = pdata.apply(lambda x : x.Log())
+            pdata.apply(lambda x : x.Stats())
+        dataavg = pdata.apply(lambda x : x.Avg)
+        dataerr = pdata.apply(lambda x : x.Std)
+        # tlist = pdata.index[xlims[0]:xlims[1]]
+        # dataavg = dataavg.iloc[xlims[0]:xlims[1]]
+        # dataerr = dataerr.iloc[xlims[0]:xlims[1]]
+        ## np.abs makes negative effective masses coming from G2^-1 be positive.
+        hold_series = pa.Series()
+        hold_series['x_data'] = 'from_keys'
+        # hold_series['x_data'] = np.array(map(untstr,tlist))
+        hold_series['y_data'] = dataavg
+        hold_series['key_select'] = (ip,slice(None))
+        hold_series['yerr_data'] = dataerr
+        hold_series['xerr_data'] = None
+        hold_series['type'] = 'error_bar_vary'
+        hold_series['fit_class'] = None
+        hold_series['label'] = self.LegLab
+        hold_series['symbol'] = self.thissym
+        hold_series['color'] = self.thiscol
+        hold_series['shift'] = thisshift
+        # hold_series['xdatarange'] = xlims
+        hold_series['fmt_class'] = KeyForamtting(self.latparams)
+        plot_class.AppendData(hold_series)
         return plot_class
         # plot_class.get_xlim(*xlims)
 
@@ -624,6 +628,7 @@ class TwoPointCorr(object):
             print('no fits done, starting')
             self.Fit(int(state.replace('state','')),fitr)
         fit_data = sff.PullSOFSeries(self.C2_Fit_Stats['boot'],fmted=True)
+        if len(fit_data) == 0: return plot_class
         # fit_data = Series_fix_key(fit_data,4,'fittwor','tsumfitr')
         this_fun = fit_data.index[0][2]
         this_key = (state,momlist,this_fun,fitr)
@@ -1101,19 +1106,47 @@ class TwoPointCorr(object):
 
 
     def EffMass(self):
-        def bootlog(data):
-            return data.Log()
-        lEM,lEMA,lEMS = [],[],[]
-        for (ip,it),idata in self.items():
-            nextt = (untstr(it) % (self.nt-1)) + 1
-            thisEmass = (idata/self.C2_Stats['boot'][ip,tstr(nextt)]).Log()
-            thisEmass.Stats()
-            lEM.append(thisEmass)
-            lEMA.append(thisEmass.Avg)
-            lEMS.append(thisEmass.Std)
-        self.C2_Stats.loc[:,'EffM'] = pa.Series(lEM,index=self.C2_Stats.index)
-        self.C2_Stats.loc[:,'EffMAvg'] = pa.Series(lEMA,index=self.C2_Stats.index)
-        self.C2_Stats.loc[:,'EffMStd'] = pa.Series(lEMS,index=self.C2_Stats.index)
+        if not hasattr(self,'MessEffMass'):
+            self.MessEffMass = False
+        overwrite_effm = False
+        if self.MesOrBar == 'Meson':
+            try:
+                from pynverse import inversefunc
+                overwrite_effm = not self.MessEffMass
+                self.MesEffMass = True
+            except:
+                warn('pynverse needs to be install to analytically solve the effective mass \
+                     function for Mesons, using incorrect effective mass funciton. Run pip install \
+                     pynverse to get it')
+                self.MesEffMass = False
+        else:
+            self.MesEffMass = False
+        if 'EffM' not in self.C2_Stats or overwrite_effm:
+            lEM,lEMA,lEMS = [],[],[]
+            if self.MesEffMass:
+                for (ip,it),idata in self.items():
+                    nextt = (untstr(it) % (self.nt-1)) + 1
+                    idata_nextt = self.C2_Stats['boot'][ip,tstr(nextt)]
+                    Tshift = self.latparams.nt/2-untstr(it) + 1
+                    def ThisEffMFun(mass):
+                            return np.cosh(-mass*Tshift)/np.cosh(-mass*(Tshift-1))
+                    thisEmass = BootStrap(bootvals=np.abs(inversefunc(ThisEffMFun,
+                                                               y_values=(idata/idata_nextt).bootvals)))
+                    thisEmass.Stats()
+                    lEM.append(thisEmass)
+                    lEMA.append(thisEmass.Avg)
+                    lEMS.append(thisEmass.Std)
+            else:
+                for (ip,it),idata in self.items():
+                        nextt = (untstr(it) % (self.nt-1)) + 1
+                        thisEmass = (idata/self.C2_Stats['boot'][ip,tstr(nextt)]).Log()
+                        thisEmass.Stats()
+                        lEM.append(thisEmass)
+                        lEMA.append(thisEmass.Avg)
+                        lEMS.append(thisEmass.Std)
+            self.C2_Stats.loc[:,'EffM'] = pa.Series(lEM,index=self.C2_Stats.index)
+            self.C2_Stats.loc[:,'EffMAvg'] = pa.Series(lEMA,index=self.C2_Stats.index)
+            self.C2_Stats.loc[:,'EffMStd'] = pa.Series(lEMS,index=self.C2_Stats.index)
 
     # def ReadAndBootAndEffM(self,DefWipe=False):
     #     if os.path.isfile(self.PickleFile) and not DefWipe:
@@ -1149,6 +1182,11 @@ class TwoPointCorr(object):
         # outDict['xsrc'] = FixDictArray(self.xsrc,'xsrc')
         outDict['ism'] = self.ism
         outDict['jsm'] = self.jsm
+        if self.MesOrBar == 'Meson':
+            if self.MesEffMass:
+                outDict['EffMassFun'] = 'Cosh_ratio_inverse'
+            else:
+                outDict['EffMassFun'] = 'log_of_ratio'
 
         excel_params = pa.Series(deepcopy(outDict))
 
@@ -1156,7 +1194,8 @@ class TwoPointCorr(object):
             # print 'debug'
             # print self.C2_Fit_Stats['boot']
             for (istate,imom),fitdict in self.C2_Fit_Stats['boot'].items():
-                outDict['Fits'][istate][imom] = fitdict.GetOutputDict()
+                if 'Fit' in fitdict.Fit_Stats.columns:
+                    outDict['Fits'][istate][imom] = fitdict.GetOutputDict()
 
 
         # for ststr,statedict in self.FitDict.iteritems():
@@ -1372,6 +1411,7 @@ class TwoPointCorr(object):
                 # self.Write()
         else:
             self.ReadAndWrite(WipeData=WipeData,NoFit=NoFit)
+        self.EffMass()
     ## Operator overloading
 
     #Too Much work, only works for one operator. Please use SetCustomName after doing all algebraic manipulation
@@ -7330,8 +7370,6 @@ class FlowedTwoPtCorr(object):
 
 
     def EffMass(self):
-        def bootlog(data):
-            return data.Log()
         lEM,lEMA,lEMS = [],[],[]
         for (itflow,it),idata in self.items():
             nextt = (untstr(it) % (self.nt-1)) + 1

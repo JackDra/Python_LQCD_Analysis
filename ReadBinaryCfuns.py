@@ -50,7 +50,7 @@ class ReadFSCfunPickCHROMA:
     def __init__(self,  thisfileList,thisMomList,thisGammaList,forcent=nt,check_fs=False,
                         force_cmplx_type=complextype):
         params = mp.LatticeParameters()
-        params.LoadPickle()
+        params.LoadPickle(no_write=True)
         self.data = []
         for thisfile in thisfileList:
             # if thistsink == 'FileName':
@@ -136,7 +136,7 @@ class ReadFSCfunPickCHROMA:
 class RC3Full:
     def __init__(self,thisfileList,thisMomList,thisGammaList,forcent=nt,check_fs=False):
         params = mp.LatticeParameters()
-        params.LoadPickle()
+        params.LoadPickle(no_write=True)
         self.data = []
         self.f_info = []
         for thisfile in thisfileList:
@@ -305,8 +305,8 @@ class R2CChromaXMLFileList:
         else: raise IOError('Pass Baryon or Meson into correlator read routine')
         self.data = []
         self.tshiftlist = []
-        params = mp.LatticeParameters()
-        params.LoadPickle()
+        # params = mp.LatticeParameters()
+        # params.LoadPickle(no_write=True)
         datalen = 0
         for thisfile in thisfileList:
             self.OutMomList = []
@@ -421,8 +421,8 @@ class RC2Full:
         self.data = []
         self.datag5 = []
         self.tshiftlist = []
-        params = mp.LatticeParameters()
-        params.LoadPickle()
+        # params = mp.LatticeParameters()
+        # params.LoadPickle()
         for thisfile in thisfileList:
             self.OutMomList = []
             TSRC_read = False

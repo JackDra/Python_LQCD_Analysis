@@ -3,6 +3,8 @@ import pystan
 import pandas as pd
 import numpy as np
 
+
+
 # The Stan model as a string.
 model_string = """
 data {

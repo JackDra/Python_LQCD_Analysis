@@ -13,6 +13,15 @@ from TimeStuff import Timer
 import operator as op
 import imp
 
+def mindex_iloc_md(df,index_list):
+    for iindex in index_list:
+        df = multindex_iloc(df,iindex)
+    return df
+
+def multindex_iloc(df, index):
+    label = df.index.levels[0][index]
+    return df.iloc[df.index.get_loc(label)]
+
 myeps = np.finfo(0.0).eps
 
 numeric_const_pattern = '[-+]? (?: (?: \d* \. \d+ ) | (?: \d+ \.? ) )(?: [Ee] [+-]? \d+ ) ?'
@@ -57,11 +66,15 @@ def logNA(value):
     if isinstance(value,(list,tuple,np.ndarray)):
         return logNA_list(value)
     else:
-        if value < 0:
-            return  -myeps
+        if isinstance(value,complex) :
+            if value.imag > 0:
+                return np.log(value)
+            else:
+                return float('NaN')
+        elif value < 0:
+            return  float('NaN')
         else:
             return np.log(value)
-
 def human_format(num):
     magnitude = 0
     while abs(num) >= 1000:

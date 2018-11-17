@@ -489,6 +489,7 @@ class SetOfTwoPt(object):
                 varcount += 1
                 this_pion_mass = iC2.latparams.GetPionMass(Phys=True,MeV=True)
                 fit_data = PullSOFSeries_Wpar(iC2.C2_Fit_Stats.loc[:,'boot'],fmted=True)
+                if len(fit_data) == 0: continue
                 ipar = par_type[icount]
                 if ipar == 'First':
                     ipar = fit_data.index[0][-1]
@@ -502,6 +503,7 @@ class SetOfTwoPt(object):
                     print(ifitstate,imom,fit_fun,ifitr,ipar, 'Not found, attempting to fit')
                     iC2.Fit(state=ifitstate,fit_range=ifitr)
                     fit_data = PullSOFSeries_Wpar(iC2.C2_Fit_Stats.loc[:,'boot'],fmted=True)
+                    if len(fit_data) == 0: continue
                 for ikey,ival in fit_data.items():
                     vall.append(ival)
                     indexl.append((this_pion_mass,)+ikey)

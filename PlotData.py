@@ -112,6 +112,7 @@ null_series['x_range_min'] = None
 null_series['x_range_max'] = None
 null_series['x_increment'] = None
 null_series['hairline'] = False
+null_series['extrap_fade'] = 0
 null_series['hair_alpha'] = False
 null_series['phys_axies'] = False
 null_series['FPName'] = ''
@@ -269,6 +270,10 @@ class Plotting(object):
             self.plot_info['leg_fontsize'] = legsize
         if 'leg_alpha' not in plot_info:
             self.plot_info['leg_alpha'] = legalpha
+        if 'y_plot_scale' not in plot_info:
+            self.plot_info['y_plot_scale'] = 'None'
+        if 'x_plot_scale' not in plot_info:
+            self.plot_info['x_plot_scale'] = 'None'
         if 'save_file' in self.plot_info:
             self.HumanFile = self.plot_info['save_file'].replace('.pdf','')+'.xml'
             self.PickleFile = self.plot_info['save_file'].replace('.pdf','')+'.py3p'
@@ -453,6 +458,8 @@ class Plotting(object):
                 self.plot_data[icol]['supress_legend'] = False
             if 'hairline' not in col_data:
                 self.plot_data[icol]['hairline'] = False
+            if 'extrap_fade' not in col_data or col_data['extrap_fade'] == 0:
+                self.plot_data[icol]['extrap_fade'] = 1.5
             if 'hair_alpha' not in col_data:
                 self.plot_data[icol]['hair_alpha'] = (20,1)
             if 'FPName' not in col_data:
@@ -521,7 +528,7 @@ class Plotting(object):
             if 'fit' in col_data['type']:
                 if 'fit_class' not in col_data:
                     raise EnvironmentError('fit_class not present even though fit was selected!')
-                if isinstance( col_data['fit_class'],sff.SetOfFitFuns):
+                elif isinstance( col_data['fit_class'],sff.SetOfFitFuns):
                     col_data['fit_class'] = col_data['fit_class'].Fit_Stats_fmt['Fit']
                 elif isinstance( col_data['fit_class'].iloc[0],sff.SetOfFitFuns):
                     col_data['fit_class'] = sff.PullSOFSeries(col_data['fit_class'])
@@ -827,7 +834,7 @@ class Plotting(object):
                 this_yerrdata = this_yerrdata.loc[this_key_select]
             else:
                 this_leg = ''
-            if len(this_xdata) != len(this_ydata):
+            if (not isinstance(this_xdata,str)) and len(this_xdata) != len(this_ydata):
                 print('Warning, xdata and ydata are different length, manually cutting')
                 if len(this_xdata) > len(this_ydata):
                     this_xdata = this_xdata[:len(this_ydata)]
@@ -891,8 +898,10 @@ class Plotting(object):
                     this_leg = med_leg+str(LegendFmt(this_plot_data['label']+' '+this_leg))
                 else:
                     this_leg = med_leg+str(LegendFmt(this_plot_data['label']))
-                if this_plot_data['x_fun'] is not None and this_plot_data['x_fun'] is not False:
-                    this_xdata = [this_plot_data['x_fun'](ix) for ix in this_xdata]
+                if isinstance(this_xdata,str) and this_xdata == 'from_keys':
+                    this_xdata = np.array(list(map(get_val_float_0,this_ydata.index)))
+                    if isinstance(this_xdata[0],(list,tuple,np.ndarray)) and len(this_xdata[0]) > 1:
+                        this_xdata = this_xdata[:,0]
                 try:
                     np.array(this_xdata)+float(this_plot_data['shift'])
                 except Exception as err:
@@ -902,6 +911,8 @@ class Plotting(object):
                     for ix in this_xdata:
                         out_str += '    '+str(ix) + '\n'
                     raise Exception(out_str +str(err))
+                if this_plot_data['x_fun'] is not None and this_plot_data['x_fun'] is not False:
+                    this_xdata = [this_plot_data['x_fun'](ix) for ix in this_xdata]
                 if this_plot_data['scale'] is not False and this_plot_data['scale'] is not None:
                     this_yerrdata = np.array(this_yerrdata)*this_plot_data['scale']
                     this_ydata = np.array(this_ydata)*this_plot_data['scale']
@@ -1347,6 +1358,7 @@ class Plotting(object):
                                 x_fun=this_plot_data['x_fun'],
                                 supress_legend=this_plot_data['supress_legend'],
                                 hairline=this_plot_data['hairline'],
+                                extrap_fade=this_plot_data['extrap_fade'],
                                 plot_plane = self.plot_plane)
         else:
             print('Warning, plpython kill programot type',this_plot_data['type'],'not implemented, skipping data')
@@ -1433,6 +1445,10 @@ class Plotting(object):
                 self.plot_plane.set_ylabel(self.plot_info['ylabel'],self.plot_info['ylabel_dict'])
             else:
                 self.plot_plane.set_ylabel(self.plot_info['ylabel'],{'fontsize':ysize})
+        if 'x_plot_scale' in self.plot_info and self.plot_info['x_plot_scale'].lower() != 'none':
+            self.plot_plane.set_xscale(self.plot_info['x_plot_scale'])
+        if 'y_plot_scale' in self.plot_info and self.plot_info['y_plot_scale'].lower() != 'none':
+            self.plot_plane.set_yscale(self.plot_info['y_plot_scale'])
         if 'xlims' in self.plot_info:
             self.plot_info['xlims'] = list(self.plot_info['xlims'])
             if self.plot_info['xlims'][0] == None:
@@ -1447,6 +1463,7 @@ class Plotting(object):
             if self.plot_info['ylims'][1] == None:
                 self.plot_info['ylims'][1] = self.plot_plane.get_ylim()[1]
             self.plot_plane.set_ylim(self.plot_info['ylims'])
+
         if 'do_xTicks' in self.plot_info and self.plot_info['do_xTicks']:
             self.plot_plane.set_xticks(np.arange(self.plot_info['xTick_min'],self.plot_info['xTick_max'],step=self.plot_info['xTick_inc']))
         if 'do_yTicks' in self.plot_info and self.plot_info['do_yTicks']:
@@ -1557,18 +1574,21 @@ class Plotting(object):
         outDict['Info'] = Series_TO_ODict(self.plot_info)
         for iplot_key,iplot_data in self.plot_data.items():
             is_vary = '_vary' in iplot_data['type']
-            key_str = str(iplot_key)
+            key_str = str(iplot_key).replace(' ','_')
             for ikey,idata in iplot_data.items():
+                dict_key = ikey.replace(' ','_')
                 if ikey == 'color':
                     idata = fmt_Qt5_col(idata)
                 if '_data' not in ikey and 'key_select' not in ikey:
                     if hasattr(idata,'name'):
-                        outDict[key_str][ikey] = idata.name
+                        outDict[key_str][dict_key] = idata.name
+                    elif hasattr(idata,'__name__'):
+                        outDict[key_str][dict_key] = idata.__name__
                     else:
                         if idata is None:
-                            outDict[key_str][ikey] = 'None'
+                            outDict[key_str][dict_key] = 'None'
                         else:
-                            outDict[key_str][ikey] = idata
+                            outDict[key_str][dict_key] = idata
             if 'plot' in iplot_data['type'] or 'error_bar' in iplot_data['type'] or 'scatter' in  iplot_data['type'] or 'error_band' in iplot_data['type'] :
                 if 'plot' in iplot_data['type']:
                     yerr_test,xerr_test = False,False
@@ -1586,6 +1606,10 @@ class Plotting(object):
                     elif isinstance(iplot_data['x_data'],str) and iplot_data['x_data'] == 'from_keys':
                         # iindex = list(iplot_data['key_select']).index(slice(None))
                         this_key_select = Un_Fix_Key_Select(tuple_wrap(iplot_data['key_select']))
+                        # print('DEBUG')
+                        # print(this_key_select)
+                        # print(iplot_data['y_data'])
+                        # print(iplot_data['y_data'].loc[this_key_select])
                         this_xdata = list(iplot_data['y_data'].loc[this_key_select].index)
                         if isinstance(this_xdata[0],(list,tuple,np.ndarray)) and len(this_xdata[0]) > 1:
                             slice_loc = tuple_wrap(iplot_data['key_select']).index(slice(None))

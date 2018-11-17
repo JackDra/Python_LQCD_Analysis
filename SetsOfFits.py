@@ -48,6 +48,7 @@ def PullSOFSeries(this_series,keep_keys=slice(None),fmted=True):
     outl,indexl = [],[]
     if fmted:
         for ikey,SOF_data in this_series.items():
+            if 'Fit' not in SOF_data.Fit_Stats_fmt.columns: continue
             for fit_key,fit_data in SOF_data.Fit_Stats_fmt['Fit'].items():
                 this_key = ikey
                 if not isinstance(ikey,(list,tuple,np.ndarray)):
@@ -56,6 +57,7 @@ def PullSOFSeries(this_series,keep_keys=slice(None),fmted=True):
                 outl.append(fit_data)
     else:
         for ikey,SOF_data in this_series.items():
+            if 'Fit' not in SOF_data.Fit_Stats.columns: continue
             for fit_key,fit_data in SOF_data.Fit_Stats['Fit'].items():
                 this_key = ikey
                 if not isinstance(ikey,(list,tuple,np.ndarray)):
@@ -363,13 +365,6 @@ class SetOfFitFuns(object):
                             testbool = testbool and self.xdata_split[1][ifit['fit_min_2']] <= ix2 <= self.xdata_split[1][ifit['fit_max_2']]
                             print(ix1,ix2,testbool)
                         raise EnvironmentError('Fit data not found in fitting...')
-            # print('DEBUG ndim'+str(self.ndim_fit))
-            # for ikey,ival in ifit.items():
-            #     print('  ',ikey,ival)
-            # print('Values:')
-            # for ix_0,ix_1,iy in zip(this_xdata[0],this_xdata[1],this_ydata):
-            #     print('  ',ix_0,ix_1,iy.Avg,iy.Std)
-            # print()
 
             this_fit = ff.Fitting( thisPrec=self.thisPrec,thisMI=self.thisMI,
                                 Funs=ifit['Funs'],data = [this_xdata,this_ydata],
@@ -377,6 +372,13 @@ class SetOfFitFuns(object):
                                 paramunits=ifit['paramunits'])
             fit_list.append(this_fit)
             ilist.append(this_key)
+            # print('DEBUG ndim'+str(self.ndim_fit),' fitr',ifit)
+            # for ikey,ival in ifit.items():
+            #     print('  ',ikey,ival)
+            # print('Values:')
+            # for ix_0,ix_1,iy in zip(this_xdata[0],this_xdata[1],this_ydata):
+            #     print('  ',ix_0,ix_1,iy.Avg,iy.Std)
+            # print()
         if len(ilist) > 0:
             if len(ilist[0]) == 4:
                 this_Fit_Col_Names = ['Function','iGuess','fit_min','fit_max']
@@ -402,7 +404,7 @@ class SetOfFitFuns(object):
 
 
 
-    def DoFits(self,PullParams=True,PullChi=True,show_timer=True):
+    def DoFits(self,PullParams=False,PullChi=True,show_timer=True):
         if 'Fit' in self.Fit_Stats:
             if show_timer: this_timer = Timer(linklist=list(range(len(self.Fit_Stats.index))),name='Fitting '+self.name)
             for ikey,ifit in self.Fit_Stats.loc[:,'Fit'].items():
@@ -488,7 +490,7 @@ class SetOfFitFuns(object):
             fit_min = sort_xvals[sort_xvals > fit_min]
             if len(fit_min) == 0:
                 out_str = 'fit_min is larger than all data for index:'+str(index)+'\n'
-                out_str += 'fit_min '+fit_min +'\n'
+                out_str += 'fit_min '+str(fit_min) +'\n'
                 out_str += 'xdata: \n'
                 out_str += '\n  '.join(map(str,sort_xvals))
                 raise EnvironmentError(out_str)
@@ -499,7 +501,7 @@ class SetOfFitFuns(object):
             fit_max = sort_xvals[sort_xvals < fit_max]
             if len(fit_max) == 0:
                 out_str = 'fit_max is smaller than all data for index:'+str(index)+'\n'
-                out_str += 'fit_max '+fit_max +'\n'
+                out_str += 'fit_max '+str(fit_max) +'\n'
                 out_str += 'xdata: \n'
                 out_str += '\n  '.join(map(str,sort_xvals))
                 raise EnvironmentError(out_str)
@@ -511,8 +513,12 @@ class SetOfFitFuns(object):
     def MakeFitRanges(self,fit_min,fit_max,npar,from_xdata=False,index=0):
         if from_xdata:
             fit_min,fit_max = self.GetXdataValue(fit_min,fit_max,index)
-            fit_min = self.xdata_split[index].index(get_val_float(fit_min))
-            fit_max = self.xdata_split[index].index(get_val_float(fit_max))
+            fit_min = list(self.xdata_split[index]).index(get_val_float(fit_min))
+            fit_max = list(self.xdata_split[index]).index(get_val_float(fit_max))
+            if fit_min == fit_max:
+                if fit_max < len(self.xdata_split[index])-1:
+                    fit_max = fit_max+1
+                fit_min = max(0,fit_min-npar)
         out_list = []
         for ifit_min in range(fit_min,fit_max+1):
             for ifit_max in range(ifit_min+npar-1,fit_max+1):
@@ -522,12 +528,16 @@ class SetOfFitFuns(object):
     def MakeFitRanges_FixEnd(self,fit_min,fit_max,npar,from_xdata=False,index=0):
         if from_xdata:
             fit_min,fit_max = self.GetXdataValue(fit_min,fit_max,index)
-            fit_min_i = self.xdata_split[index].index(get_val_float(fit_min))
-            fit_max_i = self.xdata_split[index].index(get_val_float(fit_max))
+            fit_min_i = list(self.xdata_split[index]).index(get_val_float(fit_min))
+            fit_max_i = list(self.xdata_split[index]).index(get_val_float(fit_max))
+            if fit_min == fit_max:
+                if fit_max < len(self.xdata_split[index])-1:
+                    fit_max = fit_max+1
+                fit_min = max(0,fit_min-npar)
             # print('DEBUG fit_min_i',fit_min_i)
             # print('DEBUG fit_max_i',fit_max_i)
         out_list = []
-        for ifit_min in range(fit_min_i,fit_max_i-npar+1):
+        for ifit_min in range(fit_min_i,fit_max_i-npar+2):
             out_list.append((ifit_min,fit_max_i))
         return out_list,fit_min,fit_max
 
@@ -552,6 +562,9 @@ class SetOfFitFuns(object):
         if self.ndim_fit != 1:
             print('CheckRange must be used for 1d fitting')
             return False
+        if isinstance(fit_info,(list,tuple,np.ndarray)):
+            return all([self.CheckRange(fit_min,fit_max,fit_info=iinfo,
+                min_fit_len=min_fit_len) for iinfo in fit_info])
         this_npar = self.AddDefault(fit_info)['Funs'][1]
         fit_ranges = self.MakeFitRanges(fit_min,fit_max,this_npar+min_fit_len)
         if len(fit_ranges) == 0:
@@ -594,6 +607,9 @@ class SetOfFitFuns(object):
         if self.ndim_fit != 1:
             print('ScanRange must be used for 1d fitting')
             return False
+        if isinstance(fit_info,(list,tuple,np.ndarray)):
+            return all([self.ScanRange(fit_min,fit_max,fit_info=iinfo,
+                min_fit_len=min_fit_len,from_xdata=from_xdata) for iinfo in fit_info])
         this_npar = self.AddDefault(fit_info)['Funs'][1]
         fit_ranges = self.MakeFitRanges(fit_min,fit_max,this_npar+min_fit_len,from_xdata=from_xdata)
         if len(fit_ranges) == 0:
@@ -614,6 +630,9 @@ class SetOfFitFuns(object):
         if self.ndim_fit != 1:
             print('ScanRange must be used for 1d fitting')
             return False
+        if isinstance(fit_info,(list,tuple,np.ndarray)):
+            return all([self.ScanRange_Sym(fit_min,fit_max,fit_info=iinfo,
+                min_fit_len=min_fit_len) for iinfo in fit_info])
         this_npar = self.AddDefault(fit_info)['Funs'][1]
         fit_ranges = self.MakeFitRanges_Sym(fit_min,fit_max,this_npar+min_fit_len)
         if len(fit_ranges) == 0:
@@ -633,6 +652,9 @@ class SetOfFitFuns(object):
         if self.ndim_fit != 2:
             print('ScanShape must be used for 2d fitting')
             return False
+        if isinstance(fit_info,(list,tuple,np.ndarray)):
+            return all([self.ScanShape(fit_min_1,fit_max_1,fit_min_2,fit_max_2,fit_info=iinfo,
+                min_fit_len=min_fit_len) for iinfo in fit_info])
         this_npar = self.AddDefault(fit_info)['Funs'][1]
         fit_ranges,fit_ranges_2 = self.MakeFitRanges_shape(fit_min_1,fit_max_1,fit_min_2,fit_max_2,this_npar+min_fit_len)
         if len(fit_ranges) == 0:
@@ -674,6 +696,9 @@ class SetOfFitFuns(object):
         if self.ndim_fit != 2:
             print('ScanBox must be used for 2d fitting')
             return False
+        if isinstance(fit_info,(list,tuple,np.ndarray)):
+            return all([self.ScanBox(fit_min_1,fit_max_1,fit_min_2,fit_max_2,fit_info=iinfo,
+                min_fit_len_1=min_fit_len_1,min_fit_len_2=min_fit_len_2,from_xdata=from_xdata) for iinfo in fit_info])
         this_npar = self.AddDefault(fit_info)['Funs'][1]
         fit_ranges = self.MakeFitRanges(fit_min_1,fit_max_1,this_npar+min_fit_len_1,from_xdata=from_xdata,index=0)
         fit_ranges_2 = self.MakeFitRanges(fit_min_2,fit_max_2,this_npar+min_fit_len_2,from_xdata=from_xdata,index=1)
@@ -696,12 +721,46 @@ class SetOfFitFuns(object):
         self.ImportFits(parse_info)
         return True
 
+    def ScanBox_maxdim2(self,fit_min_1,fit_max_1,fit_min_2,fit_max_2,fit_info={},
+                min_fit_len_1=def_min_fitr,min_fit_len_2=def_min_fitr,from_xdata=False):
+        if self.ndim_fit != 2:
+            print('ScanBox must be used for 2d fitting')
+            return False
+
+        if isinstance(fit_info,(list,tuple,np.ndarray)):
+            return all([self.ScanBox_maxdim2(fit_min_1,fit_max_1,fit_min_2,fit_max_2,fit_info=iinfo,
+                min_fit_len_1=min_fit_len_1,min_fit_len_2=min_fit_len_2,from_xdata=from_xdata) for iinfo in fit_info])
+        this_npar = self.AddDefault(fit_info)['Funs'][1]
+        fit_ranges = self.MakeFitRanges(fit_min_1,fit_max_1,this_npar+min_fit_len_1,from_xdata=from_xdata,index=0)
+        fit_ranges_2 = self.MakeFitRanges(fit_min_2,fit_max_2,min_fit_len_2,from_xdata=from_xdata,index=1)
+        if len(fit_ranges) == 0 or len(fit_ranges_2) == 0:
+            print('Warning, no acceptable fit ranges for:')
+            print(fit_min_1,fit_max_1,fit_min_2,fit_max_2, end=' ')
+            print('min fit ranges')
+            print(this_npar+min_fit_len_1,this_npar+min_fit_len_2)
+            return False
+        parse_info = []
+        for ifit_min_1,ifit_max_1 in fit_ranges:
+            # for ifit_min_2,ifit_max_2 in fit_ranges_2:
+                # print('Adding fitr'+str(ifit_min_1)+'-'+str(ifit_max_1)+' fittwor'+str(ifit_min_2)+'-'+str(ifit_max_2))
+            this_info = copy(fit_info)
+            this_info['fit_min_1'] = ifit_min_1
+            this_info['fit_max_1'] = ifit_max_1
+            this_info['fit_min_2'] = min(np.array(fit_ranges_2)[:,0])
+            this_info['fit_max_2'] = max(np.array(fit_ranges_2)[:,1])
+            parse_info.append(this_info)
+        self.ImportFits(parse_info)
+        return True
+
 
     def ScanBox_FixEnd(self,fit_min_1,fit_max_1,fit_min_2,fit_max_2,fit_info={},
                 min_fit_len_1=def_min_fitr,min_fit_len_2=def_min_fitr,from_xdata=False):
         if self.ndim_fit != 2:
             print('ScanBox must be used for 2d fitting')
             return False
+        if isinstance(fit_info,(list,tuple,np.ndarray)):
+            return all([self.ScanBox_FixEnd(fit_min_1,fit_max_1,fit_min_2,fit_max_2,fit_info=iinfo,
+                min_fit_len_1=min_fit_len_1,min_fit_len_2=min_fit_len_2,from_xdata=from_xdata) for iinfo in fit_info])
         this_npar = self.AddDefault(fit_info)['Funs'][1]
         fit_ranges,fit_min_1,fit_max_1 = self.MakeFitRanges_FixEnd(fit_min_1,fit_max_1,this_npar+min_fit_len_1,from_xdata=from_xdata,index=0)
         fit_ranges_2,fit_min_2,fit_max_2 = self.MakeFitRanges_FixEnd(fit_min_2,fit_max_2,this_npar+min_fit_len_2,from_xdata=from_xdata,index=1)
@@ -728,10 +787,47 @@ class SetOfFitFuns(object):
         self.ImportFits(parse_info)
         return True
 
+    def ScanBox_FixEnd_maxdim2(self,fit_min_1,fit_max_1,fit_min_2,fit_max_2,fit_info={},
+                min_fit_len_1=def_min_fitr,min_fit_len_2=def_min_fitr,from_xdata=False):
+        if self.ndim_fit != 2:
+            print('ScanBox must be used for 2d fitting')
+            return False
+        if isinstance(fit_info,(list,tuple,np.ndarray)):
+            return all([self.ScanBox_FixEnd_maxdim2(fit_min_1,fit_max_1,fit_min_2,fit_max_2,fit_info=iinfo,
+                min_fit_len_1=min_fit_len_1,min_fit_len_2=min_fit_len_2,from_xdata=from_xdata) for iinfo in fit_info])
+        this_npar = self.AddDefault(fit_info)['Funs'][1]
+        fit_ranges,fit_min_1,fit_max_1 = self.MakeFitRanges_FixEnd(fit_min_1,fit_max_1,this_npar+min_fit_len_1,from_xdata=from_xdata,index=0)
+        fit_ranges_2,fit_min_2,fit_max_2 = self.MakeFitRanges_FixEnd(fit_min_2,fit_max_2,min_fit_len_2,from_xdata=from_xdata,index=1)
+        if len(fit_ranges) == 0 or len(fit_ranges_2) == 0:
+            print('Warning, no acceptable fit ranges for:')
+            print(fit_min_1,fit_max_1,fit_min_2,fit_max_2, end=' ')
+            print('min fit ranges')
+            print(this_npar+min_fit_len_1,this_npar+min_fit_len_2)
+            print('xdata dim1')
+            print('\n'.join(map(str,self.xdata_split[0])))
+            print('xdata dim2')
+            print('\n'.join(map(str,self.xdata_split[1])))
+            return False
+        parse_info = []
+        for ifit_min_1,ifit_max_1 in fit_ranges:
+            # for ifit_min_2,ifit_max_2 in fit_ranges_2:
+                # print('Adding fitr'+str(ifit_min_1)+'-'+str(ifit_max_1)+' fittwor'+str(ifit_min_2)+'-'+str(ifit_max_2))
+            this_info = copy(fit_info)
+            this_info['fit_min_1'] = ifit_min_1
+            this_info['fit_max_1'] = ifit_max_1
+            this_info['fit_min_2'] = fit_ranges_2[0][0]
+            this_info['fit_max_2'] = fit_ranges_2[0][1]
+            parse_info.append(this_info)
+        self.ImportFits(parse_info)
+        return True
+
     def SingleFitBox(self,fit_min_1,fit_max_1,fit_min_2,fit_max_2,fit_info={},min_fit_len=def_min_fitr):
         if self.ndim_fit != 2:
             print('ScanBox must be used for 2d fitting')
             return False
+        if isinstance(fit_info,(list,tuple,np.ndarray)):
+            return all([self.SingleFitBox(fit_min_1,fit_max_1,fit_min_2,fit_max_2,fit_info=iinfo,
+                min_fit_len=min_fit_len) for iinfo in fit_info])
         fit_info['fit_min_1'] = fit_min_1
         fit_info['fit_max_1'] = fit_max_1
         fit_info['fit_min_2'] = fit_min_2
