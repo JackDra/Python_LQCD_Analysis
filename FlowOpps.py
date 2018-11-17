@@ -2434,8 +2434,8 @@ class FlowOpFullSquared(object):
         else: self.Op_fold = True
 
         ## number of random sources per gauge field to average over
-        if 'nranget' in list(Info.keys()): self.nranget = Info['nranget']
-        else: self.nranget = self.latparams.nt/2
+        if 'nranget' in list(Info.keys()): self.nranget = int(Info['nranget'])
+        else: self.nranget = int(self.latparams.nt/2)
 
 
         ## number of values summed after to.
