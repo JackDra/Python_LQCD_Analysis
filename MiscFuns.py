@@ -464,6 +464,7 @@ def CheckClass(class1,class2,checklist):
                         print('value ' , ival , ' not found in class2')
                     return False
         elif (('_cfgs' in icheck or 'cfglist' in icheck) and 'fo_for_cfgs' not in icheck) and not isinstance(class1[icheck],bool):
+            if 'configs' not in class1[icheck].keys(): continue
             if 'xsrc_list' not in class1[icheck] or 'xsrc_list' not in class2[icheck]:
                 for (istream,iccfg),icfg in class1[icheck]['configs'].items():
                     if istream not in class2[icheck].index.levels[0] or icfg not in class2[icheck]['configs'][istream].values:

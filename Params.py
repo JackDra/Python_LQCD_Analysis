@@ -191,7 +191,11 @@ for ish in np.arange(1,shiftmax+1): shiftset += [-ish*shiftper,ish*shiftper]
 # datadir = '/mnt/research/lqcd/CfunAnalysis/'
 # cfundir = datadir + '/cfunPChroma/'
 datadir = paramdict['data_directory']
-cfg_dir = paramdict['cfg_dir']
+if 'cfg_dir' in paramdict:
+    cfg_dir = paramdict['cfg_dir']
+else:
+    cfg_dir = guess_dir+'/Configs/'
+
 if 'formatted_cfg_dir' in paramdict:
     cfgfmtdir = paramdict['formatted_cfg_dir']
 else:

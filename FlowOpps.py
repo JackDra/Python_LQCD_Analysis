@@ -669,8 +669,9 @@ class FlowOp(object):
 
 
     ## make sure all xlims are the same, because this sets the window of xlim (needed for calculating shifts)
-    def FlowPlotAuto(self,plot_class,xlims='data',thiscol='PreDefine',thissym='PreDefine',thisshift='PreDefine',
-                     FlowRad=True,t0_xvals=True):
+    def FlowPlotAuto(self,plot_class,xlims='data',thiscol='PreDefine',thissym='PreDefine',
+                     thisshift='PreDefine',
+                     FlowRad=True,t0_xvals=False):
         if xlims == 'data':
             xlims = list(map(untflowstr,self.tflowlist))
         self.FlowCheckCol(thiscol)
@@ -724,7 +725,7 @@ class FlowOp(object):
 
     def FlowPlot_mul_tf2(self,plot_class,xlims='data',thiscol='PreDefine',
                          thissym='PreDefine',thisshift='PreDefine',FlowRad=True,BorA='boot',
-                         mul=False,tpow=1,t0_xvals=True,just_E=False,lab_append=''):
+                         mul=False,tpow=1,t0_xvals=False,just_E=False,lab_append=''):
         if xlims == 'data':
             xlims = list(map(untflowstr,self.tflowlist))
         self.FlowCheckCol(thiscol)
@@ -783,7 +784,7 @@ class FlowOp(object):
 
     ## make sure all xlims are the same, because this sets the window of xlim (needed for calculating shifts)
     def FlowPlot(self,plot_class,xlims='data',thiscol='PreDefine',thissym='PreDefine',thisshift='PreDefine',
-                 FlowRad=True,t0_xvals=True,lab_append=''):
+                 FlowRad=True,t0_xvals=False,lab_append=''):
         if xlims == 'data':
             xlims = list(map(untflowstr,self.tflowlist))
         self.FlowCheckCol(thiscol)
@@ -1186,15 +1187,15 @@ class FlowOp(object):
                 if show_timer: thistimer.Lap(ifile)
             self.Op_cfgs.loc[:,'Op'] = pa.Series(thisdata,index=self.Op_cfgs.index)
         else:
-            if show_timer: thistimer = Timer(linklist=self.Op_cfgs['configs'].values,name='Read '+self.flowname)
-            if len(self.Op_cfgs['configs'].values) == 0:
-                raise IOError('No values found for ' +self.Observ)
-            thisdata = []
+            # if len(self.Op_cfgs['configs'].values) == 0:
+            #     raise IOError('No values found for ' +self.Observ)
             if self.Read_Cfgs(file_type=cfg_file_type,show_timer=show_timer,CheckCfgs=CheckCfgs):
                 return
             else:
                 if 'configs' not in self.Op_cfgs:
                     raise EnvironmentError('No config files found anywhere.')
+            if show_timer: thistimer = Timer(linklist=self.Op_cfgs['configs'].values,name='Read '+self.flowname)
+            thisdata = []
             for (istream,iccfg),icfg in self.Op_cfgs['configs'].items():
                 ifile = self.flowdir_list[istream]+icfg.join(self.flowfilename)
                 if self.FlowNewForm:

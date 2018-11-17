@@ -1143,8 +1143,8 @@ class FlowedOp( ta.HasTraits ):
         data.PlotTauInt(tflowpicked,plot_info)
         data.PlotWopt(tflowpicked,plot_info)
         # data.PlotRandTimes(tflowpicked,randt_fitr=randtfitmax,tsize=tsize,xsize=xsize,ysize=ysize,ftitle=thetitle,fxlab=thexlab,fylab=theylab,legloc=legloc)
-        data.PlotVsPionMass(fitlist,plot_info)
-        data.PlotVsQuarkMass(tflowpicked,plot_info)
+        # data.PlotVsPionMass(fitlist,plot_info)
+        # data.PlotVsQuarkMass(tflowpicked,plot_info)
         data = None
         print('Flow run complete')
 
