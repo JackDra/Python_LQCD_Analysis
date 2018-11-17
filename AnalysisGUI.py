@@ -200,7 +200,7 @@ class CalculationParams( ta.HasTraits ):
     output_directory = ta.Str(pa.outputdir)
     scratch_directory = ta.Str(pa.scratchdir)
     formatted_cfg_dir = ta.Str(pa.cfgfmtdir)
-    cfun_prefix = ta.Str(pa.cfundir.replace(pa.datadir,''))
+    cfun_prefix = ta.Str(pa.cfundir.replace(pa.cfg_dir,''))
     flow_new_format = ta.Bool(pa.flow_new_format)
     n_boot = ta.Int(pa.nboot)
     nchi_threshold = ta.Int(pa.nchi_threshold)
