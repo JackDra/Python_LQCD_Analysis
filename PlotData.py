@@ -15,6 +15,7 @@ from XmlFormatting import AvgStdToFormat,minfmt,maxfmt,MakeValAndErr,MakeVal
 from FileIO import WriteXml,WritePickle,ReadPickleWrap
 from copy import copy
 from XmlFormatting import LegendFmt
+from Params import graphdir
 
 Py2Read = False
 
@@ -528,9 +529,9 @@ class Plotting(object):
             if 'fit' in col_data['type']:
                 if 'fit_class' not in col_data:
                     raise EnvironmentError('fit_class not present even though fit was selected!')
-                elif isinstance( col_data['fit_class'],sff.SetOfFitFuns):
+                elif hasattr( col_data['fit_class'],'Fit_Stats_fmt'):
                     col_data['fit_class'] = col_data['fit_class'].Fit_Stats_fmt['Fit']
-                elif isinstance( col_data['fit_class'].iloc[0],sff.SetOfFitFuns):
+                elif hasattr( col_data['fit_class'].iloc[0],'Fit_Stats_fmt'):
                     col_data['fit_class'] = sff.PullSOFSeries(col_data['fit_class'])
         return True
     # def ScaleY(self,this_plot_data):
@@ -1636,7 +1637,7 @@ class Plotting(object):
                     if xerr_test:
                         this_xerrdata = iplot_data['xerr_data']
                     if isinstance(this_xdata,pa.Series):
-                        this_xdata = this_xdata[this_key_select].values
+                        this_xdata = this_xdata.values
                     elif isinstance(this_xdata,str) and this_xdata == 'from_keys':
                         this_xdata = list(this_ydata.index)
                         if isinstance(this_xdata[0],(tuple,list,np.ndarray)):
@@ -1780,8 +1781,8 @@ class Plotting(object):
 def Test_Papers_FF():
     import QuantityLists as ql
     this_info = pa.Series()
-    mkdir_p('/home/jackdra/LQCD/Scripts/Python_Analysis/TestGraphs/')
-    this_info['save_file'] = '/home/jackdra/LQCD/Scripts/Python_Analysis/TestGraphs/Paper_FF.pdf'
+    mkdir_p(graphdir+'/TestGraphs/')
+    this_info['save_file'] = graphdir+'/TestGraphs/Paper_FF.pdf'
     this_info['title'] = r'Neutron EDM Chiral Plot (Not $\alpha$ Rotated)'
     this_info['xlabel'] = r'$m_{\pi}[MeV]$'
     this_info['ylabel'] = r'$d_{n}[efm]$'
@@ -1837,7 +1838,7 @@ def Test_Paper_Single():
     import QuantityLists as ql
     this_info = pa.Series()
     mkdir_p('/home/jackdra/LQCD/Scripts/Python_Analysis/TestGraphs')
-    this_info['save_file'] = '/home/jackdra/LQCD/Scripts/Python_Analysis/TestGraphs/Paper_FF_Single.pdf'
+    this_info['save_file'] = graphdir+'/TestGraphs/Paper_FF_Single.pdf'
     this_info['title'] = r'Neutron EDM Chiral Plot (Not $\alpha$ Rotated)'
     this_info['xlabel'] = r'$m_{\pi}[MeV]$'
     this_info['ylabel'] = r'$d_{n}[efm]$'
@@ -1892,7 +1893,7 @@ def Test_Plot():
 
 
     this_info = pa.Series()
-    this_info['save_file'] = '/home/jackdra/LQCD/Scripts/Python_Analysis/TestGraphs/plotting_test.pdf'
+    this_info['save_file'] = graphdir+'/TestGraphs/plotting_test.pdf'
     this_info['title'] = 'Test Graph'
     this_info['xlabel'] = 'Test x'
     this_info['ylabel'] = 'Test y'
@@ -1905,7 +1906,7 @@ def Test_Plot():
     return data_plot
 
 def mpi701_plot():
-    load_file = '/home/jackdra/LQCD/Scripts/Python_Analysis/TestGraphs/mpi701.csv'
+    load_file = graphdir+'/TestGraphs/mpi701.csv'
     data = pa.read_csv(load_file)
     xdata = data.iloc[:,0]
     ydata = data['Q']
@@ -1921,7 +1922,7 @@ def mpi701_plot():
     hold_series['label'] = r'$m_{\pi}=701 MeV$'
     this_data['mpi701'] = hold_series
 
-    load_file = '/home/jackdra/LQCD/Scripts/Python_Analysis/TestGraphs/mpi701_updown.csv'
+    load_file = graphdir+'/TestGraphs/mpi701_updown.csv'
     data = pa.read_csv(load_file)
     xdata = data['Q2']
     yup,ydown = data['yup'],data['ydown']
@@ -1961,7 +1962,7 @@ def Plot_E_Jangho():
 
 
     this_data = pa.DataFrame()
-    hold_series = pa.Series()
+    hold_series = null_series
     hold_series['type'] = 'error_bar'
     hold_series['x_data'] = L16_data.iloc[:,0]
     hold_series['y_data'] = L16_data.iloc[:,1]
@@ -1970,7 +1971,7 @@ def Plot_E_Jangho():
     this_data['Jangho_L16'] = hold_series
 
 
-    hold_series = pa.Series()
+    hold_series = null_series
     hold_series['type'] = 'error_bar'
     hold_series['x_data'] = L20_data.iloc[:,0]
     hold_series['y_data'] = L20_data.iloc[:,1]
@@ -1979,7 +1980,7 @@ def Plot_E_Jangho():
     this_data['Jangho_L20'] = hold_series
 
 
-    hold_series = pa.Series()
+    hold_series = null_series
     hold_series['type'] = 'error_bar'
     hold_series['x_data'] = L28_data.iloc[:,0]
     hold_series['y_data'] = L28_data.iloc[:,1]
@@ -1989,7 +1990,7 @@ def Plot_E_Jangho():
 
 
     this_info = pa.Series()
-    this_info['save_file'] = '/home/jackdra/LQCD/Scripts/Python_Analysis/TestGraphs/Jangho_E.pdf'
+    this_info['save_file'] = graphdir+'/TestGraphs/Jangho_E.pdf'
     this_info['title'] = r'Jangho E plot'
     this_info['xlabel'] = r'$\sqrt{8t} fm$'
     this_info['ylabel'] = r'$t^2 E(t)$'
@@ -2004,7 +2005,7 @@ def Plot_E_Jangho():
 
 def Plot_one_on_x():
     this_data = pa.DataFrame()
-    hold_series = pa.Series()
+    hold_series = null_series
     hold_series['type'] = 'plot'
     hold_series['x_data'] = np.arange(0,2,0.01)
     hold_series['y_data'] = 1/hold_series['x_data']
@@ -2012,7 +2013,7 @@ def Plot_one_on_x():
     this_data['one_on_x'] = hold_series
 
     this_info = pa.Series()
-    this_info['save_file'] = '/home/jackdra/LQCD/Scripts/Python_Analysis/TestGraphs/one_on_x.pdf'
+    this_info['save_file'] = graphdir+'/TestGraphs/one_on_x.pdf'
     this_info['title'] = r''
     this_info['xlabel'] = r''
     this_info['ylabel'] = r''
@@ -2027,7 +2028,7 @@ def Plot_one_on_x():
 
 def Plot_one_on_x2():
     this_data = pa.DataFrame()
-    hold_series = pa.Series()
+    hold_series = null_series
     hold_series['type'] = 'plot'
     hold_series['x_data'] = np.arange(0,2,0.01)
     hold_series['y_data'] = 1/(hold_series['x_data']**2)
@@ -2035,7 +2036,7 @@ def Plot_one_on_x2():
     this_data['one_on_x2'] = hold_series
 
     this_info = pa.Series()
-    this_info['save_file'] = '/home/jackdra/LQCD/Scripts/Python_Analysis/TestGraphs/one_on_x2.pdf'
+    this_info['save_file'] = graphdir+'/TestGraphs/one_on_x2.pdf'
     this_info['title'] = r''
     this_info['xlabel'] = r''
     this_info['ylabel'] = r''
@@ -2051,8 +2052,12 @@ def Plot_one_on_x2():
 if __name__ == '__main__':
     # Test_Plot()
 
-    data_plot = Test_Papers_FF()
-
+    test_FF = Test_Papers_FF()
+    one_on_x = Plot_one_on_x()
+    one_on_x2 = Plot_one_on_x2()
+    test_plot = Test_Plot()
+    test_paper = Test_Paper_Single()
+    print('variables are test_FF, one_on_x, one_on_x2, test_plot, test_paper')
     # # %matplotlib inline
     # import sys
     # if len(sys.argv) < 2:

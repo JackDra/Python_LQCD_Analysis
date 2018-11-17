@@ -12,6 +12,7 @@ QUICK TESTS / interactive mode with results:
 
       python -i ./Autocorr.py
       python -i ./BootStrap.py
+      python -i ./PlotData.py
       python -i ./FlowOpps.py
       python -i ./FlowOpps.py
       python -i ./TwoPtCorrelators.py

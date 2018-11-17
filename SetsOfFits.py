@@ -9,6 +9,7 @@ import FitFunctions as ff
 # from FitFunctions import Fitting
 import pandas as pa
 from Params import defPrec,defMaxIter,def_min_fitr,Debug_Mode,nboot
+from Params import graphdir
 from copy import copy
 from MiscFuns import get_val_float
 from XmlFormatting import xmlfitr
@@ -338,6 +339,8 @@ class SetOfFitFuns(object):
                     # print('fit_1 ',self.xdata_split[0][ifit['fit_min_1']],' ',self.xdata_split[0][ifit['fit_max_1']])
                     # print('fit_2 ',self.xdata_split[1][ifit['fit_min_2']],' ',self.xdata_split[1][ifit['fit_max_2']])
                     for ic,(ix1,ix2) in enumerate(zip(*self.xdata)):
+                        if ifit['fit_max_1'] >= len(self.xdata_split[0]): continue
+                        if ifit['fit_max_2'] >= len(self.xdata_split[1]): continue
                         testbool = self.xdata_split[0][ifit['fit_min_1']] <= ix1 <= self.xdata_split[0][ifit['fit_max_1']]
                         testbool = testbool and self.xdata_split[1][ifit['fit_min_2']] <= ix2 <= self.xdata_split[1][ifit['fit_max_2']]
                         if testbool:
@@ -354,13 +357,21 @@ class SetOfFitFuns(object):
                         print('DEBUG')
                         print('fit_1_index ',ifit['fit_min_1'],' ',ifit['fit_max_1'])
                         print('fit_2_index ',ifit['fit_min_2'],' ',ifit['fit_max_2'])
-                        print('fit_1 ',self.xdata_split[0][ifit['fit_min_1']],' ',self.xdata_split[0][ifit['fit_max_1']])
-                        print('fit_2 ',self.xdata_split[1][ifit['fit_min_2']],' ',self.xdata_split[1][ifit['fit_max_2']])
+                        if ifit['fit_max_1'] < len(self.xdata_split[0]):
+                            print('fit_1 ',self.xdata_split[0][ifit['fit_min_1']],' ',self.xdata_split[0][ifit['fit_max_1']])
+                        else:
+                            print('fit_1 ',ifit['fit_max_1'], 'is to large for ',self.xdata_split[0])
+                        if ifit['fit_max_2'] < len(self.xdata_split[1]):
+                            print('fit_2 ',self.xdata_split[1][ifit['fit_min_2']],' ',self.xdata_split[1][ifit['fit_max_2']])
+                        else:
+                            print('fit_2 ',ifit['fit_max_2'], 'is to large for ',self.xdata_split[1])
                         print('xdata_split_0')
                         print('\n'.join(map(str,self.xdata_split[0])))
                         print('xdata_split_1')
                         print('\n'.join(map(str,self.xdata_split[1])))
                         for ic,(ix1,ix2) in enumerate(zip(*self.xdata)):
+                            if ifit['fit_max_1'] >= len(self.xdata_split[0]): continue
+                            if ifit['fit_max_2'] >= len(self.xdata_split[1]): continue
                             testbool = self.xdata_split[0][ifit['fit_min_1']] <= ix1 <= self.xdata_split[0][ifit['fit_max_1']]
                             testbool = testbool and self.xdata_split[1][ifit['fit_min_2']] <= ix2 <= self.xdata_split[1][ifit['fit_max_2']]
                             print(ix1,ix2,testbool)
@@ -1429,7 +1440,7 @@ def TestSetOfFits():
 
 
     this_info = pa.Series()
-    this_info['save_file'] = './TestGraphs/TestFitChiPlot.pdf'
+    this_info['save_file'] = graphdir+'/TestGraphs/TestFitChiPlot.pdf'
     this_info['title'] = 'Test Fitting'
     this_info['xlabel'] = 'Test x'
     this_info['ylabel'] = 'Test y'
@@ -1478,7 +1489,7 @@ def TestSetOfFits_2D():
     fit_info['Funs'] = [LinearFF_2D,3]
     # fit_info['Funs'] = [ConstantFitFun,1]
     # fit_info['iGuess'] = [0,0]
-    testfit.ScanBox(0,xvalssize[0],0,xvalssize[1],fit_info,min_fit_len_1=2,min_fit_len_2=2)
+    testfit.ScanBox(0,xvalssize[0]-1,0,xvalssize[1]-1,fit_info,min_fit_len_1=2,min_fit_len_2=2)
     testfit.DoFits()
     testfit.SortChi()
 
@@ -1522,7 +1533,7 @@ def TestSetOfFits_2D():
 
 
     this_info = pa.Series()
-    this_info['save_file'] = './TestGraphs/TestFitChiPlot_2D.pdf'
+    this_info['save_file'] = graphdir+'/TestGraphs/TestFitChiPlot_2D.pdf'
     this_info['title'] = 'Test Fitting 2D'
     this_info['xlabel'] = 'Test x[0]'
     this_info['ylabel'] = 'Test y'
@@ -1547,3 +1558,5 @@ def TestSetOfFits_2D():
 if __name__ == '__main__':
     testdata,testfit = TestSetOfFits()
     testdata_2D,testfit_2D = TestSetOfFits_2D()
+    print('test data is testdata and testdata_2D')
+    print('test fit instance is testfit and testfit_2D')
