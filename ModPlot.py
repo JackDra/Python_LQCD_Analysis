@@ -465,8 +465,11 @@ class DataFrame( ta.HasTraits ):
             if data_plot.plot_data.loc['xdatarange',self.this_key] == 'Data':
                 self.fit_custom_xrange = False
             else:
-                self.fit_custom_xrange = True
-                self.fit_x_min,self.fit_x_max = data_plot.plot_data.loc['xdatarange',self.this_key]
+                try:
+                    self.fit_custom_xrange = True
+                    self.fit_x_min,self.fit_x_max = data_plot.plot_data.loc['xdatarange',self.this_key]
+                except:
+                    pass                    
         else:
             self.fit_custom_xrange = False
         if 'plot_err' in data_plot.plot_data.index:
