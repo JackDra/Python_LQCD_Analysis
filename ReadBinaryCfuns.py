@@ -442,7 +442,7 @@ class RC2Full:
                         # print thisfile.replace(xsrcList[0],xsrc)
                         # print int(thissrclist[-1])
                         self.tshiftlist.append(int(thissrclist[-1]))
-                    elif strline == '<Shell_Shell_Wilson_'+MesOrBar+'s>':
+                    elif '_'+MesOrBar+'s>' in strline :
                     # if strline == '<Shell_Shell_Wilson_Baryons>':
                         BarPart = True
                     elif InterpFlag in strline:

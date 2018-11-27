@@ -136,6 +136,16 @@ class BootStrap(object):
                 self.ImportData(cfgvals)
                 self.MakeBS(DelVal=thisDelVal)
 
+    def DivByLast(self):
+        ## hack function for if you append the bootstrap samples with
+        ## the tree level result
+        this_bootvals = self.bootvals[:-1]/self.bootvals[-1]
+        if not hasattr(self,'n_block'):
+            self.n_block = 1
+        return BootStrap(thisnboot=self.nboot-1,
+                         name=self.name+'_div_tree',
+                         bootvals=this_bootvals,rand_list=self.rand_list,
+                         n_block=self.n_block)
 
     def GetBootVals(self):
         return self.bootvals.values
@@ -962,4 +972,4 @@ def TestBlock(n_block=1):
 
 if __name__ == '__main__':
     data,data2,data3 = TestBoot()
-    print('testing data is in variables data, data2 and data3')
+    print('testing data is in data, data2 and data3')

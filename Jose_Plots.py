@@ -13,6 +13,7 @@ from PredefFitFuns import c3PolyFun,c3PolyFun2,c3PolyFun3
 from PredefFitFuns import c3PolyFun_skip1,c3PolyFun2_skip1,c3PolyFun3_skip1
 from PredefFitFuns import c3ExpFitFun,c3ExpFitFun2,c3ExpFitFun_nosqrt
 from PredefFitFuns import c3ExpFitFun2_nosqrt,c3ExpFitFun3_nosqrt
+from ReadBinaryCfuns import RC2Full
 
 import os
 import pickle as pik
@@ -51,12 +52,12 @@ a_dict['L16'] =  0.1095
 a_dict['L20'] =  0.0936
 a_dict['L28'] =  0.0684
 t0_dict = {}
-t0_dict['mpi410'] =  2.5377162290
-t0_dict['mpi570'] =  2.3999592122
-t0_dict['mpi700'] =  2.2590866059
-t0_dict['L16'] =  1.3628954894
-t0_dict['L20'] =  2.2386627909
-t0_dict['L28'] =  4.9885618908
+t0_dict['mpi410'] =     2.5377162290
+t0_dict['mpi570'] =     2.3999592122
+t0_dict['mpi700'] =     2.2590866059
+t0_dict['L16'] =        1.3628954894
+t0_dict['L20'] =        2.2386627909
+t0_dict['L28'] =        4.9885618908
 
 t0_dict_err = {}
 t0_dict_err['mpi410'] =  0.0015529386
@@ -65,6 +66,10 @@ t0_dict_err['mpi700'] =  0.0011742296
 t0_dict_err['L16'] =     0.0015817442
 t0_dict_err['L20'] =     0.0021913620
 t0_dict_err['L28'] =     0.0064980950
+
+from XmlFormatting import MakeValAndErr
+for ival_err,ival in zip(t0_dict_err.values(),t0_dict.values()):
+    print(MakeValAndErr(ival,ival_err,Dec=2))
 use_t0rat = True
 if use_t0rat:
     sqrt8t_key = 'sqrt8t_t0rat'
@@ -81,6 +86,28 @@ def MakeFileList(this_dict):
 
 Fit_filelist = MakeFileList(Fit_ens_files)
 
+flow_list = [f'{val:.1f}' for val in np.arange(0,1,0.1)]
+flow_list += [f'{val:.1f}' for val in np.arange(0,10,1)]
+def ReadTLFileList(this_dict):
+    output_dict = {}
+    for ikey,ifile in this_dict.items():
+        tf_data = []
+        t_list,tf_list = [],[]
+        for iflow in flow_list:
+            this_file = ifile.replace('FLOW_TIME',iflow)
+            this_data = RC2Full([this_file],['0 0 0'],
+                                InterpNumb='15',
+                                MesOrBar='Meson').data
+            this_data = list(np.array(this_data)[0,:,0].flatten())
+            tf_data += this_data
+            t_list += [f'{it}' for it in this_data]
+            tf_list += [iflow for it in this_data]
+        output_dict[ikey] = pa.DataFrame()
+        output_dict[ikey]['t_sink'] = pa.Series(t_list)
+        output_dict[ikey]['t_flow'] = pa.Series(tf_list)
+        output_dict[ikey]['Corr'] = pa.Series(tf_data)
+    return output_dict
+
 def ReadFileList(this_dict):
     output_dict = {}
     for ikey,ifile in this_dict.items():
@@ -89,13 +116,33 @@ def ReadFileList(this_dict):
     return output_dict
 
 Fit_data = ReadFileList(Fit_filelist)
+this_kappa = 'k0.1250'
+tree_files = {}
+for ikey in Fit_filelist.keys():
+    if 'mpi' in ikey:
+        tree_files[ikey] =        '/home/jackdra/LQCD/Scripts/Jose_PoS/DataGraphs/Treelev/RC32x64_tree/RC32x64_tree_'+this_kappa+'_FLOW_TIME.xml'
+    else:
+        this_RC = int(ikey[1:])
+        this_RC = 'RC'+str(this_RC)+'x'+str(this_RC*2)
+        tree_files[ikey] =        '/home/jackdra/LQCD/Scripts/Jose_PoS/DataGraphs/Treelev/'+this_RC+'_tree/'+this_RC+'_tree_'+this_kappa+'_FLOW_TIME.xml'
 
-def BootStrap_Vals(this_DF):
+
+# tree_data = ReadTLFileList(tree_files)
+
+
+def BootStrap_Vals(this_DF,this_tree= None):
     A_list,E_list,chi_list,ilist = [],[],[],[]
     for ikey,iDF in this_DF.groupby(('flow t','tmin')):
-        A_list.append(BootStrap(thisnboot=len(iDF),bootvals=iDF['A'].values))
-        E_list.append(BootStrap(thisnboot=len(iDF),bootvals=iDF['E'].values))
-        chi_list.append(BootStrap(thisnboot=len(iDF),bootvals=iDF['chisq'].values))
+        if this_tree is None:
+            A_list.append(BootStrap(thisnboot=len(iDF),bootvals=iDF['A'].values))
+            E_list.append(BootStrap(thisnboot=len(iDF),bootvals=iDF['E'].values))
+            chi_list.append(BootStrap(thisnboot=len(iDF),bootvals=iDF['chisq'].values))
+        else:
+            A_list.append(BootStrap(thisnboot=len(iDF)+1,
+                                    bootvals=np.append(iDF['A'].values,this_tree['A'])))
+            E_list.append(BootStrap(thisnboot=len(iDF)+1,
+                                    bootvals=np.append(iDF['E'].values,this_tree['E'])))
+            chi_list.append(BootStrap(thisnboot=len(iDF),bootvals=iDF['chisq'].values))
         ilist.append(ikey)
     if len(ilist) > 0:
         ilist = pa.MultiIndex.from_tuples(ilist,names=('flow t','tmin'))
@@ -685,6 +732,33 @@ this_info['save_file'] = '/home/jackdra/LQCD/Scripts/Jose_PoS/DataGraphs/Jacks/M
 this_info['title'] = r'Effective Mass'
 this_info['xlabel'] = r'$t_{cut} [fm]$'
 this_info['ylabel'] = r'$EffM[GeV]$'
+# this_info['xlims'] = [0,10]
+# this_info['ylims'] = [0,15]
+data_plot = Plotting(plot_data=this_data,plot_info=this_info)
+data_plot.PlotAll()
+data_plot.ShowFigure()
+data_plot.PrintData()
+
+this_data = pa.DataFrame()
+for ikey,ival in Fit_data.items():
+    hold_series = null_series
+    hold_series['type'] = 'error_bar_vary'
+    hold_series['key_select'] = (first_key[ikey],slice(None))
+    hold_series['x_data'] = 'from_keys'
+    ivals = []
+    for (itf,itc),this_ival in ival['E_GeV'].iteritems():
+        ivals.append(this_ival/ival['E_GeV'][('0.0',itc)])
+        ivals[-1].Stats()
+    this_series = pa.Series(ivals,index=ival['E_GeV'].index)
+    hold_series['y_data'] = this_series.apply(lambda x : x.Avg)
+    hold_series['yerr_data'] = this_series.apply(lambda x : x.Std)
+    hold_series['label'] = ikey
+    this_data[ikey] = hold_series
+this_info = pa.Series()
+this_info['save_file'] = '/home/jackdra/LQCD/Scripts/Jose_PoS/DataGraphs/Jacks/MM0_master.pdf'
+this_info['title'] = r'Effective Mass Flowed Ratio'
+this_info['xlabel'] = r'$t_{cut} [fm]$'
+this_info['ylabel'] = r'$M(t_{f})/M(0)$'
 # this_info['xlims'] = [0,10]
 # this_info['ylims'] = [0,15]
 data_plot = Plotting(plot_data=this_data,plot_info=this_info)

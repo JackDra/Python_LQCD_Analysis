@@ -17,10 +17,21 @@ if sys.version_info[0] < 3:
     raise Exception("This branch (Py3 or offshoot) is built with python3, please use older branch if python2 is needed")
 
 
-this_machine = socket.gethostname()
-guess_dir = os.getcwd()
-if not os.path.isfile(guess_dir+'/Params.py'):
-    raise EnvironmentError('cwd: ' + guess_dir+'/Params.py Not present, please run code from directory where code is located')
+socket_name = socket.gethostname()
+guess_dir = ''
+if 'jack' in socket_name.lower():
+    this_machine = 'jack_lappy'
+elif 'juqueen' in socket_name:
+    this_machine = 'juqueen'
+elif 'dev' in socket_name or 'gateway' in socket_name or 'lac-' in socket_name or 'css-' in socket_name:
+    this_machine = 'laconia'
+    guess_dir = '/mnt/home/dragosja/Scripts/Python_Analysis/'
+else:
+    # print 'Warning, socket name ',socket_name,' not recognised, setting to default'
+    # this_machine = 'unknown'
+    print('Warning, socket name ',socket_name,' not recognised, assuming laconia')
+    this_machine = 'laconia'
+    guess_dir = '/mnt/home/dragosja/Scripts/Python_Analysis/'
 
 def Def_pdict():
     paramdict = OrderedDict()
@@ -37,10 +48,9 @@ def Def_pdict():
     paramdict['Solver_Prec'] = 10**(-8)
     # paramdict['data_directory'] = '/mnt/research/lqcd/CfunAnalysis/'
     # paramdict['cfun_prefix'] = '/cfunPChroma/'
-    paramdict['data_directory'] = guess_dir+'/Data/'
-    paramdict['cfg_dir'] = guess_dir+'/Configs/'
-    paramdict['formatted_cfg_dir'] = guess_dir+'/FmtConfigs/'
-    paramdict['cfun_prefix'] = '/cfuns/'
+    paramdict['formatted_cfg_dir'] = os.getcwd()+'/Configs/'
+    paramdict['data_directory'] = '/home/jackdra/PHD/CHROMA/TestVar/scratch/'
+    paramdict['cfun_prefix'] = '/cfunsg5/'
     paramdict['n_space'] = 32
     paramdict['n_time'] = 64
     paramdict['lattice_spacing'] = 0.0907 ## In fermi
@@ -88,7 +98,7 @@ else:
     def_job_params['machine'] = this_machine
     def_job_params['python_exe'] = 'python'
     def_job_params['time'] = '4:50:00'
-    def_job_params['email'] = '@gmail.com'
+    def_job_params['email'] = 'jack.dragos@gmail.com'
     def_job_params['nproc'] = 1
     def_job_params['RunPTG'] = False
     if this_machine == 'juqueen':
@@ -115,7 +125,7 @@ else:
     def_job_params_solve['machine'] = this_machine
     def_job_params_solve['python_exe'] = 'python'
     def_job_params_solve['time'] = '4:50:00'
-    def_job_params_solve['email'] = '@gmail.com'
+    def_job_params_solve['email'] = 'jack.dragos@gmail.com'
     def_job_params_solve['nproc'] = 1
     def_job_params_solve['RunPTG'] = False
     if this_machine == 'juqueen':
@@ -193,15 +203,10 @@ for ish in np.arange(1,shiftmax+1): shiftset += [-ish*shiftper,ish*shiftper]
 # datadir = '/mnt/research/lqcd/CfunAnalysis/'
 # cfundir = datadir + '/cfunPChroma/'
 datadir = paramdict['data_directory']
-if 'cfg_dir' in paramdict:
-    cfg_dir = paramdict['cfg_dir']
-else:
-    cfg_dir = guess_dir+'/Configs/'
-
 if 'formatted_cfg_dir' in paramdict:
     cfgfmtdir = paramdict['formatted_cfg_dir']
 else:
-    cfgfmtdir = guess_dir+'/FmtConfigs/'
+    cfgfmtdir = os.getcwd()+'/Configs/'
 if not os.path.isdir(cfgfmtdir):
     print('Warning, config directory not found:')
     print(cfgfmtdir)
@@ -210,7 +215,7 @@ if not os.path.isdir(cfgfmtdir):
 if 'output_directory' in paramdict:
     outputdir = paramdict['output_directory']
 else:
-    outputdir = guess_dir+'/results/'
+    outputdir = datadir+'/resultsREWORK/'
 if 'scratch_directory' in paramdict:
     scratchdir = paramdict['scratch_directory']
 else:
@@ -220,13 +225,13 @@ test_file = scratchdir + '/debug_file.test'
 if 'flow_new_format' in paramdict:
     flow_new_format = paramdict['flow_new_format']
 else:
-    flow_new_format = True
+    flow_new_format = False
 functiondir = scratchdir + '/functions/'
-cfundir = cfg_dir + paramdict['cfun_prefix']
+cfundir = datadir + paramdict['cfun_prefix']
 ########################################################
 
-Qdir = cfg_dir+'/topcharge/'
-Wdir = cfg_dir+'/weinopp/'
+Qdir = datadir+'/topcharge/'
+Wdir = datadir+'/weinopp/'
 graphdir = outputdir + '/graphs/'
 
 try:

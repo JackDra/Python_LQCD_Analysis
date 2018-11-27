@@ -200,7 +200,7 @@ class CalculationParams( ta.HasTraits ):
     output_directory = ta.Str(pa.outputdir)
     scratch_directory = ta.Str(pa.scratchdir)
     formatted_cfg_dir = ta.Str(pa.cfgfmtdir)
-    cfun_prefix = ta.Str(pa.cfundir.replace(pa.cfg_dir,''))
+    cfun_prefix = ta.Str(pa.cfundir.replace(pa.datadir,''))
     flow_new_format = ta.Bool(pa.flow_new_format)
     n_boot = ta.Int(pa.nboot)
     nchi_threshold = ta.Int(pa.nchi_threshold)
@@ -1143,8 +1143,8 @@ class FlowedOp( ta.HasTraits ):
         data.PlotTauInt(tflowpicked,plot_info)
         data.PlotWopt(tflowpicked,plot_info)
         # data.PlotRandTimes(tflowpicked,randt_fitr=randtfitmax,tsize=tsize,xsize=xsize,ysize=ysize,ftitle=thetitle,fxlab=thexlab,fylab=theylab,legloc=legloc)
-        # data.PlotVsPionMass(fitlist,plot_info)
-        # data.PlotVsQuarkMass(tflowpicked,plot_info)
+        data.PlotVsPionMass(fitlist,plot_info)
+        data.PlotVsQuarkMass(tflowpicked,plot_info)
         data = None
         print('Flow run complete')
 

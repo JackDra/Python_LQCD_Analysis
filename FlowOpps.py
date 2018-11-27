@@ -669,9 +669,8 @@ class FlowOp(object):
 
 
     ## make sure all xlims are the same, because this sets the window of xlim (needed for calculating shifts)
-    def FlowPlotAuto(self,plot_class,xlims='data',thiscol='PreDefine',thissym='PreDefine',
-                     thisshift='PreDefine',
-                     FlowRad=True,t0_xvals=False):
+    def FlowPlotAuto(self,plot_class,xlims='data',thiscol='PreDefine',thissym='PreDefine',thisshift='PreDefine',
+                     FlowRad=True,t0_xvals=True):
         if xlims == 'data':
             xlims = list(map(untflowstr,self.tflowlist))
         self.FlowCheckCol(thiscol)
@@ -689,7 +688,12 @@ class FlowOp(object):
             print('Warning, no flow times found for plot')
             return plot_class
         if t0_xvals:
-            this_s8t0 = (8*self.latparams.Get_t0()['boot'].iloc[0]).Sqrt()
+            try:
+                this_s8t0 = (8*self.latparams.Get_t0()['boot'].iloc[0]).Sqrt()
+            except Exception as err:
+                print('t0_xvals error:',err)
+                t0_xvals = False
+        if t0_xvals:
             tflowphys,tflowphys_err = [],[]
             for itflow in map(untflowstr,tlistplot):
                 it = np.sqrt(8*itflow)/this_s8t0
@@ -698,7 +702,7 @@ class FlowOp(object):
                 tflowphys_err.append(it.Std)
             tflowphys = np.array(tflowphys)
             tflowphys_err = np.array(tflowphys_err)
-        else:
+        if not t0_xvals:
             tflowphys = np.array(list(map(untflowstr,tlistplot)))
             tflowphys = TflowToPhys(np.array(tflowphys),self.latparams.latspace)
         # tflowphys = np.array(list(map(untflowstr,tlistplot)))
@@ -725,7 +729,7 @@ class FlowOp(object):
 
     def FlowPlot_mul_tf2(self,plot_class,xlims='data',thiscol='PreDefine',
                          thissym='PreDefine',thisshift='PreDefine',FlowRad=True,BorA='boot',
-                         mul=False,tpow=1,t0_xvals=False,just_E=False,lab_append=''):
+                         mul=False,tpow=1,t0_xvals=True,just_E=False,lab_append=''):
         if xlims == 'data':
             xlims = list(map(untflowstr,self.tflowlist))
         self.FlowCheckCol(thiscol)
@@ -751,7 +755,12 @@ class FlowOp(object):
             print('Warning, no flow times found for plot')
             return plot_class
         if t0_xvals:
-            this_s8t0 = (8*self.latparams.Get_t0()['boot'].iloc[0]).Sqrt()
+            try:
+                this_s8t0 = (8*self.latparams.Get_t0()['boot'].iloc[0]).Sqrt()
+            except Exception as err:
+                print('t0_xvals error:',err)
+                t0_xvals = False
+        if t0_xvals:
             tflowphys,tflowphys_err = [],[]
             for itflow in map(untflowstr,tlistplot):
                 it = np.sqrt(8*itflow)/this_s8t0
@@ -784,7 +793,7 @@ class FlowOp(object):
 
     ## make sure all xlims are the same, because this sets the window of xlim (needed for calculating shifts)
     def FlowPlot(self,plot_class,xlims='data',thiscol='PreDefine',thissym='PreDefine',thisshift='PreDefine',
-                 FlowRad=True,t0_xvals=False,lab_append=''):
+                 FlowRad=True,t0_xvals=True,lab_append=''):
         if xlims == 'data':
             xlims = list(map(untflowstr,self.tflowlist))
         self.FlowCheckCol(thiscol)
@@ -800,7 +809,12 @@ class FlowOp(object):
             return plot_class
         tflowphys = np.array(list(map(untflowstr,tlistplot)))
         if t0_xvals:
-            this_s8t0 = (8*self.latparams.Get_t0()['boot'].iloc[0]).Sqrt()
+            try:
+                this_s8t0 = (8*self.latparams.Get_t0()['boot'].iloc[0]).Sqrt()
+            except Exception as err:
+                print('t0_xvals error:',err)
+                t0_xvals = False
+        if t0_xvals:
             tflowphys,tflowphys_err = [],[]
             for itflow in map(untflowstr,tlistplot):
                 it = np.sqrt(8*itflow)/this_s8t0
@@ -1187,15 +1201,15 @@ class FlowOp(object):
                 if show_timer: thistimer.Lap(ifile)
             self.Op_cfgs.loc[:,'Op'] = pa.Series(thisdata,index=self.Op_cfgs.index)
         else:
-            # if len(self.Op_cfgs['configs'].values) == 0:
-            #     raise IOError('No values found for ' +self.Observ)
+            if show_timer: thistimer = Timer(linklist=self.Op_cfgs['configs'].values,name='Read '+self.flowname)
+            if len(self.Op_cfgs['configs'].values) == 0:
+                raise IOError('No values found for ' +self.Observ)
+            thisdata = []
             if self.Read_Cfgs(file_type=cfg_file_type,show_timer=show_timer,CheckCfgs=CheckCfgs):
                 return
             else:
                 if 'configs' not in self.Op_cfgs:
                     raise EnvironmentError('No config files found anywhere.')
-            if show_timer: thistimer = Timer(linklist=self.Op_cfgs['configs'].values,name='Read '+self.flowname)
-            thisdata = []
             for (istream,iccfg),icfg in self.Op_cfgs['configs'].items():
                 ifile = self.flowdir_list[istream]+icfg.join(self.flowfilename)
                 if self.FlowNewForm:
@@ -2434,8 +2448,8 @@ class FlowOpFullSquared(object):
         else: self.Op_fold = True
 
         ## number of random sources per gauge field to average over
-        if 'nranget' in list(Info.keys()): self.nranget = int(Info['nranget'])
-        else: self.nranget = int(self.latparams.nt/2)
+        if 'nranget' in list(Info.keys()): self.nranget = Info['nranget']
+        else: self.nranget = self.latparams.nt/2
 
 
         ## number of values summed after to.

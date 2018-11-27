@@ -83,6 +83,20 @@ def c3FFDer(x,p):
         tf = x[0].Sqrt()
     return [makexunit(tf),1/tf,tf]
 
+def c3FitFun_V2(x,p):
+    try:
+        tf = np.sqrt(x[0])
+    except:
+        tf = x[0].Sqrt()
+    return 1+p[0] + p[1]/tf + p[2]*tf
+
+def c3FFDer_V2(x,p):
+    try:
+        tf = np.sqrt(x[0])
+    except:
+        tf = x[0].Sqrt()
+    return [makexunit(tf),1/tf,tf]
+
 
 def c3PolyFun(x,p):
     # try:
