@@ -1,0 +1,774 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>ThreePtCorrelators module &#8212; LQCD Analysis Codebase TF Fits documentation</title>
+    <link rel="stylesheet" href="_static/agogo.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="TimeStuff module" href="TimeStuff.html" />
+    <link rel="prev" title="TestCorr module" href="TestCorr.html" /> 
+  </head><body>
+    <div class="header-wrapper" role="banner">
+      <div class="header">
+        <div class="headertitle"><a
+          href="index.html">LQCD Analysis Codebase TF Fits documentation</a></div>
+        <div class="rel" role="navigation" aria-label="related navigation">
+          <a href="TestCorr.html" title="TestCorr module"
+             accesskey="P">previous</a> |
+          <a href="TimeStuff.html" title="TimeStuff module"
+             accesskey="N">next</a> |
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-ThreePtCorrelators">
+<span id="threeptcorrelators-module"></span><h1>ThreePtCorrelators module<a class="headerlink" href="#module-ThreePtCorrelators" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="ThreePtCorrelators.NJNQCorr">
+<em class="property">class </em><code class="descclassname">ThreePtCorrelators.</code><code class="descname">NJNQCorr</code><span class="sig-paren">(</span><em>thisnboot=200</em>, <em>cfglist={}</em>, <em>Info={}</em>, <em>name=''</em>, <em>filename=''</em>, <em>man_load_cfgs=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQCorr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQCorr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>NJNQ(q,tau,pp,t,tf) uses bootstrap class
+pp  = sink momentum
+t   = source sink separation time
+q   = current insersion momentum
+tau = current insersion time
+tflow = flow time</p>
+<p>Info is a dictionary containing information for the correlator:
+see comments below to see what is required.
+missing elements just sets field to default</p>
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQCorr.Bootstrap">
+<code class="descname">Bootstrap</code><span class="sig-paren">(</span><em>WipeData=True</em>, <em>DefWipe=False</em>, <em>show_timer=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQCorr.Bootstrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQCorr.Bootstrap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQCorr.CombineCfgLists">
+<code class="descname">CombineCfgLists</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQCorr.CombineCfgLists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQCorr.CombineCfgLists" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQCorr.Fit">
+<code class="descname">Fit</code><span class="sig-paren">(</span><em>C2pars='PreDef'</em>, <em>state='PreDef'</em>, <em>fit_ranges='PreDef'</em>, <em>iGuess='PreDef'</em>, <em>EstDir=False</em>, <em>thistflowlist='PreDef'</em>, <em>WipeFit=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQCorr.Fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQCorr.Fit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQCorr.GetCfgList">
+<code class="descname">GetCfgList</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQCorr.GetCfgList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQCorr.GetCfgList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQCorr.GetFuns">
+<code class="descname">GetFuns</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQCorr.GetFuns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQCorr.GetFuns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQCorr.GetTwoPtPars">
+<code class="descname">GetTwoPtPars</code><span class="sig-paren">(</span><em>ip</em>, <em>state</em>, <em>pars</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQCorr.GetTwoPtPars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQCorr.GetTwoPtPars" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQCorr.ImportCfgList">
+<code class="descname">ImportCfgList</code><span class="sig-paren">(</span><em>cfgsrclist</em>, <em>stream_list='PreDefine'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQCorr.ImportCfgList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQCorr.ImportCfgList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQCorr.ImportFitRanges">
+<code class="descname">ImportFitRanges</code><span class="sig-paren">(</span><em>fit_ranges</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQCorr.ImportFitRanges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQCorr.ImportFitRanges" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQCorr.ImportTwoPtFits">
+<code class="descname">ImportTwoPtFits</code><span class="sig-paren">(</span><em>state</em>, <em>sourcepars</em>, <em>sinkpars</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQCorr.ImportTwoPtFits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQCorr.ImportTwoPtFits" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQCorr.LoadCfgs">
+<code class="descname">LoadCfgs</code><span class="sig-paren">(</span><em>cfglist</em>, <em>name=''</em>, <em>filename=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQCorr.LoadCfgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQCorr.LoadCfgs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQCorr.LoadPickle">
+<code class="descname">LoadPickle</code><span class="sig-paren">(</span><em>DefWipe=False</em>, <em>WipeData=True</em>, <em>CheckCfgs=False</em>, <em>CheckMom=True</em>, <em>show_timer=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQCorr.LoadPickle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQCorr.LoadPickle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ThreePtCorrelators.NJNQCorr.NJNQ_Fit_Stats">
+<code class="descname">NJNQ_Fit_Stats</code><em class="property"> = None</em><a class="headerlink" href="#ThreePtCorrelators.NJNQCorr.NJNQ_Fit_Stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.NJNQ_Fit_Stats DataFrame:</p>
+<p>columns =   boot,   Avg,        Std</p>
+<dl class="docutils">
+<dt>rows =      states fitted to,   current _operator,  momenta,</dt>
+<dd>time fit range ,    flow_times</dd>
+<dt>Avg/Std elements are pa.Series instances with:</dt>
+<dd>index = fit parameters
+values = Avg/Std values</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ThreePtCorrelators.NJNQCorr.NJNQ_Stats">
+<code class="descname">NJNQ_Stats</code><em class="property"> = None</em><a class="headerlink" href="#ThreePtCorrelators.NJNQCorr.NJNQ_Stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.NJNQ_Stats DataFrame:</p>
+<p>columns =   boot,   Avg,        Std</p>
+<p>rows =      current_operator,   momenta,    time separation,    flow_times</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQCorr.ObsToName">
+<code class="descname">ObsToName</code><span class="sig-paren">(</span><em>thisop</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQCorr.ObsToName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQCorr.ObsToName" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQCorr.Read">
+<code class="descname">Read</code><span class="sig-paren">(</span><em>show_timer=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQCorr.Read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQCorr.Read" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQCorr.ReadAndWrite">
+<code class="descname">ReadAndWrite</code><span class="sig-paren">(</span><em>WipeData=True</em>, <em>show_timer=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQCorr.ReadAndWrite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQCorr.ReadAndWrite" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQCorr.RemoveFuns">
+<code class="descname">RemoveFuns</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQCorr.RemoveFuns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQCorr.RemoveFuns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQCorr.RemoveVals">
+<code class="descname">RemoveVals</code><span class="sig-paren">(</span><em>WipeData=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQCorr.RemoveVals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQCorr.RemoveVals" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQCorr.SetCustomName">
+<code class="descname">SetCustomName</code><span class="sig-paren">(</span><em>string=''</em>, <em>stringfn=''</em>, <em>stringLL=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQCorr.SetCustomName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQCorr.SetCustomName" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQCorr.SetTFit">
+<code class="descname">SetTFit</code><span class="sig-paren">(</span><em>tsink</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQCorr.SetTFit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQCorr.SetTFit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQCorr.SetTflowFit">
+<code class="descname">SetTflowFit</code><span class="sig-paren">(</span><em>tflow</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQCorr.SetTflowFit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQCorr.SetTflowFit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQCorr.Stats">
+<code class="descname">Stats</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQCorr.Stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQCorr.Stats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQCorr.Update_Stream_List">
+<code class="descname">Update_Stream_List</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQCorr.Update_Stream_List"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQCorr.Update_Stream_List" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQCorr.Write">
+<code class="descname">Write</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQCorr.Write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQCorr.Write" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQCorr.items">
+<code class="descname">items</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQCorr.items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQCorr.items" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQCorr.itemsAvgStd">
+<code class="descname">itemsAvgStd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQCorr.itemsAvgStd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQCorr.itemsAvgStd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQCorr.iteritems">
+<code class="descname">iteritems</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQCorr.iteritems"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQCorr.iteritems" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQCorr.itervalues">
+<code class="descname">itervalues</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQCorr.itervalues"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQCorr.itervalues" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQCorr.keys">
+<code class="descname">keys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQCorr.keys"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQCorr.keys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ThreePtCorrelators.NJNQCorr.parentlist">
+<code class="descname">parentlist</code><em class="property"> = ['RatioCorrelators.RatioCorr']</em><a class="headerlink" href="#ThreePtCorrelators.NJNQCorr.parentlist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQCorr.values">
+<code class="descname">values</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQCorr.values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQCorr.values" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQCorr.valuesAvgStd">
+<code class="descname">valuesAvgStd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQCorr.valuesAvgStd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQCorr.valuesAvgStd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ThreePtCorrelators.NJNQFullCorr">
+<em class="property">class </em><code class="descclassname">ThreePtCorrelators.</code><code class="descname">NJNQFullCorr</code><span class="sig-paren">(</span><em>thisnboot=200</em>, <em>cfglist={}</em>, <em>Info={}</em>, <em>name=''</em>, <em>filename=''</em>, <em>man_load_cfgs=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQFullCorr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQFullCorr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>NJNQ(q,tau,pp,t,tf,ts) uses bootstrap class
+pp  = sink momentum
+t   = source sink separation time
+q   = current insersion momentum
+tau = current insersion time
+tflow = flow time
+ts = operator insersion time (  refered to “sum time”, to keep in</p>
+<blockquote>
+<div>line with same notation for other quantities)</div></blockquote>
+<p>Info is a dictionary containing information for the correlator:
+see comments below to see what is required.
+missing elements just sets field to default</p>
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQFullCorr.Bootstrap">
+<code class="descname">Bootstrap</code><span class="sig-paren">(</span><em>WipeData=True</em>, <em>DefWipe=False</em>, <em>show_timer=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQFullCorr.Bootstrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQFullCorr.Bootstrap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQFullCorr.CombineCfgLists">
+<code class="descname">CombineCfgLists</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQFullCorr.CombineCfgLists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQFullCorr.CombineCfgLists" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQFullCorr.Create_NJNQ_fun">
+<code class="descname">Create_NJNQ_fun</code><span class="sig-paren">(</span><em>it_sum</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQFullCorr.Create_NJNQ_fun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQFullCorr.Create_NJNQ_fun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQFullCorr.Create_Tsrc_Fun">
+<code class="descname">Create_Tsrc_Fun</code><span class="sig-paren">(</span><em>ictflow</em>, <em>it_curr</em>, <em>it_sink</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQFullCorr.Create_Tsrc_Fun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQFullCorr.Create_Tsrc_Fun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQFullCorr.GetCfgList">
+<code class="descname">GetCfgList</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQFullCorr.GetCfgList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQFullCorr.GetCfgList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQFullCorr.GetFuns">
+<code class="descname">GetFuns</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQFullCorr.GetFuns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQFullCorr.GetFuns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQFullCorr.GetTwoPtPars">
+<code class="descname">GetTwoPtPars</code><span class="sig-paren">(</span><em>ip</em>, <em>state</em>, <em>pars</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQFullCorr.GetTwoPtPars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQFullCorr.GetTwoPtPars" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQFullCorr.ImportCfgList">
+<code class="descname">ImportCfgList</code><span class="sig-paren">(</span><em>cfgsrclist</em>, <em>stream_list='PreDefine'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQFullCorr.ImportCfgList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQFullCorr.ImportCfgList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQFullCorr.ImportFitRanges">
+<code class="descname">ImportFitRanges</code><span class="sig-paren">(</span><em>fit_ranges</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQFullCorr.ImportFitRanges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQFullCorr.ImportFitRanges" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQFullCorr.ImportTwoPtFits">
+<code class="descname">ImportTwoPtFits</code><span class="sig-paren">(</span><em>state</em>, <em>sourcepars</em>, <em>sinkpars</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQFullCorr.ImportTwoPtFits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQFullCorr.ImportTwoPtFits" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQFullCorr.LoadCfgs">
+<code class="descname">LoadCfgs</code><span class="sig-paren">(</span><em>cfglist</em>, <em>name=''</em>, <em>filename=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQFullCorr.LoadCfgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQFullCorr.LoadCfgs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQFullCorr.LoadPickle">
+<code class="descname">LoadPickle</code><span class="sig-paren">(</span><em>DefWipe=False</em>, <em>WipeData=True</em>, <em>CheckCfgs=False</em>, <em>CheckMom=True</em>, <em>show_timer=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQFullCorr.LoadPickle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQFullCorr.LoadPickle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ThreePtCorrelators.NJNQFullCorr.NJNQFull_Fit_Stats">
+<code class="descname">NJNQFull_Fit_Stats</code><em class="property"> = None</em><a class="headerlink" href="#ThreePtCorrelators.NJNQFullCorr.NJNQFull_Fit_Stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.NJNQFull_Fit_Stats DataFrame:</p>
+<p>columns =   boot,   Avg,        Std</p>
+<dl class="docutils">
+<dt>rows =      states fitted to,   current _operator,  momenta,</dt>
+<dd>time fit range ,    flow_times</dd>
+<dt>Avg/Std elements are pa.Series instances with:</dt>
+<dd>index = fit parameters
+values = Avg/Std values</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ThreePtCorrelators.NJNQFullCorr.NJNQFull_Stats">
+<code class="descname">NJNQFull_Stats</code><em class="property"> = None</em><a class="headerlink" href="#ThreePtCorrelators.NJNQFullCorr.NJNQFull_Stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.NJNQFull_Stats DataFrame:</p>
+<p>columns =   boot,   Avg,        Std</p>
+<dl class="docutils">
+<dt>rows =      current_operator,   momenta,    time separation,</dt>
+<dd>flow_times,         flow op trange</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ThreePtCorrelators.NJNQFullCorr.NJNQInt_Stats">
+<code class="descname">NJNQInt_Stats</code><em class="property"> = None</em><a class="headerlink" href="#ThreePtCorrelators.NJNQFullCorr.NJNQInt_Stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.NJNQFull_Stats DataFrame:</p>
+<p>columns =   boot,   Avg,        Std</p>
+<p>rows =      current_operator,   momenta,    time separation,    flow_times</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQFullCorr.ObsToName">
+<code class="descname">ObsToName</code><span class="sig-paren">(</span><em>thisop</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQFullCorr.ObsToName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQFullCorr.ObsToName" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQFullCorr.Read">
+<code class="descname">Read</code><span class="sig-paren">(</span><em>show_timer=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQFullCorr.Read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQFullCorr.Read" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQFullCorr.ReadAndWrite">
+<code class="descname">ReadAndWrite</code><span class="sig-paren">(</span><em>WipeData=True</em>, <em>show_timer=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQFullCorr.ReadAndWrite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQFullCorr.ReadAndWrite" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQFullCorr.RemoveFuns">
+<code class="descname">RemoveFuns</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQFullCorr.RemoveFuns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQFullCorr.RemoveFuns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQFullCorr.RemoveVals">
+<code class="descname">RemoveVals</code><span class="sig-paren">(</span><em>WipeData=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQFullCorr.RemoveVals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQFullCorr.RemoveVals" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQFullCorr.SetCustomName">
+<code class="descname">SetCustomName</code><span class="sig-paren">(</span><em>string=''</em>, <em>stringfn=''</em>, <em>stringLL=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQFullCorr.SetCustomName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQFullCorr.SetCustomName" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQFullCorr.SetTFit">
+<code class="descname">SetTFit</code><span class="sig-paren">(</span><em>tsink</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQFullCorr.SetTFit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQFullCorr.SetTFit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQFullCorr.SetTflowFit">
+<code class="descname">SetTflowFit</code><span class="sig-paren">(</span><em>tflow</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQFullCorr.SetTflowFit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQFullCorr.SetTflowFit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQFullCorr.Stats">
+<code class="descname">Stats</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQFullCorr.Stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQFullCorr.Stats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQFullCorr.Update_Stream_List">
+<code class="descname">Update_Stream_List</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQFullCorr.Update_Stream_List"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQFullCorr.Update_Stream_List" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQFullCorr.Write">
+<code class="descname">Write</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQFullCorr.Write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQFullCorr.Write" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQFullCorr.items">
+<code class="descname">items</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQFullCorr.items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQFullCorr.items" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQFullCorr.itemsAvgStd">
+<code class="descname">itemsAvgStd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQFullCorr.itemsAvgStd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQFullCorr.itemsAvgStd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQFullCorr.iteritems">
+<code class="descname">iteritems</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQFullCorr.iteritems"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQFullCorr.iteritems" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQFullCorr.itervalues">
+<code class="descname">itervalues</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQFullCorr.itervalues"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQFullCorr.itervalues" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQFullCorr.keys">
+<code class="descname">keys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQFullCorr.keys"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQFullCorr.keys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ThreePtCorrelators.NJNQFullCorr.parentlist">
+<code class="descname">parentlist</code><em class="property"> = ['RatioCorrelators.RatioCorr']</em><a class="headerlink" href="#ThreePtCorrelators.NJNQFullCorr.parentlist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQFullCorr.values">
+<code class="descname">values</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQFullCorr.values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQFullCorr.values" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.NJNQFullCorr.valuesAvgStd">
+<code class="descname">valuesAvgStd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#NJNQFullCorr.valuesAvgStd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.NJNQFullCorr.valuesAvgStd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="ThreePtCorrelators.Test3pt">
+<code class="descclassname">ThreePtCorrelators.</code><code class="descname">Test3pt</code><span class="sig-paren">(</span><em>DefWipe=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#Test3pt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.Test3pt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ThreePtCorrelators.TestNJNQ">
+<code class="descclassname">ThreePtCorrelators.</code><code class="descname">TestNJNQ</code><span class="sig-paren">(</span><em>DefWipe=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#TestNJNQ"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.TestNJNQ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ThreePtCorrelators.TestNJNQFull">
+<code class="descclassname">ThreePtCorrelators.</code><code class="descname">TestNJNQFull</code><span class="sig-paren">(</span><em>DefWipe=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#TestNJNQFull"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.TestNJNQFull" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="ThreePtCorrelators.ThreePointCorr">
+<em class="property">class </em><code class="descclassname">ThreePtCorrelators.</code><code class="descname">ThreePointCorr</code><span class="sig-paren">(</span><em>thisnboot=200</em>, <em>cfglist={}</em>, <em>Info={}</em>, <em>name=''</em>, <em>filename=''</em>, <em>man_load_cfgs=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#ThreePointCorr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.ThreePointCorr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>C3(q,tau,pp,t) uses bootstrap class
+pp  = sink momentum
+t   = source sink separation time
+q   = current insersion momentum
+tau = current insersion time</p>
+<p>Info is a dictionary containing information for the correlator:
+see comments below to see what is required.
+missing elements just sets field to default</p>
+<dl class="method">
+<dt id="ThreePtCorrelators.ThreePointCorr.Bootstrap">
+<code class="descname">Bootstrap</code><span class="sig-paren">(</span><em>WipeData=True</em>, <em>DefWipe=False</em>, <em>show_timer=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#ThreePointCorr.Bootstrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.ThreePointCorr.Bootstrap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ThreePtCorrelators.ThreePointCorr.C3_Fit_Stats">
+<code class="descname">C3_Fit_Stats</code><em class="property"> = None</em><a class="headerlink" href="#ThreePtCorrelators.ThreePointCorr.C3_Fit_Stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.C3_Fit_Stats DataFrame:</p>
+<p>columns =   boot,   Avg,        Std</p>
+<p>rows =       states fitted to,current _operator, momenta, time fit range</p>
+<dl class="docutils">
+<dt>Avg/Std elements are pa.Series instances with:</dt>
+<dd>index = fit parameters
+values = Avg/Std values</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ThreePtCorrelators.ThreePointCorr.C3_Stats">
+<code class="descname">C3_Stats</code><em class="property"> = None</em><a class="headerlink" href="#ThreePtCorrelators.ThreePointCorr.C3_Stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.C3_Stats DataFrame:</p>
+<p>columns =   boot,   Avg,        Std</p>
+<p>rows =      current_operator,   momenta,    time separation</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ThreePtCorrelators.ThreePointCorr.C3_cfgs">
+<code class="descname">C3_cfgs</code><em class="property"> = None</em><a class="headerlink" href="#ThreePtCorrelators.ThreePointCorr.C3_cfgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.C3_cfgs DataFrame:</p>
+<p>columns =   config_number , C3[igamma, ip, it]</p>
+<p>rows =      stream , configuration</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.ThreePointCorr.ChopDepVarList">
+<code class="descname">ChopDepVarList</code><span class="sig-paren">(</span><em>this_df</em>, <em>read_meta</em>, <em>show_err=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#ThreePointCorr.ChopDepVarList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.ThreePointCorr.ChopDepVarList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.ThreePointCorr.Fit">
+<code class="descname">Fit</code><span class="sig-paren">(</span><em>C2pars='PreDef'</em>, <em>state='PreDef'</em>, <em>fit_ranges='PreDef'</em>, <em>iGuess='PreDef'</em>, <em>EstDir=False</em>, <em>WipeFit=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#ThreePointCorr.Fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.ThreePointCorr.Fit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.ThreePointCorr.FixRead">
+<code class="descname">FixRead</code><span class="sig-paren">(</span><em>readdict</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#ThreePointCorr.FixRead"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.ThreePointCorr.FixRead" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.ThreePointCorr.GetCfgList">
+<code class="descname">GetCfgList</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#ThreePointCorr.GetCfgList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.ThreePointCorr.GetCfgList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.ThreePointCorr.GetDSCfgList">
+<code class="descname">GetDSCfgList</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#ThreePointCorr.GetDSCfgList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.ThreePointCorr.GetDSCfgList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.ThreePointCorr.GetTwoPtPars">
+<code class="descname">GetTwoPtPars</code><span class="sig-paren">(</span><em>ip</em>, <em>state</em>, <em>pars</em>, <em>fitr='first'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#ThreePointCorr.GetTwoPtPars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.ThreePointCorr.GetTwoPtPars" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.ThreePointCorr.ImportCfgList">
+<code class="descname">ImportCfgList</code><span class="sig-paren">(</span><em>cfgsrclist</em>, <em>stream_list='PreDefine'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#ThreePointCorr.ImportCfgList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.ThreePointCorr.ImportCfgList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.ThreePointCorr.ImportFitRanges">
+<code class="descname">ImportFitRanges</code><span class="sig-paren">(</span><em>fit_ranges</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#ThreePointCorr.ImportFitRanges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.ThreePointCorr.ImportFitRanges" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.ThreePointCorr.ImportTwoPtFits">
+<code class="descname">ImportTwoPtFits</code><span class="sig-paren">(</span><em>state</em>, <em>sourcepars</em>, <em>sinkpars</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#ThreePointCorr.ImportTwoPtFits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.ThreePointCorr.ImportTwoPtFits" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.ThreePointCorr.LoadCfgs">
+<code class="descname">LoadCfgs</code><span class="sig-paren">(</span><em>cfglist</em>, <em>name=''</em>, <em>filename=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#ThreePointCorr.LoadCfgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.ThreePointCorr.LoadCfgs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.ThreePointCorr.LoadDS">
+<code class="descname">LoadDS</code><span class="sig-paren">(</span><em>DefWipe=False</em>, <em>WipeData=True</em>, <em>CheckCfgs=True</em>, <em>CheckMom=True</em>, <em>show_timer=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#ThreePointCorr.LoadDS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.ThreePointCorr.LoadDS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.ThreePointCorr.LoadPickle">
+<code class="descname">LoadPickle</code><span class="sig-paren">(</span><em>DefWipe=False</em>, <em>WipeData=True</em>, <em>CheckCfgs=False</em>, <em>CheckMom=True</em>, <em>show_timer=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#ThreePointCorr.LoadPickle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.ThreePointCorr.LoadPickle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.ThreePointCorr.Read">
+<code class="descname">Read</code><span class="sig-paren">(</span><em>show_timer=False</em>, <em>Full=False</em>, <em>file_type='PreDef'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#ThreePointCorr.Read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.ThreePointCorr.Read" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.ThreePointCorr.ReadAndWrite">
+<code class="descname">ReadAndWrite</code><span class="sig-paren">(</span><em>DefWipe=False</em>, <em>WipeData=True</em>, <em>show_timer=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#ThreePointCorr.ReadAndWrite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.ThreePointCorr.ReadAndWrite" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.ThreePointCorr.Read_Cfgs">
+<code class="descname">Read_Cfgs</code><span class="sig-paren">(</span><em>file_type='PreDef'</em>, <em>show_timer=True</em>, <em>CheckCfgs=True</em>, <em>Full=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#ThreePointCorr.Read_Cfgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.ThreePointCorr.Read_Cfgs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.ThreePointCorr.RemoveVals">
+<code class="descname">RemoveVals</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#ThreePointCorr.RemoveVals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.ThreePointCorr.RemoveVals" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.ThreePointCorr.SetCustomName">
+<code class="descname">SetCustomName</code><span class="sig-paren">(</span><em>string=''</em>, <em>stringfn=''</em>, <em>stringLL=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#ThreePointCorr.SetCustomName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.ThreePointCorr.SetCustomName" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.ThreePointCorr.Stats">
+<code class="descname">Stats</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#ThreePointCorr.Stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.ThreePointCorr.Stats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.ThreePointCorr.Update_Stream_List">
+<code class="descname">Update_Stream_List</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#ThreePointCorr.Update_Stream_List"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.ThreePointCorr.Update_Stream_List" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.ThreePointCorr.Write">
+<code class="descname">Write</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#ThreePointCorr.Write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.ThreePointCorr.Write" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.ThreePointCorr.WriteCfgsToFile">
+<code class="descname">WriteCfgsToFile</code><span class="sig-paren">(</span><em>thisdir</em>, <em>show_timer=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#ThreePointCorr.WriteCfgsToFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.ThreePointCorr.WriteCfgsToFile" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.ThreePointCorr.Write_Cfgs">
+<code class="descname">Write_Cfgs</code><span class="sig-paren">(</span><em>file_type='PreDef'</em>, <em>show_timer=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#ThreePointCorr.Write_Cfgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.ThreePointCorr.Write_Cfgs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.ThreePointCorr.items">
+<code class="descname">items</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#ThreePointCorr.items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.ThreePointCorr.items" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.ThreePointCorr.itemsAvgStd">
+<code class="descname">itemsAvgStd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#ThreePointCorr.itemsAvgStd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.ThreePointCorr.itemsAvgStd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.ThreePointCorr.iteritems">
+<code class="descname">iteritems</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#ThreePointCorr.iteritems"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.ThreePointCorr.iteritems" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.ThreePointCorr.itervalues">
+<code class="descname">itervalues</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#ThreePointCorr.itervalues"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.ThreePointCorr.itervalues" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.ThreePointCorr.keys">
+<code class="descname">keys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#ThreePointCorr.keys"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.ThreePointCorr.keys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ThreePtCorrelators.ThreePointCorr.parentlist">
+<code class="descname">parentlist</code><em class="property"> = ['RatioCorrelators.RatioCorr']</em><a class="headerlink" href="#ThreePtCorrelators.ThreePointCorr.parentlist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.ThreePointCorr.values">
+<code class="descname">values</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#ThreePointCorr.values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.ThreePointCorr.values" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ThreePtCorrelators.ThreePointCorr.valuesAvgStd">
+<code class="descname">valuesAvgStd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ThreePtCorrelators.html#ThreePointCorr.valuesAvgStd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ThreePtCorrelators.ThreePointCorr.valuesAvgStd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table of Contents</h3>
+          <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Python_Analysis</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="AhmedRes.html">AhmedRes module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="AnalysisGUI.html">AnalysisGUI module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Autocorr.html">Autocorr module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BNLFormFactor.html">BNLFormFactor module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BootStrapping.html">BootStrapping module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BootStrapping_self.html">BootStrapping_self module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ChacoModPlot_heatmap.html">ChacoModPlot_heatmap module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ChacoTest.html">ChacoTest module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CreateTable.html">CreateTable module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DSDefines.html">DSDefines module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FFSolve.html">FFSolve module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FileIO.html">FileIO module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FileIOMat.html">FileIOMat module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FitFunctions.html">FitFunctions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FitFunctions_TF.html">FitFunctions_TF module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FlowOpps.html">FlowOpps module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ForMatAndrea.html">ForMatAndrea module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FormFactors.html">FormFactors module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GammaMatricies.html">GammaMatricies module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Jose_Plots.html">Jose_Plots module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MAH_control.html">MAH_control module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MakeFuns.html">MakeFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Mat_Alpha_Hack.html">Mat_Alpha_Hack module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Mat_Hack_V2.html">Mat_Hack_V2 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Mayavi_Test.html">Mayavi_Test module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MiscFuns.html">MiscFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModPlot.html">ModPlot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModStylePlot.html">ModStylePlot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MomParams.html">MomParams module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MultiWrap.html">MultiWrap module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="NullPlotData.html">NullPlotData module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PandasTest.html">PandasTest module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Params.html">Params module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ParamsOLD.html">ParamsOLD module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PlotData.html">PlotData module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PredefFitFuns.html">PredefFitFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="QuantityLists.html">QuantityLists module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RatioCorrelators.html">RatioCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ReadBinaryCfuns.html">ReadBinaryCfuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ReadBinaryCfuns_SLone.html">ReadBinaryCfuns_SLone module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RunSetCommands.html">RunSetCommands module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFFs.html">SetsOfFFs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFits.html">SetsOfFits module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFlowOps.html">SetsOfFlowOps module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfRatios.html">SetsOfRatios module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfTwoPtCorrs.html">SetsOfTwoPtCorrs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Setup.html">Setup module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Test3dLine.html">Test3dLine module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TestAll.html">TestAll module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TestCorr.html">TestCorr module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">ThreePtCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TimeStuff.html">TimeStuff module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TwoPtCorrelators.html">TwoPtCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VarMethod.html">VarMethod module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VarMethod_self.html">VarMethod_self module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="XmlFormatting.html">XmlFormatting module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mv_graphs.html">mv_graphs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xmltodict.html">xmltodict module</a></li>
+</ul>
+</li>
+</ul>
+
+          <div role="search">
+            <h3 style="margin-top: 1.5em;">Search</h3>
+            <form class="search" action="search.html" method="get">
+                <input type="text" name="q" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+            </form>
+          </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <div role="navigation" aria-label="related navigaton">
+            <a href="TestCorr.html" title="TestCorr module"
+              >previous</a> |
+            <a href="TimeStuff.html" title="TimeStuff module"
+              >next</a> |
+            <a href="py-modindex.html" title="Python Module Index"
+              >modules</a> |
+            <a href="genindex.html" title="General Index"
+              >index</a>
+          </div>
+          <div role="note" aria-label="source link">
+              <br/>
+              <a href="_sources/ThreePtCorrelators.rst.txt"
+                rel="nofollow">Show Source</a>
+          </div>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Jack Dragos.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>

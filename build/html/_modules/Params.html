@@ -1,0 +1,618 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Params &#8212; LQCD Analysis Codebase TF Fits documentation</title>
+    <link rel="stylesheet" href="../_static/agogo.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="header-wrapper" role="banner">
+      <div class="header">
+        <div class="headertitle"><a
+          href="../index.html">LQCD Analysis Codebase TF Fits documentation</a></div>
+        <div class="rel" role="navigation" aria-label="related navigation">
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for Params</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">## THIS FILE IS TEMPORARY, FOR DEBUGGING AND SIMPLE DEFAULT PARAMETERS</span>
+<span class="c1">## TODO: either default parameters in file, or even GUI?...</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">MiscFuns</span> <span class="k">import</span> <span class="n">mkdir_p</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">PredefFitFuns</span> <span class="k">import</span> <span class="n">ConstantFitFun</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">deepcopy</span>
+<span class="kn">import</span> <span class="nn">pickle</span> <span class="k">as</span> <span class="nn">pickle</span>
+<span class="c1"># import dill as pickle</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">socket</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;This branch (Py3 or offshoot) is built with python3, please use older branch if python2 is needed&quot;</span><span class="p">)</span>
+
+
+<span class="n">socket_name</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">gethostname</span><span class="p">()</span>
+<span class="n">guess_dir</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="k">if</span> <span class="s1">&#39;jack&#39;</span> <span class="ow">in</span> <span class="n">socket_name</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+    <span class="n">this_machine</span> <span class="o">=</span> <span class="s1">&#39;jack_lappy&#39;</span>
+<span class="k">elif</span> <span class="s1">&#39;juqueen&#39;</span> <span class="ow">in</span> <span class="n">socket_name</span><span class="p">:</span>
+    <span class="n">this_machine</span> <span class="o">=</span> <span class="s1">&#39;juqueen&#39;</span>
+<span class="k">elif</span> <span class="s1">&#39;dev&#39;</span> <span class="ow">in</span> <span class="n">socket_name</span> <span class="ow">or</span> <span class="s1">&#39;gateway&#39;</span> <span class="ow">in</span> <span class="n">socket_name</span> <span class="ow">or</span> <span class="s1">&#39;lac-&#39;</span> <span class="ow">in</span> <span class="n">socket_name</span> <span class="ow">or</span> <span class="s1">&#39;css-&#39;</span> <span class="ow">in</span> <span class="n">socket_name</span><span class="p">:</span>
+    <span class="n">this_machine</span> <span class="o">=</span> <span class="s1">&#39;laconia&#39;</span>
+    <span class="n">guess_dir</span> <span class="o">=</span> <span class="s1">&#39;/mnt/home/dragosja/Scripts/Python_Analysis/&#39;</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="c1"># print &#39;Warning, socket name &#39;,socket_name,&#39; not recognised, setting to default&#39;</span>
+    <span class="c1"># this_machine = &#39;unknown&#39;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Warning, socket name &#39;</span><span class="p">,</span><span class="n">socket_name</span><span class="p">,</span><span class="s1">&#39; not recognised, assuming laconia&#39;</span><span class="p">)</span>
+    <span class="n">this_machine</span> <span class="o">=</span> <span class="s1">&#39;laconia&#39;</span>
+    <span class="n">guess_dir</span> <span class="o">=</span> <span class="s1">&#39;/mnt/home/dragosja/Scripts/Python_Analysis/&#39;</span>
+
+<div class="viewcode-block" id="Def_pdict"><a class="viewcode-back" href="../Params.html#Params.Def_pdict">[docs]</a><span class="k">def</span> <span class="nf">Def_pdict</span><span class="p">():</span>
+    <span class="n">paramdict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+    <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;Multicore&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;Debug_Mode&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;num_of_procs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;max_job_per_thread&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">20</span>
+    <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;write_excel&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;Show_Write&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;Show_Read&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;Wipe_All_Fits&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;cfg_file_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;msgpack&#39;</span>
+    <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;Max_Iters&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10000</span>
+    <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;Solver_Prec&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">8</span><span class="p">)</span>
+    <span class="c1"># paramdict[&#39;data_directory&#39;] = &#39;/mnt/research/lqcd/CfunAnalysis/&#39;</span>
+    <span class="c1"># paramdict[&#39;cfun_prefix&#39;] = &#39;/cfunPChroma/&#39;</span>
+    <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;formatted_cfg_dir&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span><span class="o">+</span><span class="s1">&#39;/Configs/&#39;</span>
+    <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;data_directory&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;/home/jackdra/PHD/CHROMA/TestVar/scratch/&#39;</span>
+    <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;cfun_prefix&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;/cfunsg5/&#39;</span>
+    <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;n_space&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">32</span>
+    <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;n_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">64</span>
+    <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;lattice_spacing&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0907</span> <span class="c1">## In fermi</span>
+    <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;n_boot&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">200</span>
+    <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;nchi_threshold&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;nchi_fit_threshold&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;plot_the_ff&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;normed_histograms&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;def_min_fitr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="k">return</span> <span class="n">paramdict</span></div>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s1">&#39;./Param_p3.py3p&#39;</span><span class="p">):</span>
+        <span class="n">this_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span><span class="o">+</span><span class="s1">&#39;/Param_p3.py3p&#39;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span> <span class="n">this_file</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span> <span class="p">)</span> <span class="k">as</span> <span class="n">pfile</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Reading Params from, &#39;</span><span class="p">,</span> <span class="n">this_file</span><span class="p">)</span>
+            <span class="n">paramdict</span> <span class="o">=</span>  <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">pfile</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s1">&#39;../Param_p3.py3p&#39;</span><span class="p">):</span>
+        <span class="n">this_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span><span class="o">+</span><span class="s1">&#39;/../Param_p3.py3p&#39;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span> <span class="n">this_file</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span> <span class="p">)</span> <span class="k">as</span> <span class="n">pfile</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Reading Params from, &#39;</span><span class="p">,</span> <span class="n">this_file</span><span class="p">)</span>
+            <span class="n">paramdict</span> <span class="o">=</span>  <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">pfile</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">guess_dir</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">guess_dir</span><span class="o">+</span><span class="s1">&#39;Param_p3.py3p&#39;</span><span class="p">):</span>
+        <span class="n">this_file</span> <span class="o">=</span> <span class="n">guess_dir</span><span class="o">+</span><span class="s1">&#39;Param_p3.py3p&#39;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span> <span class="n">this_file</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span> <span class="p">)</span> <span class="k">as</span> <span class="n">pfile</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Reading Params from, &#39;</span><span class="p">,</span> <span class="n">this_file</span><span class="p">)</span>
+            <span class="n">paramdict</span> <span class="o">=</span>  <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">pfile</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">paramdict</span> <span class="o">=</span> <span class="n">Def_pdict</span><span class="p">()</span>
+        <span class="c1"># raise IOError(&#39;Param_p3.p is not set, need to deal with this?&#39;)</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error reading &#39;</span> <span class="p">,</span> <span class="n">this_file</span><span class="p">,</span> <span class="s1">&#39; Setting to default values.&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The error was:&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">))</span>
+    <span class="n">paramdict</span> <span class="o">=</span> <span class="n">Def_pdict</span><span class="p">()</span>
+
+<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s1">&#39;./JobParam_p3.py3p&#39;</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span> <span class="s1">&#39;./JobParam_p3.py3p&#39;</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span> <span class="p">)</span> <span class="k">as</span> <span class="n">pfile</span><span class="p">:</span>
+        <span class="n">def_job_params</span> <span class="o">=</span>  <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">pfile</span><span class="p">)</span>
+<span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s1">&#39;../JobParam_p3.py3p&#39;</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span> <span class="s1">&#39;../JobParam_p3.py3p&#39;</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span> <span class="p">)</span> <span class="k">as</span> <span class="n">pfile</span><span class="p">:</span>
+        <span class="n">def_job_params</span> <span class="o">=</span>  <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">pfile</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">def_job_params</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+    <span class="n">def_job_params</span><span class="p">[</span><span class="s1">&#39;machine&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">this_machine</span>
+    <span class="n">def_job_params</span><span class="p">[</span><span class="s1">&#39;python_exe&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;python&#39;</span>
+    <span class="n">def_job_params</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;4:50:00&#39;</span>
+    <span class="n">def_job_params</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;jack.dragos@gmail.com&#39;</span>
+    <span class="n">def_job_params</span><span class="p">[</span><span class="s1">&#39;nproc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">def_job_params</span><span class="p">[</span><span class="s1">&#39;RunPTG&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="n">this_machine</span> <span class="o">==</span> <span class="s1">&#39;juqueen&#39;</span><span class="p">:</span>
+        <span class="n">def_job_params</span><span class="p">[</span><span class="s1">&#39;quetype&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;bluegene&#39;</span>
+        <span class="n">def_job_params</span><span class="p">[</span><span class="s1">&#39;Scom&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;llsubmit&#39;</span>
+    <span class="k">elif</span> <span class="n">this_machine</span> <span class="o">==</span> <span class="s1">&#39;laconia&#39;</span><span class="p">:</span>
+        <span class="n">def_job_params</span><span class="p">[</span><span class="s1">&#39;quetype&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;dev-intel16&#39;</span>
+        <span class="n">def_job_params</span><span class="p">[</span><span class="s1">&#39;RunPTG&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">def_job_params</span><span class="p">[</span><span class="s1">&#39;Scom&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;qsub&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">def_job_params</span><span class="p">[</span><span class="s1">&#39;quetype&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;batch&#39;</span>
+        <span class="n">def_job_params</span><span class="p">[</span><span class="s1">&#39;Scom&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;sbatch&#39;</span>
+    <span class="n">def_job_params</span><span class="p">[</span><span class="s1">&#39;memory&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;12GB&#39;</span>
+
+
+<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s1">&#39;./JobParamSolve.py3p&#39;</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span> <span class="s1">&#39;./JobParamSolve.py3p&#39;</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span> <span class="p">)</span> <span class="k">as</span> <span class="n">pfile</span><span class="p">:</span>
+        <span class="n">def_job_params_solve</span> <span class="o">=</span>  <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">pfile</span><span class="p">)</span>
+<span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s1">&#39;../JobParamSolve.py3p&#39;</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span> <span class="s1">&#39;../JobParamSolve.py3p&#39;</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span> <span class="p">)</span> <span class="k">as</span> <span class="n">pfile</span><span class="p">:</span>
+        <span class="n">def_job_params_solve</span> <span class="o">=</span>  <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">pfile</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">def_job_params_solve</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+    <span class="n">def_job_params_solve</span><span class="p">[</span><span class="s1">&#39;machine&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">this_machine</span>
+    <span class="n">def_job_params_solve</span><span class="p">[</span><span class="s1">&#39;python_exe&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;python&#39;</span>
+    <span class="n">def_job_params_solve</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;4:50:00&#39;</span>
+    <span class="n">def_job_params_solve</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;jack.dragos@gmail.com&#39;</span>
+    <span class="n">def_job_params_solve</span><span class="p">[</span><span class="s1">&#39;nproc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">def_job_params_solve</span><span class="p">[</span><span class="s1">&#39;RunPTG&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="n">this_machine</span> <span class="o">==</span> <span class="s1">&#39;juqueen&#39;</span><span class="p">:</span>
+        <span class="n">def_job_params_solve</span><span class="p">[</span><span class="s1">&#39;quetype&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;bluegene&#39;</span>
+        <span class="n">def_job_params_solve</span><span class="p">[</span><span class="s1">&#39;Scom&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;llsubmit&#39;</span>
+    <span class="k">elif</span> <span class="n">this_machine</span> <span class="o">==</span> <span class="s1">&#39;laconia&#39;</span><span class="p">:</span>
+        <span class="n">def_job_params_solve</span><span class="p">[</span><span class="s1">&#39;quetype&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;dev-intel16&#39;</span>
+        <span class="n">def_job_params_solve</span><span class="p">[</span><span class="s1">&#39;RunPTG&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">def_job_params_solve</span><span class="p">[</span><span class="s1">&#39;Scom&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;qsub&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">def_job_params_solve</span><span class="p">[</span><span class="s1">&#39;quetype&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;batch&#39;</span>
+        <span class="n">def_job_params_solve</span><span class="p">[</span><span class="s1">&#39;Scom&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;sbatch&#39;</span>
+    <span class="n">def_job_params_solve</span><span class="p">[</span><span class="s1">&#39;memory&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;12GB&#39;</span>
+
+<span class="n">All_Classes_Names</span> <span class="o">=</span> <span class="p">[</span> <span class="s1">&#39;AResAlpha&#39;</span><span class="p">,</span><span class="s1">&#39;AResChi2&#39;</span><span class="p">,</span><span class="s1">&#39;CalculationParams&#39;</span><span class="p">,</span><span class="s1">&#39;RunParams&#39;</span><span class="p">,</span><span class="s1">&#39;PlotParams&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;JobParams&#39;</span><span class="p">,</span><span class="s1">&#39;JobParamsSolve&#39;</span><span class="p">,</span><span class="s1">&#39;TPCorr&#39;</span><span class="p">,</span><span class="s1">&#39;FlowedOp&#39;</span><span class="p">,</span><span class="s1">&#39;FlowedOpFull&#39;</span><span class="p">,</span><span class="s1">&#39;RatioFun&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Alpha&#39;</span><span class="p">,</span><span class="s1">&#39;AlphaFull&#39;</span><span class="p">,</span><span class="s1">&#39;FormFacts&#39;</span><span class="p">,</span><span class="s1">&#39;DictFlowEditor&#39;</span><span class="p">,</span><span class="s1">&#39;DictEditor&#39;</span><span class="p">,</span><span class="s1">&#39;BeginFrame&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;AutoCorrelate&#39;</span><span class="p">,</span><span class="s1">&#39;BootStrap&#39;</span><span class="p">,</span><span class="s1">&#39;AlphaFrame&#39;</span><span class="p">,</span><span class="s1">&#39;FlowOpFrame&#39;</span><span class="p">,</span><span class="s1">&#39;BeginFrame&#39;</span><span class="p">,</span><span class="s1">&#39;FFEquation&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Fitting&#39;</span><span class="p">,</span><span class="s1">&#39;FlowOp&#39;</span><span class="p">,</span><span class="s1">&#39;FlowOpFullSquared&#39;</span><span class="p">,</span><span class="s1">&#39;FormFact&#39;</span><span class="p">,</span><span class="s1">&#39;GammaMat&#39;</span><span class="p">,</span><span class="s1">&#39;CorrSpinTrace&#39;</span><span class="p">,</span><span class="s1">&#39;DOO&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;DataFrame&#39;</span><span class="p">,</span><span class="s1">&#39;InfoFrame&#39;</span><span class="p">,</span><span class="s1">&#39;BeginFrame&#39;</span><span class="p">,</span><span class="s1">&#39;LatticeParameters&#39;</span><span class="p">,</span><span class="s1">&#39;Plotting&#39;</span><span class="p">,</span><span class="s1">&#39;RatioCorr&#39;</span><span class="p">,</span><span class="s1">&#39;RatioFOCorr&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;RatioFOFullCorr&#39;</span><span class="p">,</span><span class="s1">&#39;ReadFSCfunPickCHROMA&#39;</span><span class="p">,</span><span class="s1">&#39;RC3Full&#39;</span><span class="p">,</span><span class="s1">&#39;R2CChromaXMLFileList&#39;</span><span class="p">,</span><span class="s1">&#39;RC2Full&#39;</span><span class="p">,</span><span class="s1">&#39;NaNCfunError&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;ReadFSCfunPickCHROMA&#39;</span><span class="p">,</span><span class="s1">&#39;RC3Full&#39;</span><span class="p">,</span><span class="s1">&#39;R2CChromaXMLFileList&#39;</span><span class="p">,</span><span class="s1">&#39;RC2Full&#39;</span><span class="p">,</span><span class="s1">&#39;NaNCfunError&#39;</span><span class="p">,</span><span class="s1">&#39;SetOfFF&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;SetOfFitFuns&#39;</span><span class="p">,</span><span class="s1">&#39;SetOfFO&#39;</span><span class="p">,</span><span class="s1">&#39;SetOfFOFull&#39;</span><span class="p">,</span><span class="s1">&#39;SetOfRat&#39;</span><span class="p">,</span><span class="s1">&#39;SetOfTwoPt&#39;</span><span class="p">,</span><span class="s1">&#39;SetOfNNQ&#39;</span><span class="p">,</span><span class="s1">&#39;SetOfNNQFull&#39;</span><span class="p">,</span><span class="s1">&#39;ThreePointCorr&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;NJNQCorr&#39;</span><span class="p">,</span><span class="s1">&#39;NJNQFullCorr&#39;</span><span class="p">,</span><span class="s1">&#39;Timer&#39;</span><span class="p">,</span><span class="s1">&#39;TwoPointCorr&#39;</span><span class="p">,</span><span class="s1">&#39;NNQCorr&#39;</span><span class="p">,</span><span class="s1">&#39;NNQFullCorr&#39;</span><span class="p">,</span><span class="s1">&#39;FlowedTwoPtCorr&#39;</span><span class="p">,</span><span class="s1">&#39;VariationalTwoPt&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;LegendFmt&#39;</span><span class="p">,</span><span class="s1">&#39;KeyForamtting&#39;</span><span class="p">,</span><span class="s1">&#39;ParsingInterrupted&#39;</span><span class="p">,</span><span class="s1">&#39;_DictSAXHandler&#39;</span><span class="p">]</span>
+
+<span class="c1"># G2_abs = False</span>
+<span class="c1"># if G2_abs:</span>
+<span class="c1">#     print &#39;G2_abs is ON! WARNING!&#39;</span>
+<span class="c1"># def_nblock = 1</span>
+<span class="n">myeps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span>
+<span class="n">percentile</span> <span class="o">=</span> <span class="mf">0.158</span>
+<span class="n">Qeps</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">defMcore</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1">## Not Needed</span>
+<span class="c1"># defMcore = paramdict[&#39;Multicore&#39;] ## changes all the default multicore LoadPickles</span>
+<span class="c1"># defnProc = 12 ## default max processors to use</span>
+<span class="n">defnProc</span> <span class="o">=</span> <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;num_of_procs&#39;</span><span class="p">]</span> <span class="c1">## default max processors to use</span>
+<span class="n">defMaxTasks</span> <span class="o">=</span> <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;max_job_per_thread&#39;</span><span class="p">]</span>
+<span class="n">ShowXmlWrite</span> <span class="o">=</span> <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;Show_Write&#39;</span><span class="p">]</span>
+<span class="k">if</span> <span class="s1">&#39;cfg_file_type&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">paramdict</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+    <span class="n">cfg_file_type</span> <span class="o">=</span> <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;cfg_file_type&#39;</span><span class="p">]</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">cfg_file_type</span> <span class="o">=</span> <span class="s1">&#39;msgpack&#39;</span>
+
+<span class="k">if</span> <span class="s1">&#39;write_excel&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">paramdict</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+    <span class="n">write_excel</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">write_excel</span> <span class="o">=</span> <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;write_excel&#39;</span><span class="p">]</span>
+<span class="c1"># if &#39;Show_Read&#39; not in paramdict.keys():</span>
+<span class="c1">#     ShowRead = False</span>
+<span class="c1"># else:</span>
+<span class="n">ShowRead</span> <span class="o">=</span> <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;Show_Read&#39;</span><span class="p">]</span>
+<span class="n">Wipe_All_Fits</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="k">if</span> <span class="s1">&#39;Wipe_All_Fits&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">paramdict</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+    <span class="n">Wipe_All_Fits</span> <span class="o">=</span> <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;Wipe_All_Fits&#39;</span><span class="p">]</span>
+<span class="n">plot_style</span> <span class="o">=</span> <span class="s1">&#39;classic&#39;</span>
+
+<span class="n">colourset8</span> <span class="o">=</span> <span class="p">[</span> <span class="s1">&#39;#000080&#39;</span><span class="p">,</span><span class="s1">&#39;#B22222&#39;</span><span class="p">,</span><span class="s1">&#39;#00B800&#39;</span><span class="p">,</span><span class="s1">&#39;#8B008B&#39;</span><span class="p">,</span> <span class="s1">&#39;#0000FF&#39;</span><span class="p">,</span><span class="s1">&#39;#FF0000&#39;</span><span class="p">,</span><span class="s1">&#39;#000000&#39;</span><span class="p">,</span><span class="s1">&#39;#32CD32&#39;</span><span class="p">,</span><span class="s1">&#39;#FF0066&#39;</span><span class="p">]</span>
+<span class="n">markerset</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;o&#39;</span><span class="p">,</span><span class="s1">&#39;s&#39;</span><span class="p">,</span><span class="s1">&#39;^&#39;</span><span class="p">,</span><span class="s1">&#39;v&#39;</span><span class="p">,</span><span class="s1">&#39;d&#39;</span><span class="p">]</span>
+
+<span class="n">lineres</span> <span class="o">=</span> <span class="mi">100</span>
+
+<span class="n">defMaxIter</span> <span class="o">=</span> <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;Max_Iters&#39;</span><span class="p">]</span>
+<span class="n">defPrec</span> <span class="o">=</span> <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;Solver_Prec&#39;</span><span class="p">]</span><span class="c1">## max number of iterations for least squares fitting.</span>
+<span class="n">fillalpha</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="n">defSparam</span> <span class="o">=</span> <span class="mf">1.5</span>
+
+<span class="n">shiftmax</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">shiftper</span> <span class="o">=</span> <span class="mf">0.05</span> <span class="c1">##R function shift</span>
+<span class="n">shiftperff</span> <span class="o">=</span> <span class="mf">0.01</span> <span class="c1">##Form Factor shift</span>
+<span class="n">shiftset</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">ish</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">shiftmax</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span> <span class="n">shiftset</span> <span class="o">+=</span> <span class="p">[</span><span class="o">-</span><span class="n">ish</span><span class="o">*</span><span class="n">shiftper</span><span class="p">,</span><span class="n">ish</span><span class="o">*</span><span class="n">shiftper</span><span class="p">]</span>
+
+
+<span class="c1">## CURRENTLY THIS NEEDS TO CHANGE FOR YOUR DATA DIRECTORIES</span>
+<span class="c1"># datadir = &#39;/mnt/research/lqcd/CfunAnalysis/&#39;</span>
+<span class="c1"># cfundir = datadir + &#39;/cfunPChroma/&#39;</span>
+<span class="n">datadir</span> <span class="o">=</span> <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;data_directory&#39;</span><span class="p">]</span>
+<span class="k">if</span> <span class="s1">&#39;formatted_cfg_dir&#39;</span> <span class="ow">in</span> <span class="n">paramdict</span><span class="p">:</span>
+    <span class="n">cfgfmtdir</span> <span class="o">=</span> <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;formatted_cfg_dir&#39;</span><span class="p">]</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">cfgfmtdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span><span class="o">+</span><span class="s1">&#39;/Configs/&#39;</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">cfgfmtdir</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Warning, config directory not found:&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">cfgfmtdir</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; please change formatted_cfg_dir in General Parameters&#39;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="s1">&#39;output_directory&#39;</span> <span class="ow">in</span> <span class="n">paramdict</span><span class="p">:</span>
+    <span class="n">outputdir</span> <span class="o">=</span> <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;output_directory&#39;</span><span class="p">]</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">outputdir</span> <span class="o">=</span> <span class="n">datadir</span><span class="o">+</span><span class="s1">&#39;/resultsREWORK/&#39;</span>
+<span class="k">if</span> <span class="s1">&#39;scratch_directory&#39;</span> <span class="ow">in</span> <span class="n">paramdict</span><span class="p">:</span>
+    <span class="n">scratchdir</span> <span class="o">=</span> <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;scratch_directory&#39;</span><span class="p">]</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">scratchdir</span> <span class="o">=</span> <span class="n">outputdir</span><span class="o">+</span><span class="s1">&#39;/scratch/&#39;</span>
+
+<span class="n">test_file</span> <span class="o">=</span> <span class="n">scratchdir</span> <span class="o">+</span> <span class="s1">&#39;/debug_file.test&#39;</span>
+<span class="k">if</span> <span class="s1">&#39;flow_new_format&#39;</span> <span class="ow">in</span> <span class="n">paramdict</span><span class="p">:</span>
+    <span class="n">flow_new_format</span> <span class="o">=</span> <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;flow_new_format&#39;</span><span class="p">]</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">flow_new_format</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">functiondir</span> <span class="o">=</span> <span class="n">scratchdir</span> <span class="o">+</span> <span class="s1">&#39;/functions/&#39;</span>
+<span class="n">cfundir</span> <span class="o">=</span> <span class="n">datadir</span> <span class="o">+</span> <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;cfun_prefix&#39;</span><span class="p">]</span>
+<span class="c1">########################################################</span>
+
+<span class="n">Qdir</span> <span class="o">=</span> <span class="n">datadir</span><span class="o">+</span><span class="s1">&#39;/topcharge/&#39;</span>
+<span class="n">Wdir</span> <span class="o">=</span> <span class="n">datadir</span><span class="o">+</span><span class="s1">&#39;/weinopp/&#39;</span>
+<span class="n">graphdir</span> <span class="o">=</span> <span class="n">outputdir</span> <span class="o">+</span> <span class="s1">&#39;/graphs/&#39;</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">mkdir_p</span><span class="p">(</span><span class="n">functiondir</span><span class="p">)</span>
+    <span class="n">mkdir_p</span><span class="p">(</span><span class="n">graphdir</span><span class="p">)</span>
+    <span class="n">mkdir_p</span><span class="p">(</span><span class="n">scratchdir</span><span class="p">)</span>
+    <span class="n">mkdir_p</span><span class="p">(</span><span class="n">functiondir</span><span class="p">)</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s1">&#39;./Param_p3.py3p&#39;</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;./Param_p3.p found&#39;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s1">&#39;../Param_p3.py3p&#39;</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;../Param_p3.p found&#39;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">guess_dir</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">guess_dir</span><span class="o">+</span><span class="s1">&#39;Param_p3.py3p&#39;</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">guess_dir</span><span class="o">+</span><span class="s1">&#39;Param_p3.p found&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;No parameter file found&#39;</span><span class="p">)</span>
+    <span class="n">errorstr</span> <span class="o">=</span> <span class="p">(</span><span class="n">graphdir</span> <span class="o">+</span>
+                <span class="s1">&#39;</span><span class="se">\n</span><span class="s1"> error making directory, machine identified as </span><span class="se">\n</span><span class="s1"> &#39;</span><span class="o">+</span>
+                <span class="n">this_machine</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">errorstr</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;THIS MUST BE FIXED BEFORE RUNNING&#39;</span><span class="p">)</span>
+<span class="c1"># MomSqrdSet = [ &#39;0&#39;,&#39;1&#39;,&#39;2&#39;,&#39;3&#39;,&#39;4&#39;,&#39;5&#39;,&#39;6&#39;,&#39;7&#39;,&#39;8&#39;,&#39;9&#39; ]</span>
+<span class="n">MomSqrdSet</span> <span class="o">=</span> <span class="p">[</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span><span class="s1">&#39;1&#39;</span><span class="p">,</span><span class="s1">&#39;2&#39;</span><span class="p">,</span><span class="s1">&#39;3&#39;</span><span class="p">,</span><span class="s1">&#39;4&#39;</span><span class="p">]</span>
+<span class="n">defmom2list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+<span class="n">defqsqrdMax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">defmom2list</span><span class="p">)</span>
+<span class="n">defpmomlist</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;0 0 0&#39;</span><span class="p">,</span><span class="s1">&#39;1 0 0&#39;</span><span class="p">,</span><span class="s1">&#39;1 1 0&#39;</span><span class="p">,</span><span class="s1">&#39;1 1 1&#39;</span><span class="p">,</span><span class="s1">&#39;2 0 0&#39;</span><span class="p">]</span>
+<span class="n">nxyz</span> <span class="o">=</span> <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;n_space&#39;</span><span class="p">]</span>
+<span class="n">nt</span> <span class="o">=</span> <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;n_time&#39;</span><span class="p">]</span>
+<span class="n">nxyzt</span> <span class="o">=</span> <span class="p">[</span><span class="n">nxyz</span><span class="p">,</span><span class="n">nxyz</span><span class="p">,</span><span class="n">nxyz</span><span class="p">,</span><span class="n">nt</span><span class="p">]</span>
+<span class="c1"># qunit = (2.0*np.pi)/float(nxyz)</span>
+<span class="n">hbarc</span> <span class="o">=</span> <span class="mf">0.1973269718</span> <span class="c1">## In GeV * fermi</span>
+<span class="n">cm_to_fm</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="mi">13</span>
+<span class="n">alpha_guess</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="c1">## guess for what the nucleon mixing angle alpha is......</span>
+                   <span class="c1">## doesn&#39;t really matter what this is, just change it to see if Form Factors change.</span>
+
+
+
+<span class="n">latspace</span> <span class="o">=</span> <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;lattice_spacing&#39;</span><span class="p">]</span> <span class="c1">## In fermi</span>
+<span class="c1"># hbarcdivlat = hbarc/latspace</span>
+
+<span class="n">defxlim</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">10</span><span class="p">]</span>
+<span class="n">defxlimAlpha</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">15</span><span class="p">]</span>
+<span class="n">defxlimAlphaTflow</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="c1">## in sqrt(8t)</span>
+<span class="n">defxlimOpMore</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.01</span><span class="p">,</span><span class="mf">9.11</span><span class="p">,</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="n">defxlimOpMost</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.01</span><span class="p">,</span><span class="mf">10.00</span><span class="p">,</span><span class="mf">0.01</span><span class="p">)</span>
+<span class="c1"># defxlimOp = np.arange(0.01,10,1.0)</span>
+<span class="n">defxlimOp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">4.01</span><span class="p">,</span><span class="mf">5.01</span><span class="p">,</span><span class="mf">6.01</span><span class="p">])</span>
+<span class="c1"># defxlimOp = np.array([6.01])</span>
+
+<div class="viewcode-block" id="chitcoeff"><a class="viewcode-back" href="../Params.html#Params.chitcoeff">[docs]</a><span class="k">def</span> <span class="nf">chitcoeff</span><span class="p">(</span><span class="n">nt</span><span class="p">,</span><span class="n">nxyz</span><span class="p">,</span><span class="n">latspace</span><span class="p">,</span><span class="n">obs</span><span class="p">):</span>
+    <span class="k">if</span> <span class="s1">&#39;QW&#39;</span> <span class="ow">in</span> <span class="n">obs</span> <span class="ow">or</span> <span class="s1">&#39;WQ&#39;</span> <span class="ow">in</span> <span class="n">obs</span><span class="p">:</span>
+        <span class="k">return</span>  <span class="p">(</span><span class="n">hbarc</span><span class="o">/</span><span class="p">(</span><span class="n">latspace</span><span class="o">**</span><span class="p">(</span><span class="mf">4.</span><span class="p">)</span><span class="o">*</span><span class="n">nxyz</span><span class="o">**</span><span class="p">(</span><span class="mf">3.</span><span class="p">)</span><span class="o">*</span><span class="n">nt</span><span class="p">))</span> <span class="c1">## (1/V) [GeV]^{6}</span>
+    <span class="k">elif</span> <span class="s1">&#39;Q&#39;</span> <span class="ow">in</span> <span class="n">obs</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">hbarc</span><span class="o">/</span><span class="p">(</span><span class="n">latspace</span><span class="o">*</span><span class="n">nxyz</span><span class="o">**</span><span class="p">(</span><span class="mf">0.75</span><span class="p">)</span><span class="o">*</span><span class="n">nt</span><span class="o">**</span><span class="p">(</span><span class="mf">0.25</span><span class="p">)))</span> <span class="c1">## (1/V)^1/4 [GeV]</span>
+    <span class="k">elif</span> <span class="s1">&#39;W&#39;</span> <span class="ow">in</span> <span class="n">obs</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">hbarc</span><span class="o">/</span><span class="p">((</span><span class="n">latspace</span><span class="o">*</span><span class="n">nxyz</span><span class="o">**</span><span class="p">(</span><span class="mf">0.75</span><span class="p">)</span><span class="o">*</span><span class="n">nt</span><span class="o">**</span><span class="p">(</span><span class="mf">0.25</span><span class="p">)))</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span> <span class="c1">## (1/V)^1/8 [GeV]</span></div>
+
+<span class="n">nboot</span> <span class="o">=</span> <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;n_boot&#39;</span><span class="p">]</span>
+<span class="k">if</span> <span class="s1">&#39;nchi_threshold&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">paramdict</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+    <span class="n">nchi_threshold</span> <span class="o">=</span> <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;nchi_threshold&#39;</span><span class="p">]</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">nchi_threshold</span> <span class="o">=</span> <span class="mi">10</span>
+
+<span class="k">if</span> <span class="s1">&#39;nchi_fit_threshold&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">paramdict</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+    <span class="n">nchi_fit_threshold</span> <span class="o">=</span> <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;nchi_fit_threshold&#39;</span><span class="p">]</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">nchi_fit_threshold</span> <span class="o">=</span> <span class="mi">10</span>
+
+<span class="k">if</span> <span class="s1">&#39;plot_the_ff&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">paramdict</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+    <span class="n">plot_the_ff</span> <span class="o">=</span> <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;plot_the_ff&#39;</span><span class="p">]</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">plot_the_ff</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="k">if</span> <span class="s1">&#39;normed_histograms&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">paramdict</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+    <span class="n">normed_histograms</span> <span class="o">=</span> <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;normed_histograms&#39;</span><span class="p">]</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">normed_histograms</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="k">if</span> <span class="s1">&#39;def_min_fitr&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">paramdict</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+    <span class="n">def_min_fitr</span> <span class="o">=</span> <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;def_min_fitr&#39;</span><span class="p">]</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">def_min_fitr</span> <span class="o">=</span> <span class="mi">3</span>
+
+
+<span class="k">if</span> <span class="s1">&#39;Debug_Mode&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">paramdict</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+    <span class="n">Debug_Mode</span> <span class="o">=</span> <span class="n">paramdict</span><span class="p">[</span><span class="s1">&#39;Debug_Mode&#39;</span><span class="p">]</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">Debug_Mode</span> <span class="o">=</span> <span class="kc">False</span>
+
+
+
+<span class="n">MesICS1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="o">**-</span><span class="mi">6</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">0.2</span><span class="p">)]</span>
+<span class="n">MesICS2</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="o">**-</span><span class="mi">6</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">0.2</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">0.2</span><span class="p">)]</span>
+
+<span class="n">defInfo</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+<span class="n">defInfo</span><span class="p">[</span><span class="s1">&#39;outdir&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">outputdir</span>
+<span class="n">defInfo</span><span class="p">[</span><span class="s1">&#39;show_cfgs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">defInfo</span><span class="p">[</span><span class="s1">&#39;nxyzt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">32</span><span class="p">,</span><span class="mi">32</span><span class="p">,</span><span class="mi">32</span><span class="p">,</span><span class="mi">64</span><span class="p">]</span>
+<span class="n">defInfo</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0907</span> <span class="c1">## In fermi</span>
+<span class="n">defInfo</span><span class="p">[</span><span class="s1">&#39;kud&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1375400</span>
+<span class="n">defInfo</span><span class="p">[</span><span class="s1">&#39;ks&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1364000</span>
+<span class="n">defInfo</span><span class="p">[</span><span class="s1">&#39;Csw&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1715</span>
+<span class="n">defInfo</span><span class="p">[</span><span class="s1">&#39;Beta&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1900</span>
+<span class="n">defInfo</span><span class="p">[</span><span class="s1">&#39;jsm&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">64</span>
+<span class="n">defInfo</span><span class="p">[</span><span class="s1">&#39;sm2ptRat&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">16</span><span class="p">,</span><span class="mi">32</span><span class="p">,</span><span class="mi">64</span><span class="p">]</span> <span class="c1">## remove this, jsmcoeffs and sinklab to get rid of sink combinations</span>
+<span class="k">if</span> <span class="n">defInfo</span><span class="p">[</span><span class="s1">&#39;kud&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1375400</span><span class="p">:</span>
+    <span class="n">defInfo</span><span class="p">[</span><span class="s1">&#39;jsmCoeffs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0000005522</span><span class="p">,</span><span class="o">-</span><span class="mf">0.0001589143</span><span class="p">,</span><span class="mf">0.9999999874</span><span class="p">],</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">defInfo</span><span class="p">[</span><span class="s1">&#39;sinklab&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;PoF0D1&#39;</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">defInfo</span><span class="p">[</span><span class="s1">&#39;jsmCoeffs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">]</span>
+    <span class="n">defInfo</span><span class="p">[</span><span class="s1">&#39;sinklab&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;jsm64&#39;</span>
+
+
+<span class="n">defInfo</span><span class="p">[</span><span class="s1">&#39;autocorr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">defInfo</span><span class="p">[</span><span class="s1">&#39;Sparam&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.5</span>
+<span class="n">defInfo</span><span class="p">[</span><span class="s1">&#39;MesOrBar&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Baryon&#39;</span>
+<span class="n">defInfo</span><span class="p">[</span><span class="s1">&#39;Adjoint_Flow&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">defInfo</span><span class="p">[</span><span class="s1">&#39;combine_sinks&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">defInfo</span><span class="p">[</span><span class="s1">&#39;ism&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">64</span>
+<span class="n">defInfo</span><span class="p">[</span><span class="s1">&#39;tsrc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">defInfo</span><span class="p">[</span><span class="s1">&#39;Fits&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;state1&#39;</span><span class="p">,</span><span class="s1">&#39;fitr9-20&#39;</span><span class="p">),(</span><span class="s1">&#39;state2&#39;</span><span class="p">,</span><span class="s1">&#39;fitr5-20&#39;</span><span class="p">)]</span>
+<span class="n">defInfo</span><span class="p">[</span><span class="s1">&#39;tsink&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">13</span>
+<span class="c1"># defInfo[&#39;pmom&#39;] = [&#39;0 0 0&#39;,&#39;1 1 1&#39;]</span>
+<span class="n">defInfo</span><span class="p">[</span><span class="s1">&#39;pmom&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;All&#39;</span> <span class="c1">## corresponds to defmom2list (above)</span>
+<span class="n">defInfo</span><span class="p">[</span><span class="s1">&#39;ppmom&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;0 0 0&#39;</span>
+<span class="c1"># defInfo[&#39;qmom&#39;] = [&#39;0 0 0&#39;,&#39;2 0 0&#39;]</span>
+<span class="n">defInfo</span><span class="p">[</span><span class="s1">&#39;qmom&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;0 0 0&#39;</span><span class="p">]</span>
+<span class="c1"># defInfo[&#39;qmom&#39;] = [&#39;0 0 0&#39;,&#39;0 0 1&#39;,&#39;0 1 1&#39;,&#39;1 1 1&#39;,&#39;0 0 2&#39;]</span>
+<span class="n">defInfo</span><span class="p">[</span><span class="s1">&#39;DoubSing&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;doub&#39;</span>
+<span class="c1"># defInfo[&#39;DoubSing&#39;] = &#39;Neutron&#39;</span>
+<span class="c1"># defInfo[&#39;DoubSing&#39;] = &#39;Proton&#39;</span>
+<span class="n">defInfo</span><span class="p">[</span><span class="s1">&#39;Projector&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;P4&#39;</span>
+<span class="c1"># defInfo[&#39;gammas&#39;] = [&#39;g4Cons&#39;]</span>
+<span class="n">defInfo</span><span class="p">[</span><span class="s1">&#39;gammas&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;g4&#39;</span><span class="p">]</span>
+<span class="c1"># defInfo[&#39;Projector&#39;] = &#39;P3&#39;</span>
+<span class="c1"># defInfo[&#39;gammas&#39;] = [&#39;g3g5cmplx&#39;]</span>
+<span class="n">defInfo</span><span class="p">[</span><span class="s1">&#39;Interp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;CPEven&#39;</span>
+
+
+
+<span class="n">defInfo</span><span class="p">[</span><span class="s1">&#39;Fits3pt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;state1&#39;</span><span class="p">,</span><span class="s1">&#39;fitr4-8&#39;</span><span class="p">),(</span><span class="s1">&#39;state2&#39;</span><span class="p">,</span><span class="s1">&#39;fitr3-9&#39;</span><span class="p">)]</span>
+<span class="n">defInfo</span><span class="p">[</span><span class="s1">&#39;FitsRF&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;fitr4-8&#39;</span><span class="p">]</span>
+<span class="n">defInfo</span><span class="p">[</span><span class="s1">&#39;FitsRFFull&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;taufitr3-8&#39;</span><span class="p">,</span><span class="s1">&#39;fitr4-8&#39;</span><span class="p">]]</span>
+<span class="n">defInfo</span><span class="p">[</span><span class="s1">&#39;FFFits&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;All&#39;</span><span class="p">]</span>
+
+<span class="n">defInfo2</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">defInfo</span><span class="p">)</span>
+<span class="n">defInfo2</span><span class="p">[</span><span class="s1">&#39;ism&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">32</span>
+
+<span class="n">defInfo3</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">defInfo</span><span class="p">)</span>
+<span class="n">defInfo3</span><span class="p">[</span><span class="s1">&#39;ism&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">16</span>
+
+
+<span class="n">defInfoFlow</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">defInfo</span><span class="p">)</span>
+<span class="n">defInfoFlow</span><span class="p">[</span><span class="s1">&#39;Interp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;CPOdd&#39;</span>
+<span class="n">defInfoFlow</span><span class="p">[</span><span class="s1">&#39;Observable&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;TopCharge&#39;</span>
+<span class="n">defInfoFlow</span><span class="p">[</span><span class="s1">&#39;tflowlist&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">defxlimOp</span>
+<span class="c1"># defInfoFlow[&#39;nrandt&#39;] = 5</span>
+<span class="n">defInfoFlow</span><span class="p">[</span><span class="s1">&#39;nrandt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">64</span>
+<span class="n">defInfoFlow</span><span class="p">[</span><span class="s1">&#39;tsum_list&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ts63&#39;</span><span class="p">]</span>
+<span class="n">defInfoFlow</span><span class="p">[</span><span class="s1">&#39;FlowFits&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;fitr8-10&#39;</span><span class="p">]</span>
+<span class="n">defInfoFlow</span><span class="p">[</span><span class="s1">&#39;FlowFitFun&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">ConstantFitFun</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">defInfoFlow</span><span class="p">[</span><span class="s1">&#39;FitsAlpha&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;fitr10-20&#39;</span><span class="p">]</span>
+<span class="n">defInfoFlow</span><span class="p">[</span><span class="s1">&#39;FitsAlphaFull&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;fitr10-20&#39;</span><span class="p">,</span><span class="s1">&#39;tsumfitr8-32&#39;</span><span class="p">)]</span>
+<span class="n">defInfoFlow</span><span class="p">[</span><span class="s1">&#39;FitFunAlpha&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">ConstantFitFun</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">defInfoFlow</span><span class="p">[</span><span class="s1">&#39;tflowfit&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;t_f6.01&#39;</span><span class="p">,</span><span class="s1">&#39;t_f5.01&#39;</span><span class="p">,</span><span class="s1">&#39;t_f4.01&#39;</span><span class="p">]</span>
+<span class="n">defInfoFlow</span><span class="p">[</span><span class="s1">&#39;tsinkfit&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;t10&#39;</span><span class="p">]</span>
+<span class="n">defInfoFlow</span><span class="p">[</span><span class="s1">&#39;Projector&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;P3&#39;</span>
+<span class="n">defInfoFlow</span><span class="p">[</span><span class="s1">&#39;gammas&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;g4&#39;</span><span class="p">]</span>
+<span class="n">defInfoFlow</span><span class="p">[</span><span class="s1">&#39;qmom&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;0 0 1&#39;</span><span class="p">]</span>
+<span class="n">defInfoFlow</span><span class="p">[</span><span class="s1">&#39;tsum_picked&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;ts63&#39;</span>
+<span class="n">defInfoFlow</span><span class="p">[</span><span class="s1">&#39;op_trange_sum_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;from_src_None&#39;</span>
+
+<span class="c1"># defInfoFlow[&#39;tsum_fit_list&#39;] = [&#39;ts0&#39;,&#39;ts16&#39;]</span>
+<span class="n">defInfoFlow</span><span class="p">[</span><span class="s1">&#39;tsum_fit_list&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ts&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">its</span><span class="p">)</span> <span class="k">for</span> <span class="n">its</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">33</span><span class="p">)]</span>
+<span class="n">defInfoFlow</span><span class="p">[</span><span class="s1">&#39;boot_tsum_list&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">defInfoFlow</span><span class="p">[</span><span class="s1">&#39;tsum_fit_list&#39;</span><span class="p">]</span>
+<span class="n">defInfoFlow</span><span class="p">[</span><span class="s1">&#39;boot_nt_list&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">nt</span><span class="o">//</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">defInfoFlow</span><span class="p">[</span><span class="s1">&#39;op_trange_sum_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;from_src_sum_sym_None&#39;</span>
+<span class="n">defInfoFlow</span><span class="p">[</span><span class="s1">&#39;fit_par_picked&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;First&#39;</span>
+<span class="n">defInfoFlow</span><span class="p">[</span><span class="s1">&#39;tsum_spec_fit_list&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;tss32&#39;</span><span class="p">]</span>
+<span class="c1"># defInfoFlow[&#39;fit_min_picked&#39;] = float(&#39;NaN&#39;)</span>
+
+<span class="c1"># defInfoFlow[&#39;FitFun&#39;] = (ChitFitFun,3)</span>
+
+
+<span class="n">defInfoFlow2</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">defInfoFlow</span><span class="p">)</span>
+<span class="n">defInfoFlow2</span><span class="p">[</span><span class="s1">&#39;ism&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">32</span>
+
+<span class="n">defInfoFlow3</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">defInfoFlow</span><span class="p">)</span>
+<span class="n">defInfoFlow3</span><span class="p">[</span><span class="s1">&#39;ism&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">16</span>
+
+
+
+<span class="n">defInfoMes</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">defInfo</span><span class="p">)</span>
+<span class="n">defInfoMes</span><span class="p">[</span><span class="s1">&#39;MesOrBar&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Meson&#39;</span>
+<span class="n">defInfoMes</span><span class="p">[</span><span class="s1">&#39;Interp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Pion&#39;</span> <span class="c1">## Pion is 15</span>
+<span class="n">defInfoMes</span><span class="p">[</span><span class="s1">&#39;Fits&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;state1&#39;</span><span class="p">,</span><span class="s1">&#39;fitr9-20&#39;</span><span class="p">,</span><span class="n">MesICS1</span><span class="p">),(</span><span class="s1">&#39;state2&#39;</span><span class="p">,</span><span class="s1">&#39;fitr5-20&#39;</span><span class="p">,</span><span class="n">MesICS2</span><span class="p">)]</span>
+
+
+<span class="n">defInfoMes2</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">defInfoMes</span><span class="p">)</span>
+<span class="n">defInfoMes2</span><span class="p">[</span><span class="s1">&#39;ism&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">32</span>
+
+<span class="n">defInfoMes3</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">defInfoMes</span><span class="p">)</span>
+<span class="n">defInfoMes3</span><span class="p">[</span><span class="s1">&#39;ism&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">16</span>
+
+
+<span class="n">defFitDict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+<span class="n">defFitDict</span><span class="p">[</span><span class="s1">&#39;Kud01375400Ks01364000_-a-_Baryon_CPEven_tsrc0_ism64_jsm64&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;state1&#39;</span><span class="p">,</span><span class="s1">&#39;fitr10-20&#39;</span><span class="p">)</span>
+<span class="n">defFitDict</span><span class="p">[</span><span class="s1">&#39;Kud01375400Ks01364000_-a-_Baryon_CPEven_tsrc0_ism32_jsm64&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;state1&#39;</span><span class="p">,</span><span class="s1">&#39;fitr9-20&#39;</span><span class="p">)</span>
+<span class="n">defFitDict</span><span class="p">[</span><span class="s1">&#39;Kud01375400Ks01364000_-a-_Baryon_CPEven_tsrc0_ism16_jsm64&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;state1&#39;</span><span class="p">,</span><span class="s1">&#39;fitr9-20&#39;</span><span class="p">)</span>
+<span class="n">defFitDict</span><span class="p">[</span><span class="s1">&#39;Kud01375400Ks01364000_-a-_Baryon_CPEven_tsrc0_ism64_PoF0D1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;state1&#39;</span><span class="p">,</span><span class="s1">&#39;fitr9-20&#39;</span><span class="p">)</span>
+<span class="n">defFitDict</span><span class="p">[</span><span class="s1">&#39;Kud01375400Ks01364000_-a-_Baryon_CPEven_tsrc0_ism32_PoF0D1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;state1&#39;</span><span class="p">,</span><span class="s1">&#39;fitr9-20&#39;</span><span class="p">)</span>
+<span class="n">defFitDict</span><span class="p">[</span><span class="s1">&#39;Kud01375400Ks01364000_-a-_Baryon_CPEven_tsrc0_ism16_PoF0D1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;state1&#39;</span><span class="p">,</span><span class="s1">&#39;fitr9-20&#39;</span><span class="p">)</span>
+<span class="n">defFitDict</span><span class="p">[</span><span class="s1">&#39;Kud01375400Ks01364000_-a-_Baryon_CPOdd_tsrc0_ism64_jsm64&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;state1&#39;</span><span class="p">,</span><span class="s1">&#39;fitr9-20&#39;</span><span class="p">)</span>
+<span class="n">defFitDict</span><span class="p">[</span><span class="s1">&#39;Kud01375400Ks01364000_-a-_Baryon_CPOdd_tsrc0_ism32_jsm64&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;state1&#39;</span><span class="p">,</span><span class="s1">&#39;fitr9-20&#39;</span><span class="p">)</span>
+<span class="n">defFitDict</span><span class="p">[</span><span class="s1">&#39;Kud01375400Ks01364000_-a-_Baryon_CPOdd_tsrc0_ism16_jsm64&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;state1&#39;</span><span class="p">,</span><span class="s1">&#39;fitr9-20&#39;</span><span class="p">)</span>
+<span class="n">defFitDict</span><span class="p">[</span><span class="s1">&#39;Kud01375400Ks01364000_-a-_Baryon_CPOdd_tsrc0_ism64_PoF0D1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;state1&#39;</span><span class="p">,</span><span class="s1">&#39;fitr9-20&#39;</span><span class="p">)</span>
+<span class="n">defFitDict</span><span class="p">[</span><span class="s1">&#39;Kud01375400Ks01364000_-a-_Baryon_CPOdd_tsrc0_ism32_PoF0D1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;state1&#39;</span><span class="p">,</span><span class="s1">&#39;fitr9-20&#39;</span><span class="p">)</span>
+<span class="n">defFitDict</span><span class="p">[</span><span class="s1">&#39;Kud01375400Ks01364000_-a-_Baryon_CPOdd_tsrc0_ism16_PoF0D1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;state1&#39;</span><span class="p">,</span><span class="s1">&#39;fitr9-20&#39;</span><span class="p">)</span>
+<span class="n">defFitDict</span><span class="p">[</span><span class="s1">&#39;Kud01375400Ks01364000_Meson_Pion_tsrc0_ism64_jsm64&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;state1&#39;</span><span class="p">,</span><span class="s1">&#39;fitr9-20&#39;</span><span class="p">,</span><span class="n">MesICS1</span><span class="p">)</span>
+<span class="n">defFitDict</span><span class="p">[</span><span class="s1">&#39;Kud01375400Ks01364000_Meson_Pion_tsrc0_ism32_jsm64&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;state1&#39;</span><span class="p">,</span><span class="s1">&#39;fitr9-20&#39;</span><span class="p">,</span><span class="n">MesICS1</span><span class="p">)</span>
+<span class="n">defFitDict</span><span class="p">[</span><span class="s1">&#39;Kud01375400Ks01364000_Meson_Pion_tsrc0_ism16_jsm64&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;state1&#39;</span><span class="p">,</span><span class="s1">&#39;fitr9-20&#39;</span><span class="p">,</span><span class="n">MesICS1</span><span class="p">)</span>
+<span class="n">defFitDict</span><span class="p">[</span><span class="s1">&#39;Kud01375400Ks01364000_-a-_P4_doub_pp000_tsrc0_tsink13_ism64_PoF0D1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;fitr4-8&#39;</span>
+<span class="n">defFitDict</span><span class="p">[</span><span class="s1">&#39;Kud01375400Ks01364000_-a-_P4_doub_pp000_tsrc0_tsink13_ism32_PoF0D1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;fitr4-8&#39;</span>
+<span class="n">defFitDict</span><span class="p">[</span><span class="s1">&#39;Kud01375400Ks01364000_-a-_P4_doub_pp000_tsrc0_tsink13_ism16_PoF0D1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;fitr4-8&#39;</span>
+<span class="n">defFitDict</span><span class="p">[</span><span class="s1">&#39;Kud01375400Ks01364000_-a-_P3_doub_pp000_tsrc0_tsink13_ism64_PoF0D1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;fitr4-8&#39;</span>
+<span class="n">defFitDict</span><span class="p">[</span><span class="s1">&#39;Kud01375400Ks01364000_-a-_P3_doub_pp000_tsrc0_tsink13_ism32_PoF0D1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;fitr4-8&#39;</span>
+<span class="n">defFitDict</span><span class="p">[</span><span class="s1">&#39;Kud01375400Ks01364000_-a-_P3_doub_pp000_tsrc0_tsink13_ism16_PoF0D1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;fitr4-8&#39;</span>
+<span class="n">defFitDict</span><span class="p">[</span><span class="s1">&#39;MassForFF&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">defFitDict</span><span class="p">[</span><span class="s1">&#39;Kud01375400Ks01364000_-a-_Baryon_CPEven_tsrc0_ism64_jsm64&#39;</span><span class="p">]</span>
+
+
+<span class="n">defFitAllGamma</span> <span class="o">=</span> <span class="s1">&#39;fitr4-8&#39;</span>
+
+<span class="n">defFitDict2</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+<span class="n">defFitDict2</span><span class="p">[</span><span class="s1">&#39;Baryon_CPEven_tsrc0_ism64_jsm64&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;state2&#39;</span><span class="p">,</span><span class="s1">&#39;fitr5-20&#39;</span><span class="p">)</span>
+<span class="n">defFitDict2</span><span class="p">[</span><span class="s1">&#39;Baryon_CPEven_tsrc0_ism32_jsm64&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;state2&#39;</span><span class="p">,</span><span class="s1">&#39;fitr5-20&#39;</span><span class="p">)</span>
+<span class="n">defFitDict2</span><span class="p">[</span><span class="s1">&#39;Baryon_CPEven_tsrc0_ism16_jsm64&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;state2&#39;</span><span class="p">,</span><span class="s1">&#39;fitr5-20&#39;</span><span class="p">)</span>
+<span class="n">defFitDict2</span><span class="p">[</span><span class="s1">&#39;Meson_Pion_tsrc0_ism64_jsm64&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;state2&#39;</span><span class="p">,</span><span class="s1">&#39;fitr5-20&#39;</span><span class="p">,</span><span class="n">MesICS2</span><span class="p">)</span>
+<span class="n">defFitDict2</span><span class="p">[</span><span class="s1">&#39;Meson_Pion_tsrc0_ism32_jsm64&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;state2&#39;</span><span class="p">,</span><span class="s1">&#39;fitr5-20&#39;</span><span class="p">,</span><span class="n">MesICS2</span><span class="p">)</span>
+<span class="n">defFitDict2</span><span class="p">[</span><span class="s1">&#39;Meson_Pion_tsrc0_ism16_jsm64&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;state2&#39;</span><span class="p">,</span><span class="s1">&#39;fitr5-20&#39;</span><span class="p">,</span><span class="n">MesICS2</span><span class="p">)</span>
+
+
+<span class="c1">##HERE TODO</span>
+<span class="n">defFitAlpha</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+<span class="n">defFitAlpha</span><span class="p">[</span><span class="s1">&#39;tsrc0_ism64_jsm64_TopCharge&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;fitr8-10&#39;</span>
+<span class="n">defFitAlpha</span><span class="p">[</span><span class="s1">&#39;tsrc0_ism32_jsm32_TopCharge&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;fitr8-10&#39;</span>
+<span class="n">defFitAlpha</span><span class="p">[</span><span class="s1">&#39;tsrc0_ism16_jsm16_TopCharge&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;fitr8-10&#39;</span>
+<span class="n">defFitAlpha</span><span class="p">[</span><span class="s1">&#39;RC32x64_Kud01375400Ks01364000_-a-_tsrc0_ism64_PoF0D1_TopCharge&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;fitr8-10&#39;</span>
+<span class="n">defFitAlpha</span><span class="p">[</span><span class="s1">&#39;Kud01375400Ks01364000_-a-_tsrc0_ism64_PoF0D1_TopCharge&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;fitr8-10&#39;</span>
+<span class="n">defFitAlpha</span><span class="p">[</span><span class="s1">&#39;Kud01375400Ks01364000_-a-_tsrc0_ism64_jsm64_TopCharge&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;fitr8-10&#39;</span>
+<span class="n">defFitAlpha</span><span class="p">[</span><span class="s1">&#39;Kud01375400Ks01364000_-a-_tsrc0_ism32_jsm64_TopCharge&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;fitr8-10&#39;</span>
+<span class="n">defFitAlpha</span><span class="p">[</span><span class="s1">&#39;Kud01375400Ks01364000_-a-_tsrc0_ism16_jsm64_TopCharge&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;fitr8-10&#39;</span>
+
+
+
+
+
+
+<span class="n">defcfglist</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+<span class="n">defcfglist</span><span class="p">[</span><span class="s1">&#39;-a-004310&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,[</span><span class="mi">101</span><span class="p">,</span><span class="mi">102</span><span class="p">]))</span>
+<span class="n">defcfglist</span><span class="p">[</span><span class="s1">&#39;-a-004010&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,[</span><span class="mi">101</span><span class="p">,</span><span class="mi">102</span><span class="p">]))</span>
+<span class="n">defcfglist</span><span class="p">[</span><span class="s1">&#39;-a-003310&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,[</span><span class="mi">101</span><span class="p">,</span><span class="mi">102</span><span class="p">]))</span>
+
+
+<span class="n">defSetsOfInfos</span> <span class="o">=</span> <span class="p">[</span><span class="n">defInfo</span><span class="p">,</span><span class="n">defInfo2</span><span class="p">,</span><span class="n">defInfo3</span><span class="p">]</span>
+
+
+<span class="c1">## used to fix the stupid right add/sub/mult etc.. problem when overloading operators</span>
+<div class="viewcode-block" id="ParentClasses"><a class="viewcode-back" href="../Params.html#Params.ParentClasses">[docs]</a><span class="k">def</span> <span class="nf">ParentClasses</span><span class="p">(</span><span class="n">thisclass</span><span class="p">,</span><span class="n">parentclasses</span><span class="p">):</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">for</span> <span class="n">iparent</span> <span class="ow">in</span> <span class="n">parentclasses</span><span class="p">:</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">out</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thisclass</span><span class="p">,</span><span class="n">iparent</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">out</span></div>
+
+<span class="c1">## turns list of tflows into sqrt(8*tflow)</span>
+<div class="viewcode-block" id="TflowToPhys"><a class="viewcode-back" href="../Params.html#Params.TflowToPhys">[docs]</a><span class="k">def</span> <span class="nf">TflowToPhys</span><span class="p">(</span><span class="n">tflowlist</span><span class="p">,</span><span class="n">thislatspace</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tflowlist</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tflowlist</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">iflow</span> <span class="ow">in</span> <span class="n">tflowlist</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">iflow</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+                <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">8</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="n">iflow</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;t_f&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)))</span><span class="o">*</span><span class="n">thislatspace</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">8</span><span class="o">*</span><span class="n">iflow</span><span class="p">)</span><span class="o">*</span><span class="n">thislatspace</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">output</span> <span class="c1">## in fermi</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tflowlist</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">8</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="n">tflowlist</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;t_f&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)))</span><span class="o">*</span><span class="n">thislatspace</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">8</span><span class="o">*</span><span class="n">tflowlist</span><span class="p">)</span><span class="o">*</span><span class="n">thislatspace</span></div>
+
+<span class="c1">## CURRENLTY LOCKING DOES NOT WORK WITH MULTICORE....</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table of Contents</h3>
+          <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Python_Analysis</a></li>
+</ul>
+
+          <div role="search">
+            <h3 style="margin-top: 1.5em;">Search</h3>
+            <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+            </form>
+          </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <div role="navigation" aria-label="related navigaton">
+            <a href="../py-modindex.html" title="Python Module Index"
+              >modules</a> |
+            <a href="../genindex.html" title="General Index"
+              >index</a>
+          </div>
+          <div role="note" aria-label="source link">
+          </div>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Jack Dragos.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>

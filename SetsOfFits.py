@@ -4,7 +4,7 @@ import numpy as np
 
 from MiscFuns import ODNested
 
-from BootStrapping import BootStrap
+from BootStrapping import BootStrap,CombineBS
 import FitFunctions as ff
 # from FitFunctions import Fitting
 import pandas as pa
@@ -13,8 +13,11 @@ from copy import copy
 from MiscFuns import get_val_float
 from XmlFormatting import xmlfitr
 from TimeStuff import Timer
-from XmlFormatting import unxmlfitr_int
+from XmlFormatting import unxmlfitr_int,MakeValAndErr
 from copy import deepcopy
+from NullPlotData import null_series
+
+
 
 ## keepkeys is for keeping track of "fit funtions, fit ranges etc..."
 def PullSOFSeries_Wpar(this_series,keep_keys=slice(None),fmted=True):
@@ -40,6 +43,7 @@ def PullSOFSeries_Wpar(this_series,keep_keys=slice(None),fmted=True):
         return pa.Series(outl,index=indicies).dropna()
     else:
         return pa.Series()
+
 
 
 def PullSOFSeries(this_series,keep_keys=slice(None),fmted=True):
@@ -187,17 +191,17 @@ class SetOfFitFuns(object):
         self.ndim_fit = self.xdata.shape[0]
 
 
-    def Get_Extrapolation(self,fmted=True):
+    def Get_Extrapolation(self,fmted=True,with_chi=False):
         if fmted:
             if 'Fit' in self.Fit_Stats_fmt:
-                return ff.PullFitSeries(self.Fit_Stats_fmt['Fit'])
-            else:
-                return pa.Series()
+                return ff.PullFitSeries(self.Fit_Stats_fmt['Fit'],with_chi=with_chi)
         else:
             if 'Fit' in self.Fit_Stats:
-                return ff.PullFitSeries(self.Fit_Stats['Fit'])
-            else:
-                return pa.Series()
+                return ff.PullFitSeries(self.Fit_Stats['Fit'],with_chi=with_chi)
+        if with_chi:
+            return pa.Series(),pa.Series()
+        else:
+            return pa.Series()
 
 
 
@@ -484,7 +488,10 @@ class SetOfFitFuns(object):
         return out_list,out_2_list
 
     def GetXdataValue(self,fit_min,fit_max,index):
-        sort_xvals = np.array(self.xdata_split[index])
+        if not hasattr(self,'xdata_split') or self.xdata_split is None:
+            sort_xvals = self.xdata[0]
+        else:
+            sort_xvals = np.array(self.xdata_split[index])
         if get_val_float(fit_min) not in sort_xvals:
             print('fit_min ',fit_min,' not in xdata, finding closest values above')
             fit_min = sort_xvals[sort_xvals > fit_min]
@@ -513,10 +520,14 @@ class SetOfFitFuns(object):
     def MakeFitRanges(self,fit_min,fit_max,npar,from_xdata=False,index=0):
         if from_xdata:
             fit_min,fit_max = self.GetXdataValue(fit_min,fit_max,index)
-            fit_min = list(self.xdata_split[index]).index(get_val_float(fit_min))
-            fit_max = list(self.xdata_split[index]).index(get_val_float(fit_max))
+            if not hasattr(self,'xdata_split') or self.xdata_split is None:
+                this_x = self.xdata[0]
+            else:
+                this_x = self.xdata_split[index]
+            fit_min = list(this_x).index(get_val_float(fit_min))
+            fit_max = list(this_x).index(get_val_float(fit_max))
             if fit_min == fit_max:
-                if fit_max < len(self.xdata_split[index])-1:
+                if fit_max < len(this_x)-1:
                     fit_max = fit_max+1
                 fit_min = max(0,fit_min-npar)
         out_list = []
@@ -528,10 +539,14 @@ class SetOfFitFuns(object):
     def MakeFitRanges_FixEnd(self,fit_min,fit_max,npar,from_xdata=False,index=0):
         if from_xdata:
             fit_min,fit_max = self.GetXdataValue(fit_min,fit_max,index)
-            fit_min_i = list(self.xdata_split[index]).index(get_val_float(fit_min))
-            fit_max_i = list(self.xdata_split[index]).index(get_val_float(fit_max))
+            if not hasattr(self,'xdata_split') or self.xdata_split is None:
+                this_x = self.xdata[0]
+            else:
+                this_x = self.xdata_split[index]
+            fit_min_i = list(this_x).index(get_val_float(fit_min))
+            fit_max_i = list(this_x).index(get_val_float(fit_max))
             if fit_min == fit_max:
-                if fit_max < len(self.xdata_split[index])-1:
+                if fit_max < len(this_x)-1:
                     fit_max = fit_max+1
                 fit_min = max(0,fit_min-npar)
             # print('DEBUG fit_min_i',fit_min_i)
@@ -835,9 +850,6 @@ class SetOfFitFuns(object):
         self.ImportFits(fit_info)
         return True
 
-
-
-
     def SortChi(self):
         if not self.ChiSorted:
             if 'Chi2pdf' not in self.Fit_Stats:
@@ -849,6 +861,68 @@ class SetOfFitFuns(object):
                 self.Fit_Stats_fmt = self.Fit_Stats_fmt.sort_values('Chi2pdfAvg')
                 self.ChiSorted_fmt = True
             self.ChiSorted = True
+
+    def PlotVaryFitr(self,plot_plane,acutal_x=True,chi_min=0,chi_max=2,
+                     thiscol=None,thissym=None,thisshift=None):
+        all_data,cut_data = self.Get_Extrapolation(fmted=False,with_chi=True)
+        if len(all_data) == 0:
+            print('plotfitvary has no data to extrapolate')
+            return plot_plane
+        all_data = all_data.to_frame('data').reset_index()
+        cut_data = cut_data.to_frame('chi_data').reset_index()
+        cut_data = all_data.loc[np.logical_and((cut_data['chi_data'].apply(lambda x : x.Avg) >= int(chi_min)).values,
+                                (cut_data['chi_data'].apply(lambda x : x.Avg) <= int(chi_max)).values),:]
+        if len(cut_data) == 0:
+            print('WARNING, no chi ranges')
+            print('chi_min:',chi_min)
+            print('chi_min:',chi_min)
+            # print('ramge of chi values are are')
+            # print('min_chi:',min(cut_data['chi_data'].apply(lambda x : x.Avg)))
+            # print('min_chi:',max(cut_data['chi_data'].apply(lambda x : x.Avg)))
+            print('using all chi values for this result')
+            cut_data = all_data
+        if acutal_x:
+            if not hasattr(self,'xdata_split') or self.xdata_split is None:
+                pull_x = lambda x : f'{self.xdata[0][int(x)]:.4f}'
+                cut_data.loc[:,'fit_min'] = cut_data['fit_min'].apply(pull_x)
+                cut_data.loc[:,'fit_max'] = cut_data['fit_max'].apply(pull_x)
+            else:
+                raise NotImplementedError('acutal x values for 2d plotting not implemented yet.')
+        this_index = list(cut_data.columns)
+        del this_index[this_index.index('data')]
+        # del this_index[this_index.index('Function')]
+        # del this_index[this_index.index('iGuess')]
+        cut_data = cut_data.set_index(this_index)['data']
+        hold_series = null_series
+        hold_series['symbol'] = thissym
+        hold_series['color'] = thiscol
+        hold_series['shift'] = thisshift
+        hold_series['type'] = 'error_bar_vary'
+        first_key = (slice(None),)+tuple(cut_data.index[0])[1:]
+        hold_series['key_select'] = first_key
+        hold_series['x_data'] = 'from_keys'
+        hold_series['y_data'] = cut_data.apply(lambda x : x.Avg)
+        hold_series['yerr_data'] = cut_data.apply(lambda x : x.Std)
+        hold_series['label'] = self.name
+        plot_plane.AppendData(hold_series)
+        return plot_plane
+
+    ## TODO ###
+    # def PlotChiVaryFitr(self,plot_plane,chi_min=0,chi_max=2):
+    #     all_data,chi_data = self.Get_Extrapolation(fmted=False,with_chi=True)
+    #     chi_data = chi_data.to_frame('chi_data').reset_index()
+    #     all_data = deepcopy(chi_data)
+    #     chi_data = chi_data.loc[np.logical_and((chi_data['chi_data'].apply(lambda x : x.Avg) >= int(chi_min)).values,
+    #                             (chi_data['chi_data'].apply(lambda x : x.Avg) <= int(chi_max)).values),:]
+    #     if len(chi_data) == 0:
+    #         print('WARNING, no chi ranges')
+    #         print('chi_min:',chi_min)
+    #         print('chi_min:',chi_min)
+    #         # print('ramge of chi values are are')
+    #         # print('min_chi:',min(chi_data['chi_data'].apply(lambda x : x.Avg)))
+    #         # print('min_chi:',max(chi_data['chi_data'].apply(lambda x : x.Avg)))
+    #         print('using all chi values for this result')
+    #         chi_data = all_data
 
     def PlotFunction(self,ikey,otherXvals=[],xaxis=0,xdatarange='Data',thislineres=100,
                     color=None,shift=0.0,flowphys=False,ShowPar='None',scale=1.0,
@@ -986,6 +1060,49 @@ class SetOfFitFuns(object):
     #         output_data.loc[:,icol] = pa.Series(col_data.values,index=indicies)
     #     return output_data,rand_list
 
+    def Get_Formatted_Table(self,fmt_latex=False):
+        self.PullIdenticalParams()
+        self.PullPlotLen()
+        print(self.Fit_Stats_fmt.to_latex(escape=False))
+        print('\n'.join(self.Fit_Stats_fmt.columns))
+        par_list = ['len_val','fit_min_val','len','fit_max_val']
+        par_list += [icol for icol in self.Fit_Stats_fmt.columns if 'par_' in icol and ('_Avg' in icol or '_Std' in icol)]
+        par_list += ['Chi2pdfAvg','Chi2pdfStd']
+        fmt_fit = self.Fit_Stats_fmt.reset_index()[par_list]
+        valerr_fit = pa.DataFrame()
+        for icol in fmt_fit.columns:
+            if 'Avg' in icol:
+                err_col = icol.replace('_Avg','_Std').replace('Avg','Std')
+                valerr_fit[icol.replace('_Avg','').replace('Avg','')] = fmt_fit.apply(lambda x : MakeValAndErr(x[icol],x[err_col],latex=fmt_latex,Dec=2),axis=1)
+            elif 'Std' not in icol:
+                valerr_fit[icol] = fmt_fit[icol]
+        if fmt_latex:
+            valerr_fit.columns = ['$'+icol+'$' for icol in valerr_fit.columns]
+            for icol in valerr_fit.columns:
+                if isinstance(valerr_fit[icol].iloc[0],str):
+                    valerr_fit[icol] = valerr_fit[icol].apply(lambda x : '$'+x+'$')
+                else:
+                    valerr_fit[icol] = valerr_fit[icol].apply(lambda x : f'${x:0.3f}$')
+        return valerr_fit
+
+    def PullPlotLen(self):
+        self.PullPlotFitr()
+        if not hasattr(self,'xdata_split') or self.xdata_split is None:
+            self.Fit_Stats['len_val'] = self.Fit_Stats['fit_max_val'] - self.Fit_Stats['fit_min_val']
+            self.Fit_Stats_fmt['len_val'] = self.Fit_Stats_fmt['fit_max_val'] - self.Fit_Stats_fmt['fit_min_val']
+        else:
+            raise NotImplementedError('pull plot len not implemented for 2d fitting yet.')
+
+    def PullPlotFitr(self):
+        if not hasattr(self,'xdata_split') or self.xdata_split is None:
+            self.Fit_Stats['fit_min_val'] = pa.Series(self.Fit_Stats.reset_index()['fit_min'].apply(lambda x : self.xdata[0][int(x)]).values,index=self.Fit_Stats.index)
+            self.Fit_Stats['fit_max_val'] = pa.Series(self.Fit_Stats.reset_index()['fit_max'].apply(lambda x : self.xdata[0][int(x)]).values,index=self.Fit_Stats.index)
+            self.Fit_Stats_fmt['fit_min_val'] = pa.Series(self.Fit_Stats.reset_index()['fit_min'].apply(lambda x : self.xdata[0][int(x)]).values,index=self.Fit_Stats_fmt.index)
+            self.Fit_Stats_fmt['fit_max_val'] = pa.Series(self.Fit_Stats.reset_index()['fit_max'].apply(lambda x : self.xdata[0][int(x)]).values,index=self.Fit_Stats_fmt.index)
+        else:
+            raise NotImplementedError('pull plot fitr not implemented for 2d fitting yet.')
+
+
     def PullIdenticalParams(self):
         if self.VaryFunctions: return
         count = 0
@@ -1074,6 +1191,68 @@ class SetOfFitFuns(object):
             return this_index[0]+' fitr'+'-'.join(map(str,this_index[2:-1])) + ' '+this_index[-1]
         elif len(this_index) == 6:
             return this_index[0]+' fitr'+'-'.join(map(str,this_index[2:-2]))+ ' fittwor'+'-'.join(map(str,this_index[-2:]))
+
+    def Comb_Max_fitr(self,fix_max,cut_min=False,resample=False,chi_min=0,chi_max=2):
+        all_data,chi_data = self.Get_Extrapolation(fmted=False,with_chi=True)
+        all_data = all_data.to_frame('data').reset_index()
+        chi_data = chi_data.to_frame('chi_data').reset_index()
+        chi_data = all_data.loc[np.logical_and((chi_data['chi_data'].apply(lambda x : x.Avg) >= int(chi_min)).values,
+                                (chi_data['chi_data'].apply(lambda x : x.Avg) <= int(chi_max)).values),:]
+        if len(chi_data) == 0:
+            print('WARNING, no chi ranges')
+            print('chi_min:',chi_min)
+            print('chi_min:',chi_min)
+            print('ramge of chi values are are')
+            print('min_chi:',min(chi_data['chi_data'].apply(lambda x : x.Avg)))
+            print('min_chi:',max(chi_data['chi_data'].apply(lambda x : x.Avg)))
+            print('using all chi values for this result')
+            chi_data = all_data
+        this_data = chi_data[chi_data['fit_max'].apply(int) == int(fix_max)]
+        if cut_min is not False:
+            this_data = this_data[this_data['fit_min'].apply(int) >= int(cut_min)]
+        if len(this_data) == 0:
+            print('WARNING, no comb_max_fitr for these parameters')
+            print('fit_max:',fix_max)
+            print('cut_min:',cut_min)
+            print('using all fit ranges values for this result')
+            this_data = chi_data
+        parvals,parindex = [],[]
+        for ikey,ival in this_data.groupby('fit parameter'):
+            parvals.append(CombineBS(ival['data'],name=str(ikey),resample=resample))
+            parindex.append(ikey)
+        if len(parindex) > 0:
+            out_series = pa.Series(parvals,index=parindex)
+        else:
+            out_series = pa.Series()
+        return out_series
+
+    def Comb_Min_fitr(self,fix_min,cut_max=False,resample=False,chi_min=0,chi_max=2):
+        all_data = self.Get_Extrapolation(fmted=False).to_frame('data').reset_index()
+        all_data = all_data[all_data['fit_min'].apply(int) == int(fix_min)]
+        if cut_max is not False:
+            all_data = all_data[all_data['fit_min'].apply(int) >= int(cut_max)]
+        this_data = all_data[all_data['Chi2DoF'].apply(lambda x : x.Avg) >= int(chi_min)]
+        this_data = this_data[this_data['Chi2DoF'].apply(lambda x : x.Avg) <= int(chi_max)]
+        if len(this_data) == 0:
+            print('WARNING, no comb_max_fitr for these parameters')
+            print('fit_min:',fix_min)
+            print('cut_max:',cut_max)
+            print('min_chi:',chi_min)
+            print('max_chi:',chi_max)
+            print('ramge of chi values are are')
+            print('min_chi:',min(all_data['Chi2DoF'].apply(lambda x : x.Avg)))
+            print('min_chi:',max(all_data['Chi2DoF'].apply(lambda x : x.Avg)))
+            print('using all chi values for this result')
+            this_data = all_data
+        parvals,parindex = [],[]
+        for ikey,ival in this_data.groupby('fit parameter'):
+            parvals.append(CombineBS(ival['data'],name=str(ikey),resample=resample)['data'])
+            parindex.append(ikey)
+        if len(parindex) > 0:
+            out_series = pa.Series(parvals,index=parindex)
+        else:
+            out_series = pa.Series()
+        return out_series
 
     def MakeFormatted(self):
         indexl = []
@@ -1357,6 +1536,47 @@ class SetOfFitFuns(object):
 
     def iteritems_fmt(self):
         return iter(self.Fit_Stats_fmt['Fit'].items())
+
+
+    def Cut_min_len(self,min_fit_len):
+        hold_index = self.Fit_Stats.index.names
+        hold_index_fmt = self.Fit_Stats_fmt.index.names
+        hold_fit = self.Fit_Stats.reset_index()
+        cut_series = hold_fit['fit_max'].apply(lambda x : int(x))-hold_fit['fit_min'].apply(lambda x : int(x)) > min_fit_len
+        if len(cut_series) == 0:
+            print('Cut_min_len too big, using largest fit range')
+            max_cut_len = max(hold_fit['fit_max'].apply(lambda x : int(x))-hold_fit['fit_min'].apply(lambda x : int(x)))
+            cut_series =  hold_fit['fit_max'].apply(lambda x : int(x))-hold_fit['fit_min'].apply(lambda x : int(x))== max_cut_len
+        self.Fit_Stats = hold_fit[cut_series].set_index(hold_index)
+        self.Fit_Stats_fmt = self.Fit_Stats_fmt.reset_index()[cut_series].set_index(hold_index_fmt)
+
+    def Cut_max(self,max_cut):
+        hold_index_fmt = self.Fit_Stats_fmt.index.names
+        hold_index = self.Fit_Stats.index.names
+        hold_fit = self.Fit_Stats.reset_index()
+        cut_series = hold_fit['fit_max'].apply(lambda x : int(x)) < max_cut
+        self.Fit_Stats = hold_fit[cut_series].set_index(hold_index)
+        self.Fit_Stats_fmt = self.Fit_Stats_fmt.reset_index()[cut_series].set_index(hold_index_fmt)
+
+    def Cut_min(self,min_cut):
+        hold_index_fmt = self.Fit_Stats_fmt.index.names
+        hold_index = self.Fit_Stats.index.names
+        hold_fit = self.Fit_Stats.reset_index()
+        cut_series = hold_fit['fit_min'].apply(lambda x : int(x)) > min_cut
+        self.Fit_Stats = hold_fit[cut_series].set_index(hold_index)
+        self.Fit_Stats_fmt = self.Fit_Stats_fmt.reset_index()[cut_series].set_index(hold_index_fmt)
+
+    def Fitr_Len_Sort(self):
+        hold_index_fmt = self.Fit_Stats_fmt.index.names
+        hold_index = self.Fit_Stats.index.names
+        hold_fit = self.Fit_Stats.reset_index()
+        hold_fit_fmt = self.Fit_Stats_fmt.reset_index()
+        hold_fit['len'] = 1/(hold_fit['fit_max'].apply(lambda x : int(x))-hold_fit['fit_min'].apply(lambda x : int(x)))
+        hold_fit_fmt['len'] = hold_fit['len']
+        self.Fit_Stats = hold_fit.sort_values('len').set_index(hold_index)
+        self.Fit_Stats_fmt = hold_fit_fmt.sort_values('len').set_index(hold_index_fmt)
+        self.Fit_Stats_fmt['len'] = 1/self.Fit_Stats_fmt['len']
+        self.Fit_Stats['len'] = 1/self.Fit_Stats['len']
 
 
 def TestSetOfFits():

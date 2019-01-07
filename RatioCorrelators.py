@@ -11,7 +11,7 @@ from FileIO import ReadFuns,WriteFuns
 # from PredefFitFuns import ConstantFitFun,RF_Prop_Fit
 from PredefFitFuns import ConstantFitFun
 import SetsOfFits as sff
-from PlotData import null_series
+from NullPlotData import null_series
 from TwoPtCorrelators import NNQCorr
 # from TwoPtCorrelators import TwoPointCorr,NNQCorr,NNQFullCorr
 # from FlowOpps import FlowOp

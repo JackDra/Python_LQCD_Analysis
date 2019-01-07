@@ -1,0 +1,586 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>FileIO &#8212; LQCD Analysis Codebase TF Fits documentation</title>
+    <link rel="stylesheet" href="../_static/agogo.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="header-wrapper" role="banner">
+      <div class="header">
+        <div class="headertitle"><a
+          href="../index.html">LQCD Analysis Codebase TF Fits documentation</a></div>
+        <div class="rel" role="navigation" aria-label="related navigation">
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for FileIO</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">## THIS FILE IS TEMPORARY, FOR DEBUGGING AND SIMPLE DEFAULT PARAMETERS</span>
+<span class="c1">## TODO: either default parameters in file, or even GUI?...</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">MiscFuns</span> <span class="k">import</span> <span class="n">is_number</span><span class="p">,</span><span class="n">fmt_file_type</span>
+<span class="kn">from</span> <span class="nn">xmltodict</span> <span class="k">import</span> <span class="n">unparse</span><span class="p">,</span><span class="n">parse</span>
+<span class="kn">from</span> <span class="nn">XmlFormatting</span> <span class="k">import</span> <span class="n">FormatToDictAvgStdChi</span><span class="p">,</span><span class="n">FormatToDictAvgStd</span>
+<span class="kn">import</span> <span class="nn">pickle</span> <span class="k">as</span> <span class="nn">pickle</span>
+<span class="c1"># import dill as pickle</span>
+<span class="c1"># import pickle as dill</span>
+<span class="kn">import</span> <span class="nn">dill</span>
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span><span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pa</span>
+<span class="kn">from</span> <span class="nn">Params</span> <span class="k">import</span> <span class="n">write_excel</span><span class="p">,</span><span class="n">ShowXmlWrite</span><span class="p">,</span><span class="n">functiondir</span>
+<span class="kn">from</span> <span class="nn">Params</span> <span class="k">import</span> <span class="n">All_Classes_Names</span><span class="p">,</span><span class="n">ShowRead</span><span class="p">,</span><span class="n">cfg_file_type</span><span class="p">,</span><span class="n">Debug_Mode</span><span class="p">,</span><span class="n">test_file</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">fcntl</span>
+
+<span class="n">py2_encoding</span> <span class="o">=</span> <span class="s1">&#39;latin1&#39;</span>
+
+<div class="viewcode-block" id="WriteWithMeta"><a class="viewcode-back" href="../FileIO.html#FileIO.WriteWithMeta">[docs]</a><span class="k">def</span> <span class="nf">WriteWithMeta</span><span class="p">(</span><span class="n">df_data</span><span class="p">,</span><span class="n">meta_data</span><span class="p">,</span><span class="n">this_file</span><span class="p">,</span><span class="n">file_type</span><span class="o">=</span><span class="n">cfg_file_type</span><span class="p">):</span>
+    <span class="k">if</span> <span class="s1">&#39;None&#39;</span> <span class="ow">in</span> <span class="n">cfg_file_type</span><span class="p">:</span>
+        <span class="c1"># print</span>
+        <span class="c1"># print &#39;forced code to not write cfgs&#39;</span>
+        <span class="k">return</span>
+    <span class="k">if</span> <span class="s1">&#39;to_&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">file_type</span><span class="p">:</span>
+        <span class="n">file_type</span> <span class="o">=</span> <span class="s1">&#39;to_&#39;</span><span class="o">+</span><span class="n">file_type</span>
+    <span class="n">file_ext</span> <span class="o">=</span> <span class="n">fmt_file_type</span><span class="p">(</span><span class="n">file_type</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;to_&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="s1">&#39;.&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">file_ext</span><span class="p">:</span>
+        <span class="n">file_ext</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="o">+</span><span class="n">file_ext</span>
+    <span class="k">if</span> <span class="n">file_ext</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">this_file</span><span class="p">:</span>
+        <span class="n">this_file</span> <span class="o">+=</span> <span class="n">file_ext</span>
+    <span class="k">if</span> <span class="n">file_ext</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;.csv&#39;</span><span class="p">,</span><span class="s1">&#39;.json&#39;</span><span class="p">,</span><span class="s1">&#39;.html&#39;</span><span class="p">]:</span>
+        <span class="nb">getattr</span><span class="p">(</span><span class="n">df_data</span><span class="p">,</span><span class="n">file_type</span><span class="p">)(</span><span class="n">this_file</span><span class="p">)</span>
+        <span class="nb">getattr</span><span class="p">(</span><span class="n">pa</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">meta_data</span><span class="p">),</span><span class="n">file_type</span><span class="p">)(</span><span class="n">this_file</span><span class="o">+</span><span class="s1">&#39;.meta&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">this_file</span><span class="p">,</span><span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">fcntl</span><span class="o">.</span><span class="n">flock</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">fcntl</span><span class="o">.</span><span class="n">LOCK_EX</span><span class="p">)</span>
+                <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">meta_data</span><span class="p">,</span><span class="n">f</span><span class="p">)</span>
+                <span class="nb">getattr</span><span class="p">(</span><span class="n">df_data</span><span class="p">,</span><span class="n">file_type</span><span class="p">)(</span><span class="n">f</span><span class="p">)</span>
+                <span class="n">fcntl</span><span class="o">.</span><span class="n">flock</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">fcntl</span><span class="o">.</span><span class="n">LOCK_UN</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">this_file</span><span class="p">,</span><span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">meta_data</span><span class="p">,</span><span class="n">f</span><span class="p">)</span>
+                    <span class="nb">getattr</span><span class="p">(</span><span class="n">df_data</span><span class="p">,</span><span class="n">file_type</span><span class="p">)(</span><span class="n">f</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err2</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">),</span><span class="nb">str</span><span class="p">(</span><span class="n">err2</span><span class="p">),</span><span class="s1">&#39;Error writing file&#39;</span><span class="p">,</span><span class="n">this_file</span><span class="p">]))</span></div>
+
+<div class="viewcode-block" id="ReadWithMetaPy2"><a class="viewcode-back" href="../FileIO.html#FileIO.ReadWithMetaPy2">[docs]</a><span class="k">def</span> <span class="nf">ReadWithMetaPy2</span><span class="p">(</span><span class="n">this_file</span><span class="p">,</span><span class="n">file_type</span><span class="o">=</span><span class="n">cfg_file_type</span><span class="p">):</span>
+    <span class="k">if</span> <span class="s1">&#39;None&#39;</span> <span class="ow">in</span> <span class="n">cfg_file_type</span><span class="p">:</span>
+        <span class="c1"># print</span>
+        <span class="c1"># print &#39;forced code to not read cfgs&#39;</span>
+        <span class="k">return</span> <span class="p">[],</span><span class="n">pa</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+    <span class="k">if</span> <span class="s1">&#39;read_&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">file_type</span><span class="p">:</span>
+        <span class="n">file_type</span> <span class="o">=</span> <span class="s1">&#39;read_&#39;</span><span class="o">+</span><span class="n">file_type</span>
+    <span class="n">file_ext</span> <span class="o">=</span> <span class="n">fmt_file_type</span><span class="p">(</span><span class="n">file_type</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;read_&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="s1">&#39;.&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">file_ext</span><span class="p">:</span>
+        <span class="n">file_ext</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="o">+</span><span class="n">file_ext</span>
+    <span class="k">if</span> <span class="n">file_ext</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">this_file</span><span class="p">:</span>
+        <span class="n">this_file</span> <span class="o">+=</span> <span class="n">file_ext</span>
+    <span class="k">if</span> <span class="n">file_ext</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;.csv&#39;</span><span class="p">,</span><span class="s1">&#39;.json&#39;</span><span class="p">,</span><span class="s1">&#39;.html&#39;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">EnvironmentError</span><span class="p">(</span><span class="s1">&#39;reading human readable types: csv, json, html not supported&#39;</span><span class="p">)</span>
+        <span class="c1"># meta_data = getattr(pa,file_type)(this_file+&#39;.meta&#39;)</span>
+        <span class="c1"># df_data = getattr(pa,file_type)(this_file)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">this_file</span><span class="p">,</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">fcntl</span><span class="o">.</span><span class="n">flock</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">fcntl</span><span class="o">.</span><span class="n">LOCK_EX</span><span class="p">)</span>
+                <span class="n">meta_data</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">encoding</span><span class="o">=</span><span class="n">py2_encoding</span><span class="p">)</span>
+                <span class="n">df_data</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">pa</span><span class="p">,</span><span class="n">file_type</span><span class="p">)(</span><span class="n">f</span><span class="p">)</span>
+                <span class="n">fcntl</span><span class="o">.</span><span class="n">flock</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">fcntl</span><span class="o">.</span><span class="n">LOCK_UN</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">this_file</span><span class="p">,</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">meta_data</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">encoding</span><span class="o">=</span><span class="n">py2_encoding</span><span class="p">)</span>
+                    <span class="n">df_data</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">pa</span><span class="p">,</span><span class="n">file_type</span><span class="p">)(</span><span class="n">f</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err2</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">),</span><span class="nb">str</span><span class="p">(</span><span class="n">err2</span><span class="p">),</span><span class="s1">&#39;Error loading file&#39;</span><span class="p">,</span><span class="n">this_file</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="n">meta_data</span><span class="p">,</span><span class="n">df_data</span></div>
+
+
+<div class="viewcode-block" id="ReadWithMeta"><a class="viewcode-back" href="../FileIO.html#FileIO.ReadWithMeta">[docs]</a><span class="k">def</span> <span class="nf">ReadWithMeta</span><span class="p">(</span><span class="n">this_file</span><span class="p">,</span><span class="n">file_type</span><span class="o">=</span><span class="n">cfg_file_type</span><span class="p">):</span>
+    <span class="k">if</span> <span class="s1">&#39;None&#39;</span> <span class="ow">in</span> <span class="n">cfg_file_type</span><span class="p">:</span>
+        <span class="c1"># print</span>
+        <span class="c1"># print &#39;forced code to not read cfgs&#39;</span>
+        <span class="k">return</span> <span class="p">[],</span><span class="n">pa</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+    <span class="k">if</span> <span class="s1">&#39;read_&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">file_type</span><span class="p">:</span>
+        <span class="n">file_type</span> <span class="o">=</span> <span class="s1">&#39;read_&#39;</span><span class="o">+</span><span class="n">file_type</span>
+    <span class="n">file_ext</span> <span class="o">=</span> <span class="n">fmt_file_type</span><span class="p">(</span><span class="n">file_type</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;read_&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="s1">&#39;.&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">file_ext</span><span class="p">:</span>
+        <span class="n">file_ext</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="o">+</span><span class="n">file_ext</span>
+    <span class="k">if</span> <span class="n">file_ext</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">this_file</span><span class="p">:</span>
+        <span class="n">this_file</span> <span class="o">+=</span> <span class="n">file_ext</span>
+    <span class="k">if</span> <span class="n">file_ext</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;.csv&#39;</span><span class="p">,</span><span class="s1">&#39;.json&#39;</span><span class="p">,</span><span class="s1">&#39;.html&#39;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">EnvironmentError</span><span class="p">(</span><span class="s1">&#39;reading human readable types: csv, json, html not supported&#39;</span><span class="p">)</span>
+        <span class="c1"># meta_data = getattr(pa,file_type)(this_file+&#39;.meta&#39;)</span>
+        <span class="c1"># df_data = getattr(pa,file_type)(this_file)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">this_file</span><span class="p">,</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">fcntl</span><span class="o">.</span><span class="n">flock</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">fcntl</span><span class="o">.</span><span class="n">LOCK_EX</span><span class="p">)</span>
+                <span class="n">meta_data</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                <span class="n">df_data</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">pa</span><span class="p">,</span><span class="n">file_type</span><span class="p">)(</span><span class="n">f</span><span class="p">)</span>
+                <span class="n">fcntl</span><span class="o">.</span><span class="n">flock</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">fcntl</span><span class="o">.</span><span class="n">LOCK_UN</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">this_file</span><span class="p">,</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">meta_data</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                    <span class="n">df_data</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">pa</span><span class="p">,</span><span class="n">file_type</span><span class="p">)(</span><span class="n">f</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err2</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Error attempting to read pickle file, attempting to use encoding&#39;</span><span class="o">+</span><span class="n">py2_encoding</span><span class="p">)</span>
+                <span class="n">ReadWithMetaPy2</span><span class="p">(</span><span class="n">this_file</span><span class="p">,</span><span class="n">file_type</span><span class="o">=</span><span class="n">file_type</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">meta_data</span><span class="p">,</span><span class="n">df_data</span></div>
+
+
+<span class="c1">## CURRENLTY LOCKING DOES NOT WORK WITH MULTICORE....</span>
+
+<div class="viewcode-block" id="WriteExcel"><a class="viewcode-back" href="../FileIO.html#FileIO.WriteExcel">[docs]</a><span class="k">def</span> <span class="nf">WriteExcel</span><span class="p">(</span><span class="n">thisfile</span><span class="p">,</span><span class="n">df_list</span><span class="p">,</span><span class="n">flowcfglist</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">cfglist</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">Bak</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">Bak</span><span class="p">:</span> <span class="n">BackupFile</span><span class="p">(</span><span class="n">thisfile</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">write_excel</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">pa</span><span class="o">.</span><span class="n">ExcelWriter</span><span class="p">(</span><span class="n">thisfile</span><span class="p">)</span> <span class="k">as</span> <span class="n">writer</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">ikey</span><span class="p">,</span><span class="n">idf</span> <span class="ow">in</span> <span class="n">df_list</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="s1">&#39;boot&#39;</span> <span class="ow">in</span> <span class="n">idf</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span> <span class="k">del</span> <span class="n">idf</span><span class="p">[</span><span class="s1">&#39;boot&#39;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="s1">&#39;Auto&#39;</span> <span class="ow">in</span> <span class="n">idf</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span> <span class="k">del</span> <span class="n">idf</span><span class="p">[</span><span class="s1">&#39;Auto&#39;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="s1">&#39;Alphaboot&#39;</span> <span class="ow">in</span> <span class="n">idf</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span> <span class="k">del</span> <span class="n">idf</span><span class="p">[</span><span class="s1">&#39;Alphaboot&#39;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="s1">&#39;AlphaAuto&#39;</span> <span class="ow">in</span> <span class="n">idf</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span> <span class="k">del</span> <span class="n">idf</span><span class="p">[</span><span class="s1">&#39;AlphaAuto&#39;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="s1">&#39;EffM&#39;</span> <span class="ow">in</span> <span class="n">idf</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span> <span class="k">del</span> <span class="n">idf</span><span class="p">[</span><span class="s1">&#39;EffM&#39;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="s1">&#39;FF&#39;</span> <span class="ow">in</span> <span class="n">idf</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span> <span class="k">del</span> <span class="n">idf</span><span class="p">[</span><span class="s1">&#39;FF&#39;</span><span class="p">]</span>
+                <span class="n">idf</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="n">writer</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="n">ikey</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">flowcfglist</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">flowcfglist</span><span class="p">,</span><span class="n">pa</span><span class="o">.</span><span class="n">Series</span><span class="p">):</span>
+                    <span class="n">flowcfglist</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">flowcfglist</span><span class="p">)</span>
+                <span class="n">flowcfglist</span><span class="o">.</span><span class="n">to_frame</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;flow_configurations&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="n">writer</span><span class="p">,</span><span class="n">sheet_name</span><span class="o">=</span><span class="s1">&#39;flow_cfg_list&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">cfglist</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cfglist</span><span class="p">,</span><span class="n">pa</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+                    <span class="n">cfglist</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">cfglist</span><span class="p">)</span>
+                <span class="n">outcfg_list</span> <span class="o">=</span> <span class="n">cfglist</span><span class="p">[</span><span class="s1">&#39;configs&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_frame</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;configurations&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="s1">&#39;xsrc_list&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">cfglist</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span> <span class="n">outcfg_list</span><span class="p">[</span><span class="s1">&#39;n_xsrc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cfglist</span><span class="p">[</span><span class="s1">&#39;xsrc_list&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+                <span class="n">outcfg_list</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="n">writer</span><span class="p">,</span><span class="n">sheet_name</span><span class="o">=</span><span class="s1">&#39;cfg_list&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">params</span><span class="p">,</span><span class="n">pa</span><span class="o">.</span><span class="n">Series</span><span class="p">):</span>
+                    <span class="n">params</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">params</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Parameters&#39;</span><span class="p">)</span>
+                <span class="n">params</span><span class="o">.</span><span class="n">to_frame</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Parameters&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="n">writer</span><span class="p">,</span><span class="n">sheet_name</span><span class="o">=</span><span class="s1">&#39;Parameters&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="WriteXml"><a class="viewcode-back" href="../FileIO.html#FileIO.WriteXml">[docs]</a><span class="k">def</span> <span class="nf">WriteXml</span><span class="p">(</span><span class="n">thisfile</span><span class="p">,</span><span class="n">outputdict</span><span class="p">,</span><span class="n">Bak</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">Bak</span><span class="p">:</span> <span class="n">BackupFile</span><span class="p">(</span><span class="n">thisfile</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ShowXmlWrite</span> <span class="ow">and</span> <span class="s1">&#39;Parameters&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">thisfile</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Writing to &#39;</span><span class="p">,</span> <span class="n">thisfile</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">thisfile</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+        <span class="n">fcntl</span><span class="o">.</span><span class="n">flock</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">fcntl</span><span class="o">.</span><span class="n">LOCK_EX</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span> <span class="n">unparse</span><span class="p">(</span><span class="n">outputdict</span><span class="p">,</span><span class="n">pretty</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span><span class="s1">&#39;    &#39;</span><span class="p">))</span>
+        <span class="n">fcntl</span><span class="o">.</span><span class="n">flock</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">fcntl</span><span class="o">.</span><span class="n">LOCK_UN</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="c1"># for ikey,iout in outputdict[&#39;Results&#39;].iteritems():</span>
+        <span class="c1">#     print ikey</span>
+        <span class="c1">#     print type(iout)</span>
+        <span class="c1">#     print iout</span>
+        <span class="c1">#     print</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">thisfile</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+            <span class="n">fcntl</span><span class="o">.</span><span class="n">flock</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">fcntl</span><span class="o">.</span><span class="n">LOCK_EX</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span> <span class="n">unparse</span><span class="p">(</span><span class="n">outputdict</span><span class="p">,</span><span class="n">pretty</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span><span class="s1">&#39;    &#39;</span><span class="p">))</span>
+            <span class="n">fcntl</span><span class="o">.</span><span class="n">flock</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">fcntl</span><span class="o">.</span><span class="n">LOCK_UN</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err2</span><span class="p">:</span>
+            <span class="n">CheckFTDAS</span><span class="p">(</span><span class="n">outputdict</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">thisfile</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">outputdict</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">())</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">err</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">+</span><span class="n">err2</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1"> Error with outputting xml file </span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">thisfile</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="WriteFun_NoLock"><a class="viewcode-back" href="../FileIO.html#FileIO.WriteFun_NoLock">[docs]</a><span class="k">def</span> <span class="nf">WriteFun_NoLock</span><span class="p">(</span><span class="n">this_fun</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">this_fun</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+        <span class="n">this_file</span> <span class="o">=</span> <span class="n">functiondir</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">this_fun</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;.fun&#39;</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">this_fun</span><span class="p">,</span><span class="nb">int</span><span class="p">):</span>
+        <span class="n">this_file</span> <span class="o">=</span> <span class="n">functiondir</span><span class="o">+</span><span class="s1">&#39;par&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">this_fun</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;.fun&#39;</span>
+    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">this_fun</span><span class="p">,</span><span class="s1">&#39;file_name&#39;</span><span class="p">):</span>
+        <span class="n">this_file</span> <span class="o">=</span> <span class="n">functiondir</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">this_fun</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;.fun&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">this_file</span> <span class="o">=</span> <span class="n">functiondir</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">this_fun</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;.fun&#39;</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">this_file</span><span class="p">):</span>
+        <span class="k">return</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">this_file</span><span class="p">,</span><span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">dill</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">this_fun</span><span class="p">,</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Failed writing pickled file: </span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">+</span><span class="n">this_file</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="WriteFuns"><a class="viewcode-back" href="../FileIO.html#FileIO.WriteFuns">[docs]</a><span class="k">def</span> <span class="nf">WriteFuns</span><span class="p">(</span><span class="o">*</span><span class="n">these_funs</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">ivar</span> <span class="ow">in</span> <span class="n">these_funs</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ivar</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+            <span class="n">this_file</span> <span class="o">=</span> <span class="n">functiondir</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">ivar</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;.fun&#39;</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ivar</span><span class="p">,</span><span class="nb">int</span><span class="p">):</span>
+            <span class="n">this_file</span> <span class="o">=</span> <span class="n">functiondir</span><span class="o">+</span><span class="s1">&#39;par&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">ivar</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;.fun&#39;</span>
+        <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">ivar</span><span class="p">,</span><span class="s1">&#39;file_name&#39;</span><span class="p">):</span>
+            <span class="n">this_file</span> <span class="o">=</span> <span class="n">functiondir</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">ivar</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;.fun&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">this_file</span> <span class="o">=</span> <span class="n">functiondir</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">ivar</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;.fun&#39;</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">this_file</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">this_file</span><span class="p">,</span><span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">fcntl</span><span class="o">.</span><span class="n">flock</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">fcntl</span><span class="o">.</span><span class="n">LOCK_EX</span><span class="p">)</span>
+                <span class="n">dill</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">ivar</span><span class="p">,</span><span class="n">f</span><span class="p">)</span>
+                <span class="n">fcntl</span><span class="o">.</span><span class="n">flock</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">fcntl</span><span class="o">.</span><span class="n">LOCK_UN</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">WriteFun_NoLock</span><span class="p">(</span><span class="n">ivar</span><span class="p">)</span></div>
+            <span class="c1"># raise IOError(str(err)+&#39;\nFailed writing pickled file: \n&#39;+this_file)</span>
+
+
+
+<span class="c1"># def ReadFuns_Py2(*fun_names):</span>
+<span class="c1">#     fun_list = []</span>
+<span class="c1">#     for ifun in fun_names:</span>
+<span class="c1">#         fun_file = functiondir+ifun+&#39;.fun&#39;</span>
+<span class="c1">#         if os.path.isfile(fun_file):</span>
+<span class="c1">#             # try:</span>
+<span class="c1">#             with open(fun_file,&#39;rb&#39;) as f:</span>
+<span class="c1">#                 fun_list.append(dill.load(f))</span>
+<span class="c1">#             # except Exception as err:</span>
+<span class="c1">#             #     raise IOError(str(err)+&#39;\nFailed loading pickled file: \n&#39;+fun_file)</span>
+<span class="c1">#         else:</span>
+<span class="c1">#             print(&#39;FNF: &#39;+fun_file)</span>
+<span class="c1">#             fun_list.append(&#39;FNF: &#39;+fun_file)</span>
+<span class="c1">#     return fun_list</span>
+
+<div class="viewcode-block" id="ReadFuns_NoLock"><a class="viewcode-back" href="../FileIO.html#FileIO.ReadFuns_NoLock">[docs]</a><span class="k">def</span> <span class="nf">ReadFuns_NoLock</span><span class="p">(</span><span class="o">*</span><span class="n">fun_names</span><span class="p">):</span>
+    <span class="n">fun_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">ifun</span> <span class="ow">in</span> <span class="n">fun_names</span><span class="p">:</span>
+        <span class="n">fun_file</span> <span class="o">=</span> <span class="n">functiondir</span><span class="o">+</span><span class="n">ifun</span><span class="o">+</span><span class="s1">&#39;.fun&#39;</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">fun_file</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fun_file</span><span class="p">,</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">fun_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dill</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Failed loading pickled file: </span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">+</span><span class="n">fun_file</span><span class="p">)</span>
+            <span class="c1"># except Exception:</span>
+            <span class="c1">#     fun_list.append(ReadFuns_Py2(ifun)[0])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;FNF: &#39;</span><span class="o">+</span><span class="n">fun_file</span><span class="p">)</span>
+            <span class="n">fun_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;FNF: &#39;</span><span class="o">+</span><span class="n">fun_file</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fun_list</span></div>
+
+
+<div class="viewcode-block" id="ReadFuns"><a class="viewcode-back" href="../FileIO.html#FileIO.ReadFuns">[docs]</a><span class="k">def</span> <span class="nf">ReadFuns</span><span class="p">(</span><span class="o">*</span><span class="n">fun_names</span><span class="p">):</span>
+    <span class="n">fun_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">ifun</span> <span class="ow">in</span> <span class="n">fun_names</span><span class="p">:</span>
+        <span class="n">fun_file</span> <span class="o">=</span> <span class="n">functiondir</span><span class="o">+</span><span class="n">ifun</span><span class="o">+</span><span class="s1">&#39;.fun&#39;</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">fun_file</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fun_file</span><span class="p">,</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">fcntl</span><span class="o">.</span><span class="n">flock</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">fcntl</span><span class="o">.</span><span class="n">LOCK_EX</span><span class="p">)</span>
+                    <span class="n">fun_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dill</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+                    <span class="n">fcntl</span><span class="o">.</span><span class="n">flock</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">fcntl</span><span class="o">.</span><span class="n">LOCK_UN</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="n">fun_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ReadFuns_NoLock</span><span class="p">(</span><span class="n">ifun</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="c1"># raise IOError(str(err)+&#39;\nFailed loading pickled file: \n&#39;+fun_file)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;FNF: &#39;</span><span class="o">+</span><span class="n">fun_file</span><span class="p">)</span>
+            <span class="n">fun_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;FNF: &#39;</span><span class="o">+</span><span class="n">fun_file</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fun_list</span></div>
+
+
+<div class="viewcode-block" id="WriteDill"><a class="viewcode-back" href="../FileIO.html#FileIO.WriteDill">[docs]</a><span class="k">def</span> <span class="nf">WriteDill</span><span class="p">(</span><span class="n">thisfile</span><span class="p">,</span><span class="n">outputdict</span><span class="p">,</span><span class="n">this_err</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">thisfile</span><span class="p">,</span><span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">dill</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">outputdict</span><span class="p">,</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err2</span><span class="p">:</span>
+        <span class="n">CheckFTDAS</span><span class="p">(</span><span class="n">outputdict</span><span class="p">,</span><span class="n">this_err</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">this_err</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">err2</span><span class="p">)</span><span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1"> Error with outputting pickled file </span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">thisfile</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestForFunction"><a class="viewcode-back" href="../FileIO.html#FileIO.TestForFunction">[docs]</a><span class="k">def</span> <span class="nf">TestForFunction</span><span class="p">(</span><span class="n">dictin</span><span class="p">,</span><span class="n">this_string</span><span class="o">=</span><span class="p">[],</span><span class="n">temp_file</span><span class="o">=</span><span class="n">test_file</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dictin</span><span class="p">,</span><span class="nb">dict</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dictin</span><span class="p">,</span><span class="n">OrderedDict</span><span class="p">)</span> <span class="p">:</span>
+        <span class="k">for</span> <span class="n">ikey</span><span class="p">,</span><span class="n">idata</span> <span class="ow">in</span> <span class="n">dictin</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">pass_string</span> <span class="o">=</span> <span class="n">this_string</span> <span class="o">+</span> <span class="p">[</span><span class="n">ikey</span><span class="p">]</span>
+            <span class="n">TestForFunction</span><span class="p">(</span><span class="n">idata</span><span class="p">,</span><span class="n">this_string</span><span class="o">=</span><span class="n">pass_string</span><span class="p">,</span><span class="n">temp_file</span><span class="o">=</span><span class="n">temp_file</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dictin</span><span class="p">,</span><span class="n">pa</span><span class="o">.</span><span class="n">Series</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">ikey</span><span class="p">,</span><span class="n">idata</span> <span class="ow">in</span> <span class="n">dictin</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">pass_string</span> <span class="o">=</span> <span class="n">this_string</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Series:&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">ikey</span><span class="p">)]</span>
+            <span class="n">TestForFunction</span><span class="p">(</span><span class="n">idata</span><span class="p">,</span><span class="n">this_string</span><span class="o">=</span><span class="n">pass_string</span><span class="p">,</span><span class="n">temp_file</span><span class="o">=</span><span class="n">temp_file</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dictin</span><span class="p">,</span><span class="n">pa</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="p">:</span>
+        <span class="k">for</span> <span class="n">icol</span><span class="p">,</span><span class="n">idata</span> <span class="ow">in</span> <span class="n">dictin</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">ikey</span><span class="p">,</span><span class="n">jdata</span> <span class="ow">in</span> <span class="n">idata</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">pass_string</span> <span class="o">=</span> <span class="n">this_string</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;DF:&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">icol</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;;&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">ikey</span><span class="p">)]</span>
+                <span class="n">TestForFunction</span><span class="p">(</span><span class="n">jdata</span><span class="p">,</span><span class="n">this_string</span><span class="o">=</span><span class="n">pass_string</span><span class="p">,</span><span class="n">temp_file</span><span class="o">=</span><span class="n">temp_file</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">any</span><span class="p">([</span><span class="n">iclass</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">dictin</span><span class="p">))</span> <span class="k">for</span> <span class="n">iclass</span> <span class="ow">in</span> <span class="n">All_Classes_Names</span><span class="p">]):</span>
+        <span class="k">for</span> <span class="n">ikey</span><span class="p">,</span><span class="n">idata</span> <span class="ow">in</span> <span class="n">dictin</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="s1">&#39;__&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ikey</span><span class="p">:</span>
+                <span class="n">pass_string</span> <span class="o">=</span> <span class="n">this_string</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Class:&#39;</span><span class="o">+</span><span class="n">ikey</span><span class="p">]</span>
+                <span class="n">TestForFunction</span><span class="p">(</span><span class="n">idata</span><span class="p">,</span><span class="n">this_string</span><span class="o">=</span><span class="n">pass_string</span><span class="p">,</span><span class="n">temp_file</span><span class="o">=</span><span class="n">temp_file</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">temp_file</span><span class="p">,</span><span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">dictin</span><span class="p">,</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-------------------------------------------&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;An error occured at:&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">itab</span><span class="p">,</span><span class="n">istr</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">this_string</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="o">*</span><span class="n">itab</span><span class="p">,</span><span class="n">istr</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;value to print&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">dictin</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;has type&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">dictin</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-------------------------------------------&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">()</span></div>
+        <span class="c1"># for itab,istr in enumerate(this_string):</span>
+        <span class="c1">#     print &#39;   &#39;*itab , str(istr)</span>
+
+<div class="viewcode-block" id="WritePickle_NoLock"><a class="viewcode-back" href="../FileIO.html#FileIO.WritePickle_NoLock">[docs]</a><span class="k">def</span> <span class="nf">WritePickle_NoLock</span><span class="p">(</span><span class="n">thisfile</span><span class="p">,</span><span class="n">outputdict</span><span class="p">,</span><span class="n">this_err</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">thisfile</span><span class="p">,</span><span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">outputdict</span><span class="p">,</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="n">this_err</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;WARNING: cannot write with cPickle, using dill for file:&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">thisfile</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">Debug_Mode</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;DEBUGGING the cPickle problem...&#39;</span><span class="p">)</span>
+            <span class="n">TestForFunction</span><span class="p">(</span><span class="n">outputdict</span><span class="p">)</span>
+        <span class="n">WriteDill</span><span class="p">(</span><span class="n">thisfile</span><span class="p">,</span><span class="n">outputdict</span><span class="p">,</span><span class="n">this_err</span><span class="o">=</span><span class="n">this_err</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="WritePickle"><a class="viewcode-back" href="../FileIO.html#FileIO.WritePickle">[docs]</a><span class="k">def</span> <span class="nf">WritePickle</span><span class="p">(</span><span class="n">thisfile</span><span class="p">,</span><span class="n">outputdict</span><span class="p">,</span><span class="n">Bak</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">Bak</span><span class="p">:</span> <span class="n">BackupFile</span><span class="p">(</span><span class="n">thisfile</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">thisfile</span><span class="p">,</span><span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="c1"># fcntl.flock(f, fcntl.LOCK_EX)</span>
+            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span> <span class="n">outputdict</span> <span class="p">,</span> <span class="n">f</span> <span class="p">)</span>
+            <span class="c1"># fcntl.flock(f, fcntl.LOCK_UN)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+        <span class="n">WritePickle_NoLock</span><span class="p">(</span><span class="n">thisfile</span><span class="p">,</span><span class="n">outputdict</span><span class="p">,</span><span class="n">this_err</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="BackupFile"><a class="viewcode-back" href="../FileIO.html#FileIO.BackupFile">[docs]</a><span class="k">def</span> <span class="nf">BackupFile</span><span class="p">(</span><span class="o">*</span><span class="n">thisfilelist</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">thisfile</span> <span class="ow">in</span> <span class="n">thisfilelist</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;Parameters&#39;</span> <span class="ow">in</span> <span class="n">thisfile</span><span class="p">:</span> <span class="k">continue</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">thisfile</span><span class="p">):</span>
+                <span class="n">shutil</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">thisfile</span><span class="p">,</span> <span class="n">thisfile</span><span class="o">+</span><span class="s1">&#39;.bak&#39;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;ERROR with backing up file &#39;</span><span class="o">+</span><span class="n">thisfile</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ReadDillWrap"><a class="viewcode-back" href="../FileIO.html#FileIO.ReadDillWrap">[docs]</a><span class="k">def</span> <span class="nf">ReadDillWrap</span><span class="p">(</span><span class="n">thisfile</span><span class="p">,</span><span class="n">this_err</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span> <span class="n">thisfile</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span> <span class="p">)</span> <span class="k">as</span> <span class="n">pfile</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">dill</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">pfile</span><span class="p">)</span>
+        <span class="c1"># print &#39;Warning, dill used for reading file: \n&#39;,pfile</span>
+        <span class="k">return</span> <span class="n">data</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err2</span><span class="p">:</span>
+        <span class="n">this_err</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">err2</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;WARNING: cannot read with cPickle, using dill for file:&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">thisfile</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ReadPicklePy2</span><span class="p">(</span><span class="n">thisfile</span><span class="p">,</span><span class="n">this_err</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ReadPicklePy2"><a class="viewcode-back" href="../FileIO.html#FileIO.ReadPicklePy2">[docs]</a><span class="k">def</span> <span class="nf">ReadPicklePy2</span><span class="p">(</span><span class="n">thisfile</span><span class="p">,</span><span class="n">this_err</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span> <span class="n">thisfile</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span> <span class="p">)</span> <span class="k">as</span> <span class="n">pfile</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">pfile</span><span class="p">,</span><span class="n">encoding</span><span class="o">=</span><span class="n">py2_encoding</span><span class="p">)</span>
+        <span class="c1"># print &#39;Warning, dill used for reading file: \n&#39;,pfile</span>
+        <span class="k">return</span> <span class="n">data</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">this_err</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">err2</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Failed loading pickled file with encoding &#39;</span><span class="o">+</span><span class="n">py2_encoding</span><span class="o">+</span><span class="s1">&#39;: </span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">+</span><span class="n">thisfile</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ReadPickleWrap_NoLock"><a class="viewcode-back" href="../FileIO.html#FileIO.ReadPickleWrap_NoLock">[docs]</a><span class="k">def</span> <span class="nf">ReadPickleWrap_NoLock</span><span class="p">(</span><span class="n">thisfile</span><span class="p">,</span><span class="n">this_err</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span> <span class="n">thisfile</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span> <span class="p">)</span> <span class="k">as</span> <span class="n">pfile</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">pfile</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="n">this_err</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;WARNING: cannot read with cPickle, using dill for file:&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">thisfile</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ReadDillWrap</span><span class="p">(</span><span class="n">thisfile</span><span class="p">,</span><span class="n">this_err</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ReadPickleWrap"><a class="viewcode-back" href="../FileIO.html#FileIO.ReadPickleWrap">[docs]</a><span class="k">def</span> <span class="nf">ReadPickleWrap</span><span class="p">(</span><span class="n">thisfile</span><span class="p">,</span><span class="n">thisShowRead</span><span class="o">=</span><span class="n">ShowRead</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">thisShowRead</span> <span class="ow">and</span> <span class="s1">&#39;Parameters&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">thisfile</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Reading Pickled file &#39;</span><span class="p">,</span> <span class="n">thisfile</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span> <span class="n">thisfile</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span> <span class="p">)</span> <span class="k">as</span> <span class="n">pfile</span><span class="p">:</span>
+            <span class="n">fcntl</span><span class="o">.</span><span class="n">flock</span><span class="p">(</span><span class="n">pfile</span><span class="p">,</span> <span class="n">fcntl</span><span class="o">.</span><span class="n">LOCK_EX</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">pfile</span><span class="p">)</span>
+            <span class="n">fcntl</span><span class="o">.</span><span class="n">flock</span><span class="p">(</span><span class="n">pfile</span><span class="p">,</span> <span class="n">fcntl</span><span class="o">.</span><span class="n">LOCK_UN</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ReadPickleWrap_NoLock</span><span class="p">(</span><span class="n">thisfile</span><span class="p">,</span><span class="n">this_err</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="CheckFTDAS"><a class="viewcode-back" href="../FileIO.html#FileIO.CheckFTDAS">[docs]</a><span class="k">def</span> <span class="nf">CheckFTDAS</span><span class="p">(</span><span class="n">dictin</span><span class="p">,</span><span class="n">prev_key</span><span class="o">=</span><span class="s1">&#39;first&#39;</span><span class="p">,</span><span class="n">this_err</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dictin</span><span class="p">,</span><span class="nb">dict</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dictin</span><span class="p">,</span><span class="n">OrderedDict</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">ikey</span><span class="p">,</span><span class="n">idata</span> <span class="ow">in</span> <span class="n">dictin</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">CheckFTDAS</span><span class="p">(</span><span class="n">idata</span><span class="p">,</span><span class="n">prev_key</span><span class="o">=</span><span class="n">ikey</span><span class="p">,</span><span class="n">this_err</span><span class="o">=</span><span class="n">this_err</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">dictin</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">out_msg</span> <span class="o">=</span> <span class="s1">&#39;final value in dictionary is causing xml write error&#39;</span>
+            <span class="n">thisout</span> <span class="o">=</span>  <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">this_err</span><span class="p">),</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">),</span><span class="n">prev_key</span><span class="p">,</span><span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">dictin</span><span class="p">)),</span><span class="n">out_msg</span><span class="p">])</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">thisout</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RecFTDAS"><a class="viewcode-back" href="../FileIO.html#FileIO.RecFTDAS">[docs]</a><span class="k">def</span> <span class="nf">RecFTDAS</span><span class="p">(</span><span class="n">dictin</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dictin</span><span class="p">,</span><span class="nb">dict</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dictin</span><span class="p">,</span><span class="n">OrderedDict</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">ikey</span><span class="p">,</span><span class="n">idata</span> <span class="ow">in</span> <span class="n">dictin</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">dictin</span><span class="p">[</span><span class="n">ikey</span><span class="p">]</span> <span class="o">=</span> <span class="n">RecFTDAS</span><span class="p">(</span><span class="n">idata</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dictin</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">dictout</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">dictin</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">dictout</span><span class="p">)</span> <span class="o">==</span> <span class="n">dictout</span><span class="p">:</span>
+                <span class="n">dictout</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">dictout</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">dictin</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">())</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">is_number</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">dictin</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]):</span>
+                    <span class="n">dictout</span> <span class="o">=</span> <span class="n">FormatToDictAvgStdChi</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">dictin</span><span class="p">))</span>
+                <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">dictin</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">())</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">is_number</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">dictin</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]):</span>
+                    <span class="n">dictout</span> <span class="o">=</span> <span class="n">FormatToDictAvgStd</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">dictin</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">dictout</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">dictin</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">dictin</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">dictin</span><span class="p">))</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;final value in dictionary is not string&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dictout</span></div>
+
+<div class="viewcode-block" id="FormatXml"><a class="viewcode-back" href="../FileIO.html#FileIO.FormatXml">[docs]</a><span class="k">def</span> <span class="nf">FormatXml</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$32^</span><span class="si">{3}</span><span class="s1">\times_64\_\quad_m_{\pi}=0.410_GeV_\_-def-\_&lt;Q&gt;$_&#39;</span><span class="p">,</span><span class="s1">&#39;mpi410&#39;</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$32^</span><span class="si">{3}</span><span class="s1">\times_64\_\quad_m_{\pi}=0.568_GeV_\_-def-\_&lt;Q&gt;$_&#39;</span><span class="p">,</span><span class="s1">&#39;mpi570&#39;</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$32^</span><span class="si">{3}</span><span class="s1">\times_64\_\quad_m_{\pi}=0.699_GeV_\_-def-\_&lt;Q&gt;$_&#39;</span><span class="p">,</span><span class="s1">&#39;mpi700&#39;</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$28^</span><span class="si">{3}</span><span class="s1">\times_56\_\quad_m_{\pi}=0.659_GeV_\_-def-\_&lt;Q&gt;$_&#39;</span><span class="p">,</span><span class="s1">&#39;L28&#39;</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$16^</span><span class="si">{3}</span><span class="s1">\times_32\_\quad_m_{\pi}=0.640_GeV_\_-def-\_&lt;Q&gt;$_&#39;</span><span class="p">,</span><span class="s1">&#39;L16&#39;</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$20^</span><span class="si">{3}</span><span class="s1">\times_40\_\quad_m_{\pi}=0.646_GeV_\_-def-\_&lt;Q&gt;$_&#39;</span><span class="p">,</span><span class="s1">&#39;L20&#39;</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$24^</span><span class="si">{3}</span><span class="s1">\times_48\_\quad_m_{\pi}=nan_GeV_\_-def-\_&lt;Q&gt;$_&#39;</span><span class="p">,</span><span class="s1">&#39;qu_L24&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">ival</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;-a-&#39;</span><span class="p">,</span><span class="s1">&#39;-b-&#39;</span><span class="p">,</span><span class="s1">&#39;-1-&#39;</span><span class="p">,</span><span class="s1">&#39;-2-&#39;</span><span class="p">,</span><span class="s1">&#39;-3-&#39;</span><span class="p">,</span><span class="s1">&#39;-4-&#39;</span><span class="p">]:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">ival</span><span class="p">,</span><span class="s1">&#39;stream_&#39;</span><span class="o">+</span><span class="n">ival</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10000</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;&gt;&#39;</span><span class="p">,</span><span class="s1">&#39;&lt;cfg_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;&gt;&#39;</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;/&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;&gt;&#39;</span><span class="p">,</span><span class="s1">&#39;&lt;/cfg_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;&gt;&#39;</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\alpha&#39;</span><span class="p">,</span><span class="s1">&#39;alpha&#39;</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;0.568&#39;</span><span class="p">,</span><span class="s1">&#39;568&#39;</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;0.699&#39;</span><span class="p">,</span><span class="s1">&#39;699&#39;</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;0.640&#39;</span><span class="p">,</span><span class="s1">&#39;640&#39;</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;0.646&#39;</span><span class="p">,</span><span class="s1">&#39;646&#39;</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;0.659&#39;</span><span class="p">,</span><span class="s1">&#39;659&#39;</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;0.410&#39;</span><span class="p">,</span><span class="s1">&#39;410&#39;</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;^&#39;</span><span class="p">,</span><span class="s1">&#39;_pow_&#39;</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;{&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;}&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;&amp;lt;&#39;</span><span class="p">,</span><span class="s1">&#39;_lt_&#39;</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;&amp;gt;&#39;</span><span class="p">,</span><span class="s1">&#39;_gt_&#39;</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;&lt;Q&gt;&#39;</span><span class="p">,</span><span class="s1">&#39;Q&#39;</span><span class="p">)</span>
+    <span class="c1"># data = data.replace(r&#39;=&#39;,&#39;_eq_&#39;)</span>
+    <span class="c1"># data = data.replace(r&#39;-&#39;,&#39;_dash_&#39;)</span>
+    <span class="c1"># data = data.replace(r&#39;&lt;$&#39;,r&#39;&lt;pie&#39;)</span>
+    <span class="c1"># data = data.replace(r&#39;&lt;/$&#39;,r&#39;&lt;/pie&#39;)</span>
+    <span class="c1"># data = data.replace(r&#39;$_&gt;&#39;,r&#39;_&gt;&#39;)</span>
+    <span class="c1"># data = data.replace(r&#39;\times&#39;,r&#39;_times_&#39;)</span>
+    <span class="c1"># data = data.replace(r&#39;\quad&#39;,r&#39;__&#39;)</span>
+    <span class="c1"># data = data.replace(r&#39;\pi&#39;,r&#39;pi&#39;)</span>
+    <span class="c1"># data = data.replace(r&#39;\_&#39;,r&#39;_&#39;)</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="ReadXml"><a class="viewcode-back" href="../FileIO.html#FileIO.ReadXml">[docs]</a><span class="k">def</span> <span class="nf">ReadXml</span><span class="p">(</span><span class="n">thisfile</span><span class="p">,</span><span class="n">thisShowRead</span><span class="o">=</span><span class="n">ShowRead</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">thisShowRead</span> <span class="ow">and</span> <span class="s1">&#39;Parameters&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">thisfile</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Reading Pickled file &#39;</span><span class="p">,</span> <span class="n">thisfile</span><span class="p">)</span>
+    <span class="c1"># try:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span> <span class="n">thisfile</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span> <span class="p">)</span> <span class="k">as</span> <span class="n">xml_file</span><span class="p">:</span>
+        <span class="c1"># fcntl.flock(xml_file, fcntl.LOCK_EX)</span>
+        <span class="n">parse_data</span> <span class="o">=</span> <span class="n">FormatXml</span><span class="p">(</span><span class="n">xml_file</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+        <span class="c1"># fcntl.flock(xml_file, fcntl.LOCK_UN)</span>
+    <span class="c1"># print parse_data</span>
+    <span class="c1"># print(parse_data)</span>
+    <span class="k">return</span> <span class="n">RecFTDAS</span><span class="p">(</span><span class="n">parse</span><span class="p">(</span><span class="n">parse_data</span><span class="p">))</span></div>
+        <span class="c1"># return RecFTDAS(parse(FormatXml(xml_file.read())))</span>
+    <span class="c1"># except Exception as err:</span>
+    <span class="c1">#     raise IOError(str(err)+&#39;\n Failed loading xml file: \n&#39;+thisfile)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table of Contents</h3>
+          <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Python_Analysis</a></li>
+</ul>
+
+          <div role="search">
+            <h3 style="margin-top: 1.5em;">Search</h3>
+            <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+            </form>
+          </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <div role="navigation" aria-label="related navigaton">
+            <a href="../py-modindex.html" title="Python Module Index"
+              >modules</a> |
+            <a href="../genindex.html" title="General Index"
+              >index</a>
+          </div>
+          <div role="note" aria-label="source link">
+          </div>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Jack Dragos.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>

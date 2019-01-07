@@ -1,0 +1,360 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>AhmedRes &#8212; LQCD Analysis Codebase TF Fits documentation</title>
+    <link rel="stylesheet" href="../_static/agogo.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="header-wrapper" role="banner">
+      <div class="header">
+        <div class="headertitle"><a
+          href="../index.html">LQCD Analysis Codebase TF Fits documentation</a></div>
+        <div class="rel" role="navigation" aria-label="related navigation">
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for AhmedRes</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+
+<span class="kn">from</span> <span class="nn">MiscFuns</span> <span class="k">import</span> <span class="n">ODNested</span>
+<span class="kn">import</span> <span class="nn">MomParams</span> <span class="k">as</span> <span class="nn">mp</span>
+<span class="kn">from</span> <span class="nn">Params</span> <span class="k">import</span> <span class="n">outputdir</span><span class="p">,</span><span class="n">defxlimAlpha</span><span class="p">,</span><span class="n">chitcoeff</span><span class="p">,</span><span class="n">TflowToPhys</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">XmlFormatting</span> <span class="k">import</span> <span class="n">untstr</span><span class="p">,</span><span class="n">tflowstr</span><span class="p">,</span><span class="n">untflowstr</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">Takes Ahmeds results and makes class out of them</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+
+<div class="viewcode-block" id="AResAlpha"><a class="viewcode-back" href="../AhmedRes.html#AhmedRes.AResAlpha">[docs]</a><span class="k">class</span> <span class="nc">AResAlpha</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    His results for alpha ratio</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Info</span><span class="o">=</span><span class="p">{},</span> <span class="n">thissym</span><span class="o">=</span><span class="s1">&#39;Not Set&#39;</span><span class="p">,</span><span class="n">thiscol</span><span class="o">=</span><span class="s1">&#39;Not Set&#39;</span><span class="p">,</span><span class="n">thisshift</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="n">LLname</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="n">Auto</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+
+
+        <span class="c1">## A infront of variable is for Ahmed file convention</span>
+
+        <span class="c1">## Initialising plotting parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thisshift</span> <span class="o">=</span> <span class="n">thisshift</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thiscol</span> <span class="o">=</span> <span class="n">thiscol</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thissym</span> <span class="o">=</span> <span class="n">thissym</span>
+
+        <span class="c1"># Opboot { it } bs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alphaAvg</span> <span class="o">=</span> <span class="n">ODNested</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alphaStd</span> <span class="o">=</span> <span class="n">ODNested</span><span class="p">()</span>
+
+        <span class="c1">## kappa up down (in integer form)</span>
+        <span class="k">if</span> <span class="s1">&#39;kud&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">Info</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span> <span class="bp">self</span><span class="o">.</span><span class="n">kud</span> <span class="o">=</span> <span class="s1">&#39;kud&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">Info</span><span class="p">[</span><span class="s1">&#39;kud&#39;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">kud</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="c1">## kappa strange (in integer form)</span>
+        <span class="k">if</span> <span class="s1">&#39;ks&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">Info</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span> <span class="bp">self</span><span class="o">.</span><span class="n">ks</span> <span class="o">=</span> <span class="s1">&#39;ks&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">Info</span><span class="p">[</span><span class="s1">&#39;ks&#39;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ks</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="c1">## Current obersvables are TopCharge and Weinberg</span>
+        <span class="k">if</span> <span class="s1">&#39;Observable&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">Info</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span> <span class="bp">self</span><span class="o">.</span><span class="n">Observ</span> <span class="o">=</span> <span class="n">Info</span><span class="p">[</span><span class="s1">&#39;Observable&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">Observ</span> <span class="o">=</span> <span class="s1">&#39;TopCharge&#39;</span> <span class="c1">## default to TopCharge</span>
+
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">latparams</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">LatticeParameters</span><span class="p">(</span><span class="n">Info</span><span class="o">=</span><span class="n">Info</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">latparams</span><span class="o">.</span><span class="n">LoadPickle</span><span class="p">()</span>
+
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Observ</span> <span class="o">==</span> <span class="s1">&#39;TopCharge&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">thisconv</span> <span class="o">=</span> <span class="n">chitcoeff</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">latparams</span><span class="o">.</span><span class="n">nt</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">latparams</span><span class="o">.</span><span class="n">nxyz</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">latparams</span><span class="o">.</span><span class="n">latspace</span><span class="p">,</span><span class="s1">&#39;QQ&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">thisconv</span> <span class="o">=</span> <span class="n">chitcoeff</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">latparams</span><span class="o">.</span><span class="n">nt</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">latparams</span><span class="o">.</span><span class="n">nxyz</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">latparams</span><span class="o">.</span><span class="n">latspace</span><span class="p">,</span><span class="s1">&#39;WW&#39;</span><span class="p">)</span>
+
+        <span class="c1">## Ahmed only gave me a single flow time result, this will be changed when he gives me all flow times.</span>
+        <span class="k">if</span> <span class="s1">&#39;flowtime&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">Info</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span> <span class="bp">self</span><span class="o">.</span><span class="n">flowtime</span> <span class="o">=</span> <span class="n">Info</span><span class="p">[</span><span class="s1">&#39;flowtime&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">flowtime</span> <span class="o">=</span> <span class="s1">&#39;t_f6.00&#39;</span> <span class="c1">## default to read all flow times</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">kappafolder</span> <span class="o">=</span> <span class="s1">&#39;Kud0&#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">kud</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;kud&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;Ks0&#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">ks</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;ks&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AObserv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Observ</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;weinberg&#39;</span><span class="p">,</span><span class="s1">&#39;weinopp&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Akud</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kud</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;kud&#39;</span><span class="p">,</span><span class="s1">&#39;K&#39;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Aflowtime</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">flowtime</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;t_f&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Auto</span> <span class="o">=</span> <span class="n">Auto</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetCustomName</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">LLname</span><span class="p">)</span>
+        <span class="n">thisdir</span> <span class="o">=</span> <span class="n">outputdir</span><span class="o">+</span><span class="s1">&#39;/AhmedResults/&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Auto</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">readdir</span> <span class="o">=</span> <span class="n">thisdir</span> <span class="o">+</span> <span class="s1">&#39;ratio_&#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">AObserv</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">Akud</span><span class="o">+</span><span class="s1">&#39;_at_flow_time_&#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">Aflowtime</span><span class="o">+</span><span class="s1">&#39;/&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">readdir</span> <span class="o">=</span> <span class="n">thisdir</span> <span class="o">+</span> <span class="s1">&#39;ratio_boot_&#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">AObserv</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">Akud</span><span class="o">+</span><span class="s1">&#39;_at_flow_time_&#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">Aflowtime</span><span class="o">+</span><span class="s1">&#39;/&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thisfile</span> <span class="o">=</span> <span class="s1">&#39;Tauint_at_flow_time_&#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">Aflowtime</span><span class="o">+</span><span class="s1">&#39;time_value_dvalue.txt&#39;</span>
+
+
+
+
+<div class="viewcode-block" id="AResAlpha.ReadAlpha"><a class="viewcode-back" href="../AhmedRes.html#AhmedRes.AResAlpha.ReadAlpha">[docs]</a>    <span class="k">def</span> <span class="nf">ReadAlpha</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;reading &#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">readdir</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">thisfile</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">readdir</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">thisfile</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="c1">## first line has info</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">fmtline</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">alphaAvg</span><span class="p">[</span><span class="s1">&#39;t&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">fmtline</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="n">fmtline</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">alphaStd</span><span class="p">[</span><span class="s1">&#39;t&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">fmtline</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="n">fmtline</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="AResAlpha.PlotAlpha"><a class="viewcode-back" href="../AhmedRes.html#AhmedRes.AResAlpha.PlotAlpha">[docs]</a>    <span class="k">def</span> <span class="nf">PlotAlpha</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">xlims</span><span class="o">=</span><span class="n">defxlimAlpha</span><span class="p">,</span><span class="n">thiscol</span><span class="o">=</span><span class="s1">&#39;PreDefine&#39;</span><span class="p">,</span><span class="n">thissym</span><span class="o">=</span><span class="s1">&#39;PreDefine&#39;</span><span class="p">,</span><span class="n">thisshift</span><span class="o">=</span><span class="s1">&#39;PreDefine&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">thisshift</span> <span class="o">!=</span> <span class="s1">&#39;PreDefine&#39;</span><span class="p">:</span>
+            <span class="n">xlen</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">xlims</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">xlims</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">thisshift</span> <span class="o">=</span> <span class="n">thisshift</span><span class="o">*</span><span class="n">xlen</span>
+        <span class="k">if</span> <span class="n">thissym</span> <span class="o">!=</span> <span class="s1">&#39;PreDefine&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">thissym</span> <span class="o">=</span> <span class="n">thissym</span>
+        <span class="k">if</span> <span class="n">thiscol</span> <span class="o">!=</span> <span class="s1">&#39;PreDefine&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">thiscol</span> <span class="o">=</span> <span class="n">thiscol</span>
+        <span class="n">xvals</span><span class="p">,</span><span class="n">yvals</span><span class="p">,</span><span class="n">yerr</span> <span class="o">=</span> <span class="p">[],[],[]</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">it</span><span class="p">,</span><span class="n">iy</span><span class="p">),</span><span class="n">iyerr</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alphaAvg</span><span class="o">.</span><span class="n">items</span><span class="p">()),</span><span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alphaStd</span><span class="o">.</span><span class="n">values</span><span class="p">())):</span>
+            <span class="n">itplot</span> <span class="o">=</span> <span class="n">untstr</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">xlims</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span> <span class="o">&lt;</span> <span class="n">itplot</span> <span class="o">&lt;</span> <span class="n">xlims</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">xvals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">itplot</span><span class="p">)</span>
+                <span class="n">yvals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">iy</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">thisconv</span><span class="p">)</span>
+                <span class="n">yerr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">iyerr</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">thisconv</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alphaAvg</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">EnvironmentError</span><span class="p">(</span><span class="s1">&#39;Please read in Ahmend results before plotting with self.ReadAlpha()&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">thiscol</span> <span class="o">==</span> <span class="s1">&#39;Not Set&#39;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">thissym</span> <span class="o">==</span> <span class="s1">&#39;Not Set&#39;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">EnvironmentError</span><span class="p">(</span><span class="s1">&#39;plotting color or symbol not set, please initialise class or set when plotting&#39;</span><span class="p">)</span></div>
+        <span class="c1"># pl.errorbar(np.array(xvals)+self.thisshift,yvals,yerr,label=self.LegLab,fmt=self.thissym,color=self.thiscol)</span>
+
+
+<div class="viewcode-block" id="AResAlpha.SetCustomName"><a class="viewcode-back" href="../AhmedRes.html#AhmedRes.AResAlpha.SetCustomName">[docs]</a>    <span class="k">def</span> <span class="nf">SetCustomName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">string</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="n">stringLL</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">string</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">kappafolder</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">Observ</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">string</span>
+        <span class="k">if</span> <span class="n">stringLL</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Auto</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">LegLab</span> <span class="o">=</span> <span class="s1">&#39;$&#39;</span><span class="o">+</span><span class="s1">&#39;\ &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">latparams</span><span class="o">.</span><span class="n">GetPionMassLab</span><span class="p">(),</span><span class="bp">self</span><span class="o">.</span><span class="n">Observ</span><span class="p">,</span><span class="s1">&#39;Ahmed&#39;</span><span class="p">])</span><span class="o">+</span><span class="s1">&#39;$ Auto&#39;</span> <span class="c1">## customise this how you like</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">LegLab</span> <span class="o">=</span> <span class="s1">&#39;$&#39;</span><span class="o">+</span><span class="s1">&#39;\ &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">latparams</span><span class="o">.</span><span class="n">GetPionMassLab</span><span class="p">(),</span><span class="bp">self</span><span class="o">.</span><span class="n">Observ</span><span class="p">,</span><span class="s1">&#39;Ahmed&#39;</span><span class="p">])</span><span class="o">+</span><span class="s1">&#39;$&#39;</span> <span class="c1">## customise this how you like</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">LegLab</span> <span class="o">=</span> <span class="n">stringLL</span></div></div>
+
+
+
+
+<span class="c1">################################################################################################################################################</span>
+<span class="c1">################################################################################################################################################</span>
+<span class="c1">################################################################################################################################################</span>
+<span class="c1">################################################################################################################################################</span>
+<span class="c1">################################################################################################################################################</span>
+<span class="c1">################################################################################################################################################</span>
+<span class="c1">################################################################################################################################################</span>
+<span class="c1">################################################################################################################################################</span>
+
+
+
+
+<div class="viewcode-block" id="AResChi2"><a class="viewcode-back" href="../AhmedRes.html#AhmedRes.AResChi2">[docs]</a><span class="k">class</span> <span class="nc">AResChi2</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    His results for &lt;Q^{2}&gt; or &lt;W^{2}&gt; (WITHOUT COEFFICIENT)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Info</span><span class="o">=</span><span class="p">{},</span> <span class="n">thissym</span><span class="o">=</span><span class="s1">&#39;Not Set&#39;</span><span class="p">,</span><span class="n">thiscol</span><span class="o">=</span><span class="s1">&#39;Not Set&#39;</span><span class="p">,</span><span class="n">thisshift</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="n">LLname</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+
+
+        <span class="c1">## A infront of variable is for Ahmed file convention</span>
+
+        <span class="c1">## Initialising plotting parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thisshift</span> <span class="o">=</span> <span class="n">thisshift</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thiscol</span> <span class="o">=</span> <span class="n">thiscol</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thissym</span> <span class="o">=</span> <span class="n">thissym</span>
+
+        <span class="c1"># Opboot { it } bs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Chi2Avg</span> <span class="o">=</span> <span class="n">ODNested</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Chi2Std</span> <span class="o">=</span> <span class="n">ODNested</span><span class="p">()</span>
+
+        <span class="c1">## kappa up down (in integer form)</span>
+        <span class="k">if</span> <span class="s1">&#39;kud&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">Info</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span> <span class="bp">self</span><span class="o">.</span><span class="n">kud</span> <span class="o">=</span> <span class="s1">&#39;kud&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">Info</span><span class="p">[</span><span class="s1">&#39;kud&#39;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">kud</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="c1">## kappa strange (in integer form)</span>
+        <span class="k">if</span> <span class="s1">&#39;ks&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">Info</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span> <span class="bp">self</span><span class="o">.</span><span class="n">ks</span> <span class="o">=</span> <span class="s1">&#39;ks&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">Info</span><span class="p">[</span><span class="s1">&#39;ks&#39;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ks</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="c1">## Current obersvables are TopCharge and Weinberg</span>
+        <span class="k">if</span> <span class="s1">&#39;Observable&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">Info</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span> <span class="bp">self</span><span class="o">.</span><span class="n">Observ</span> <span class="o">=</span> <span class="n">Info</span><span class="p">[</span><span class="s1">&#39;Observable&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">Observ</span> <span class="o">=</span> <span class="s1">&#39;TopCharge&#39;</span> <span class="c1">## default to TopCharge</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">latparams</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">LatticeParameters</span><span class="p">(</span><span class="n">Info</span><span class="o">=</span><span class="n">Info</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">latparams</span><span class="o">.</span><span class="n">LoadPickle</span><span class="p">()</span>
+
+
+        <span class="k">if</span> <span class="s1">&#39;TopCharge&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">Observ</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">thisconv</span> <span class="o">=</span> <span class="n">chitcoeff</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">latparams</span><span class="o">.</span><span class="n">nt</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">latparams</span><span class="o">.</span><span class="n">nxyz</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">latparams</span><span class="o">.</span><span class="n">latspace</span><span class="p">,</span><span class="s1">&#39;QQ&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">thisconv</span> <span class="o">=</span> <span class="n">chitcoeff</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">latparams</span><span class="o">.</span><span class="n">nt</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">latparams</span><span class="o">.</span><span class="n">nxyz</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">latparams</span><span class="o">.</span><span class="n">latspace</span><span class="p">,</span><span class="s1">&#39;WW&#39;</span><span class="p">)</span>
+
+
+        <span class="c1"># ## this is used display only these flowtimes, Still reads and writes all</span>
+        <span class="c1"># if &#39;tflowlist&#39; in Info.keys(): self.tflowlist = Info[&#39;tflowlist&#39;]</span>
+        <span class="c1"># else: self.tflowlist = defxlimOp ## default to read all flow times</span>
+
+
+        <span class="c1"># listout = []</span>
+        <span class="c1"># for ict,itflow in enumerate(self.tflowlist):</span>
+        <span class="c1">#     if &#39;t_f&#39; not in str(itflow):</span>
+        <span class="c1">#         listout.append(tflowstr(itflow))</span>
+        <span class="c1">#     else:</span>
+        <span class="c1">#         listout.append(itflow)</span>
+        <span class="c1"># self.tflowfloat = [untflowstr(itflow) for itflow in listout]</span>
+        <span class="c1"># self.tflowlist = np.array(listout)</span>
+
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">kappafolder</span> <span class="o">=</span> <span class="s1">&#39;Kud0&#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">kud</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;kud&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;Ks0&#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">ks</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;ks&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;topcharge&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">Observ</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;weinberg&#39;</span><span class="p">,</span><span class="s1">&#39;weinopp&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">AObserv</span> <span class="o">=</span> <span class="s1">&#39;topcharge&#39;</span>
+        <span class="k">elif</span> <span class="s1">&#39;weinopp&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">Observ</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;weinberg&#39;</span><span class="p">,</span><span class="s1">&#39;weinopp&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">AObserv</span> <span class="o">=</span> <span class="s1">&#39;weinopp&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Akud</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kud</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;kud&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetCustomName</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">LLname</span><span class="p">)</span>
+        <span class="n">thisdir</span> <span class="o">=</span> <span class="n">outputdir</span><span class="o">+</span><span class="s1">&#39;/AhmedResults/&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">readdir</span> <span class="o">=</span> <span class="n">thisdir</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">AObserv</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">Akud</span><span class="o">+</span><span class="s1">&#39;/&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thisfile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">AObserv</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">Akud</span><span class="o">+</span><span class="s1">&#39;.txt&#39;</span>
+
+
+
+
+<div class="viewcode-block" id="AResChi2.ReadChi2"><a class="viewcode-back" href="../AhmedRes.html#AhmedRes.AResChi2.ReadChi2">[docs]</a>    <span class="k">def</span> <span class="nf">ReadChi2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;reading &#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">readdir</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">thisfile</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">readdir</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">thisfile</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="c1">## first line has info</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">fmtline</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="n">tflowkey</span> <span class="o">=</span> <span class="n">tflowstr</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">fmtline</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="mi">100</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">Chi2Avg</span><span class="p">[</span><span class="n">tflowkey</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="n">fmtline</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">Chi2Std</span><span class="p">[</span><span class="n">tflowkey</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="n">fmtline</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="AResChi2.CorrectAhmed"><a class="viewcode-back" href="../AhmedRes.html#AhmedRes.AResChi2.CorrectAhmed">[docs]</a>    <span class="k">def</span> <span class="nf">CorrectAhmed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">iy</span><span class="p">,</span><span class="n">iyerr</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s1">&#39;TopCharge&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">Observ</span> <span class="ow">or</span> <span class="s1">&#39;Q&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">Observ</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">iy</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mf">4.</span><span class="p">),</span><span class="n">iy</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="o">/</span><span class="mf">4.</span><span class="p">)</span><span class="o">*</span><span class="n">iyerr</span><span class="o">/</span><span class="mf">4.</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">iy</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mf">8.</span><span class="p">),</span><span class="n">iy</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">7</span><span class="o">/</span><span class="mf">8.</span><span class="p">)</span><span class="o">*</span><span class="n">iyerr</span><span class="o">/</span><span class="mf">8.</span></div>
+
+    <span class="c1"># def CorrectAhmed(self,iy,iyerr):</span>
+    <span class="c1">#     return iy,iyerr</span>
+
+
+<div class="viewcode-block" id="AResChi2.PlotChi2"><a class="viewcode-back" href="../AhmedRes.html#AhmedRes.AResChi2.PlotChi2">[docs]</a>    <span class="k">def</span> <span class="nf">PlotChi2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">xlims</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">,</span><span class="n">thiscol</span><span class="o">=</span><span class="s1">&#39;PreDefine&#39;</span><span class="p">,</span><span class="n">thissym</span><span class="o">=</span><span class="s1">&#39;PreDefine&#39;</span><span class="p">,</span><span class="n">thisshift</span><span class="o">=</span><span class="s1">&#39;PreDefine&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Chi2Avg</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">EnvironmentError</span><span class="p">(</span><span class="s1">&#39;Please read in Ahmend results before plotting with self.ReadChi2()&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">xlims</span><span class="p">,</span><span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">xlims</span> <span class="o">==</span> <span class="s1">&#39;data&#39;</span><span class="p">:</span>
+            <span class="n">xlims</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Chi2Avg</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">xlims</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="nb">str</span><span class="p">))</span> <span class="ow">or</span> <span class="s1">&#39;t_f&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">xlims</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="n">xlims</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">tflowstr</span><span class="p">,</span><span class="n">xlims</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">thisshift</span> <span class="o">!=</span> <span class="s1">&#39;PreDefine&#39;</span><span class="p">:</span>
+            <span class="n">xlen</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">xlims</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">xlims</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">thisshift</span> <span class="o">=</span> <span class="n">thisshift</span><span class="o">*</span><span class="n">xlen</span>
+        <span class="k">if</span> <span class="n">thissym</span> <span class="o">!=</span> <span class="s1">&#39;PreDefine&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">thissym</span> <span class="o">=</span> <span class="n">thissym</span>
+        <span class="k">if</span> <span class="n">thiscol</span> <span class="o">!=</span> <span class="s1">&#39;PreDefine&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">thiscol</span> <span class="o">=</span> <span class="n">thiscol</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">thiscol</span> <span class="o">==</span> <span class="s1">&#39;Not Set&#39;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">thissym</span> <span class="o">==</span> <span class="s1">&#39;Not Set&#39;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">EnvironmentError</span><span class="p">(</span><span class="s1">&#39;plotting color or symbol not set, please initialise class or set when plotting&#39;</span><span class="p">)</span>
+        <span class="n">xvals</span><span class="p">,</span><span class="n">yvals</span><span class="p">,</span><span class="n">yerr</span> <span class="o">=</span> <span class="p">[],[],[]</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">it</span><span class="p">,</span><span class="n">iy</span><span class="p">),</span><span class="n">iyerr</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Chi2Avg</span><span class="o">.</span><span class="n">items</span><span class="p">()),</span><span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Chi2Std</span><span class="o">.</span><span class="n">values</span><span class="p">())):</span>
+            <span class="n">itplot</span> <span class="o">=</span> <span class="n">TflowToPhys</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">untflowstr</span><span class="p">(</span><span class="n">it</span><span class="p">)]),</span><span class="bp">self</span><span class="o">.</span><span class="n">latparams</span><span class="o">.</span><span class="n">latspace</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">it</span> <span class="ow">in</span> <span class="n">xlims</span><span class="p">:</span>
+                <span class="n">iycorr</span><span class="p">,</span><span class="n">iyerrcorr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">CorrectAhmed</span><span class="p">(</span><span class="n">iy</span><span class="p">,</span><span class="n">iyerr</span><span class="p">)</span>
+                <span class="n">xvals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">itplot</span><span class="p">)</span>
+                <span class="n">yvals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">iycorr</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">thisconv</span><span class="p">)</span>
+                <span class="n">yerr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">iyerrcorr</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">thisconv</span><span class="p">)</span></div>
+        <span class="c1"># pl.errorbar(np.array(xvals)+self.thisshift,yvals,yerr,label=self.LegLab,fmt=self.thissym,color=self.thiscol)</span>
+
+<div class="viewcode-block" id="AResChi2.SetCustomName"><a class="viewcode-back" href="../AhmedRes.html#AhmedRes.AResChi2.SetCustomName">[docs]</a>    <span class="k">def</span> <span class="nf">SetCustomName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">string</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="n">stringLL</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">string</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">kappafolder</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">Observ</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">string</span>
+        <span class="k">if</span> <span class="n">stringLL</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">LegLab</span> <span class="o">=</span> <span class="s1">&#39;$&#39;</span><span class="o">+</span><span class="s1">&#39;\ &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">latparams</span><span class="o">.</span><span class="n">GetPionMassLab</span><span class="p">(),</span><span class="bp">self</span><span class="o">.</span><span class="n">Observ</span><span class="p">,</span><span class="s1">&#39;Ahmed&#39;</span><span class="p">])</span><span class="o">+</span><span class="s1">&#39;$&#39;</span> <span class="c1">## customise this how you like</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">LegLab</span> <span class="o">=</span> <span class="n">stringLL</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table of Contents</h3>
+          <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Python_Analysis</a></li>
+</ul>
+
+          <div role="search">
+            <h3 style="margin-top: 1.5em;">Search</h3>
+            <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+            </form>
+          </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <div role="navigation" aria-label="related navigaton">
+            <a href="../py-modindex.html" title="Python Module Index"
+              >modules</a> |
+            <a href="../genindex.html" title="General Index"
+              >index</a>
+          </div>
+          <div role="note" aria-label="source link">
+          </div>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Jack Dragos.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>

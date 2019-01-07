@@ -52,6 +52,17 @@ def BlockCfgs(cfg_list,n_block):
         bc_vals[extra_len:] = np.mean(cfg_list[extra_len:])
     return bc_vals
 
+def CombineBS(this_series,name='',resample=False):
+    if not isinstance(this_series,pa.Series):
+        raise IOError('please pass in Series to be combined\n',type(this_series))
+    out_bs_list = []
+    for ival in this_series.values:
+        out_bs_list += list(ival.GetBootVals())
+    out_boot = BootStrap(thisnboot=len(out_bs_list), name=name,bootvals=out_bs_list)
+    if resample is not False:
+        out_boot,dump = out_boot.ResampleBS(new_nboot=resample)
+    return out_boot
+
 def FlattenBootstrapDF(this_df,this_nboot=nboot,reset_index=True):
     if not isinstance(this_df,pa.DataFrame):
         raise IOError('please pass in DataFrame to be flattened')
@@ -115,7 +126,7 @@ class BootStrap(object):
             self.blocked_bootvals = {}
             self.blocked_cfgvals = {}
             self.n_block = n_block
-            self.block_sel = 'block1'
+        self.block_sel = 'block1'
 
         self.name = name  # Give it a label if you want, might help with plotting?
         self.Avg = np.float64(np.nan)
@@ -146,6 +157,7 @@ class BootStrap(object):
                          name=self.name+'_div_tree',
                          bootvals=this_bootvals,rand_list=self.rand_list,
                          n_block=self.n_block)
+
 
     def GetBootVals(self):
         return self.bootvals.values
@@ -231,7 +243,7 @@ class BootStrap(object):
             self.BlockCfgs()
 
 
-    def ImportBS_Blocked(self,inputboot,this_block,DelVal=True):
+    def ImportBS_Blocked(self,inputboot,this_block):
         if isinstance(this_block,(int,float)):
             this_block = 'block'+str(int(this_block))
         if isinstance(inputboot,pa.Series):
@@ -280,7 +292,7 @@ class BootStrap(object):
             self.rand_list = None
         return this_rlist
 
-    def MakeBS_Blocked(self,DelVal=True):
+    def MakeBS_Blocked(self):
         self.CheckCfgVals_Blocked()
         for iblock,block_cfgs in self.blocked_cfgvals.items():
             this_nval = len(block_cfgs)
@@ -300,8 +312,8 @@ class BootStrap(object):
             #     # print
             #     ## TODO, check if differnet streams need to be separated out.
             #     tempbootvals.append(self.cfgvals.sample(self.nval, replace=True,random_state=myseed+iboot).mean())
-            self.ImportBS_Blocked(tempbootvals,iblock,DelVal=DelVal)
-        self.Stats()
+            self.ImportBS_Blocked(tempbootvals,iblock)
+        # self.Stats()
 
     def Select_Block(self,this_block):
         if hasattr(self,'n_block') and self.n_block > 1:
@@ -319,6 +331,10 @@ class BootStrap(object):
             else:
                 print('select block failed for '+this_block)
 
+    def GetSingleBlock(self,this_block):
+        self.Select_Block(this_block)
+        ##default n_block = 1
+        return BootStrap(thisnboot=self.nboot, name=self.name,bootvals=self.bootvals)
 
     def MakeBS(self,DelVal=True):
         self.CheckCfgVals()
@@ -337,9 +353,9 @@ class BootStrap(object):
         #     # print
         #     ## TODO, check if differnet streams need to be separated out.
         #     tempbootvals.append(self.cfgvals.sample(self.nval, replace=True,random_state=myseed+iboot).mean())
-        self.ImportBS(tempbootvals,DelVal=DelVal)
         if hasattr(self,'n_block') and self.n_block > 1:
-            self.MakeBS_Blocked(DelVal=True)
+            self.MakeBS_Blocked()
+        self.ImportBS(tempbootvals,DelVal=DelVal)
         self.Stats()
 
 

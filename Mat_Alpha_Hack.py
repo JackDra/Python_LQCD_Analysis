@@ -2,19 +2,21 @@
 
 from FlowOpps import FlowOp
 from Params import defInfoFlow,defxlimOpMost
-from Params import outputdir,graphdir
+from Params import outputdir,graphdir,scratchdir
 from XmlFormatting import tflowTOLeg,untflowstr
 from TimeStuff import Timer
 import pandas as pa
-from PlotData import null_series
+from NullPlotData import null_series
 import numpy as np
 import os
 from Autocorr import AutoCorrelate
-from PredefFitFuns import LinearFitFun,LinFFDer
+from PredefFitFuns import LinearFitFun,LinFFDer,c3FitFun_nosqrt
 import SetsOfFits as sff
 from copy import deepcopy
 from PlotData import Plotting
 from QuantityLists import ens_dict
+import pickle as pik
+
 
 # nx,nt,latspace = 16,32,0.1215
 # kud,ks = 13825,13710
@@ -372,10 +374,12 @@ def GetCfgEns(ens_name,InfoFlow):
 
 
 
-def AlphaRatAnalysis(ens_name,InfoFlow,data_plot,data_plot_NoE,data_plot_tauint,data_plot_covar,t0_scale):
+def AlphaRatAnalysis(ens_name,InfoFlow,data_plot,data_plot_NoE,
+                     data_plot_tauint,data_plot_covar,t0_scale,nblock=1):
     t0_scale_str = f't_s{t0_scale:.3}'
     leg_lab_ext = r' \frac{t_{s}}{t_{0}}='+t0_scale_str.replace('t_s','')
     InfoFlow['tflowlist'] = defxlimOpMost
+    InfoFlow['n_block'] = nblock
 
     data_Q = FlowOp(Info=InfoFlow,man_load_cfgs=True)
     data_W = FlowOp(Info=InfoFlow,man_load_cfgs=True)
@@ -383,9 +387,15 @@ def AlphaRatAnalysis(ens_name,InfoFlow,data_plot,data_plot_NoE,data_plot_tauint,
     data_QW = FlowOp(Info=InfoFlow,man_load_cfgs=True)
     data_QQ = FlowOp(Info=InfoFlow,man_load_cfgs=True)
     data_QQ0 = FlowOp(Info=InfoFlow,man_load_cfgs=True)
-    out_name_NoE = 'Test_alpha_NoE_'+ens_name+'_'+t0_scale_str
-    out_name_Q0= 'Test_alpha_Q0_'+ens_name+'_'+t0_scale_str
-    out_name = 'Test_alpha_'+ens_name+'_'+t0_scale_str
+    if nblock > 1:
+        nbstr = '_nb'+str(nblock)
+    else:
+        nbstr = ''
+    out_name_NoE = 'Test_alpha_NoE_'+ens_name+'_'+t0_scale_str+nbstr
+    out_name_Q0= 'Test_alpha_Q0_'+ens_name+'_'+t0_scale_str+nbstr
+    out_name = 'Test_alpha_'+ens_name+'_'+t0_scale_str+nbstr
+
+
 
     alpha_ratio = FlowOp(Info=InfoFlow,man_load_cfgs=True)
     alpha_ratio.FlowSetCustomName(string=out_name)
@@ -417,13 +427,13 @@ def AlphaRatAnalysis(ens_name,InfoFlow,data_plot,data_plot_NoE,data_plot_tauint,
             alpha_ratio_Q0.FlowStats()
             alpha_ratio_Q0.FlowWrite()
 
-        data_Q.FlowSetCustomName(string=ens_name+'_Test_Q')
-        data_E.FlowSetCustomName(string=ens_name+'_Test_E')
-        data_W.FlowSetCustomName(string=ens_name+'_Test_W')
-        data_QQ.FlowSetCustomName(string=ens_name+'_Test_QQ')
-        data_QQ0.FlowSetCustomName(string=ens_name+'_Test_QQ0')
-        data_QW.FlowSetCustomName(string=ens_name+'_Test_QW_'+t0_scale_str)
-        data_QW.FlowSetCustomName(string=ens_name+'_Test_QW_'+t0_scale_str,stringLL=data_QW.flowLegLab+leg_lab_ext)
+        data_Q.FlowSetCustomName(string=ens_name+'_Test_Q'+nbstr)
+        data_E.FlowSetCustomName(string=ens_name+'_Test_E'+nbstr)
+        data_W.FlowSetCustomName(string=ens_name+'_Test_W'+nbstr)
+        data_QQ.FlowSetCustomName(string=ens_name+'_Test_QQ'+nbstr)
+        data_QQ0.FlowSetCustomName(string=ens_name+'_Test_QQ0'+nbstr)
+        data_QW.FlowSetCustomName(string=ens_name+'_Test_QW_'+t0_scale_str+nbstr)
+        data_QW.FlowSetCustomName(string=ens_name+'_Test_QW_'+t0_scale_str+nbstr,stringLL=data_QW.flowLegLab+leg_lab_ext)
         if os.path.isfile(data_Q.flowPickleFile):
             data_Q.FlowLoadPickle(CheckCfgs=False,WipeData=False,DefWipe=WipeBase)
         if os.path.isfile(data_E.flowPickleFile):
@@ -441,6 +451,7 @@ def AlphaRatAnalysis(ens_name,InfoFlow,data_plot,data_plot_NoE,data_plot_tauint,
             data_QQ0.FlowLoadPickle(CheckCfgs=False,WipeData=False,DefWipe=False)
         if os.path.isfile(data_QW.flowPickleFile) and not ForceWipe:
             data_QW.FlowLoadPickle(CheckCfgs=False,WipeData=False,DefWipe=False)
+        DoRead = False
     if DoRead:
         if 'qu_' in ens_name:
             cfglist_Q,cfglist_W,cfglist_E = GetCfgQuenched(ens_name,InfoFlow)
@@ -461,15 +472,15 @@ def AlphaRatAnalysis(ens_name,InfoFlow,data_plot,data_plot_NoE,data_plot_tauint,
         cfglist_E.to_csv(cfg_list_fileE)
 
         data_Q.FlowImportCfgList(cfglist_Q)
-        data_Q.FlowSetCustomName(string=ens_name+'_Test_Q')
+        data_Q.FlowSetCustomName(string=ens_name+'_Test_Q'+nbstr)
         data_Q.FlowLoadPickle(CheckCfgs=False,WipeData=False,DefWipe=WipeBase)
 
         data_W.FlowImportCfgList(cfglist_W)
-        data_W.FlowSetCustomName(string=ens_name+'_Test_W')
+        data_W.FlowSetCustomName(string=ens_name+'_Test_W'+nbstr)
         data_W.FlowLoadPickle(CheckCfgs=False,WipeData=False,DefWipe=WipeBase)
 
         data_E.FlowImportCfgList(cfglist_E)
-        data_E.FlowSetCustomName(string=ens_name+'_Test_E')
+        data_E.FlowSetCustomName(string=ens_name+'_Test_E'+nbstr)
         data_E.FlowLoadPickle(CheckCfgs=False,WipeData=False,DefWipe=WipeBase)
         data_E.Compute_t0()
         this_t0 = data_E.t0_values['boot'].iloc[0]
@@ -479,17 +490,17 @@ def AlphaRatAnalysis(ens_name,InfoFlow,data_plot,data_plot_NoE,data_plot_tauint,
         data_QW = FlowOp(Info=InfoFlow,man_load_cfgs=True)
         data_QQ = FlowOp(Info=InfoFlow,man_load_cfgs=True)
         data_QQ0 = FlowOp(Info=InfoFlow,man_load_cfgs=True)
-        data_QW.FlowSetCustomName(string=ens_name+'_Test_QW_'+t0_scale_str)
-        data_QW.FlowSetCustomName(string=ens_name+'_Test_QW_'+t0_scale_str,stringLL=data_QW.flowLegLab+leg_lab_ext)
-        data_QQ.FlowSetCustomName(string=ens_name+'_Test_QQ')
-        data_QQ0.FlowSetCustomName(string=ens_name+'_Test_QQ0')
+        data_QW.FlowSetCustomName(string=ens_name+'_Test_QW_'+t0_scale_str+nbstr)
+        data_QW.FlowSetCustomName(string=ens_name+'_Test_QW_'+t0_scale_str+nbstr,stringLL=data_QW.flowLegLab+leg_lab_ext)
+        data_QQ.FlowSetCustomName(string=ens_name+'_Test_QQ'+nbstr)
+        data_QQ0.FlowSetCustomName(string=ens_name+'_Test_QQ0'+nbstr)
 
         if os.path.isfile(data_QW.flowPickleFile) and not ForceWipe:
             data_QW.FlowLoadPickle(CheckCfgs=False,WipeData=False,DefWipe=False)
         else:
             data_QW_low,data_QW_high,tlow,thigh = data_W.FlowCombinePreBS_FixFT_Interp(data_Q,Operation='x',flow_time=ts,Phys=False)
-            data_QW_low.FlowSetCustomName(string=ens_name+'_Test_QW_low_'+str(tlow))
-            data_QW_high.FlowSetCustomName(string=ens_name+'_Test_QW_high_'+str(thigh))
+            data_QW_low.FlowSetCustomName(string=ens_name+'_Test_QW_low_'+str(tlow)+nbstr)
+            data_QW_high.FlowSetCustomName(string=ens_name+'_Test_QW_high_'+str(thigh)+nbstr)
             data_QW_low.FlowBootstrap(WipeData=False)
             data_QW_high.FlowBootstrap(WipeData=False)
             data_QW_low.FlowWrite()
@@ -518,8 +529,8 @@ def AlphaRatAnalysis(ens_name,InfoFlow,data_plot,data_plot_NoE,data_plot_tauint,
                     return float('NaN')
             data_QW_df = data_QW_low.Op_Stats['boot'].to_frame('low')
             data_QW_df['high'] = data_QW_high.Op_Stats['boot']
-            data_QW.FlowSetCustomName(string=ens_name+'_Test_QW_'+t0_scale_str)
-            data_QW.FlowSetCustomName(string=ens_name+'_Test_QW_'+t0_scale_str,
+            data_QW.FlowSetCustomName(string=ens_name+'_Test_QW_'+t0_scale_str+nbstr)
+            data_QW.FlowSetCustomName(string=ens_name+'_Test_QW_'+t0_scale_str+nbstr,
                                       stringLL=data_QW.flowLegLab+leg_lab_ext)
             data_QW.Op_Stats['boot'] = data_QW_df.apply(Fitt,axis=1)
             data_QW.FlowWrite()
@@ -527,7 +538,7 @@ def AlphaRatAnalysis(ens_name,InfoFlow,data_plot,data_plot_NoE,data_plot_tauint,
             data_QQ.FlowLoadPickle(CheckCfgs=False,WipeData=False,DefWipe=False)
         else:
             data_QQ = data_Q.FlowCombinePreBS(data_Q,Operation='x')
-            data_QQ.FlowSetCustomName(string=ens_name+'_Test_QQ')
+            data_QQ.FlowSetCustomName(string=ens_name+'_Test_QQ'+nbstr)
             data_QQ.FlowBootstrap(WipeData=False)
             data_QQ.FlowWrite()
 
@@ -535,7 +546,7 @@ def AlphaRatAnalysis(ens_name,InfoFlow,data_plot,data_plot_NoE,data_plot_tauint,
             data_QQ0.FlowLoadPickle(CheckCfgs=False,WipeData=False,DefWipe=False)
         else:
             data_QQ0 = data_Q.FlowCombinePreBS_FixFT(data_Q,Operation='x',flow_time=0)
-            data_QQ0.FlowSetCustomName(string=ens_name+'_Test_QQ0')
+            data_QQ0.FlowSetCustomName(string=ens_name+'_Test_QQ0'+nbstr)
             data_QQ0.FlowBootstrap(WipeData=False)
             data_QQ0.FlowWrite()
 
@@ -582,7 +593,8 @@ def AlphaRatAnalysis(ens_name,InfoFlow,data_plot,data_plot_NoE,data_plot_tauint,
         alpha_ratio_Q0.FlowSetCustomName(string=out_name_Q0,stringLL=alpha_ratio_Q0.flowLegLab+leg_lab_ext)
         alpha_ratio_Q0.FlowStats()
         alpha_ratio_Q0.FlowWrite()
-    data_plot_NoE = alpha_ratio_NoE.FlowPlot_mul_tf2(data_plot_NoE,mul=True)
+    # data_plot_NoE = alpha_ratio_NoE.FlowPlot_mul_tf2(data_plot_NoE,mul=True)
+    data_plot_NoE = alpha_ratio_NoE.FlowPlot_mul_tf2(data_plot_NoE,mul=True,forcet0=t0_dict[ens_name])
     # data_plot_NoE = alpha_ratio_NoE.FlowPlot(data_plot_NoE)
     data_plot = alpha_ratio.FlowPlot_mul_tf2(data_plot)
     # if DoAuto:
@@ -731,8 +743,58 @@ def ErrEpsShift(this_data):
         out_series = pa.Series()
     return out_series
 
+
+
 import sys
 master_ens_list = ['mpi411','mpi570','mpi701','L16','L20','L28','qu_L24']
+t0_dict = {}
+t0_dict['mpi411'] =     2.5377162290
+t0_dict['mpi570'] =     2.3999592122
+t0_dict['mpi701'] =     2.2590866059
+t0_dict['L16'] =        1.3628954894
+t0_dict['L20'] =        2.2386627909
+t0_dict['L28'] =        4.9885618908
+t0_dict['qu_L24'] =     3.2060027740
+
+
+a_dict = {}
+a_dict['mpi411'] =  0.0907
+a_dict['mpi570'] =  0.0907
+a_dict['mpi701'] =  0.0907
+a_dict['L16'] =  0.1095
+a_dict['L20'] =  0.0936
+a_dict['L28'] =  0.0684
+a_dict['qu_L24'] =  0.07
+fit_info_list = []
+fit_info = {}
+fit_info['Funs'] = [c3FitFun_nosqrt,3]
+fit_info_list.append(fit_info)
+tflow_fit_min = 0.1
+tflow_fit_max = 0.4
+min_par_tflow = 20
+min_hold = tflow_fit_min
+max_hold = tflow_fit_max
+tflow_fit_min = {}
+tflow_fit_max = {}
+use_t0rat = True
+if use_t0rat:
+    sqrt8t_key = 'sqrt8t_t0rat'
+else:
+    sqrt8t_key = 'sqrt8t_fm'
+if use_t0rat:
+    print(min_hold,' to ',max_hold, ' in fm corresponds to')
+    for ikey in a_dict.keys():
+        print(ikey)
+        tflow_fit_min[ikey] = min_hold/(a_dict[ikey]*np.sqrt(8*t0_dict[ikey]))
+        tflow_fit_max[ikey] = max_hold/(a_dict[ikey]*np.sqrt(8*t0_dict[ikey]))
+        print(tflow_fit_min[ikey],' to ',tflow_fit_max[ikey], ' in units of sqrt(8t_{0})')
+        print()
+else:
+    for ikey in a_dict.keys():
+        tflow_fit_min[ikey] = min_hold
+        tflow_fit_max[ikey] = max_hold
+
+run_nb = 1
 if len(sys.argv)> 1:
     ens_list = []
     for iarg in sys.argv[1:]:
@@ -742,6 +804,8 @@ if len(sys.argv)> 1:
             ens_list.append(['L16','L20','L28'])
         elif 'quenched' in iarg and 'ens' in iarg:
             ens_list.append(['qu_L24'])
+        elif 'nblock' in iarg:
+            run_nb = int(iarg.replace('nblock',''))
         elif iarg not in master_ens_list:
             print('Warning, ensemble name not found: ',iarg)
         else:
@@ -754,117 +818,150 @@ print(', '.join(ens_list))
 print()
 
 
-def PlotFlowTime(t0_scale):
+def FitRat(this_data,this_key,nbstr=''):
+    fit_data = this_data.Op_Stats[['boot']].reset_index()
+    this_file = scratchdir+'/fit_WQ_'+this_key+nbstr+'.py3p'
+    this_fit = False
+    if os.path.isfile(this_file):
+        with open(this_file,'rb') as f:
+            this_fit,dummy = pik.load(f)
+    if this_fit is False or len(this_fit.Fit_Stats_fmt['Fit']) == 0:
+        if use_t0rat:
+            fit_data[sqrt8t_key] = fit_data['Flow Times'].apply(lambda x : np.sqrt(untflowstr(x)/t0_dict[this_key]))
+        else:
+            fit_data[sqrt8t_key] = fit_data['Flow Times'].apply(lambda x : np.sqrt(untflowstr(x))*a_dict[this_key])
+        fit_data['boot'] = fit_data.apply(lambda x : x['boot']*untflowstr(x['Flow Times']),axis=1)
+        fit_data['boot'].apply(lambda x : x.Stats())
+        fit_data = fit_data.set_index(sqrt8t_key)['boot']
+        fit_less_data = fit_data[::5]
+        this_fit = sff.SetOfFitFuns(data = fit_less_data,name=this_key)
+        this_fit.ScanRange(tflow_fit_min[ikey],tflow_fit_max[ikey],
+                           fit_info_list,min_fit_len=min_par_tflow,from_xdata=True)
+        this_fit.DoFits()
+        this_fit.SortChi()
+        this_fit.Fitr_Len_Sort()
+        # this_fit.Cut_min_len(30)
+        this_fit.RemoveFuns()
+        with open(this_file,'wb') as f:
+            pik.dump((this_fit,fit_less_data),f)
+        this_fit.GetFuns()
+    return this_fit
+
+
+def PlotFlowTime(t0_scale,this_nb=1):
+    if this_nb > 1:
+        nbstr = '_nb'+str(this_nb)
+    else:
+        nbstr = ''
 
     t0_scale_str = f't_s{t0_scale:.3}'
     this_info = pa.Series()
-    this_info['save_file'] = graphdir+'/flowops_test_NoE_'+t0_scale_str+'.pdf'
-    this_info['title'] = r'$\frac{t<Q(t_{s})W(t)>}{<Q(t_{s})^{2}>}$ $t_{s}='+t0_scale_str+ r' t_{0}$'
+    this_info['save_file'] = graphdir+'/flowops_test_NoE_'+t0_scale_str+nbstr+'.pdf'
+    this_info['title'] = r'$\frac{t<Q(t_{s})W(t)>}{<Q(t_{s})^{2}>}$ $t_{s}='+t0_scale_str+ r' t_{0}$'+nbstr
     this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
     this_info['ylabel'] = 'ratio'
     data_plot_NoE = Plotting(plot_info=this_info)
 
     this_info = pa.Series()
-    this_info['save_file'] = graphdir+'/flowops_test_'+t0_scale_str+'.pdf'
-    this_info['title'] = r'$\frac{<Q(t_{s})W(t)>}{t<E(t)><Q(t_{s})^{2}>}$ $t_{s}='+t0_scale_str+ r' t_{0}$'
+    this_info['save_file'] = graphdir+'/flowops_test_'+t0_scale_str+nbstr+'.pdf'
+    this_info['title'] = r'$\frac{<Q(t_{s})W(t)>}{t<E(t)><Q(t_{s})^{2}>}$ $t_{s}='+t0_scale_str+ r' t_{0}$'+nbstr
     this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
     this_info['ylabel'] = 'ratio'
     data_plot = Plotting(plot_info=this_info)
 
 
+    # this_info = pa.Series()
+    # this_info['save_file'] = graphdir+'/flowops_R28_'+t0_scale_str+'.pdf'
+    # this_info['title'] = r'$\frac{<Q(t_{s})W(t)>}{t<E(t)><Q(t_{s})^{2}>_{28}}$ $t_{s}='+t0_scale_str+ r' t_{0}$'
+    # this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
+    # this_info['ylabel'] = 'ratio'
+    # data_plot_28 = Plotting(plot_info=this_info)
+    #
+    # this_info = pa.Series()
+    # this_info['save_file'] = graphdir+'/flowops_test_Q0_'+t0_scale_str+'.pdf'
+    # this_info['title'] = r'$\frac{<Q(t_{s})W(t)>}{t<E(t)><Q(t_{s})Q(0)>}$ $t_{s}='+t0_scale_str+ r' t_{0}$'
+    # this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
+    # this_info['ylabel'] = 'ratio'
+    # data_plot_Q0 = Plotting(plot_info=this_info)
+    #
     this_info = pa.Series()
-    this_info['save_file'] = graphdir+'/flowops_R28_'+t0_scale_str+'.pdf'
-    this_info['title'] = r'$\frac{<Q(t_{s})W(t)>}{t<E(t)><Q(t_{s})^{2}>_{28}}$ $t_{s}='+t0_scale_str+ r' t_{0}$'
-    this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
-    this_info['ylabel'] = 'ratio'
-    data_plot_28 = Plotting(plot_info=this_info)
-
-    this_info = pa.Series()
-    this_info['save_file'] = graphdir+'/flowops_test_Q0_'+t0_scale_str+'.pdf'
-    this_info['title'] = r'$\frac{<Q(t_{s})W(t)>}{t<E(t)><Q(t_{s})Q(0)>}$ $t_{s}='+t0_scale_str+ r' t_{0}$'
-    this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
-    this_info['ylabel'] = 'ratio'
-    data_plot_Q0 = Plotting(plot_info=this_info)
-
-    this_info = pa.Series()
-    this_info['save_file'] = graphdir+'/flowops_test_WWrat_'+t0_scale_str+'.pdf'
-    this_info['title'] = r'$\frac{<W(t_{s})W(t)>}{t<E(t)><Q(t_{s})W(t_{s})>}$ $t_{s}='+t0_scale_str+ r' t_{0}$'
+    this_info['save_file'] = graphdir+'/flowops_test_WWrat_'+t0_scale_str+nbstr+'.pdf'
+    this_info['title'] = r'$\frac{<W(t_{s})W(t)>}{t<E(t)><Q(t_{s})W(t_{s})>}$ $t_{s}='+t0_scale_str+ r' t_{0}$'+nbstr
     this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
     this_info['ylabel'] = 'ratio'
     WW_data_plot = Plotting(plot_info=this_info)
 
     this_info = pa.Series()
-    this_info['save_file'] = graphdir+'/flowops_test_WWrat_NoE_'+t0_scale_str+'.pdf'
-    this_info['title'] = r'$\frac{t<W(t_{s})W(t)>}{<Q(t_{s})W(t_{s})>}$ $t_{s}='+t0_scale_str+ r' t_{0}$'
+    this_info['save_file'] = graphdir+'/flowops_test_WWrat_NoE_'+t0_scale_str+nbstr+'.pdf'
+    this_info['title'] = r'$\frac{t<W(t_{s})W(t)>}{<Q(t_{s})W(t_{s})>}$ $t_{s}='+t0_scale_str+ r' t_{0}$'+nbstr
     this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
     this_info['ylabel'] = 'ratio'
     WW_data_plot_NoE = Plotting(plot_info=this_info)
 
     this_info = pa.Series()
-    this_info['save_file'] = graphdir+'/flowops_test_'+t0_scale_str+'_tauint.pdf'
-    this_info['title'] = r'$\tau_{int}$ of alpha ratio $t_{s}='+t0_scale_str+ r' t_{0}$'
+    this_info['save_file'] = graphdir+'/flowops_test_'+t0_scale_str+nbstr+'_tauint.pdf'
+    this_info['title'] = r'$\tau_{int}$ of alpha ratio $t_{s}='+t0_scale_str+ r' t_{0}$'+nbstr
     this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
     this_info['ylabel'] = '$\tau_{int}$'
     data_plot_tauint = Plotting(plot_info=this_info)
 
     this_info = pa.Series()
-    this_info['save_file'] = graphdir+'/flowops_test_covar.pdf'
-    this_info['title'] = 'Covariance matrix of alpha ratio '
+    this_info['save_file'] = graphdir+'/flowops_test_covar'+nbstr+'.pdf'
+    this_info['title'] = 'Covariance matrix of alpha ratio '+nbstr
     this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
     this_info['ylabel'] = '$Covar$'
     data_plot_covar = Plotting(plot_info=this_info)
+    #
+    # this_info = pa.Series()
+    # this_info['save_file'] = graphdir+'/flowops_W.pdf'
+    # this_info['title'] = r'$<W(t)>$'
+    # this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
+    # this_info['ylabel'] = '$W$'
+    # data_plot_W = Plotting(plot_info=this_info)
+    #
+    # this_info = pa.Series()
+    # this_info['save_file'] = graphdir+'/flowops_Q.pdf'
+    # this_info['title'] = r'$<Q(t)>$'
+    # this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
+    # this_info['ylabel'] = '$Q$'
+    # data_plot_Q = Plotting(plot_info=this_info)
+    #
+    # this_info = pa.Series()
+    # this_info['save_file'] = graphdir+'/flowops_E.pdf'
+    # this_info['title'] = r'$<\frac{6*t^{2}}{V}*E(t)>$'
+    # this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
+    # this_info['ylabel'] = '$E$'
+    # data_plot_E = Plotting(plot_info=this_info)
+    #
+    # this_info = pa.Series()
+    # this_info['save_file'] = graphdir+'/flowops_QQ_'+t0_scale_str+'.pdf'
+    # this_info['title'] = r'$<Q(t)^{2}>$'
+    # this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
+    # this_info['ylabel'] = r'$<QQ>$'
+    # data_plot_QQ = Plotting(plot_info=this_info)
+    #
+    # this_info = pa.Series()
+    # this_info['save_file'] = graphdir+'/flowops_QQ0_'+t0_scale_str+'.pdf'
+    # this_info['title'] = r'$<Q(t)Q(0)>$'
+    # this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
+    # this_info['ylabel'] = r'$<QQ>$'
+    # data_plot_QQ0 = Plotting(plot_info=this_info)
+    #
+    #
+    #
+    # this_info = pa.Series()
+    # this_info['save_file'] = graphdir+'/flowops_QW_'+t0_scale_str+'.pdf'
+    # this_info['title'] = r'$<Q(t_{s})W(t)>$ $t_{s}='+t0_scale_str+ r' t_{0}$'
+    # this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
+    # this_info['ylabel'] = r'$<QW>$'
+    # data_plot_QW = Plotting(plot_info=this_info)
 
-    this_info = pa.Series()
-    this_info['save_file'] = graphdir+'/flowops_W.pdf'
-    this_info['title'] = r'$<W(t)>$'
-    this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
-    this_info['ylabel'] = '$W$'
-    data_plot_W = Plotting(plot_info=this_info)
-
-    this_info = pa.Series()
-    this_info['save_file'] = graphdir+'/flowops_Q.pdf'
-    this_info['title'] = r'$<Q(t)>$'
-    this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
-    this_info['ylabel'] = '$Q$'
-    data_plot_Q = Plotting(plot_info=this_info)
-
-    this_info = pa.Series()
-    this_info['save_file'] = graphdir+'/flowops_E.pdf'
-    this_info['title'] = r'$<\frac{6*t^{2}}{V}*E(t)>$'
-    this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
-    this_info['ylabel'] = '$E$'
-    data_plot_E = Plotting(plot_info=this_info)
-
-    this_info = pa.Series()
-    this_info['save_file'] = graphdir+'/flowops_QQ_'+t0_scale_str+'.pdf'
-    this_info['title'] = r'$<Q(t)^{2}>$'
-    this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
-    this_info['ylabel'] = r'$<QQ>$'
-    data_plot_QQ = Plotting(plot_info=this_info)
-
-    this_info = pa.Series()
-    this_info['save_file'] = graphdir+'/flowops_QQ0_'+t0_scale_str+'.pdf'
-    this_info['title'] = r'$<Q(t)Q(0)>$'
-    this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
-    this_info['ylabel'] = r'$<QQ>$'
-    data_plot_QQ0 = Plotting(plot_info=this_info)
-
-
-
-    this_info = pa.Series()
-    this_info['save_file'] = graphdir+'/flowops_QW_'+t0_scale_str+'.pdf'
-    this_info['title'] = r'$<Q(t_{s})W(t)>$ $t_{s}='+t0_scale_str+ r' t_{0}$'
-    this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
-    this_info['ylabel'] = r'$<QW>$'
-    data_plot_QW = Plotting(plot_info=this_info)
-
-    this_info = pa.Series()
-    this_info['save_file'] = graphdir+'/flowops_WW_'+t0_scale_str+'.pdf'
-    this_info['title'] = r'$<W(t_{s})W(t)>$ $t_{s}='+t0_scale_str+ r' t_{0}$'
-    this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
-    this_info['ylabel'] = r'$<WW>$'
-    data_plot_WW = Plotting(plot_info=this_info)
-
+    # this_info = pa.Series()
+    # this_info['save_file'] = graphdir+'/flowops_WW_'+t0_scale_str+'.pdf'
+    # this_info['title'] = r'$<W(t_{s})W(t)>$ $t_{s}='+t0_scale_str+ r' t_{0}$'
+    # this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
+    # this_info['ylabel'] = r'$<WW>$'
+    # data_plot_WW = Plotting(plot_info=this_info)
 
     Rat_list = {}
     Rat_28_list = {}
@@ -880,6 +977,7 @@ def PlotFlowTime(t0_scale):
     # data_QW2_list = {}
     WWrat_ens_list = {}
     ts_list = {}
+    Rat_Fit_list = {}
     for ikey,iens in ens_dict.items():
         if ikey not in ens_list: continue
         if '-' in ikey or '_no2' in ikey: continue
@@ -892,7 +990,9 @@ def PlotFlowTime(t0_scale):
         this_alpha,this_alpha_Q0,this_alpha_NoE,data_plot, \
         data_plot_NoE,data_plot_tauint,data_Q,data_E,data_W,data_QW, \
         data_QQ,data_QQ0,data_plot_covar,InfoFlow,its = AlphaRatAnalysis(ikey,parse_dict,data_plot,data_plot_NoE,
-                                                            data_plot_tauint,data_plot_covar,t0_scale)
+                                                            data_plot_tauint,data_plot_covar,t0_scale,nblock=this_nb)
+
+        Rat_Fit_list[ikey] = FitRat(this_alpha_NoE,ikey,nbstr=nbstr)
         ts_list[ikey] = its
         Rat_list[ikey] = this_alpha
         Rat_Q0_list[ikey] = this_alpha_Q0
@@ -903,20 +1003,32 @@ def PlotFlowTime(t0_scale):
         data_QQ_list[ikey] = data_QQ
         data_QQ0_list[ikey] = data_QQ0
         data_QW_list[ikey] = deepcopy(data_QW)
-        data_plot_Q0 = this_alpha_Q0.FlowPlot_mul_tf2(data_plot_Q0)
-        data_plot_Q = data_Q.FlowPlot(data_plot_Q)
-        data_plot_W = data_W.FlowPlot(data_plot_W)
-        data_plot_E = data_E.FlowPlot_mul_tf2(data_plot_E,just_E=True)
-        data_plot_QQ = data_QQ.FlowPlot(data_plot_QQ)
-        data_plot_QQ0 = data_QQ0.FlowPlot(data_plot_QQ0)
-        data_plot_QW = data_QW.FlowPlot_mul_tf2(data_plot_QW,mul=True)
-        data_plot_Q0
+
+        hold_series = null_series
+        hold_series['type'] = 'fit_vary'
+        # plot_fit = A0Fit_data[ikey].ReduceViaChi(nchi_cutoff=15)[0]
+        plot_fit = Rat_Fit_list[ikey]
+        hold_series['key_select'] = 'First'
+        hold_series['fit_class'] = plot_fit
+        hold_series['label'] = ikey+' Fit'
+        # hold_series['xaxis'] = 0
+        # hold_series['xdatarange'] = 'Data'
+        # hold_series['otherXvals'] = [1]
+        data_plot_NoE.AppendData(hold_series)
+
+        # data_plot_Q0 = this_alpha_Q0.FlowPlot_mul_tf2(data_plot_Q0)
+        # data_plot_Q = data_Q.FlowPlot(data_plot_Q)
+        # data_plot_W = data_W.FlowPlot(data_plot_W)
+        # data_plot_E = data_E.FlowPlot_mul_tf2(data_plot_E,just_E=True)
+        # data_plot_QQ = data_QQ.FlowPlot(data_plot_QQ)
+        # data_plot_QQ0 = data_QQ0.FlowPlot(data_plot_QQ0)
+        # data_plot_QW = data_QW.FlowPlot_mul_tf2(data_plot_QW,mul=True)
         if DoWW:
             this_WWrat,this_WWrat_NoE,WW_data_plot,WW_data_plot_NoE,data_WW = DoWWAnalysis(ikey,WW_data_plot,WW_data_plot_NoE,data_Q,data_E,data_W,data_QW,InfoFlow,t0_scale)
             data_WW_list[ikey] = data_WW
             # data_QW2_list[ikey] = data_QW2
             WWrat_ens_list[ikey] = this_WWrat
-            data_plot_WW = data_WW.FlowPlot(data_plot_WW)
+            # data_plot_WW = data_WW.FlowPlot(data_plot_WW)
             # data_plot_QWcomp = data_QW.FlowPlot(data_plot_QWcomp)
             # # data_plot_QWcomp = data_QW2.FlowPlot(data_plot_QWcomp)
             # data_plot_WWvsQW = data_QW.FlowPlot_mul_tf2(data_plot_WWvsQW,mul=True)
@@ -930,26 +1042,26 @@ def PlotFlowTime(t0_scale):
         if 'mpi' in ikey: continue
         if QQ_28 is not None:
             this_data = data_QW_list[ikey].__div__(data_E_list[ikey]*QQ_28)
-            out_name = 'Test_alpha_28_'+ikey+'_'+t0_scale_str
+            out_name = 'Test_alpha_28_'+ikey+'_'+t0_scale_str+nbstr
             this_data.FlowSetCustomName(string=out_name)
             this_data.FlowSetCustomName(string=out_name,stringLL=this_data.flowLegLab+leg_lab_ext)
             this_data.FlowStats()
             this_data.FlowWrite()
-            data_plot_28 = this_data.FlowPlot_mul_tf2(data_plot_28)
+            # data_plot_28 = this_data.FlowPlot_mul_tf2(data_plot_28)
             Rat_28_list[ikey] = this_data
-    data_plot_28.PlotAll()
+    # data_plot_28.PlotAll()
     data_plot.PlotAll()
-    data_plot_Q0.PlotAll()
+    # data_plot_Q0.PlotAll()
     data_plot_NoE.PlotAll()
-    data_plot_tauint.PlotAll()
-    data_plot_covar.PlotAll()
-    data_plot_W.PlotAll()
-    data_plot_E.PlotAll()
-    data_plot_Q.PlotAll()
-    data_plot_QQ.PlotAll()
-    data_plot_QQ0.PlotAll()
-    data_plot_QW.PlotAll()
-    data_plot_WW.PlotAll()
+    # data_plot_tauint.PlotAll()
+    # data_plot_covar.PlotAll()
+    # data_plot_W.PlotAll()
+    # data_plot_E.PlotAll()
+    # data_plot_Q.PlotAll()
+    # data_plot_QQ.PlotAll()
+    # data_plot_QQ0.PlotAll()
+    # data_plot_QW.PlotAll()
+    # data_plot_WW.PlotAll()
     # data_plot_QWcomp.PlotAll()
 
     if DoWW:
@@ -963,7 +1075,7 @@ def PlotFlowTime(t0_scale):
     # data_plot_Et2 = PlotEt2(data_E_list)
     # data_plot_WWdivQW = PlotErrRat(data_WW_list,data_QW_list)
     out_dict = {}
-
+    out_dict['Rat_Fit_data'] = Rat_Fit_list
     out_dict['Rat_data'] = Rat_list
     out_dict['Rat_28_data'] = Rat_28_list
     out_dict['Rat_Q0_data'] = Rat_Q0_list
@@ -980,151 +1092,153 @@ def PlotFlowTime(t0_scale):
     out_dict['data_plot_NoE'] = data_plot_NoE
     out_dict['data_plot_tauint'] = data_plot_tauint
     out_dict['data_plot_covar'] = data_plot_covar
-    out_dict['data_plot_W'] = data_plot_W
-    out_dict['data_plot_E'] = data_plot_E
-    out_dict['data_plot_Q'] = data_plot_Q
-    out_dict['data_plot_QQ'] = data_plot_QQ
-    out_dict['data_plot_QQ0'] = data_plot_QQ0
-    out_dict['data_plot_QW'] = data_plot_QW
-    out_dict['data_plot_WW'] = data_plot_WW
+    # out_dict['data_plot_W'] = data_plot_W
+    # out_dict['data_plot_E'] = data_plot_E
+    # out_dict['data_plot_Q'] = data_plot_Q
+    # out_dict['data_plot_QQ'] = data_plot_QQ
+    # out_dict['data_plot_QQ0'] = data_plot_QQ0
+    # out_dict['data_plot_QW'] = data_plot_QW
+    # out_dict['data_plot_WW'] = data_plot_WW
     # out_dict['data_plot_QWcomp'] = data_plot_QWcomp
     # out_dict['data_plot_WWvsQW'] = data_plot_WWvsQW
-    out_dict['WW_data_plot'] = WW_data_plot
-    out_dict['WW_data_plot_NoE'] = WW_data_plot_NoE
+    # out_dict['WW_data_plot'] = WW_data_plot
+    # out_dict['WW_data_plot_NoE'] = WW_data_plot_NoE
     # out_dict['data_plot_Et2'] = data_plot_Et2
     # out_dict['data_plot_WWdivQW'] = data_plot_WWdivQW
     return out_dict
 
 ## sqrt(8t_s) = "sqrt_t0_scale_list" X sqrt(8t_0)
-sqrt_t0_scale_list = [0.2, 0.4, 0.6, 0.8, 1.0]
+# sqrt_t0_scale_list = [0.2, 0.4, 0.6, 0.8, 1.0]
+sqrt_t0_scale_list = [0.6]
 t0_scale_list = [it0**2 for it0 in sqrt_t0_scale_list]
 pow_list = 3,2,3/2
 all_data = {}
 for it0s in t0_scale_list:
     t0_scale_str = f't_s{it0s:.3f}'
-    data_list = PlotFlowTime(it0s)
+    data_list = PlotFlowTime(it0s,this_nb=run_nb)
     all_data[t0_scale_str] = data_list
 
-for ikey,iens in ens_dict.items():
-    if ikey not in ens_list: continue
-    if '-' in ikey or '_no2' in ikey: continue
-
-    this_info = pa.Series()
-    this_info['save_file'] = graphdir+'/flowops_test_NoE_'+ikey+'.pdf'
-    this_info['title'] = r'$\frac{t<Q(t_{s})W(t)>}{<Q(t_{s})^{2}>}$ '+ikey
-    this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
-    this_info['ylabel'] = 'ratio'
-    data_plot_NoE = Plotting(plot_info=this_info)
-
-    this_info = pa.Series()
-    this_info['save_file'] = graphdir+'/flowops_test_'+ikey+'.pdf'
-    this_info['title'] = r'$\frac{<Q(t_{s})W(t)>}{t<E(t)><Q(t_{s})^{2}>}$ '+ikey
-    this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
-    this_info['ylabel'] = 'ratio'
-    data_plot = Plotting(plot_info=this_info)
-
-    this_info = pa.Series()
-    this_info['save_file'] = graphdir+'/flowops_R28_'+ikey+'.pdf'
-    this_info['title'] = r'$\frac{<Q(t_{s})W(t)>}{t<E(t)><Q(t_{s})^{2}>_{28}}$ '+ikey
-    this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
-    this_info['ylabel'] = 'ratio'
-    data_plot_28 = Plotting(plot_info=this_info)
-
-    this_info = pa.Series()
-    this_info['save_file'] = graphdir+'/flowops_test_Q0_'+ikey+'.pdf'
-    this_info['title'] = r'$\frac{<Q(t_{s})W(t)>}{t<E(t)><Q(t_{s})Q(0)>}$ '+ikey
-    this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
-    this_info['ylabel'] = 'ratio'
-    data_plot_Q0 = Plotting(plot_info=this_info)
-
-    # this_info = pa.Series()
-    # this_info['save_file'] = graphdir+'/flowops_test_WWrat_'+ikey+'.pdf'
-    # this_info['title'] = r'$\frac{<W(t_{s})W(t)>}{t<E(t)><Q(t_{s})W(t_{s})>}$ '+ikey
-    # this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
-    # this_info['ylabel'] = 'ratio'
-    # WW_data_plot = Plotting(plot_info=this_info)
-    #
-    # this_info = pa.Series()
-    # this_info['save_file'] = graphdir+'/flowops_test_WWrat_NoE_'+ikey+'.pdf'
-    # this_info['title'] = r'$\frac{t<W(t_{s})W(t)>}{<Q(t_{s})W(t_{s})>}$ '+ikey
-    # this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
-    # this_info['ylabel'] = 'ratio'
-    # WW_data_plot_NoE = Plotting(plot_info=this_info)
-
-    this_info = pa.Series()
-    this_info['save_file'] = graphdir+'/flowops_QWdiv28_'+ikey+'.pdf'
-    this_info['title'] = r'$<Q(t_{s})W(t)>_{'+ikey+'}/<Q(t_{s})W(t)>_{L28}$ '
-    this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
-    this_info['ylabel'] = r'$<QW>/<QW>_{28}$'
-    data_plot_QW_rat28 = Plotting(plot_info=this_info)
-
-    this_info = pa.Series()
-    this_info['save_file'] = graphdir+'/flowops_QWdiv20_'+ikey+'.pdf'
-    this_info['title'] = r'$<Q(t_{s})W(t)>_{'+ikey+'}/<Q(t_{s})W(t)>_{L20}$ '
-    this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
-    this_info['ylabel'] = r'$<QW>/<QW>_{20}$'
-    data_plot_QW_rat20 = Plotting(plot_info=this_info)
-
-
-    this_info = pa.Series()
-    this_info['save_file'] = graphdir+'/flowops_QWdiv16_'+ikey+'.pdf'
-    this_info['title'] = r'$<Q(t_{s})W(t)>_{'+ikey+'}/<Q(t_{s})W(t)>_{L16}$ '
-    this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
-    this_info['ylabel'] = r'$<QW>/<QW>_{16}$'
-    data_plot_QW_rat16 = Plotting(plot_info=this_info)
-
-    this_info = pa.Series()
-    this_info['save_file'] = graphdir+'/flowops_QW_'+ikey+'.pdf'
-    this_info['title'] = r'$<Q(t_{s})W(t)>$ '+ikey
-    this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
-    this_info['ylabel'] = r'$<QW>$'
-    data_plot_QW = Plotting(plot_info=this_info)
-
-
-    # this_info = pa.Series()
-    # this_info['save_file'] = graphdir+'/flowops_WW_'+ikey+'.pdf'
-    # this_info['title'] = r'$<W(t_{s})W(t)>$ '+ikey
-    # this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
-    # this_info['ylabel'] = r'$<WW>$'
-    # data_plot_WW = Plotting(plot_info=this_info)
-
-    for itc,(its,ts_data) in enumerate(all_data.items()):
-        if ikey in ts_data['Rat_28_data'].keys():
-            this_rat_28 = ts_data['Rat_28_data'][ikey]
-            data_plot_28 = this_rat_28.FlowPlot_mul_tf2(data_plot_28)
-
-        this_QW = ts_data['QW_data'][ikey]
-        # this_WW = ts_data['WW_data'][ikey]
-        this_rat = ts_data['Rat_data'][ikey]
-        this_rat_NoE = ts_data['Rat_NoE_data'][ikey]
-        this_rat_Q0 = ts_data['Rat_Q0_data'][ikey]
-        if 'L28' in ts_data['QW_data'].keys():
-            this_QW_rat = this_QW.__div__(ts_data['QW_data']['L28'])
-            this_QW_rat.FlowStats()
-            data_plot_QW_rat28 = this_QW_rat.FlowPlot(data_plot_QW_rat28,lab_append=its)
-        if 'L20' in ts_data['QW_data'].keys():
-            this_QW_rat = this_QW.__div__(ts_data['QW_data']['L20'])
-            this_QW_rat.FlowStats()
-            data_plot_QW_rat20 = this_QW_rat.FlowPlot(data_plot_QW_rat20,lab_append=its)
-        if 'L16' in ts_data['QW_data'].keys():
-            this_QW_rat = this_QW.__div__(ts_data['QW_data']['L16'])
-            this_QW_rat.FlowStats()
-            data_plot_QW_rat16 = this_QW_rat.FlowPlot(data_plot_QW_rat16,lab_append=its)
-        data_plot_QW = this_QW.FlowPlot(data_plot_QW)
-        if 'L28' in ikey:
-            for ipow in pow_list:
-                data_plot_QW = this_QW.FlowPlot_mul_tf2(data_plot_QW,mul=True,tpow=ipow,lab_append='$<QW>^{'+str(ipow)+'}$')
-                data_plot = this_rat.FlowPlot_mul_tf2(data_plot,tpow=ipow,lab_append='$<QW>^{'+str(ipow)+'}$')
-        else:
-            data_plot_QW = this_QW.FlowPlot_mul_tf2(data_plot_QW,mul=True)
-            data_plot = this_rat.FlowPlot_mul_tf2(data_plot)
-        data_plot_NoE = this_rat_NoE.FlowPlot_mul_tf2(data_plot_NoE,mul=True)
-        data_plot_Q0 = this_rat_Q0.FlowPlot_mul_tf2(data_plot_Q0)
-    data_plot_QW_rat28.PlotAll()
-    data_plot_QW_rat20.PlotAll()
-    data_plot_QW_rat16.PlotAll()
-    data_plot_QW.PlotAll()
-    data_plot.PlotAll()
-    data_plot_28.PlotAll()
-    data_plot_NoE.PlotAll()
-    data_plot_Q0.PlotAll()
+# for ikey,iens in ens_dict.items():
+#     if ikey not in ens_list: continue
+#     if '-' in ikey or '_no2' in ikey: continue
+#
+#     this_info = pa.Series()
+#     this_info['save_file'] = graphdir+'/flowops_test_NoE_'+ikey+'.pdf'
+#     this_info['title'] = r'$\frac{t<Q(t_{s})W(t)>}{<Q(t_{s})^{2}>}$ '+ikey
+#     this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
+#     this_info['ylabel'] = 'ratio'
+#     data_plot_NoE = Plotting(plot_info=this_info)
+#
+#     this_info = pa.Series()
+#     this_info['save_file'] = graphdir+'/flowops_test_'+ikey+'.pdf'
+#     this_info['title'] = r'$\frac{<Q(t_{s})W(t)>}{t<E(t)><Q(t_{s})^{2}>}$ '+ikey
+#     this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
+#     this_info['ylabel'] = 'ratio'
+#     data_plot = Plotting(plot_info=this_info)
+#
+#     # this_info = pa.Series()
+#     # this_info['save_file'] = graphdir+'/flowops_R28_'+ikey+'.pdf'
+#     # this_info['title'] = r'$\frac{<Q(t_{s})W(t)>}{t<E(t)><Q(t_{s})^{2}>_{28}}$ '+ikey
+#     # this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
+#     # this_info['ylabel'] = 'ratio'
+#     # data_plot_28 = Plotting(plot_info=this_info)
+#
+#     this_info = pa.Series()
+#     this_info['save_file'] = graphdir+'/flowops_test_Q0_'+ikey+'.pdf'
+#     this_info['title'] = r'$\frac{<Q(t_{s})W(t)>}{t<E(t)><Q(t_{s})Q(0)>}$ '+ikey
+#     this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
+#     this_info['ylabel'] = 'ratio'
+#     data_plot_Q0 = Plotting(plot_info=this_info)
+#
+#     # this_info = pa.Series()
+#     # this_info['save_file'] = graphdir+'/flowops_test_WWrat_'+ikey+'.pdf'
+#     # this_info['title'] = r'$\frac{<W(t_{s})W(t)>}{t<E(t)><Q(t_{s})W(t_{s})>}$ '+ikey
+#     # this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
+#     # this_info['ylabel'] = 'ratio'
+#     # WW_data_plot = Plotting(plot_info=this_info)
+#     #
+#     # this_info = pa.Series()
+#     # this_info['save_file'] = graphdir+'/flowops_test_WWrat_NoE_'+ikey+'.pdf'
+#     # this_info['title'] = r'$\frac{t<W(t_{s})W(t)>}{<Q(t_{s})W(t_{s})>}$ '+ikey
+#     # this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
+#     # this_info['ylabel'] = 'ratio'
+#     # WW_data_plot_NoE = Plotting(plot_info=this_info)
+#
+#     this_info = pa.Series()
+#     this_info['save_file'] = graphdir+'/flowops_QWdiv28_'+ikey+'.pdf'
+#     this_info['title'] = r'$<Q(t_{s})W(t)>_{'+ikey+'}/<Q(t_{s})W(t)>_{L28}$ '
+#     this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
+#     this_info['ylabel'] = r'$<QW>/<QW>_{28}$'
+#     data_plot_QW_rat28 = Plotting(plot_info=this_info)
+#
+#     this_info = pa.Series()
+#     this_info['save_file'] = graphdir+'/flowops_QWdiv20_'+ikey+'.pdf'
+#     this_info['title'] = r'$<Q(t_{s})W(t)>_{'+ikey+'}/<Q(t_{s})W(t)>_{L20}$ '
+#     this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
+#     this_info['ylabel'] = r'$<QW>/<QW>_{20}$'
+#     data_plot_QW_rat20 = Plotting(plot_info=this_info)
+#
+#
+#     this_info = pa.Series()
+#     this_info['save_file'] = graphdir+'/flowops_QWdiv16_'+ikey+'.pdf'
+#     this_info['title'] = r'$<Q(t_{s})W(t)>_{'+ikey+'}/<Q(t_{s})W(t)>_{L16}$ '
+#     this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
+#     this_info['ylabel'] = r'$<QW>/<QW>_{16}$'
+#     data_plot_QW_rat16 = Plotting(plot_info=this_info)
+#
+#     this_info = pa.Series()
+#     this_info['save_file'] = graphdir+'/flowops_QW_'+ikey+'.pdf'
+#     this_info['title'] = r'$<Q(t_{s})W(t)>$ '+ikey
+#     this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
+#     this_info['ylabel'] = r'$<QW>$'
+#     data_plot_QW = Plotting(plot_info=this_info)
+#
+#
+#     # this_info = pa.Series()
+#     # this_info['save_file'] = graphdir+'/flowops_WW_'+ikey+'.pdf'
+#     # this_info['title'] = r'$<W(t_{s})W(t)>$ '+ikey
+#     # this_info['xlabel'] = r'$\sqrt{8t}/\sqrt{8t_{0}}$'
+#     # this_info['ylabel'] = r'$<WW>$'
+#     # data_plot_WW = Plotting(plot_info=this_info)
+#
+#
+#     for itc,(its,ts_data) in enumerate(all_data.items()):
+#         # if ikey in ts_data['Rat_28_data'].keys():
+#         #     this_rat_28 = ts_data['Rat_28_data'][ikey]
+#         #     data_plot_28 = this_rat_28.FlowPlot_mul_tf2(data_plot_28)
+#
+#         this_QW = ts_data['QW_data'][ikey]
+#         # this_WW = ts_data['WW_data'][ikey]
+#         this_rat = ts_data['Rat_data'][ikey]
+#         this_rat_NoE = ts_data['Rat_NoE_data'][ikey]
+#         this_rat_Q0 = ts_data['Rat_Q0_data'][ikey]
+#         if 'L28' in ts_data['QW_data'].keys():
+#             this_QW_rat = this_QW.__div__(ts_data['QW_data']['L28'])
+#             this_QW_rat.FlowStats()
+#             data_plot_QW_rat28 = this_QW_rat.FlowPlot(data_plot_QW_rat28,lab_append=its)
+#         if 'L20' in ts_data['QW_data'].keys():
+#             this_QW_rat = this_QW.__div__(ts_data['QW_data']['L20'])
+#             this_QW_rat.FlowStats()
+#             data_plot_QW_rat20 = this_QW_rat.FlowPlot(data_plot_QW_rat20,lab_append=its)
+#         if 'L16' in ts_data['QW_data'].keys():
+#             this_QW_rat = this_QW.__div__(ts_data['QW_data']['L16'])
+#             this_QW_rat.FlowStats()
+#             data_plot_QW_rat16 = this_QW_rat.FlowPlot(data_plot_QW_rat16,lab_append=its)
+#         data_plot_QW = this_QW.FlowPlot(data_plot_QW)
+#         if 'L28' in ikey:
+#             for ipow in pow_list:
+#                 data_plot_QW = this_QW.FlowPlot_mul_tf2(data_plot_QW,mul=True,tpow=ipow,lab_append='$<QW>^{'+str(ipow)+'}$')
+#                 data_plot = this_rat.FlowPlot_mul_tf2(data_plot,tpow=ipow,lab_append='$<QW>^{'+str(ipow)+'}$')
+#         else:
+#             data_plot_QW = this_QW.FlowPlot_mul_tf2(data_plot_QW,mul=True)
+#             data_plot = this_rat.FlowPlot_mul_tf2(data_plot)
+#         data_plot_NoE = this_rat_NoE.FlowPlot_mul_tf2(data_plot_NoE,mul=True)
+#         data_plot_Q0 = this_rat_Q0.FlowPlot_mul_tf2(data_plot_Q0)
+#     data_plot_QW_rat28.PlotAll()
+#     data_plot_QW_rat20.PlotAll()
+#     data_plot_QW_rat16.PlotAll()
+#     data_plot_QW.PlotAll()
+#     data_plot.PlotAll()
+#     # data_plot_28.PlotAll()
+#     data_plot_NoE.PlotAll()
+#     data_plot_Q0.PlotAll()

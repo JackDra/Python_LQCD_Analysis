@@ -1,0 +1,340 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>SetsOfRatios module &#8212; LQCD Analysis Codebase TF Fits documentation</title>
+    <link rel="stylesheet" href="_static/agogo.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="SetsOfTwoPtCorrs module" href="SetsOfTwoPtCorrs.html" />
+    <link rel="prev" title="SetsOfFlowOps module" href="SetsOfFlowOps.html" /> 
+  </head><body>
+    <div class="header-wrapper" role="banner">
+      <div class="header">
+        <div class="headertitle"><a
+          href="index.html">LQCD Analysis Codebase TF Fits documentation</a></div>
+        <div class="rel" role="navigation" aria-label="related navigation">
+          <a href="SetsOfFlowOps.html" title="SetsOfFlowOps module"
+             accesskey="P">previous</a> |
+          <a href="SetsOfTwoPtCorrs.html" title="SetsOfTwoPtCorrs module"
+             accesskey="N">next</a> |
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-SetsOfRatios">
+<span id="setsofratios-module"></span><h1>SetsOfRatios module<a class="headerlink" href="#module-SetsOfRatios" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="SetsOfRatios.Mcore_CombRats">
+<code class="descclassname">SetsOfRatios.</code><code class="descname">Mcore_CombRats</code><span class="sig-paren">(</span><em>RatSet</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfRatios.html#Mcore_CombRats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfRatios.Mcore_CombRats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="SetsOfRatios.SetOfRat">
+<em class="property">class </em><code class="descclassname">SetsOfRatios.</code><code class="descname">SetOfRat</code><span class="sig-paren">(</span><em>cfglist={}</em>, <em>InfoDict=[]</em>, <em>corr_cfglists=True</em>, <em>name=''</em>, <em>setnames=[]</em>, <em>thisFO='FromList'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfRatios.html#SetOfRat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfRatios.SetOfRat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Rat(set) Inherits from RatioCorrelators Class</p>
+<p>plotting parameters (Move to different file?) ####</p>
+<p>InfoDict is a list of Info dictionaries to be bassed to RatioCorrelators:
+Setup to do fits taken from dictionaries within InfoDict (see RatioCorrelators.py)
+Although Info[‘gammas’] can have multiple gamma matricies,
+This code is only set up to take a list, where each list only has one gamma matrix in Info[‘gammas’] ( e.g. = [‘g4’])</p>
+<dl class="method">
+<dt id="SetsOfRatios.SetOfRat.CheckFO">
+<code class="descname">CheckFO</code><span class="sig-paren">(</span><em>iRat</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfRatios.html#SetOfRat.CheckFO"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfRatios.SetOfRat.CheckFO" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfRatios.SetOfRat.CheckFOFull">
+<code class="descname">CheckFOFull</code><span class="sig-paren">(</span><em>iRat</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfRatios.html#SetOfRat.CheckFOFull"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfRatios.SetOfRat.CheckFOFull" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfRatios.SetOfRat.CombRats">
+<code class="descname">CombRats</code><span class="sig-paren">(</span><em>this_keys</em>, <em>this_coeffs</em>, <em>show_timer=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfRatios.html#SetOfRat.CombRats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfRatios.SetOfRat.CombRats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfRatios.SetOfRat.CombineWithAlpha">
+<code class="descname">CombineWithAlpha</code><span class="sig-paren">(</span><em>alpha_in</em>, <em>tflow_list</em>, <em>this_fun=&lt;built-in function truediv&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfRatios.html#SetOfRat.CombineWithAlpha"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfRatios.SetOfRat.CombineWithAlpha" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfRatios.SetOfRat.DoAlphaCombine">
+<code class="descname">DoAlphaCombine</code><span class="sig-paren">(</span><em>this_fun=&lt;built-in function truediv&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfRatios.html#SetOfRat.DoAlphaCombine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfRatios.SetOfRat.DoAlphaCombine" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfRatios.SetOfRat.DoFitRanges">
+<code class="descname">DoFitRanges</code><span class="sig-paren">(</span><em>fit_min</em>, <em>fit_max</em>, <em>tsum_fit='None'</em>, <em>min_fitr=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfRatios.html#SetOfRat.DoFitRanges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfRatios.SetOfRat.DoFitRanges" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfRatios.SetOfRat.GetBestFits">
+<code class="descname">GetBestFits</code><span class="sig-paren">(</span><em>fit_min</em>, <em>fit_max</em>, <em>thisflowlist='All'</em>, <em>tsum_fit='None'</em>, <em>min_fitr=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfRatios.html#SetOfRat.GetBestFits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfRatios.SetOfRat.GetBestFits" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfRatios.SetOfRat.GetCfgList">
+<code class="descname">GetCfgList</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfRatios.html#SetOfRat.GetCfgList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfRatios.SetOfRat.GetCfgList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfRatios.SetOfRat.GetChi2PdfFits">
+<code class="descname">GetChi2PdfFits</code><span class="sig-paren">(</span><em>fit_min</em>, <em>fit_max</em>, <em>thisflowlist='All'</em>, <em>tsum_fit='None'</em>, <em>ralpha_info=(None</em>, <em>None</em>, <em>'boot')</em>, <em>chi_min=0.3</em>, <em>chi_max=0.7</em>, <em>min_fitr=3</em>, <em>nchi_threshold=10</em>, <em>imp_list='All'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfRatios.html#SetOfRat.GetChi2PdfFits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfRatios.SetOfRat.GetChi2PdfFits" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfRatios.SetOfRat.GetFitsFromIndex">
+<code class="descname">GetFitsFromIndex</code><span class="sig-paren">(</span><em>input_indicies</em>, <em>input_flowed_indicies</em>, <em>fit_min</em>, <em>fit_max</em>, <em>thisflowlist='All'</em>, <em>tsum_fit='None'</em>, <em>chi_min=0.3</em>, <em>chi_max=0.7</em>, <em>min_fitr=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfRatios.html#SetOfRat.GetFitsFromIndex"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfRatios.SetOfRat.GetFitsFromIndex" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfRatios.SetOfRat.GetSet">
+<code class="descname">GetSet</code><span class="sig-paren">(</span><em>thisset</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfRatios.html#SetOfRat.GetSet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfRatios.SetOfRat.GetSet" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfRatios.SetOfRat.GetUnCorrCfgList">
+<code class="descname">GetUnCorrCfgList</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfRatios.html#SetOfRat.GetUnCorrCfgList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfRatios.SetOfRat.GetUnCorrCfgList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfRatios.SetOfRat.Get_CombRats">
+<code class="descname">Get_CombRats</code><span class="sig-paren">(</span><em>this_keys</em>, <em>this_coeffs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfRatios.html#SetOfRat.Get_CombRats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfRatios.SetOfRat.Get_CombRats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfRatios.SetOfRat.ImportCfgList">
+<code class="descname">ImportCfgList</code><span class="sig-paren">(</span><em>cfglist</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfRatios.html#SetOfRat.ImportCfgList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfRatios.SetOfRat.ImportCfgList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfRatios.SetOfRat.LoadPickle">
+<code class="descname">LoadPickle</code><span class="sig-paren">(</span><em>DefWipe=False</em>, <em>WipeData=True</em>, <em>CheckCfgs=False</em>, <em>Mcore=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfRatios.html#SetOfRat.LoadPickle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfRatios.SetOfRat.LoadPickle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfRatios.SetOfRat.LoadPickleCommonC2">
+<code class="descname">LoadPickleCommonC2</code><span class="sig-paren">(</span><em>DefWipe=False</em>, <em>WipeData=True</em>, <em>CheckCfgs=False</em>, <em>Mcore=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfRatios.html#SetOfRat.LoadPickleCommonC2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfRatios.SetOfRat.LoadPickleCommonC2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfRatios.SetOfRat.Plot">
+<code class="descname">Plot</code><span class="sig-paren">(</span><em>plot_info, fitDict={'Kud01375400Ks01364000_-a-_Baryon_CPEven_tsrc0_ism16_PoF0D1': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPEven_tsrc0_ism16_jsm64': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPEven_tsrc0_ism32_PoF0D1': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPEven_tsrc0_ism32_jsm64': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPEven_tsrc0_ism64_PoF0D1': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPEven_tsrc0_ism64_jsm64': ('state1', 'fitr10-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPOdd_tsrc0_ism16_PoF0D1': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPOdd_tsrc0_ism16_jsm64': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPOdd_tsrc0_ism32_PoF0D1': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPOdd_tsrc0_ism32_jsm64': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPOdd_tsrc0_ism64_PoF0D1': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPOdd_tsrc0_ism64_jsm64': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_P3_doub_pp000_tsrc0_tsink13_ism16_PoF0D1': 'fitr4-8', 'Kud01375400Ks01364000_-a-_P3_doub_pp000_tsrc0_tsink13_ism32_PoF0D1': 'fitr4-8', 'Kud01375400Ks01364000_-a-_P3_doub_pp000_tsrc0_tsink13_ism64_PoF0D1': 'fitr4-8', 'Kud01375400Ks01364000_-a-_P4_doub_pp000_tsrc0_tsink13_ism16_PoF0D1': 'fitr4-8', 'Kud01375400Ks01364000_-a-_P4_doub_pp000_tsrc0_tsink13_ism32_PoF0D1': 'fitr4-8', 'Kud01375400Ks01364000_-a-_P4_doub_pp000_tsrc0_tsink13_ism64_PoF0D1': 'fitr4-8', 'Kud01375400Ks01364000_Meson_Pion_tsrc0_ism16_jsm64': ('state1', 'fitr9-20', [1e-06, -1.6094379124341003]), 'Kud01375400Ks01364000_Meson_Pion_tsrc0_ism32_jsm64': ('state1', 'fitr9-20', [1e-06, -1.6094379124341003]), 'Kud01375400Ks01364000_Meson_Pion_tsrc0_ism64_jsm64': ('state1', 'fitr9-20', [1e-06, -1.6094379124341003]), 'MassForFF': ('state1', 'fitr10-20')}, fitDictFull={'Kud01375400Ks01364000_-a-_Baryon_CPEven_tsrc0_ism16_PoF0D1': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPEven_tsrc0_ism16_jsm64': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPEven_tsrc0_ism32_PoF0D1': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPEven_tsrc0_ism32_jsm64': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPEven_tsrc0_ism64_PoF0D1': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPEven_tsrc0_ism64_jsm64': ('state1', 'fitr10-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPOdd_tsrc0_ism16_PoF0D1': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPOdd_tsrc0_ism16_jsm64': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPOdd_tsrc0_ism32_PoF0D1': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPOdd_tsrc0_ism32_jsm64': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPOdd_tsrc0_ism64_PoF0D1': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPOdd_tsrc0_ism64_jsm64': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_P3_doub_pp000_tsrc0_tsink13_ism16_PoF0D1': 'fitr4-8', 'Kud01375400Ks01364000_-a-_P3_doub_pp000_tsrc0_tsink13_ism32_PoF0D1': 'fitr4-8', 'Kud01375400Ks01364000_-a-_P3_doub_pp000_tsrc0_tsink13_ism64_PoF0D1': 'fitr4-8', 'Kud01375400Ks01364000_-a-_P4_doub_pp000_tsrc0_tsink13_ism16_PoF0D1': 'fitr4-8', 'Kud01375400Ks01364000_-a-_P4_doub_pp000_tsrc0_tsink13_ism32_PoF0D1': 'fitr4-8', 'Kud01375400Ks01364000_-a-_P4_doub_pp000_tsrc0_tsink13_ism64_PoF0D1': 'fitr4-8', 'Kud01375400Ks01364000_Meson_Pion_tsrc0_ism16_jsm64': ('state1', 'fitr9-20', [1e-06, -1.6094379124341003]), 'Kud01375400Ks01364000_Meson_Pion_tsrc0_ism32_jsm64': ('state1', 'fitr9-20', [1e-06, -1.6094379124341003]), 'Kud01375400Ks01364000_Meson_Pion_tsrc0_ism64_jsm64': ('state1', 'fitr9-20', [1e-06, -1.6094379124341003]), 'MassForFF': ('state1', 'fitr10-20')}, gammamomlist={}, tflowlist=[], tsum_list=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfRatios.html#SetOfRat.Plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfRatios.SetOfRat.Plot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfRatios.SetOfRat.PlotTsum">
+<code class="descname">PlotTsum</code><span class="sig-paren">(</span><em>plot_info, fitDict={'Kud01375400Ks01364000_-a-_Baryon_CPEven_tsrc0_ism16_PoF0D1': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPEven_tsrc0_ism16_jsm64': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPEven_tsrc0_ism32_PoF0D1': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPEven_tsrc0_ism32_jsm64': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPEven_tsrc0_ism64_PoF0D1': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPEven_tsrc0_ism64_jsm64': ('state1', 'fitr10-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPOdd_tsrc0_ism16_PoF0D1': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPOdd_tsrc0_ism16_jsm64': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPOdd_tsrc0_ism32_PoF0D1': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPOdd_tsrc0_ism32_jsm64': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPOdd_tsrc0_ism64_PoF0D1': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPOdd_tsrc0_ism64_jsm64': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_P3_doub_pp000_tsrc0_tsink13_ism16_PoF0D1': 'fitr4-8', 'Kud01375400Ks01364000_-a-_P3_doub_pp000_tsrc0_tsink13_ism32_PoF0D1': 'fitr4-8', 'Kud01375400Ks01364000_-a-_P3_doub_pp000_tsrc0_tsink13_ism64_PoF0D1': 'fitr4-8', 'Kud01375400Ks01364000_-a-_P4_doub_pp000_tsrc0_tsink13_ism16_PoF0D1': 'fitr4-8', 'Kud01375400Ks01364000_-a-_P4_doub_pp000_tsrc0_tsink13_ism32_PoF0D1': 'fitr4-8', 'Kud01375400Ks01364000_-a-_P4_doub_pp000_tsrc0_tsink13_ism64_PoF0D1': 'fitr4-8', 'Kud01375400Ks01364000_Meson_Pion_tsrc0_ism16_jsm64': ('state1', 'fitr9-20', [1e-06, -1.6094379124341003]), 'Kud01375400Ks01364000_Meson_Pion_tsrc0_ism32_jsm64': ('state1', 'fitr9-20', [1e-06, -1.6094379124341003]), 'Kud01375400Ks01364000_Meson_Pion_tsrc0_ism64_jsm64': ('state1', 'fitr9-20', [1e-06, -1.6094379124341003]), 'MassForFF': ('state1', 'fitr10-20')}, gammamomlist={}, tflowlist=[], tcurr_list=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfRatios.html#SetOfRat.PlotTsum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfRatios.SetOfRat.PlotTsum" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfRatios.SetOfRat.Read">
+<code class="descname">Read</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfRatios.html#SetOfRat.Read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfRatios.SetOfRat.Read" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfRatios.SetOfRat.ReadAndWrite">
+<code class="descname">ReadAndWrite</code><span class="sig-paren">(</span><em>DefWipe=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfRatios.html#SetOfRat.ReadAndWrite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfRatios.SetOfRat.ReadAndWrite" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfRatios.SetOfRat.ReduceRatios">
+<code class="descname">ReduceRatios</code><span class="sig-paren">(</span><em>key_list</em>, <em>coeff_list</em>, <em>show_timer=False</em>, <em>Mcore=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfRatios.html#SetOfRat.ReduceRatios"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfRatios.SetOfRat.ReduceRatios" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfRatios.SetOfRat.Reformat3pt">
+<code class="descname">Reformat3pt</code><span class="sig-paren">(</span><em>thisdir</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfRatios.html#SetOfRat.Reformat3pt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfRatios.SetOfRat.Reformat3pt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfRatios.SetOfRat.Stats">
+<code class="descname">Stats</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfRatios.html#SetOfRat.Stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfRatios.SetOfRat.Stats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfRatios.SetOfRat.Write">
+<code class="descname">Write</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfRatios.html#SetOfRat.Write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfRatios.SetOfRat.Write" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="SetsOfRatios.SetOfRat.instances">
+<code class="descname">instances</code><em class="property"> = []</em><a class="headerlink" href="#SetsOfRatios.SetOfRat.instances" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfRatios.SetOfRat.items">
+<code class="descname">items</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfRatios.html#SetOfRat.items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfRatios.SetOfRat.items" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfRatios.SetOfRat.itemsAvgStd">
+<code class="descname">itemsAvgStd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfRatios.html#SetOfRat.itemsAvgStd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfRatios.SetOfRat.itemsAvgStd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfRatios.SetOfRat.keys">
+<code class="descname">keys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfRatios.html#SetOfRat.keys"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfRatios.SetOfRat.keys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="SetsOfRatios.SetOfRat.parentlist">
+<code class="descname">parentlist</code><em class="property"> = []</em><a class="headerlink" href="#SetsOfRatios.SetOfRat.parentlist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfRatios.SetOfRat.values">
+<code class="descname">values</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfRatios.html#SetOfRat.values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfRatios.SetOfRat.values" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfRatios.SetOfRat.valuesAvgStd">
+<code class="descname">valuesAvgStd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfRatios.html#SetOfRat.valuesAvgStd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfRatios.SetOfRat.valuesAvgStd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table of Contents</h3>
+          <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Python_Analysis</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="AhmedRes.html">AhmedRes module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="AnalysisGUI.html">AnalysisGUI module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Autocorr.html">Autocorr module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BNLFormFactor.html">BNLFormFactor module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BootStrapping.html">BootStrapping module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BootStrapping_self.html">BootStrapping_self module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ChacoModPlot_heatmap.html">ChacoModPlot_heatmap module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ChacoTest.html">ChacoTest module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CreateTable.html">CreateTable module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DSDefines.html">DSDefines module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FFSolve.html">FFSolve module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FileIO.html">FileIO module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FileIOMat.html">FileIOMat module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FitFunctions.html">FitFunctions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FitFunctions_TF.html">FitFunctions_TF module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FlowOpps.html">FlowOpps module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ForMatAndrea.html">ForMatAndrea module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FormFactors.html">FormFactors module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GammaMatricies.html">GammaMatricies module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Jose_Plots.html">Jose_Plots module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MAH_control.html">MAH_control module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MakeFuns.html">MakeFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Mat_Alpha_Hack.html">Mat_Alpha_Hack module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Mat_Hack_V2.html">Mat_Hack_V2 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Mayavi_Test.html">Mayavi_Test module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MiscFuns.html">MiscFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModPlot.html">ModPlot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModStylePlot.html">ModStylePlot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MomParams.html">MomParams module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MultiWrap.html">MultiWrap module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="NullPlotData.html">NullPlotData module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PandasTest.html">PandasTest module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Params.html">Params module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ParamsOLD.html">ParamsOLD module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PlotData.html">PlotData module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PredefFitFuns.html">PredefFitFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="QuantityLists.html">QuantityLists module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RatioCorrelators.html">RatioCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ReadBinaryCfuns.html">ReadBinaryCfuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ReadBinaryCfuns_SLone.html">ReadBinaryCfuns_SLone module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RunSetCommands.html">RunSetCommands module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFFs.html">SetsOfFFs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFits.html">SetsOfFits module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFlowOps.html">SetsOfFlowOps module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">SetsOfRatios module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfTwoPtCorrs.html">SetsOfTwoPtCorrs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Setup.html">Setup module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Test3dLine.html">Test3dLine module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TestAll.html">TestAll module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TestCorr.html">TestCorr module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ThreePtCorrelators.html">ThreePtCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TimeStuff.html">TimeStuff module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TwoPtCorrelators.html">TwoPtCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VarMethod.html">VarMethod module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VarMethod_self.html">VarMethod_self module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="XmlFormatting.html">XmlFormatting module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mv_graphs.html">mv_graphs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xmltodict.html">xmltodict module</a></li>
+</ul>
+</li>
+</ul>
+
+          <div role="search">
+            <h3 style="margin-top: 1.5em;">Search</h3>
+            <form class="search" action="search.html" method="get">
+                <input type="text" name="q" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+            </form>
+          </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <div role="navigation" aria-label="related navigaton">
+            <a href="SetsOfFlowOps.html" title="SetsOfFlowOps module"
+              >previous</a> |
+            <a href="SetsOfTwoPtCorrs.html" title="SetsOfTwoPtCorrs module"
+              >next</a> |
+            <a href="py-modindex.html" title="Python Module Index"
+              >modules</a> |
+            <a href="genindex.html" title="General Index"
+              >index</a>
+          </div>
+          <div role="note" aria-label="source link">
+              <br/>
+              <a href="_sources/SetsOfRatios.rst.txt"
+                rel="nofollow">Show Source</a>
+          </div>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Jack Dragos.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>

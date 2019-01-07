@@ -1,0 +1,783 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>ReadBinaryCfuns_SLone &#8212; LQCD Analysis Codebase TF Fits documentation</title>
+    <link rel="stylesheet" href="../_static/agogo.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="header-wrapper" role="banner">
+      <div class="header">
+        <div class="headertitle"><a
+          href="../index.html">LQCD Analysis Codebase TF Fits documentation</a></div>
+        <div class="rel" role="navigation" aria-label="related navigation">
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for ReadBinaryCfuns_SLone</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="c1"># from MomParams import *</span>
+
+<span class="n">SeekIncSize</span> <span class="o">=</span> <span class="mi">8</span>
+<span class="n">ChromaSIS</span> <span class="o">=</span> <span class="mi">16</span>
+<span class="n">bar3ptChromaByteSwap</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="c1"># complextype = np.complex64</span>
+<span class="n">complextype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">complex128</span>
+<span class="n">CheckMagic</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">nt</span><span class="o">=</span><span class="mi">32</span>
+<span class="n">mom2list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span>
+<span class="n">mom2max</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">mom2list</span><span class="p">)</span>
+<span class="n">momlist</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">momstrlist</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">momformlist</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">iq1</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="n">mom2max</span><span class="p">,</span><span class="n">mom2max</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">iq2</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="n">mom2max</span><span class="p">,</span><span class="n">mom2max</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">iq3</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="n">mom2max</span><span class="p">,</span><span class="n">mom2max</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">iq1</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">iq2</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">iq3</span><span class="o">**</span><span class="mi">2</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">mom2list</span><span class="p">:</span> <span class="k">continue</span>
+            <span class="n">momlist</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">iq3</span> <span class="p">,</span> <span class="n">iq2</span> <span class="p">,</span> <span class="n">iq1</span><span class="p">))</span>
+            <span class="n">momstrlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,(</span><span class="n">iq3</span> <span class="p">,</span> <span class="n">iq2</span> <span class="p">,</span> <span class="n">iq1</span><span class="p">))))</span>
+            <span class="n">momformlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,(</span><span class="n">iq3</span> <span class="p">,</span> <span class="n">iq2</span> <span class="p">,</span> <span class="n">iq1</span><span class="p">))))</span>
+<span class="n">momlist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">momlist</span><span class="p">)</span>
+<span class="n">momstrlist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">momstrlist</span><span class="p">)</span>
+<span class="n">momformlist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">momformlist</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="pvecTOpstr"><a class="viewcode-back" href="../ReadBinaryCfuns_SLone.html#ReadBinaryCfuns_SLone.pvecTOpstr">[docs]</a><span class="k">def</span> <span class="nf">pvecTOpstr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ip</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span><span class="n">ip</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="pformTOpstr"><a class="viewcode-back" href="../ReadBinaryCfuns_SLone.html#ReadBinaryCfuns_SLone.pformTOpstr">[docs]</a><span class="k">def</span> <span class="nf">pformTOpstr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ip</span><span class="p">,</span><span class="n">nopref</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">nopref</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ip</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;p&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;q&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;- &#39;</span><span class="p">,</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ip</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;- &#39;</span><span class="p">,</span><span class="s1">&#39;-&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TOip"><a class="viewcode-back" href="../ReadBinaryCfuns_SLone.html#ReadBinaryCfuns_SLone.TOip">[docs]</a><span class="k">def</span> <span class="nf">TOip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ip</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s1">&#39; &#39;</span> <span class="ow">in</span> <span class="n">ip</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">momstrlist</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">ip</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">momformlist</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">ip</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">momlist</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">ip</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TOpstr"><a class="viewcode-back" href="../ReadBinaryCfuns_SLone.html#ReadBinaryCfuns_SLone.TOpstr">[docs]</a><span class="k">def</span> <span class="nf">TOpstr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ip</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s1">&#39; &#39;</span> <span class="ow">in</span> <span class="n">ip</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ip</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pformTOpstr</span><span class="p">(</span><span class="n">ip</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pvecTOpstr</span><span class="p">(</span><span class="n">ip</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GammaTOChroma"><a class="viewcode-back" href="../ReadBinaryCfuns_SLone.html#ReadBinaryCfuns_SLone.GammaTOChroma">[docs]</a><span class="k">def</span> <span class="nf">GammaTOChroma</span><span class="p">(</span><span class="n">Opp</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">Opp</span><span class="p">,</span><span class="nb">int</span><span class="p">):</span>
+        <span class="n">Opp</span> <span class="o">=</span> <span class="s1">&#39;g&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">Opp</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">Opp</span><span class="p">,(</span><span class="nb">list</span><span class="p">,</span><span class="nb">tuple</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">Opp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">Opp</span> <span class="o">=</span> <span class="s1">&#39;g&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">Opp</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">+</span><span class="s1">&#39;g&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">Opp</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">Opp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">Opp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="mi">15</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Opp</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)))</span><span class="o">+</span><span class="mi">1</span>
+            <span class="n">Opp</span> <span class="o">=</span> <span class="s1">&#39;g5g&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">Opp</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;gamma list too long &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Opp</span><span class="p">)))</span>
+
+    <span class="k">if</span> <span class="n">Opp</span> <span class="o">==</span> <span class="s1">&#39;Pion&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">15</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">Opp</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;g&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:])</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">GammaTOChroma</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span><span class="n">Opp</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;g&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:])))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="s1">&#39;g&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;g&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="ow">in</span> <span class="n">Opp</span><span class="p">:</span>
+                <span class="k">return</span> <span class="mi">2</span><span class="o">**</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span><span class="o">**</span><span class="p">(</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="s1">&#39;g&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;g5&#39;</span> <span class="ow">in</span> <span class="n">Opp</span> <span class="ow">or</span> <span class="s1">&#39;g5g&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="ow">in</span> <span class="n">Opp</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">15</span><span class="o">-</span><span class="mi">2</span><span class="o">**</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="s1">&#39;g&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="ow">in</span> <span class="n">Opp</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">2</span><span class="o">**</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;g5&#39;</span> <span class="ow">in</span> <span class="n">Opp</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">15</span>
+    <span class="k">elif</span> <span class="s1">&#39;I&#39;</span> <span class="ow">in</span> <span class="n">Opp</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span></div>
+
+<div class="viewcode-block" id="GetBar3ptLoc"><a class="viewcode-back" href="../ReadBinaryCfuns_SLone.html#ReadBinaryCfuns_SLone.GetBar3ptLoc">[docs]</a><span class="k">def</span> <span class="nf">GetBar3ptLoc</span><span class="p">(</span><span class="n">ig</span><span class="p">,</span><span class="n">ip</span><span class="p">,</span><span class="n">tsinklen</span><span class="p">,</span><span class="n">momlistlen</span><span class="p">,</span><span class="n">thiscomplextype</span><span class="p">,</span><span class="n">PolProj</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">intlen</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span><span class="o">.</span><span class="n">itemsize</span>
+    <span class="k">if</span> <span class="n">PolProj</span><span class="p">:</span>
+        <span class="n">strlen</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="s1">&#39;S11&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">itemsize</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">strlen</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="s1">&#39;S13&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">itemsize</span>
+    <span class="n">cmplxlen</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">thiscomplextype</span><span class="p">)</span><span class="o">.</span><span class="n">itemsize</span>
+    <span class="n">cmplxblocklen</span> <span class="o">=</span> <span class="n">cmplxlen</span><span class="o">*</span><span class="n">tsinklen</span><span class="o">+</span><span class="n">intlen</span>
+    <span class="c1"># cmplxblocklen = intlen*16+intlen</span>
+    <span class="n">headerlen</span> <span class="o">=</span> <span class="n">intlen</span><span class="o">*</span><span class="mi">27</span><span class="o">+</span><span class="n">strlen</span>
+    <span class="n">magicNumshift</span> <span class="o">=</span> <span class="n">intlen</span><span class="o">*</span><span class="mi">6</span>
+    <span class="n">magicNumshiftCons</span> <span class="o">=</span> <span class="n">intlen</span><span class="o">*</span><span class="mi">5</span>
+    <span class="n">momblocklen</span> <span class="o">=</span> <span class="n">cmplxblocklen</span> <span class="o">+</span> <span class="n">magicNumshift</span>
+    <span class="n">momblocklenCons</span> <span class="o">=</span> <span class="n">cmplxblocklen</span><span class="o">*</span><span class="mi">2</span> <span class="o">+</span> <span class="n">magicNumshiftCons</span>
+    <span class="n">momblockList</span> <span class="o">=</span> <span class="p">[</span><span class="n">momblocklen</span><span class="p">,</span><span class="n">momblocklenCons</span><span class="p">,</span><span class="n">momblocklenCons</span><span class="p">,</span><span class="n">momblocklen</span><span class="p">,</span><span class="n">momblocklenCons</span><span class="p">,</span>
+                    <span class="n">momblocklen</span><span class="p">,</span><span class="n">momblocklen</span><span class="p">,</span><span class="n">momblocklenCons</span><span class="p">,</span><span class="n">momblocklenCons</span><span class="p">,</span><span class="n">momblocklen</span><span class="p">,</span>
+                    <span class="n">momblocklen</span><span class="p">,</span><span class="n">momblocklenCons</span><span class="p">,</span><span class="n">momblocklen</span><span class="p">,</span><span class="n">momblocklenCons</span><span class="p">,</span><span class="n">momblocklenCons</span><span class="p">,</span>
+                    <span class="n">momblocklen</span><span class="p">,</span><span class="n">momblocklen</span><span class="p">,</span><span class="n">momblocklen</span><span class="p">,</span><span class="n">momblocklen</span><span class="p">,</span><span class="n">momblocklen</span><span class="p">]</span>
+
+    <span class="n">gammablocklen</span> <span class="o">=</span> <span class="n">momblocklen</span><span class="o">*</span><span class="n">momlistlen</span> <span class="o">+</span> <span class="n">intlen</span><span class="o">*</span><span class="mi">2</span>
+    <span class="n">gammablocklenCons</span> <span class="o">=</span> <span class="n">momblocklenCons</span><span class="o">*</span><span class="n">momlistlen</span> <span class="o">+</span> <span class="n">intlen</span><span class="o">*</span><span class="mi">2</span>
+    <span class="n">gammablockList</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">gammablocklen</span><span class="p">,</span><span class="n">gammablocklenCons</span><span class="p">,</span><span class="n">gammablocklenCons</span><span class="p">,</span><span class="n">gammablocklen</span><span class="p">,</span><span class="n">gammablocklenCons</span><span class="p">,</span>
+                      <span class="n">gammablocklen</span><span class="p">,</span><span class="n">gammablocklen</span><span class="p">,</span><span class="n">gammablocklenCons</span><span class="p">,</span><span class="n">gammablocklenCons</span><span class="p">,</span><span class="n">gammablocklen</span><span class="p">,</span>
+                      <span class="n">gammablocklen</span><span class="p">,</span><span class="n">gammablocklenCons</span><span class="p">,</span><span class="n">gammablocklen</span><span class="p">,</span><span class="n">gammablocklenCons</span><span class="p">,</span><span class="n">gammablocklenCons</span><span class="p">,</span>
+                      <span class="n">gammablocklen</span><span class="p">,</span><span class="n">gammablocklen</span><span class="p">,</span><span class="n">gammablocklen</span><span class="p">,</span><span class="n">gammablocklen</span><span class="p">,</span><span class="n">gammablocklen</span><span class="p">])</span>
+    <span class="n">outloc</span> <span class="o">=</span> <span class="n">headerlen</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">gammablockList</span><span class="p">[:</span><span class="n">ig</span><span class="p">])</span> <span class="o">+</span> <span class="n">momblockList</span><span class="p">[</span><span class="n">ig</span><span class="p">]</span><span class="o">*</span><span class="n">ip</span>
+    <span class="k">return</span> <span class="n">outloc</span> <span class="p">,</span> <span class="n">outloc</span> <span class="o">+</span> <span class="n">cmplxblocklen</span><span class="p">,</span><span class="n">magicNumshift</span></div>
+
+
+<span class="c1">## noDer[igamma , ip , it]</span>
+<span class="c1">## forcent is total length, not array index!</span>
+<div class="viewcode-block" id="ReadFSCfunPickCHROMA"><a class="viewcode-back" href="../ReadBinaryCfuns_SLone.html#ReadBinaryCfuns_SLone.ReadFSCfunPickCHROMA">[docs]</a><span class="k">class</span> <span class="nc">ReadFSCfunPickCHROMA</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>  <span class="n">thisfileList</span><span class="p">,</span><span class="n">thisMomList</span><span class="p">,</span><span class="n">thisGammaList</span><span class="p">,</span><span class="n">forcent</span><span class="o">=</span><span class="n">nt</span><span class="p">,</span><span class="n">check_fs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                        <span class="n">force_cmplx_type</span><span class="o">=</span><span class="n">complextype</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">thisfile</span> <span class="ow">in</span> <span class="n">thisfileList</span><span class="p">:</span>
+            <span class="c1"># if thistsink == &#39;FileName&#39;:</span>
+            <span class="c1">#     thistsink = int(re.findall(&#39;tsink.*?p&#39;,thisfile)[0].replace(&#39;tsink&#39;,&#39;&#39;).replace(&#39;p&#39;,&#39;&#39;))</span>
+            <span class="n">datahold</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="n">check_fs</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">thisfile</span><span class="p">)</span> <span class="o">==</span> <span class="mi">826009</span><span class="p">:</span> <span class="n">thiscomplextype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">complex128</span>
+                <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">thisfile</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">600000</span><span class="p">:</span>
+                    <span class="c1"># raise IOError(thisfile+ &#39; Is old 64 bit, please remove all smaller sized files&#39;)</span>
+                    <span class="n">thiscomplextype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">complex64</span>
+                <span class="k">else</span><span class="p">:</span> <span class="n">thiscomplextype</span> <span class="o">=</span> <span class="n">complextype</span>
+            <span class="k">else</span><span class="p">:</span> <span class="n">thiscomplextype</span> <span class="o">=</span> <span class="n">force_cmplx_type</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">thisfile</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ERROR FILE:&#39;</span><span class="p">,</span><span class="n">thisfile</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;Could not read 3 point correlation function&#39;</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">thisfile</span><span class="p">,</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">igamma</span><span class="p">,</span><span class="n">thisgamma</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">thisGammaList</span><span class="p">):</span>
+                        <span class="n">igammaloc</span> <span class="o">=</span> <span class="n">GammaTOChroma</span><span class="p">(</span><span class="n">thisgamma</span><span class="p">)</span>
+                        <span class="n">datahold</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+                        <span class="k">for</span> <span class="n">ip</span><span class="p">,</span><span class="n">ipstr</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">thisMomList</span><span class="p">):</span>
+                            <span class="n">iploc</span> <span class="o">=</span> <span class="n">TOip</span><span class="p">(</span><span class="n">ipstr</span><span class="p">)</span>
+                            <span class="n">loc</span><span class="p">,</span><span class="n">loccons</span><span class="p">,</span><span class="n">magmin</span> <span class="o">=</span> <span class="n">GetBar3ptLoc</span><span class="p">(</span><span class="n">igammaloc</span><span class="p">,</span><span class="n">iploc</span><span class="p">,</span><span class="n">forcent</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">momlist</span><span class="p">),</span><span class="n">thiscomplextype</span><span class="p">,</span><span class="n">PolProj</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;GMA3&#39;</span> <span class="ow">in</span> <span class="n">thisfile</span><span class="p">))</span>
+                            <span class="n">magicloc</span> <span class="o">=</span> <span class="n">loc</span><span class="o">-</span><span class="n">magmin</span>
+                            <span class="k">if</span> <span class="s1">&#39;Cons&#39;</span> <span class="ow">in</span> <span class="n">thisgamma</span><span class="p">:</span>
+                                <span class="n">loc</span> <span class="o">=</span> <span class="n">loccons</span>
+                            <span class="k">if</span> <span class="n">CheckMagic</span><span class="p">:</span>
+                                <span class="n">f</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">magicloc</span><span class="p">)</span>
+                                <span class="n">MagicList</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">fromfile</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span><span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">byteswap</span><span class="p">()</span>
+                                <span class="k">if</span> <span class="n">MagicList</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">20301</span><span class="p">:</span>
+                                    <span class="n">f</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">magicloc</span><span class="p">)</span>
+                                    <span class="n">MagicList</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">fromfile</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span><span class="n">count</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">byteswap</span><span class="p">()</span>
+                                    <span class="nb">print</span><span class="p">(</span><span class="n">MagicList</span><span class="p">)</span>
+                                    <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;Magic Number not found for &#39;</span> <span class="o">+</span><span class="n">thisgamma</span><span class="o">+</span><span class="s1">&#39; &#39;</span><span class="o">+</span><span class="n">TOpstr</span><span class="p">(</span><span class="n">iploc</span><span class="p">))</span>
+                            <span class="n">f</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">loc</span><span class="p">)</span>
+                            <span class="n">tmpdata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromfile</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="n">thiscomplextype</span><span class="p">,</span><span class="n">count</span><span class="o">=</span><span class="n">forcent</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="n">bar3ptChromaByteSwap</span><span class="p">:</span><span class="n">tmpdata</span> <span class="o">=</span> <span class="n">tmpdata</span><span class="o">.</span><span class="n">byteswap</span><span class="p">()</span>
+                            <span class="k">if</span> <span class="s1">&#39;cmplx&#39;</span> <span class="ow">in</span> <span class="n">thisgamma</span><span class="p">:</span>
+                                <span class="n">datahold</span><span class="p">[</span><span class="n">igamma</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">tmpdata</span><span class="o">.</span><span class="n">imag</span><span class="p">))</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">datahold</span><span class="p">[</span><span class="n">igamma</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">tmpdata</span><span class="o">.</span><span class="n">real</span><span class="p">))</span>
+                            <span class="c1"># if isshift&gt; nt-min(AllTSinkList)-1:</span>
+                            <span class="c1"># datahold[igamma][-1][-corr_shift-1] = -datahold[igamma][-1][-corr_shift-1]</span>
+                            <span class="c1"># print</span>
+                            <span class="c1"># print tmpdata.real</span>
+                            <span class="c1"># print</span>
+                            <span class="c1"># totsign = np.sign(np.sum(np.sign(datahold[igamma][-1][:CMTSinkList[0]])))</span>
+                            <span class="c1"># datahold[igamma][-1] = totsign*np.abs(datahold[igamma][-1])</span>
+                            <span class="n">datahold</span><span class="p">[</span><span class="n">igamma</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">datahold</span><span class="p">[</span><span class="n">igamma</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">datahold</span><span class="p">[</span><span class="n">igamma</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                            <span class="c1"># print np.abs(datahold[igamma][-1][13]-datahold[igamma][-1][12])/datahold[igamma][-1][12]</span>
+                            <span class="c1"># if np.abs(datahold[igamma][-1][13]-datahold[igamma][-1][12])/datahold[igamma][-1][12] &gt; 1.0:</span>
+                            <span class="c1">#     print</span>
+                            <span class="c1">#     print thisfile.replace(xsrcList[0],xsrc)</span>
+                            <span class="c1">#     print corr_shift</span>
+                            <span class="c1">#     for it,tdata in enumerate(datahold[igamma][-1]):</span>
+                            <span class="c1">#         print it, tdata</span>
+                            <span class="c1"># print np.roll(datahold[igamma][-1],isshift)</span>
+                            <span class="c1"># print np.roll(datahold[igamma][-1],-isshift)</span>
+                            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">datahold</span><span class="p">[</span><span class="n">igamma</span><span class="p">][</span><span class="n">ip</span><span class="p">])):</span>
+                                <span class="nb">print</span><span class="p">()</span>
+                                <span class="nb">print</span><span class="p">(</span><span class="n">thisfile</span><span class="p">)</span>
+                                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;thisgamma &#39;</span><span class="p">,</span><span class="n">thisgamma</span><span class="p">,</span><span class="s1">&#39; iploc &#39;</span><span class="p">,</span> <span class="n">iploc</span><span class="p">)</span>
+                                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;data:&#39;</span><span class="p">)</span>
+                                <span class="k">for</span> <span class="n">it</span><span class="p">,</span><span class="n">idata</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">datahold</span><span class="p">[</span><span class="n">igamma</span><span class="p">][</span><span class="n">ip</span><span class="p">]):</span>
+                                    <span class="nb">print</span><span class="p">(</span><span class="n">it</span><span class="p">,</span><span class="n">idata</span><span class="p">)</span>
+                                <span class="c1"># if DeleteNanCfgs:</span>
+                                <span class="c1">#     raise NaNCfunError(&#39;NaN Values: &#39;+thisgamma+&#39; &#39; +qvecSet[iploc]  )</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">())</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error with: </span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">thisfile</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">datahold</span><span class="p">)</span>
+                <span class="n">datalen</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">datahold</span><span class="p">)</span>
+                <span class="n">datalen</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">datalen</span><span class="p">)</span></div>
+
+
+<span class="c1">## noDer[igamma , ip , it]</span>
+<span class="c1">## forcent is total length, not array index!</span>
+<div class="viewcode-block" id="RC3Full"><a class="viewcode-back" href="../ReadBinaryCfuns_SLone.html#ReadBinaryCfuns_SLone.RC3Full">[docs]</a><span class="k">class</span> <span class="nc">RC3Full</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">thisfileList</span><span class="p">,</span><span class="n">thisMomList</span><span class="p">,</span><span class="n">thisGammaList</span><span class="p">,</span><span class="n">forcent</span><span class="o">=</span><span class="n">nt</span><span class="p">,</span><span class="n">check_fs</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">f_info</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">thisfile</span> <span class="ow">in</span> <span class="n">thisfileList</span><span class="p">:</span>
+            <span class="c1"># if thistsink == &#39;FileName&#39;:</span>
+            <span class="c1">#     thistsink = int(re.findall(&#39;tsink.*?p&#39;,thisfile)[0].replace(&#39;tsink&#39;,&#39;&#39;).replace(&#39;p&#39;,&#39;&#39;))</span>
+            <span class="n">datahold</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="n">check_fs</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">thisfile</span><span class="p">)</span> <span class="o">==</span> <span class="mi">826009</span><span class="p">:</span> <span class="n">thiscomplextype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">complex128</span>
+                <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">thisfile</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">600000</span><span class="p">:</span>
+                    <span class="c1"># raise IOError(thisfile+ &#39; Is old 64 bit, please remove all smaller sized files&#39;)</span>
+                    <span class="n">thiscomplextype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">complex64</span>
+                <span class="k">else</span><span class="p">:</span> <span class="n">thiscomplextype</span> <span class="o">=</span> <span class="n">complextype</span>
+            <span class="k">else</span><span class="p">:</span> <span class="n">thiscomplextype</span> <span class="o">=</span> <span class="n">complextype</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">thisfile</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ERROR FILE:&#39;</span><span class="p">,</span><span class="n">thisfile</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;Could not read 3 point correlation function&#39;</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">thisfile</span><span class="p">,</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="p">,</span><span class="n">this_f_info</span> <span class="o">=</span> <span class="n">ReadC3Header</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">f_info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_f_info</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">igamma</span><span class="p">,</span><span class="n">thisgamma</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">thisGammaList</span><span class="p">):</span>
+                    <span class="n">igammaloc</span> <span class="o">=</span> <span class="n">GammaTOChroma</span><span class="p">(</span><span class="n">thisgamma</span><span class="p">)</span>
+                    <span class="n">datahold</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+                    <span class="k">for</span> <span class="n">ip</span><span class="p">,</span><span class="n">ipstr</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">thisMomList</span><span class="p">):</span>
+                        <span class="n">iploc</span> <span class="o">=</span> <span class="n">TOip</span><span class="p">(</span><span class="n">ipstr</span><span class="p">)</span>
+                        <span class="n">loc</span><span class="p">,</span><span class="n">loccons</span><span class="p">,</span><span class="n">magmin</span> <span class="o">=</span> <span class="n">GetBar3ptLoc</span><span class="p">(</span>  <span class="n">igammaloc</span><span class="p">,</span><span class="n">iploc</span><span class="p">,</span><span class="n">forcent</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">momlist</span><span class="p">),</span>
+                                                            <span class="n">thiscomplextype</span><span class="p">,</span><span class="n">PolProj</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;GMA3&#39;</span> <span class="ow">in</span> <span class="n">thisfile</span><span class="p">))</span>
+                        <span class="n">magicloc</span> <span class="o">=</span> <span class="n">loc</span><span class="o">-</span><span class="n">magmin</span>
+                        <span class="k">if</span> <span class="s1">&#39;Cons&#39;</span> <span class="ow">in</span> <span class="n">thisgamma</span><span class="p">:</span>
+                            <span class="n">loc</span> <span class="o">=</span> <span class="n">loccons</span>
+                        <span class="k">if</span> <span class="n">CheckMagic</span><span class="p">:</span>
+                            <span class="n">f</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">magicloc</span><span class="p">)</span>
+                            <span class="n">MagicList</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">fromfile</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span><span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">byteswap</span><span class="p">()</span>
+                            <span class="k">if</span> <span class="n">MagicList</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">20301</span><span class="p">:</span>
+                                <span class="n">f</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">magicloc</span><span class="p">)</span>
+                                <span class="n">MagicList</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">fromfile</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span><span class="n">count</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">byteswap</span><span class="p">()</span>
+                                <span class="nb">print</span><span class="p">(</span><span class="n">MagicList</span><span class="p">)</span>
+                                <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;Magic Number not found for &#39;</span> <span class="o">+</span><span class="n">thisgamma</span><span class="o">+</span><span class="s1">&#39; &#39;</span><span class="o">+</span><span class="n">TOpstr</span><span class="p">(</span><span class="n">iploc</span><span class="p">))</span>
+                        <span class="n">f</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">loc</span><span class="p">)</span>
+                        <span class="n">tmpdata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromfile</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="n">thiscomplextype</span><span class="p">,</span><span class="n">count</span><span class="o">=</span><span class="n">forcent</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">bar3ptChromaByteSwap</span><span class="p">:</span><span class="n">tmpdata</span> <span class="o">=</span> <span class="n">tmpdata</span><span class="o">.</span><span class="n">byteswap</span><span class="p">()</span>
+                        <span class="k">if</span> <span class="s1">&#39;cmplx&#39;</span> <span class="ow">in</span> <span class="n">thisgamma</span><span class="p">:</span>
+                            <span class="n">datahold</span><span class="p">[</span><span class="n">igamma</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">tmpdata</span><span class="o">.</span><span class="n">imag</span><span class="p">))</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">datahold</span><span class="p">[</span><span class="n">igamma</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">tmpdata</span><span class="o">.</span><span class="n">real</span><span class="p">))</span>
+                        <span class="c1"># if isshift&gt; nt-min(AllTSinkList)-1:</span>
+                        <span class="c1"># datahold[igamma][-1][-corr_shift-1] = -datahold[igamma][-1][-corr_shift-1]</span>
+                        <span class="c1"># print</span>
+                        <span class="c1"># print tmpdata.real</span>
+                        <span class="c1"># print</span>
+                        <span class="c1"># totsign = np.sign(np.sum(np.sign(datahold[igamma][-1][:CMTSinkList[0]])))</span>
+                        <span class="c1"># datahold[igamma][-1] = totsign*np.abs(datahold[igamma][-1])</span>
+                        <span class="n">datahold</span><span class="p">[</span><span class="n">igamma</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">datahold</span><span class="p">[</span><span class="n">igamma</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">datahold</span><span class="p">[</span><span class="n">igamma</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                        <span class="c1"># print np.abs(datahold[igamma][-1][13]-datahold[igamma][-1][12])/datahold[igamma][-1][12]</span>
+                        <span class="c1"># if np.abs(datahold[igamma][-1][13]-datahold[igamma][-1][12])/datahold[igamma][-1][12] &gt; 1.0:</span>
+                        <span class="c1">#     print</span>
+                        <span class="c1">#     print thisfile.replace(xsrcList[0],xsrc)</span>
+                        <span class="c1">#     print corr_shift</span>
+                        <span class="c1">#     for it,tdata in enumerate(datahold[igamma][-1]):</span>
+                        <span class="c1">#         print it, tdata</span>
+                        <span class="c1"># print np.roll(datahold[igamma][-1],isshift)</span>
+                        <span class="c1"># print np.roll(datahold[igamma][-1],-isshift)</span>
+                        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">datahold</span><span class="p">[</span><span class="n">igamma</span><span class="p">][</span><span class="n">ip</span><span class="p">])):</span>
+                            <span class="nb">print</span><span class="p">()</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="n">thisfile</span><span class="p">)</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;thisgamma &#39;</span><span class="p">,</span><span class="n">thisgamma</span><span class="p">,</span><span class="s1">&#39; iploc &#39;</span><span class="p">,</span> <span class="n">iploc</span><span class="p">)</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;data:&#39;</span><span class="p">)</span>
+                            <span class="k">for</span> <span class="n">it</span><span class="p">,</span><span class="n">idata</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">datahold</span><span class="p">[</span><span class="n">igamma</span><span class="p">][</span><span class="n">ip</span><span class="p">]):</span>
+                                <span class="nb">print</span><span class="p">(</span><span class="n">it</span><span class="p">,</span><span class="n">idata</span><span class="p">)</span>
+                            <span class="c1"># if DeleteNanCfgs:</span>
+                            <span class="c1">#     raise NaNCfunError(&#39;NaN Values: &#39;+thisgamma+&#39; &#39; +qvecSet[iploc]  )</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">datahold</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rollaxis</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">ndim</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ReadC3Header"><a class="viewcode-back" href="../ReadBinaryCfuns_SLone.html#ReadBinaryCfuns_SLone.ReadC3Header">[docs]</a><span class="k">def</span> <span class="nf">ReadC3Header</span><span class="p">(</span><span class="n">f_object</span><span class="p">):</span>
+    <span class="n">d1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromfile</span><span class="p">(</span><span class="n">f_object</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span><span class="n">count</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">byteswap</span><span class="p">()</span>
+    <span class="n">outdict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">outdict</span><span class="p">[</span><span class="s1">&#39;output_version&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">outdict</span><span class="p">[</span><span class="s1">&#39;mom2max&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">outdict</span><span class="p">[</span><span class="s1">&#39;j_decay&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d1</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">outdict</span><span class="p">[</span><span class="s1">&#39;nrow&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d1</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">8</span><span class="p">]</span>
+    <span class="n">outdict</span><span class="p">[</span><span class="s1">&#39;wilson_version&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d1</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span>
+    <span class="n">outdict</span><span class="p">[</span><span class="s1">&#39;Num_seqsrc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d1</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span>
+
+    <span class="n">outdict</span><span class="p">[</span><span class="s1">&#39;nuc_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromfile</span><span class="p">(</span><span class="n">f_object</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;S11&#39;</span><span class="p">,</span><span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">d2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromfile</span><span class="p">(</span><span class="n">f_object</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span><span class="n">count</span><span class="o">=</span><span class="mi">17</span><span class="p">)</span><span class="o">.</span><span class="n">byteswap</span><span class="p">()</span>
+    <span class="n">outdict</span><span class="p">[</span><span class="s1">&#39;tsource&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">outdict</span><span class="p">[</span><span class="s1">&#39;tsink&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">outdict</span><span class="p">[</span><span class="s1">&#39;sinkmom&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d2</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span>
+    <span class="n">outdict</span><span class="p">[</span><span class="s1">&#39;gammanumber&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d2</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
+    <span class="n">outdict</span><span class="p">[</span><span class="s1">&#39;FFoutput_version&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d2</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span>
+    <span class="n">outdict</span><span class="p">[</span><span class="s1">&#39;numFF&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d2</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span>
+    <span class="n">outdict</span><span class="p">[</span><span class="s1">&#39;gammaopp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d2</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span>
+    <span class="n">outdict</span><span class="p">[</span><span class="s1">&#39;numMom&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d2</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+    <span class="n">outdict</span><span class="p">[</span><span class="s1">&#39;MagicNumber&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d2</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span>
+    <span class="n">outdict</span><span class="p">[</span><span class="s1">&#39;qmom&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d2</span><span class="p">[</span><span class="mi">13</span><span class="p">:</span><span class="mi">16</span><span class="p">]</span>
+    <span class="n">outdict</span><span class="p">[</span><span class="s1">&#39;tcurrlen&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d2</span><span class="p">[</span><span class="mi">16</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">f_object</span><span class="p">,</span><span class="n">outdict</span></div>
+
+<span class="c1">## Just a reference function for the extra parameters in the 3 point function file.</span>
+<div class="viewcode-block" id="holder"><a class="viewcode-back" href="../ReadBinaryCfuns_SLone.html#ReadBinaryCfuns_SLone.holder">[docs]</a><span class="k">def</span> <span class="nf">holder</span><span class="p">(</span><span class="n">thisfile</span><span class="p">,</span><span class="n">cmplx_dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">thisfile</span><span class="p">,</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">d1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromfile</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span><span class="n">count</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">byteswap</span><span class="p">()</span>
+        <span class="n">output_version</span> <span class="o">=</span> <span class="n">d1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">mom2max</span> <span class="o">=</span> <span class="n">d1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">j_decay</span> <span class="o">=</span> <span class="n">d1</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">nrow</span> <span class="o">=</span> <span class="n">d1</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">8</span><span class="p">]</span>
+        <span class="n">wilson_version</span> <span class="o">=</span> <span class="n">d1</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span>
+        <span class="n">Num_seqsrc</span> <span class="o">=</span> <span class="n">d1</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span>
+
+        <span class="n">nuc_type</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromfile</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;S13&#39;</span><span class="p">,</span><span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">d2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromfile</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span><span class="n">count</span><span class="o">=</span><span class="mi">17</span><span class="p">)</span><span class="o">.</span><span class="n">byteswap</span><span class="p">()</span>
+        <span class="n">tsource</span> <span class="o">=</span> <span class="n">d2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">tsink</span> <span class="o">=</span> <span class="n">d2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">sinkmom</span> <span class="o">=</span> <span class="n">d2</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span>
+        <span class="n">gammanumber</span> <span class="o">=</span> <span class="n">d2</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
+        <span class="n">FFoutput_version</span> <span class="o">=</span> <span class="n">d2</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span>
+        <span class="n">numFF</span> <span class="o">=</span> <span class="n">d2</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span>
+        <span class="n">gammaopp</span> <span class="o">=</span> <span class="n">d2</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span>
+        <span class="n">numMom</span> <span class="o">=</span> <span class="n">d2</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+        <span class="n">MagicNumber</span> <span class="o">=</span> <span class="n">d2</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span>
+        <span class="n">qmom</span> <span class="o">=</span> <span class="n">d2</span><span class="p">[</span><span class="mi">13</span><span class="p">:</span><span class="mi">16</span><span class="p">]</span>
+        <span class="n">tcurrlen</span> <span class="o">=</span> <span class="n">d2</span><span class="p">[</span><span class="mi">16</span><span class="p">]</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromfile</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="n">cmplx_dtype</span><span class="p">,</span><span class="n">count</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span><span class="o">.</span><span class="n">byteswap</span><span class="p">()</span>
+
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;output_version&#39;</span><span class="p">,</span><span class="n">output_version</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;mom2max&#39;</span><span class="p">,</span><span class="n">mom2max</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;j_decay&#39;</span><span class="p">,</span><span class="n">j_decay</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;nrow&#39;</span><span class="p">,</span><span class="n">nrow</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;wilson_version&#39;</span><span class="p">,</span><span class="n">wilson_version</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Num_seqsrc&#39;</span><span class="p">,</span><span class="n">Num_seqsrc</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;nuc_type&#39;</span><span class="p">,</span><span class="n">nuc_type</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;tsource&#39;</span><span class="p">,</span><span class="n">tsource</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;tsink &#39;</span><span class="p">,</span><span class="n">tsink</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;sinkmom &#39;</span><span class="p">,</span><span class="n">sinkmom</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;gammanumber &#39;</span><span class="p">,</span><span class="n">gammanumber</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;FFoutput_version &#39;</span><span class="p">,</span><span class="n">FFoutput_version</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;numFF &#39;</span><span class="p">,</span><span class="n">numFF</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;gammaopp &#39;</span><span class="p">,</span><span class="n">gammaopp</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;numMom &#39;</span><span class="p">,</span><span class="n">numMom</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;MagicNumber&#39;</span><span class="p">,</span><span class="n">MagicNumber</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;qmom &#39;</span><span class="p">,</span><span class="n">qmom</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;tcurrlen &#39;</span><span class="p">,</span><span class="n">tcurrlen</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;values&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">ic</span><span class="p">,</span><span class="n">ival</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">values</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">ic</span><span class="p">,</span><span class="n">ival</span><span class="o">.</span><span class="n">real</span><span class="p">,</span><span class="n">ival</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span></div>
+
+
+
+
+
+
+<span class="c1">##TODO, make sure working with multibal moms in thisMomList</span>
+<div class="viewcode-block" id="R2CChromaXMLFileList"><a class="viewcode-back" href="../ReadBinaryCfuns_SLone.html#ReadBinaryCfuns_SLone.R2CChromaXMLFileList">[docs]</a><span class="k">class</span> <span class="nc">R2CChromaXMLFileList</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">thisfileList</span><span class="p">,</span><span class="n">thisMomList</span><span class="p">,</span><span class="n">InterpNumb</span><span class="o">=</span><span class="s1">&#39;9&#39;</span><span class="p">,</span><span class="n">MesOrBar</span><span class="o">=</span><span class="s1">&#39;Baryon&#39;</span><span class="p">,</span><span class="n">tfix</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">MesOrBar</span> <span class="o">==</span> <span class="s1">&#39;Baryon&#39;</span><span class="p">:</span>
+            <span class="n">InterpFlag</span> <span class="o">=</span> <span class="s1">&#39;baryon_num&#39;</span>
+            <span class="n">tfix_interp_ref</span> <span class="o">=</span> <span class="mi">9</span>
+        <span class="k">elif</span> <span class="n">MesOrBar</span> <span class="o">==</span> <span class="s1">&#39;Meson&#39;</span><span class="p">:</span>
+            <span class="n">InterpFlag</span> <span class="o">=</span> <span class="s1">&#39;gamma_value&#39;</span>
+            <span class="n">tfix_interp_ref</span> <span class="o">=</span> <span class="mi">15</span>
+        <span class="k">else</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;Pass Baryon or Meson into correlator read routine&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tshiftlist</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">datalen</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">thisfile</span> <span class="ow">in</span> <span class="n">thisfileList</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">OutMomList</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">TSRC_read</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">datahold</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">datatfixhold</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="c1"># print &#39;Reading &#39; ,thisfile</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">thisfile</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ERROR FILE:&#39;</span><span class="p">,</span><span class="n">thisfile</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;Could not read 2 point correlation function&#39;</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">thisfile</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">BarPart</span><span class="p">,</span><span class="n">InterpPart</span><span class="p">,</span><span class="n">InterpParttfix</span><span class="p">,</span><span class="n">ReadMom</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span><span class="kc">False</span><span class="p">,</span><span class="kc">False</span><span class="p">,</span><span class="kc">False</span>
+                <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">strline</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="s1">&#39;t_srce&#39;</span> <span class="ow">in</span> <span class="n">strline</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">TSRC_read</span><span class="p">:</span>
+                        <span class="n">TSRC_read</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="n">thissrclist</span> <span class="o">=</span> <span class="n">strline</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;t_srce&gt;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;/t_srce&gt;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                        <span class="c1"># print thisfile.replace(xsrcList[0],xsrc)</span>
+                        <span class="c1"># print int(thissrclist[-1])</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">tshiftlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">thissrclist</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+                    <span class="k">elif</span> <span class="n">MesOrBar</span><span class="o">+</span><span class="s1">&#39;s&#39;</span> <span class="ow">in</span> <span class="n">strline</span><span class="p">:</span>
+                    <span class="c1"># elif strline == &#39;&lt;Shell_Shell_Wilson_&#39;+MesOrBar+&#39;s&gt;&#39;:</span>
+                    <span class="c1"># if strline == &#39;&lt;Shell_Shell_Wilson_Baryons&gt;&#39;:</span>
+                        <span class="n">BarPart</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">elif</span> <span class="n">InterpFlag</span> <span class="ow">in</span> <span class="n">strline</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">strline</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;&#39;</span><span class="o">+</span><span class="n">InterpFlag</span><span class="o">+</span><span class="s1">&#39;&gt;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;/&#39;</span><span class="o">+</span><span class="n">InterpFlag</span><span class="o">+</span><span class="s1">&#39;&gt;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">))</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">InterpNumb</span><span class="p">):</span>
+                            <span class="n">InterpPart</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">InterpPart</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">strline</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;&#39;</span><span class="o">+</span><span class="n">InterpFlag</span><span class="o">+</span><span class="s1">&#39;&gt;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;/&#39;</span><span class="o">+</span><span class="n">InterpFlag</span><span class="o">+</span><span class="s1">&#39;&gt;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">))</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">tfix_interp_ref</span><span class="p">):</span>
+                            <span class="n">InterpParttfix</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">InterpParttfix</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="k">elif</span> <span class="n">BarPart</span> <span class="ow">and</span> <span class="n">InterpPart</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="s1">&#39;&lt;sink_mom&gt;&#39;</span> <span class="ow">in</span> <span class="n">strline</span><span class="p">:</span>
+                            <span class="n">thismom</span> <span class="o">=</span> <span class="n">strline</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;sink_mom&gt;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;/sink_mom&gt;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="n">thismom</span> <span class="ow">in</span> <span class="n">thisMomList</span><span class="p">:</span>
+                                <span class="c1"># if len(datahold) &gt; 0 and tfix:</span>
+                                <span class="c1">#     maxindex = datahold[-1].index(np.max(datahold[-1]))</span>
+                                <span class="c1">#     datahold[-1] = np.roll(np.array(datahold[-1]),-maxindex).tolist()</span>
+                                <span class="n">datahold</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">OutMomList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">thismom</span><span class="p">)</span>
+                                <span class="n">ReadMom</span> <span class="o">=</span> <span class="kc">True</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">ReadMom</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="k">elif</span> <span class="s1">&#39;&lt;re&gt;&#39;</span> <span class="ow">in</span> <span class="n">strline</span> <span class="ow">and</span> <span class="n">ReadMom</span><span class="p">:</span>
+                            <span class="n">datahold</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">strline</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;re&gt;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;/re&gt;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)))</span>
+                            <span class="c1"># if np.isnan(datahold[-1][-1]) and DeleteNanCfgs:</span>
+                            <span class="c1">#     raise NaNCfunError(&#39;NaN Values: &#39;+thisfile+&#39;  &#39; +qvecSet[int(self.OutMomList[-1])]  )</span>
+                    <span class="k">if</span> <span class="n">BarPart</span> <span class="ow">and</span> <span class="n">InterpParttfix</span> <span class="ow">and</span> <span class="n">tfix</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="s1">&#39;&lt;sink_mom&gt;&#39;</span> <span class="ow">in</span> <span class="n">strline</span><span class="p">:</span>
+                            <span class="n">thismom</span> <span class="o">=</span> <span class="n">strline</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;sink_mom&gt;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;/sink_mom&gt;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="n">thismom</span> <span class="ow">in</span> <span class="n">thisMomList</span><span class="p">:</span>
+                                <span class="c1"># if len(datatfixhold) &gt; 0:</span>
+                                <span class="c1">#     maxindex = datatfixhold[-1].index(np.max(datatfixhold[-1]))</span>
+                                <span class="c1">#     datatfixhold[-1] = maxindex</span>
+                                <span class="n">datatfixhold</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+                                <span class="n">ReadMom</span> <span class="o">=</span> <span class="kc">True</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">ReadMom</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="k">elif</span> <span class="s1">&#39;&lt;re&gt;&#39;</span> <span class="ow">in</span> <span class="n">strline</span> <span class="ow">and</span> <span class="n">ReadMom</span><span class="p">:</span>
+                            <span class="n">datatfixhold</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">strline</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;re&gt;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;/re&gt;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)))</span>
+                            <span class="c1"># if np.isnan(datatfixhold[-1][-1]) and DeleteNanCfgs:</span>
+                            <span class="c1">#     raise NaNCfunError(&#39;NaN Values: &#39;+thisfile+&#39;  &#39; +qvecSet[int(self.OutMomList[-1])]  )</span>
+                    <span class="k">if</span> <span class="n">strline</span> <span class="o">==</span> <span class="s1">&#39;&lt;/momenta&gt;&#39;</span> <span class="ow">and</span> <span class="nb">str</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">InterpPart</span><span class="p">),</span><span class="mi">9</span><span class="p">)):</span>
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">datahold</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">datatfixhold</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="n">tfix</span> <span class="p">)):</span> <span class="k">break</span>
+            <span class="c1"># print xsrc, &#39; data &#39;</span>
+            <span class="c1"># print np.array(datahold)</span>
+            <span class="c1"># print self.data</span>
+            <span class="c1"># print</span>
+            <span class="k">if</span> <span class="n">tfix</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">ic</span><span class="p">,</span><span class="n">ishift</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">datatfixhold</span><span class="p">):</span>
+                    <span class="n">maxindex</span> <span class="o">=</span> <span class="n">ishift</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">ishift</span><span class="p">))</span>
+                    <span class="n">datahold</span><span class="p">[</span><span class="n">ic</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">datahold</span><span class="p">[</span><span class="n">ic</span><span class="p">],</span><span class="o">-</span><span class="n">maxindex</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rollaxis</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">datahold</span><span class="p">),</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">datalen</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">rolldata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rollaxis</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">datahold</span><span class="p">),</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">rolldata</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;error with &#39;</span><span class="o">+</span><span class="n">thisfile</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">+=</span> <span class="n">rolldata</span>
+                <span class="n">datalen</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">datalen</span><span class="p">)</span>
+
+        <span class="c1"># indicies =  np.searchsorted(map(Getpsqrd,self.OutMomList),map(Getpsqrd,thisMomList))</span>
+        <span class="n">indicies</span> <span class="o">=</span>  <span class="p">[</span><span class="n">thisMomList</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">imom</span><span class="p">)</span> <span class="k">for</span> <span class="n">imom</span> <span class="ow">in</span>  <span class="bp">self</span><span class="o">.</span><span class="n">OutMomList</span><span class="p">]</span>
+
+
+        <span class="c1"># # if Debug:</span>
+        <span class="c1"># #     print</span>
+        <span class="c1"># #     print thisfile</span>
+        <span class="c1"># #     print thisMomList</span>
+        <span class="c1"># #     print self.OutMomList</span>
+        <span class="c1"># #     print indicies</span>
+        <span class="c1"># #     print self.data</span>
+        <span class="c1"># #     print self.datatfix</span>
+        <span class="c1"># print map(Getpsqrd,self.OutMomList),map(Getpsqrd,thisMomList)</span>
+        <span class="c1"># print indicies</span>
+        <span class="c1"># print thisMomList, self.OutMomList, np.array(self.OutMomList)[indicies]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)[</span><span class="n">indicies</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span></div>
+        <span class="c1"># if tfix: self.datatfix = np.array(self.datatfix)[indicies].tolist()</span>
+
+
+
+
+<span class="c1">##TODO, make sure working with multibal moms in thisMomList</span>
+<div class="viewcode-block" id="RC2Full"><a class="viewcode-back" href="../ReadBinaryCfuns_SLone.html#ReadBinaryCfuns_SLone.RC2Full">[docs]</a><span class="k">class</span> <span class="nc">RC2Full</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">thisfileList</span><span class="p">,</span><span class="n">thisMomList</span><span class="p">,</span><span class="n">InterpNumb</span><span class="o">=</span><span class="s1">&#39;9&#39;</span><span class="p">,</span><span class="n">MesOrBar</span><span class="o">=</span><span class="s1">&#39;Baryon&#39;</span><span class="p">,</span><span class="n">Dog5</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">MesOrBar</span> <span class="o">==</span> <span class="s1">&#39;Baryon&#39;</span><span class="p">:</span> <span class="n">InterpFlag</span> <span class="o">=</span> <span class="s1">&#39;baryon_num&#39;</span>
+        <span class="k">elif</span> <span class="n">MesOrBar</span> <span class="o">==</span> <span class="s1">&#39;Meson&#39;</span><span class="p">:</span> <span class="n">InterpFlag</span> <span class="o">=</span> <span class="s1">&#39;gamma_value&#39;</span>
+        <span class="k">else</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;Pass Baryon or Meson into correlator read routine&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">datag5</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tshiftlist</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">thisfile</span> <span class="ow">in</span> <span class="n">thisfileList</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">OutMomList</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">TSRC_read</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">datahold</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">datag5hold</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="c1"># print &#39;Reading &#39; ,thisfile</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">thisfile</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ERROR FILE:&#39;</span><span class="p">,</span><span class="n">thisfile</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;Could not read 2 point correlation function&#39;</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">thisfile</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">BarPart</span><span class="p">,</span><span class="n">InterpPart</span><span class="p">,</span><span class="n">InterpPartg5</span><span class="p">,</span><span class="n">ReadMom</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span><span class="kc">False</span><span class="p">,</span><span class="kc">False</span><span class="p">,</span><span class="kc">False</span>
+                <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">strline</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="s1">&#39;t_srce&#39;</span> <span class="ow">in</span> <span class="n">strline</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">TSRC_read</span><span class="p">:</span>
+                        <span class="n">TSRC_read</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="n">thissrclist</span> <span class="o">=</span> <span class="n">strline</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;t_srce&gt;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;/t_srce&gt;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                        <span class="c1"># print thisfile.replace(xsrcList[0],xsrc)</span>
+                        <span class="c1"># print int(thissrclist[-1])</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">tshiftlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">thissrclist</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+                    <span class="k">elif</span> <span class="n">strline</span> <span class="o">==</span> <span class="s1">&#39;&lt;Shell_Shell_Wilson_&#39;</span><span class="o">+</span><span class="n">MesOrBar</span><span class="o">+</span><span class="s1">&#39;s&gt;&#39;</span><span class="p">:</span>
+                    <span class="c1"># if strline == &#39;&lt;Shell_Shell_Wilson_Baryons&gt;&#39;:</span>
+                        <span class="n">BarPart</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">elif</span> <span class="n">InterpFlag</span> <span class="ow">in</span> <span class="n">strline</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">strline</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;&#39;</span><span class="o">+</span><span class="n">InterpFlag</span><span class="o">+</span><span class="s1">&#39;&gt;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;/&#39;</span><span class="o">+</span><span class="n">InterpFlag</span><span class="o">+</span><span class="s1">&#39;&gt;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">))</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">InterpNumb</span><span class="p">):</span>
+                            <span class="n">InterpPartg5</span> <span class="o">=</span> <span class="kc">False</span>
+                            <span class="n">InterpPart</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="c1"># elif int(strline.replace(&#39;&lt;&#39;+InterpFlag+&#39;&gt;&#39;,&#39;&#39;).replace(&#39;&lt;/&#39;+InterpFlag+&#39;&gt;&#39;,&#39;&#39;)) == int(INg5):</span>
+                        <span class="c1">#     InterpPart = False</span>
+                        <span class="c1">#     InterpPartg5 = True</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">InterpPart</span> <span class="o">=</span> <span class="kc">False</span>
+                            <span class="n">InterpPartg5</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="k">elif</span> <span class="n">BarPart</span> <span class="ow">and</span> <span class="n">InterpPart</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="s1">&#39;&lt;sink_mom&gt;&#39;</span> <span class="ow">in</span> <span class="n">strline</span><span class="p">:</span>
+                            <span class="n">thismom</span> <span class="o">=</span> <span class="n">strline</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;sink_mom&gt;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;/sink_mom&gt;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="n">thismom</span> <span class="ow">in</span> <span class="n">thisMomList</span><span class="p">:</span>
+                                <span class="n">datahold</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">OutMomList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">thismom</span><span class="p">)</span>
+                                <span class="n">ReadMom</span> <span class="o">=</span> <span class="kc">True</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">ReadMom</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="k">elif</span> <span class="s1">&#39;&lt;re&gt;&#39;</span> <span class="ow">in</span> <span class="n">strline</span> <span class="ow">and</span> <span class="n">ReadMom</span><span class="p">:</span>
+                            <span class="n">datahold</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">strline</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;re&gt;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;/re&gt;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)))</span>
+                            <span class="c1"># if np.isnan(datahold[-1][-1]) and DeleteNanCfgs:</span>
+                            <span class="c1">#     raise NaNCfunError(&#39;NaN Values: &#39;+thisfile+&#39;  &#39; +qvecSet[int(self.OutMomList[-1])]  )</span>
+                    <span class="k">elif</span> <span class="n">BarPart</span> <span class="ow">and</span> <span class="n">InterpPartg5</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="s1">&#39;&lt;sink_mom&gt;&#39;</span> <span class="ow">in</span> <span class="n">strline</span><span class="p">:</span>
+                            <span class="n">thismom</span> <span class="o">=</span> <span class="n">strline</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;sink_mom&gt;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;/sink_mom&gt;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="n">thismom</span> <span class="ow">in</span> <span class="n">thisMomList</span><span class="p">:</span>
+                                <span class="n">datag5hold</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+                                <span class="n">ReadMom</span> <span class="o">=</span> <span class="kc">True</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">ReadMom</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="k">elif</span> <span class="s1">&#39;&lt;re&gt;&#39;</span> <span class="ow">in</span> <span class="n">strline</span> <span class="ow">and</span> <span class="n">ReadMom</span><span class="p">:</span>
+                            <span class="n">datag5hold</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">strline</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;re&gt;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;/re&gt;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)))</span>
+                            <span class="c1"># if np.isnan(datag5hold[-1][-1]) and DeleteNanCfgs:</span>
+                            <span class="c1">#     raise NaNCfunError(&#39;NaN Values: &#39;+thisfile+&#39;  &#39; +qvecSet[int(self.OutMomList[-1])]  )</span>
+                    <span class="k">if</span> <span class="n">strline</span> <span class="o">==</span> <span class="s1">&#39;&lt;/momenta&gt;&#39;</span> <span class="ow">and</span> <span class="n">InterpPart</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">datahold</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">datag5hold</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="n">Dog5</span> <span class="p">)):</span> <span class="k">break</span>
+            <span class="c1"># print xsrc, &#39; data &#39;</span>
+            <span class="c1"># print np.array(datahold)</span>
+            <span class="c1"># print self.data</span>
+            <span class="c1"># print</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">rollaxis</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">datahold</span><span class="p">),</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">Dog5</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">datag5</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">rollaxis</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">datag5hold</span><span class="p">),</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+
+        <span class="c1"># indicies =  np.searchsorted(map(Getpsqrd,self.OutMomList),map(Getpsqrd,thisMomList))</span>
+        <span class="n">indicies</span> <span class="o">=</span>  <span class="p">[</span><span class="n">thisMomList</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">imom</span><span class="p">)</span> <span class="k">for</span> <span class="n">imom</span> <span class="ow">in</span>  <span class="bp">self</span><span class="o">.</span><span class="n">OutMomList</span><span class="p">]</span>
+
+
+        <span class="c1"># # if Debug:</span>
+        <span class="c1"># #     print</span>
+        <span class="c1"># #     print thisfile</span>
+        <span class="c1"># #     print thisMomList</span>
+        <span class="c1"># #     print self.OutMomList</span>
+        <span class="c1"># #     print indicies</span>
+        <span class="c1"># #     print self.data</span>
+        <span class="c1"># #     print self.datag5</span>
+        <span class="c1"># print map(Getpsqrd,self.OutMomList),map(Getpsqrd,thisMomList)</span>
+        <span class="c1"># print indicies</span>
+        <span class="c1"># print thisMomList, self.OutMomList, np.array(self.OutMomList)[indicies]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rollaxis</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">),</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">)[</span><span class="n">indicies</span><span class="p">]</span>
+        <span class="c1"># self.data = np.rollaxis(self.data,1,2).tolist()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rollaxis</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">Dog5</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">datag5</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rollaxis</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">datag5</span><span class="p">),</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">)[</span><span class="n">indicies</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">datag5</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rollaxis</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">datag5</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span></div>
+
+
+
+
+
+
+<div class="viewcode-block" id="NaNCfunError"><a class="viewcode-back" href="../ReadBinaryCfuns_SLone.html#ReadBinaryCfuns_SLone.NaNCfunError">[docs]</a><span class="k">class</span> <span class="nc">NaNCfunError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestThreept_Header"><a class="viewcode-back" href="../ReadBinaryCfuns_SLone.html#ReadBinaryCfuns_SLone.TestThreept_Header">[docs]</a><span class="k">def</span> <span class="nf">TestThreept_Header</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;file not found </span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">+</span><span class="n">file_name</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="p">,</span><span class="n">data</span> <span class="o">=</span> <span class="n">ReadC3Header</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="Get2ptData"><a class="viewcode-back" href="../ReadBinaryCfuns_SLone.html#ReadBinaryCfuns_SLone.Get2ptData">[docs]</a><span class="k">def</span> <span class="nf">Get2ptData</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span><span class="n">bar_num</span><span class="o">=</span><span class="s1">&#39;15&#39;</span><span class="p">,</span><span class="n">mes_or_bar</span><span class="o">=</span><span class="s1">&#39;Meson&#39;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;file not found </span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">+</span><span class="n">file_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">R2CChromaXMLFileList</span><span class="p">([</span><span class="n">file_name</span><span class="p">],[</span><span class="s1">&#39;0 0 0&#39;</span><span class="p">],</span><span class="n">InterpNumb</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">bar_num</span><span class="p">),</span><span class="n">MesOrBar</span><span class="o">=</span><span class="n">mes_or_bar</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">Get2ptData</span><span class="p">(</span><span class="o">*</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+
+
+
+
+
+<span class="c1"># ## Der[igamma , ip , it]</span>
+<span class="c1"># class ReadFSDerCfunPick:</span>
+<span class="c1">#     def __init__(self,file,thisMomList,thisDGList):</span>
+<span class="c1">#         self.data = []</span>
+<span class="c1">#         f = open(file,&#39;rb&#39;)</span>
+<span class="c1">#         tmpdata = array(&#39;d&#39;)</span>
+<span class="c1">#         tmpdata.read(f,DGBSize*nmom*nt*2)</span>
+<span class="c1">#         tmpdata.byteswap()</span>
+<span class="c1">#         for igd,thisgamma in enumerate(thisDGList):</span>
+<span class="c1">#             cmplxflag = False</span>
+<span class="c1">#             if &#39;cmplx&#39; in thisgamma:</span>
+<span class="c1">#                 cmplxflag = True</span>
+<span class="c1">#                 thisgamma = thisgamma.replace(&#39;cmplx&#39;,&#39;&#39;)</span>
+<span class="c1">#             igdloc = DGSet.index(thisgamma)</span>
+<span class="c1">#             self.data.append([])</span>
+<span class="c1">#             for ip,iploc in enumerate(thisMomList):</span>
+<span class="c1">#                 self.data[igd].append([])</span>
+<span class="c1">#                 for it in xrange(nt):</span>
+<span class="c1">#                     loc = igdloc*2 + iploc*DGBSize*2 + it*DGBSize*nmom*2</span>
+<span class="c1">#                     if cmplxflag: loc += 1</span>
+<span class="c1">#                     self.data[igd][ip].append(tmpdata[loc])</span>
+<span class="c1">#                     if np.isnan(self.data[igd][ip][it]):</span>
+<span class="c1">#                         raise NaNCfunError(&#39;NaN Values: &#39;+thisgamma+&#39; &#39; +qvecSet[iploc] + &#39; it=&#39;+str(it+1) )</span>
+
+<span class="c1">#         f.close()</span>
+
+<span class="c1"># ## noDer[igamma , ip , it]</span>
+<span class="c1"># class ReadFSCfunPick:</span>
+<span class="c1">#     def __init__(self,file,thisMomList,thisGammaList):</span>
+<span class="c1">#         self.data = []</span>
+<span class="c1">#         f = open(file,&#39;rb&#39;)</span>
+<span class="c1">#         tmpdata = array(&#39;d&#39;)</span>
+<span class="c1">#         try:</span>
+<span class="c1">#             tmpdata.read(f,GBSize*nmom*nt*2)</span>
+<span class="c1">#         except:</span>
+<span class="c1">#             print file</span>
+<span class="c1">#         tmpdata.byteswap()</span>
+<span class="c1">#         for igamma,thisgamma in enumerate(thisGammaList):</span>
+<span class="c1">#             cmplxflag = False</span>
+<span class="c1">#             if &#39;cmplx&#39; in thisgamma:</span>
+<span class="c1">#                 cmplxflag = True</span>
+<span class="c1">#                 thisgamma = thisgamma.replace(&#39;cmplx&#39;,&#39;&#39;)</span>
+<span class="c1">#             igammaloc = GammaSet.index(thisgamma)</span>
+<span class="c1">#             self.data.append([])</span>
+<span class="c1">#             for ip,iploc in enumerate(thisMomList):</span>
+<span class="c1">#                 self.data[igamma].append([])</span>
+<span class="c1">#                 for it in xrange(nt):</span>
+<span class="c1">#                     loc = igammaloc*2 + iploc*GBSize*2 + it*GBSize*nmom*2</span>
+<span class="c1">#                     if cmplxflag: loc += 1</span>
+<span class="c1">#                     self.data[igamma][ip].append(tmpdata[loc])</span>
+<span class="c1">#                     if np.isnan(self.data[igamma][ip][it]):</span>
+<span class="c1">#                         raise NaNCfunError(&#39;NaN Values: &#39;+thisgamma+ &#39; &#39; +qvecSet[iploc] + &#39; it=&#39;+str(it+1) )</span>
+
+<span class="c1">#         f.close()</span>
+
+<span class="c1"># ##[ip,it]</span>
+<span class="c1"># class Read2ptCfunPickOld:</span>
+<span class="c1">#     def __init__(self,file,thisMomList):</span>
+<span class="c1">#         self.data = []</span>
+<span class="c1">#         f = open(file,&#39;rb&#39;)</span>
+<span class="c1">#         tmpdata = array(&#39;d&#39;)</span>
+<span class="c1">#         tmpdata.read(f,nmom*ns*ns*nt*2)</span>
+<span class="c1">#         tmpdata.byteswap()</span>
+<span class="c1">#         for ip,iploc in enumerate(thisMomList):</span>
+<span class="c1">#             self.data.append([])</span>
+<span class="c1">#             for it in xrange(nt):</span>
+<span class="c1">#         ##11 + 22 projected spin component ns = 4 works</span>
+<span class="c1">#                 loc = it*2*ns**2 + iploc*nt*2*ns**2</span>
+<span class="c1">#                 self.data[ip].append(tmpdata[loc]+tmpdata[loc+10])</span>
+<span class="c1">#                 if np.isnan(self.data[ip][it]):</span>
+<span class="c1">#                     raise NaNCfunError(&#39;NaN Values: &#39; +qvecSet[iploc] + &#39; it=&#39;+str(it+1) )</span>
+<span class="c1">#                 # if &#39;cmplx&#39; in RI:</span>
+<span class="c1">#                 #     self.datai[ipread].append(tmpdata[loc+1]+tmpdata[loc+11])</span>
+<span class="c1">#             if self.data[ip][tsource-1] &lt; 0.0:</span>
+<span class="c1">#                 self.data[ip] = np.negative(self.data[ip])</span>
+<span class="c1">#         f.close()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table of Contents</h3>
+          <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Python_Analysis</a></li>
+</ul>
+
+          <div role="search">
+            <h3 style="margin-top: 1.5em;">Search</h3>
+            <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+            </form>
+          </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <div role="navigation" aria-label="related navigaton">
+            <a href="../py-modindex.html" title="Python Module Index"
+              >modules</a> |
+            <a href="../genindex.html" title="General Index"
+              >index</a>
+          </div>
+          <div role="note" aria-label="source link">
+          </div>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Jack Dragos.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>

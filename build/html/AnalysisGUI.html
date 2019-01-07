@@ -1,0 +1,492 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>AnalysisGUI module &#8212; LQCD Analysis Codebase TF Fits documentation</title>
+    <link rel="stylesheet" href="_static/agogo.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Autocorr module" href="Autocorr.html" />
+    <link rel="prev" title="AhmedRes module" href="AhmedRes.html" /> 
+  </head><body>
+    <div class="header-wrapper" role="banner">
+      <div class="header">
+        <div class="headertitle"><a
+          href="index.html">LQCD Analysis Codebase TF Fits documentation</a></div>
+        <div class="rel" role="navigation" aria-label="related navigation">
+          <a href="AhmedRes.html" title="AhmedRes module"
+             accesskey="P">previous</a> |
+          <a href="Autocorr.html" title="Autocorr module"
+             accesskey="N">next</a> |
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-AnalysisGUI">
+<span id="analysisgui-module"></span><h1>AnalysisGUI module<a class="headerlink" href="#module-AnalysisGUI" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="AnalysisGUI.Alpha">
+<em class="property">class </em><code class="descclassname">AnalysisGUI.</code><code class="descname">Alpha</code><a class="reference internal" href="_modules/AnalysisGUI.html#Alpha"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalysisGUI.Alpha" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">traits.has_traits.HasTraits</span></code></p>
+<dl class="attribute">
+<dt id="AnalysisGUI.Alpha.smlist">
+<code class="descname">smlist</code><em class="property"> = ['16', '32', '64']</em><a class="headerlink" href="#AnalysisGUI.Alpha.smlist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="AnalysisGUI.AlphaFull">
+<em class="property">class </em><code class="descclassname">AnalysisGUI.</code><code class="descname">AlphaFull</code><a class="reference internal" href="_modules/AnalysisGUI.html#AlphaFull"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalysisGUI.AlphaFull" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">traits.has_traits.HasTraits</span></code></p>
+<dl class="attribute">
+<dt id="AnalysisGUI.AlphaFull.smlist">
+<code class="descname">smlist</code><em class="property"> = ['16', '32', '64']</em><a class="headerlink" href="#AnalysisGUI.AlphaFull.smlist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="AnalysisGUI.BeginFrame">
+<em class="property">class </em><code class="descclassname">AnalysisGUI.</code><code class="descname">BeginFrame</code><a class="reference internal" href="_modules/AnalysisGUI.html#BeginFrame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalysisGUI.BeginFrame" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">traits.has_traits.HasTraits</span></code></p>
+<p>starting frame, to select what type of thing you want to do
+options are:</p>
+<ul class="simple">
+<li>Flowed operators</li>
+<li>Two Point correlators</li>
+<li>CP odd correlators</li>
+<li>Ratio Function</li>
+<li>Form Factors</li>
+</ul>
+<dl class="attribute">
+<dt id="AnalysisGUI.BeginFrame.AlphaFull_window">
+<code class="descname">AlphaFull_window</code><em class="property"> = &lt;AnalysisGUI.AlphaFull object&gt;</em><a class="headerlink" href="#AnalysisGUI.BeginFrame.AlphaFull_window" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="AnalysisGUI.BeginFrame.Alpha_window">
+<code class="descname">Alpha_window</code><em class="property"> = &lt;AnalysisGUI.Alpha object&gt;</em><a class="headerlink" href="#AnalysisGUI.BeginFrame.Alpha_window" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="AnalysisGUI.BeginFrame.FF_window">
+<code class="descname">FF_window</code><em class="property"> = &lt;AnalysisGUI.FormFacts object&gt;</em><a class="headerlink" href="#AnalysisGUI.BeginFrame.FF_window" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="AnalysisGUI.BeginFrame.FOF_window">
+<code class="descname">FOF_window</code><em class="property"> = &lt;AnalysisGUI.FlowedOpFull object&gt;</em><a class="headerlink" href="#AnalysisGUI.BeginFrame.FOF_window" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="AnalysisGUI.BeginFrame.FO_window">
+<code class="descname">FO_window</code><em class="property"> = &lt;AnalysisGUI.FlowedOp object&gt;</em><a class="headerlink" href="#AnalysisGUI.BeginFrame.FO_window" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="AnalysisGUI.BeginFrame.GP_window">
+<code class="descname">GP_window</code><em class="property"> = &lt;AnalysisGUI.CalculationParams object&gt;</em><a class="headerlink" href="#AnalysisGUI.BeginFrame.GP_window" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="AnalysisGUI.BeginFrame.Info_Flow_window">
+<code class="descname">Info_Flow_window</code><em class="property"> = &lt;AnalysisGUI.DictFlowEditor object&gt;</em><a class="headerlink" href="#AnalysisGUI.BeginFrame.Info_Flow_window" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="AnalysisGUI.BeginFrame.Info_window">
+<code class="descname">Info_window</code><em class="property"> = &lt;AnalysisGUI.DictEditor object&gt;</em><a class="headerlink" href="#AnalysisGUI.BeginFrame.Info_window" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="AnalysisGUI.BeginFrame.Job_Solve_window">
+<code class="descname">Job_Solve_window</code><em class="property"> = &lt;AnalysisGUI.JobParamsSolve object&gt;</em><a class="headerlink" href="#AnalysisGUI.BeginFrame.Job_Solve_window" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="AnalysisGUI.BeginFrame.Job_window">
+<code class="descname">Job_window</code><em class="property"> = &lt;AnalysisGUI.JobParams object&gt;</em><a class="headerlink" href="#AnalysisGUI.BeginFrame.Job_window" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="AnalysisGUI.BeginFrame.Plot_window">
+<code class="descname">Plot_window</code><em class="property"> = &lt;AnalysisGUI.PlotParams object&gt;</em><a class="headerlink" href="#AnalysisGUI.BeginFrame.Plot_window" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="AnalysisGUI.BeginFrame.RF_window">
+<code class="descname">RF_window</code><em class="property"> = &lt;AnalysisGUI.RatioFun object&gt;</em><a class="headerlink" href="#AnalysisGUI.BeginFrame.RF_window" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="AnalysisGUI.BeginFrame.Run_window">
+<code class="descname">Run_window</code><em class="property"> = &lt;AnalysisGUI.RunParams object&gt;</em><a class="headerlink" href="#AnalysisGUI.BeginFrame.Run_window" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="AnalysisGUI.BeginFrame.TPC_window">
+<code class="descname">TPC_window</code><em class="property"> = &lt;AnalysisGUI.TPCorr object&gt;</em><a class="headerlink" href="#AnalysisGUI.BeginFrame.TPC_window" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="AnalysisGUI.CalculationParams">
+<em class="property">class </em><code class="descclassname">AnalysisGUI.</code><code class="descname">CalculationParams</code><a class="reference internal" href="_modules/AnalysisGUI.html#CalculationParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalysisGUI.CalculationParams" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">traits.has_traits.HasTraits</span></code></p>
+<p>has general parameters for analysis</p>
+<dl class="attribute">
+<dt id="AnalysisGUI.CalculationParams.this_list">
+<code class="descname">this_list</code><em class="property"> = ['msgpack', 'pickle', 'hdf', 'feather', 'parquet', 'csv', 'json', 'html', 'None']</em><a class="headerlink" href="#AnalysisGUI.CalculationParams.this_list" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="AnalysisGUI.DictEditor">
+<em class="property">class </em><code class="descclassname">AnalysisGUI.</code><code class="descname">DictEditor</code><span class="sig-paren">(</span><em>**traits</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/AnalysisGUI.html#DictEditor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalysisGUI.DictEditor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">traits.has_traits.HasTraits</span></code></p>
+<dl class="method">
+<dt id="AnalysisGUI.DictEditor.trait_view">
+<code class="descname">trait_view</code><span class="sig-paren">(</span><em>name=None</em>, <em>view_elements=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/AnalysisGUI.html#DictEditor.trait_view"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalysisGUI.DictEditor.trait_view" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets or sets a ViewElement associated with an object’s class.</p>
+<dl class="docutils">
+<dt>name <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>Name of a view element</dd>
+<dt>view_element <span class="classifier-delimiter">:</span> <span class="classifier">ViewElement</span></dt>
+<dd>View element to associate</dd>
+</dl>
+<p>A view element.</p>
+<p>If both <em>name</em> and <em>view_element</em> are specified, the view element is
+associated with <em>name</em> for the current object’s class. (That is,
+<em>view_element</em> is added to the ViewElements object associated with
+the current object’s class, indexed by <em>name</em>.)</p>
+<p>If only <em>name</em> is specified, the function returns the view element
+object associated with <em>name</em>, or None if <em>name</em> has no associated
+view element. View elements retrieved by this function are those that
+are bound to a class attribute in the class definition, or that are
+associated with a name by a previous call to this method.</p>
+<p>If neither <em>name</em> nor <em>view_element</em> is specified, the method returns a
+View object, based on the following order of preference:</p>
+<ol class="arabic simple">
+<li>If there is a View object named <code class="docutils literal notranslate"><span class="pre">traits_view</span></code> associated with the
+current object, it is returned.</li>
+<li>If there is exactly one View object associated the current
+object, it is returned.</li>
+<li>Otherwise, it returns a View object containing items for all the
+non-event trait attributes on the current object.</li>
+</ol>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="AnalysisGUI.DictFlowEditor">
+<em class="property">class </em><code class="descclassname">AnalysisGUI.</code><code class="descname">DictFlowEditor</code><span class="sig-paren">(</span><em>**traits</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/AnalysisGUI.html#DictFlowEditor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalysisGUI.DictFlowEditor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">traits.has_traits.HasTraits</span></code></p>
+<dl class="method">
+<dt id="AnalysisGUI.DictFlowEditor.trait_view">
+<code class="descname">trait_view</code><span class="sig-paren">(</span><em>name=None</em>, <em>view_elements=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/AnalysisGUI.html#DictFlowEditor.trait_view"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalysisGUI.DictFlowEditor.trait_view" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets or sets a ViewElement associated with an object’s class.</p>
+<dl class="docutils">
+<dt>name <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>Name of a view element</dd>
+<dt>view_element <span class="classifier-delimiter">:</span> <span class="classifier">ViewElement</span></dt>
+<dd>View element to associate</dd>
+</dl>
+<p>A view element.</p>
+<p>If both <em>name</em> and <em>view_element</em> are specified, the view element is
+associated with <em>name</em> for the current object’s class. (That is,
+<em>view_element</em> is added to the ViewElements object associated with
+the current object’s class, indexed by <em>name</em>.)</p>
+<p>If only <em>name</em> is specified, the function returns the view element
+object associated with <em>name</em>, or None if <em>name</em> has no associated
+view element. View elements retrieved by this function are those that
+are bound to a class attribute in the class definition, or that are
+associated with a name by a previous call to this method.</p>
+<p>If neither <em>name</em> nor <em>view_element</em> is specified, the method returns a
+View object, based on the following order of preference:</p>
+<ol class="arabic simple">
+<li>If there is a View object named <code class="docutils literal notranslate"><span class="pre">traits_view</span></code> associated with the
+current object, it is returned.</li>
+<li>If there is exactly one View object associated the current
+object, it is returned.</li>
+<li>Otherwise, it returns a View object containing items for all the
+non-event trait attributes on the current object.</li>
+</ol>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="AnalysisGUI.FlowedOp">
+<em class="property">class </em><code class="descclassname">AnalysisGUI.</code><code class="descname">FlowedOp</code><a class="reference internal" href="_modules/AnalysisGUI.html#FlowedOp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalysisGUI.FlowedOp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">traits.has_traits.HasTraits</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="AnalysisGUI.FlowedOpFull">
+<em class="property">class </em><code class="descclassname">AnalysisGUI.</code><code class="descname">FlowedOpFull</code><a class="reference internal" href="_modules/AnalysisGUI.html#FlowedOpFull"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalysisGUI.FlowedOpFull" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">traits.has_traits.HasTraits</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="AnalysisGUI.FormFacts">
+<em class="property">class </em><code class="descclassname">AnalysisGUI.</code><code class="descname">FormFacts</code><a class="reference internal" href="_modules/AnalysisGUI.html#FormFacts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalysisGUI.FormFacts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">traits.has_traits.HasTraits</span></code></p>
+<dl class="attribute">
+<dt id="AnalysisGUI.FormFacts.smlist">
+<code class="descname">smlist</code><em class="property"> = ['16', '32', '64']</em><a class="headerlink" href="#AnalysisGUI.FormFacts.smlist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="AnalysisGUI.JobParams">
+<em class="property">class </em><code class="descclassname">AnalysisGUI.</code><code class="descname">JobParams</code><a class="reference internal" href="_modules/AnalysisGUI.html#JobParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalysisGUI.JobParams" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">traits.has_traits.HasTraits</span></code></p>
+<dl class="attribute">
+<dt id="AnalysisGUI.JobParams.def_hour">
+<code class="descname">def_hour</code><em class="property"> = 4</em><a class="headerlink" href="#AnalysisGUI.JobParams.def_hour" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="AnalysisGUI.JobParams.def_min">
+<code class="descname">def_min</code><em class="property"> = 50</em><a class="headerlink" href="#AnalysisGUI.JobParams.def_min" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="AnalysisGUI.JobParams.def_seconds">
+<code class="descname">def_seconds</code><em class="property"> = 0</em><a class="headerlink" href="#AnalysisGUI.JobParams.def_seconds" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="AnalysisGUI.JobParamsSolve">
+<em class="property">class </em><code class="descclassname">AnalysisGUI.</code><code class="descname">JobParamsSolve</code><a class="reference internal" href="_modules/AnalysisGUI.html#JobParamsSolve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalysisGUI.JobParamsSolve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">traits.has_traits.HasTraits</span></code></p>
+<dl class="attribute">
+<dt id="AnalysisGUI.JobParamsSolve.def_hour">
+<code class="descname">def_hour</code><em class="property"> = 4</em><a class="headerlink" href="#AnalysisGUI.JobParamsSolve.def_hour" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="AnalysisGUI.JobParamsSolve.def_min">
+<code class="descname">def_min</code><em class="property"> = 50</em><a class="headerlink" href="#AnalysisGUI.JobParamsSolve.def_min" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="AnalysisGUI.JobParamsSolve.def_seconds">
+<code class="descname">def_seconds</code><em class="property"> = 0</em><a class="headerlink" href="#AnalysisGUI.JobParamsSolve.def_seconds" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="AnalysisGUI.JobPickleParams">
+<code class="descclassname">AnalysisGUI.</code><code class="descname">JobPickleParams</code><span class="sig-paren">(</span><em>paramdict</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/AnalysisGUI.html#JobPickleParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalysisGUI.JobPickleParams" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="AnalysisGUI.JobSolvePickleParams">
+<code class="descclassname">AnalysisGUI.</code><code class="descname">JobSolvePickleParams</code><span class="sig-paren">(</span><em>paramdict</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/AnalysisGUI.html#JobSolvePickleParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalysisGUI.JobSolvePickleParams" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="AnalysisGUI.LoadPreviousRun">
+<code class="descclassname">AnalysisGUI.</code><code class="descname">LoadPreviousRun</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/AnalysisGUI.html#LoadPreviousRun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalysisGUI.LoadPreviousRun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="AnalysisGUI.PickleParams">
+<code class="descclassname">AnalysisGUI.</code><code class="descname">PickleParams</code><span class="sig-paren">(</span><em>paramdict</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/AnalysisGUI.html#PickleParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalysisGUI.PickleParams" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="AnalysisGUI.PlotParams">
+<em class="property">class </em><code class="descclassname">AnalysisGUI.</code><code class="descname">PlotParams</code><a class="reference internal" href="_modules/AnalysisGUI.html#PlotParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalysisGUI.PlotParams" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">traits.has_traits.HasTraits</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="AnalysisGUI.RatioFun">
+<em class="property">class </em><code class="descclassname">AnalysisGUI.</code><code class="descname">RatioFun</code><a class="reference internal" href="_modules/AnalysisGUI.html#RatioFun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalysisGUI.RatioFun" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">traits.has_traits.HasTraits</span></code></p>
+<dl class="attribute">
+<dt id="AnalysisGUI.RatioFun.smlist">
+<code class="descname">smlist</code><em class="property"> = ['16', '32', '64']</em><a class="headerlink" href="#AnalysisGUI.RatioFun.smlist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="AnalysisGUI.RunParams">
+<em class="property">class </em><code class="descclassname">AnalysisGUI.</code><code class="descname">RunParams</code><a class="reference internal" href="_modules/AnalysisGUI.html#RunParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalysisGUI.RunParams" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">traits.has_traits.HasTraits</span></code></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="AnalysisGUI.SavePreviousRun">
+<code class="descclassname">AnalysisGUI.</code><code class="descname">SavePreviousRun</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/AnalysisGUI.html#SavePreviousRun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalysisGUI.SavePreviousRun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="AnalysisGUI.TPCorr">
+<em class="property">class </em><code class="descclassname">AnalysisGUI.</code><code class="descname">TPCorr</code><a class="reference internal" href="_modules/AnalysisGUI.html#TPCorr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalysisGUI.TPCorr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">traits.has_traits.HasTraits</span></code></p>
+<dl class="attribute">
+<dt id="AnalysisGUI.TPCorr.smlist">
+<code class="descname">smlist</code><em class="property"> = ['16', '32', '64']</em><a class="headerlink" href="#AnalysisGUI.TPCorr.smlist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="AnalysisGUI.TPCorr.var_extra_mpi">
+<code class="descname">var_extra_mpi</code><em class="property"> = []</em><a class="headerlink" href="#AnalysisGUI.TPCorr.var_extra_mpi" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table of Contents</h3>
+          <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Python_Analysis</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="AhmedRes.html">AhmedRes module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">AnalysisGUI module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Autocorr.html">Autocorr module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BNLFormFactor.html">BNLFormFactor module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BootStrapping.html">BootStrapping module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BootStrapping_self.html">BootStrapping_self module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ChacoModPlot_heatmap.html">ChacoModPlot_heatmap module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ChacoTest.html">ChacoTest module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CreateTable.html">CreateTable module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DSDefines.html">DSDefines module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FFSolve.html">FFSolve module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FileIO.html">FileIO module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FileIOMat.html">FileIOMat module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FitFunctions.html">FitFunctions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FitFunctions_TF.html">FitFunctions_TF module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FlowOpps.html">FlowOpps module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ForMatAndrea.html">ForMatAndrea module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FormFactors.html">FormFactors module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GammaMatricies.html">GammaMatricies module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Jose_Plots.html">Jose_Plots module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MAH_control.html">MAH_control module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MakeFuns.html">MakeFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Mat_Alpha_Hack.html">Mat_Alpha_Hack module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Mat_Hack_V2.html">Mat_Hack_V2 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Mayavi_Test.html">Mayavi_Test module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MiscFuns.html">MiscFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModPlot.html">ModPlot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModStylePlot.html">ModStylePlot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MomParams.html">MomParams module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MultiWrap.html">MultiWrap module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="NullPlotData.html">NullPlotData module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PandasTest.html">PandasTest module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Params.html">Params module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ParamsOLD.html">ParamsOLD module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PlotData.html">PlotData module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PredefFitFuns.html">PredefFitFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="QuantityLists.html">QuantityLists module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RatioCorrelators.html">RatioCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ReadBinaryCfuns.html">ReadBinaryCfuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ReadBinaryCfuns_SLone.html">ReadBinaryCfuns_SLone module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RunSetCommands.html">RunSetCommands module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFFs.html">SetsOfFFs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFits.html">SetsOfFits module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFlowOps.html">SetsOfFlowOps module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfRatios.html">SetsOfRatios module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfTwoPtCorrs.html">SetsOfTwoPtCorrs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Setup.html">Setup module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Test3dLine.html">Test3dLine module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TestAll.html">TestAll module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TestCorr.html">TestCorr module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ThreePtCorrelators.html">ThreePtCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TimeStuff.html">TimeStuff module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TwoPtCorrelators.html">TwoPtCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VarMethod.html">VarMethod module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VarMethod_self.html">VarMethod_self module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="XmlFormatting.html">XmlFormatting module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mv_graphs.html">mv_graphs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xmltodict.html">xmltodict module</a></li>
+</ul>
+</li>
+</ul>
+
+          <div role="search">
+            <h3 style="margin-top: 1.5em;">Search</h3>
+            <form class="search" action="search.html" method="get">
+                <input type="text" name="q" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+            </form>
+          </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <div role="navigation" aria-label="related navigaton">
+            <a href="AhmedRes.html" title="AhmedRes module"
+              >previous</a> |
+            <a href="Autocorr.html" title="Autocorr module"
+              >next</a> |
+            <a href="py-modindex.html" title="Python Module Index"
+              >modules</a> |
+            <a href="genindex.html" title="General Index"
+              >index</a>
+          </div>
+          <div role="note" aria-label="source link">
+              <br/>
+              <a href="_sources/AnalysisGUI.rst.txt"
+                rel="nofollow">Show Source</a>
+          </div>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Jack Dragos.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>

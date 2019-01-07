@@ -6,6 +6,7 @@ import numpy as np
 # matplotlib.use('Agg') # Must be before importing matplotlib.pyplot or pylab!
 # import matplotlib.pyplot as pl
 import PlotData as jpl
+from NullPlotData import null_series
 from copy import copy
 
 # from collections import OrderedDict
@@ -660,7 +661,7 @@ class SetOfFF(object):
         # thisFF = thisFF.replace('tilde',r'\tilde')
         # thisFF = thisFF.replace('frac',r'\frac')
         thislab = r'$'+r'\ '.join([the_DS,the_latspace])+r'$ '
-        hold_series = copy(jpl.null_series)
+        hold_series = copy(null_series)
         hold_series['x_data'] = 'from_keys'
         hold_series['y_data'] = ploty
         hold_series['yerr_data'] = plotyerr
@@ -745,7 +746,7 @@ class SetOfFF(object):
         # thisFF = thisFF.replace('tilde',r'\tilde')
         # thisFF = thisFF.replace('frac',r'\frac')
         thislab = r'$'+r'\ '.join([the_DS,the_mpi])+r'$ '
-        hold_series = copy(jpl.null_series)
+        hold_series = copy(null_series)
         hold_series['x_data'] = 'from_keys'
         hold_series['y_data'] = ploty
         hold_series['yerr_data'] = plotyerr
@@ -831,7 +832,7 @@ class SetOfFF(object):
         # thisFF = thisFF.replace('tilde',r'\tilde')
         # thisFF = thisFF.replace('frac',r'\frac')
         thislab = r'$'+r'\ '.join([the_DS,the_mpi])+r'$ '
-        hold_series = copy(jpl.null_series)
+        hold_series = copy(null_series)
         hold_series['x_data'] = 'from_keys'
         hold_series['y_data'] = ploty
         hold_series['yerr_data'] = plotyerr
@@ -879,7 +880,7 @@ class SetOfFF(object):
         def GetEval(val):
             return val.Eval_Function(*this_eval)
         fit_data = fit_data.apply(GetEval)
-        hold_series = copy(jpl.null_series)
+        hold_series = copy(null_series)
         hold_series['key_select'] = fit_data.index[0]
         hold_series['type'] = 'histogram_vary'
         hold_series['boot_data'] = fit_data
@@ -916,7 +917,7 @@ class SetOfFF(object):
             return plot_data
         # if isinstance(fitr_params,pa.Series): fitr_params = fitr_params.iloc[-1]
         ## TODO, plot from zero to data max
-        hold_series = copy(jpl.null_series)
+        hold_series = copy(null_series)
         hold_series['key_select'] = fit_data.index[0]
         hold_series['type'] = 'fit_vary'
         hold_series['fit_class'] = fit_data

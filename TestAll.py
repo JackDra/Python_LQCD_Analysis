@@ -161,6 +161,83 @@ for icoeff,ikey in zip(dataFF.combine_keys_forRF,dataFF.coeffs_forRF):
 
 
 import TwoPtCorrelators as tpc
+import os
+pre_folder = '/home/jackdra/LQCD/Results/DebugResults/Configs/'
+post_folder = '/home/jackdra/LQCD/Results/DebugResults/Configs_Nucleon/'
+try:
+    os.mkdir(post_folder)
+except:
+    pass
+cfg_list = ['RC16x32Kud01382500Ks01371000/G2/Baryon_-12-_CPEven_tsrc0_ism64_jsm64.cfgs.msg',
+            'RC20x40Kud01370000Ks01364000/G2/Baryon_-1234-_CPEven_tsrc0_ism64_jsm64.cfgs.msg',
+            'RC28x56Kud01356000Ks01351000/G2/Baryon_-12-_CPEven_tsrc0_ism64_jsm64.cfgs.msg',
+            'RC32x64Kud01370000Ks01364000/G2/Baryon_-b-_CPEven_tsrc0_ism64_jsm64.cfgs.msg',
+            'RC32x64Kud01372700Ks01364000/G2/Baryon_-b-_CPEven_tsrc0_ism64_jsm64.cfgs.msg',
+            'RC32x64Kud01375400Ks01364000/G2/Baryon_-ab-_CPEven_tsrc0_ism64_jsm64.cfgs.msg']
+
+cfg_list_out = ['RC16x32Kud01382500Ks01371000/MOMNUMB/Nucleon_CFGNUMB.txt',
+                'RC20x40Kud01370000Ks01364000/MOMNUMB/Nucleon_CFGNUMB.txt',
+                'RC28x56Kud01356000Ks01351000/MOMNUMB/Nucleon_CFGNUMB.txt',
+                'RC32x64Kud01370000Ks01364000/MOMNUMB/Nucleon_CFGNUMB.txt',
+                'RC32x64Kud01372700Ks01364000/MOMNUMB/Nucleon_CFGNUMB.txt',
+                'RC32x64Kud01375400Ks01364000/MOMNUMB/Nucleon_CFGNUMB.txt']
+in_files = [pre_folder + icfg for icfg in cfg_list]
+out_files = [post_folder + icfg for icfg in cfg_list_out]
+for iin,iout in zip(in_files,out_files):
+    try:
+        os.mkdir(iout.replace('MOMNUMB/Nucleon_CFGNUMB.txt',''))
+    except:
+        pass
+    tpc.ReformatC2(iin,iout)
+
+
+import FlowOpps as fo
+import os
+pre_folder = '/home/jackdra/LQCD/Results/DebugResults/Configs/FlowOps_NewForm/'
+post_folder = '/home/jackdra/LQCD/Results/DebugResults/Configs_Q/'
+post_folder_picktf = '/home/jackdra/LQCD/Results/DebugResults/Configs_Q_picktf/'
+try:
+    os.mkdir(post_folder)
+except:
+    pass
+try:
+    os.mkdir(post_folder_picktf)
+except:
+    pass
+cfg_list = ['RC16x32_kud1382500_ks1371000_-12-_TopCharge.cfgs.msg',
+            'RC20x40_kud1370000_ks1364000_-1432-_TopCharge.cfgs.msg',
+            'RC28x56_kud1356000_ks1351000_-12-_TopCharge.cfgs.msg',
+            'RC32x64_kud1370000_ks1364000_-b-_TopCharge.cfgs.msg',
+            'RC32x64_kud1372700_ks1364000_-b-_TopCharge.cfgs.msg',
+            'RC32x64_kud1375400_ks1364000_-ab-_TopCharge.cfgs.msg']
+in_files = [pre_folder + icfg for icfg in cfg_list]
+
+cfg_list_out = ['RC16x32Kud01382500Ks01371000.txt',
+                'RC20x40Kud01370000Ks01364000.txt',
+                'RC28x56Kud01356000Ks01351000.txt',
+                'RC32x64Kud01370000Ks01364000.txt',
+                'RC32x64Kud01372700Ks01364000.txt',
+                'RC32x64Kud01375400Ks01364000.txt']
+out_files = [post_folder + icfg for icfg in cfg_list_out]
+
+# for iin,iout in zip(in_files,out_files):
+#     try:
+#         os.mkdir(iout.replace('Q_CFGNUMB.txt',''))
+#     except:
+#         pass
+#     fo.ReformatFO(iin,iout)
+
+picked_tf = ['t_f3.01',
+             't_f5.01',
+             't_f9.01',
+             't_f6.01',
+             't_f6.01',
+             't_f6.01']
+out_files = [post_folder_picktf + icfg for icfg in cfg_list_out]
+for iin,iout,itf in zip(in_files,out_files,picked_tf):
+    this_out = iout.replace('.txt','_'+itf+'.txt')
+    fo.ReformatFO_picktf(iin,this_out,itf)
+
 data2pt = tpc.TestFlowCorr(DefWipe=True)
 
 data2pt = tpc.TestNNQFullCorr(DefWipe=True)
@@ -224,6 +301,9 @@ dataFull = fo.TestFOFull(DefWipe=False)
 
 import BootStrapping as bs
 bdata,bdata2,bdata3 = bs.TestBoot(n_block=3)
+bdata.Select_Block(3)
+bdata.block_sel
+bdata.MakeValAndErr()
 comb_data = bdata*bdata2
 comb_data.blocked_cfgvals
 

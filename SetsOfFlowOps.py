@@ -13,6 +13,7 @@ from XmlFormatting import tflowstr#,tflowTOLeg
 from PredefFitFuns import Chipt_Chit
 import FitFunctions as ff
 import PlotData as jpl
+from NullPlotData import null_series
 import pandas as pa
 
 # import matplotlib
@@ -1592,7 +1593,7 @@ class SetOfFOFull(object):
             plot_data = pa.Series(vall,index=indicies)
             # if all(np.array(parlist) == parlist[0]):
             #     Improv_leg += parlist[0:1]
-            hold_series = jpl.null_series
+            hold_series = null_series
             hold_series['x_data'] = 'from_keys'
             hold_series['key_select'] = (slice(None),)+tuple(plot_data.index[0][1:])
             hold_series['y_data'] = plot_data.apply(lambda x : x.Avg)
@@ -1608,7 +1609,7 @@ class SetOfFOFull(object):
         if len(chi_indexl) > 0:
             indicies = pa.MultiIndex.from_tuples(chi_indexl,names=('Pion Mass',))
             plot_data = pa.Series(chi_vall,index=indicies)
-            hold_series = jpl.null_series
+            hold_series = null_series
             hold_series['x_data'] = 'from_keys'
             hold_series['key_select'] = (slice(None),)
             hold_series['y_data'] = plot_data.apply(lambda x : x.Avg)

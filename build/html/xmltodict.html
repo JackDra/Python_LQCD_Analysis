@@ -1,0 +1,310 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>xmltodict module &#8212; LQCD Analysis Codebase TF Fits documentation</title>
+    <link rel="stylesheet" href="_static/agogo.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="mv_graphs module" href="mv_graphs.html" /> 
+  </head><body>
+    <div class="header-wrapper" role="banner">
+      <div class="header">
+        <div class="headertitle"><a
+          href="index.html">LQCD Analysis Codebase TF Fits documentation</a></div>
+        <div class="rel" role="navigation" aria-label="related navigation">
+          <a href="mv_graphs.html" title="mv_graphs module"
+             accesskey="P">previous</a> |
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-xmltodict">
+<span id="xmltodict-module"></span><h1>xmltodict module<a class="headerlink" href="#module-xmltodict" title="Permalink to this headline">¶</a></h1>
+<p>Makes working with XML feel like you are working with JSON</p>
+<dl class="exception">
+<dt id="xmltodict.ParsingInterrupted">
+<em class="property">exception </em><code class="descclassname">xmltodict.</code><code class="descname">ParsingInterrupted</code><a class="reference internal" href="_modules/xmltodict.html#ParsingInterrupted"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xmltodict.ParsingInterrupted" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xmltodict.parse">
+<code class="descclassname">xmltodict.</code><code class="descname">parse</code><span class="sig-paren">(</span><em>xml_input</em>, <em>encoding=None</em>, <em>expat=&lt;module 'xml.parsers.expat' from '/home/jackdra/anaconda3/lib/python3.6/xml/parsers/expat.py'&gt;</em>, <em>process_namespaces=False</em>, <em>namespace_separator=':'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xmltodict.html#parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xmltodict.parse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse the given XML input and convert it into a dictionary.</p>
+<p><cite>xml_input</cite> can either be a <cite>string</cite> or a file-like object.</p>
+<p>If <cite>xml_attribs</cite> is <cite>True</cite>, element attributes are put in the dictionary
+among regular child elements, using <cite>&#64;</cite> as a prefix to avoid collisions. If
+set to <cite>False</cite>, they are just ignored.</p>
+<p>Simple example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">xmltodict</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">doc</span> <span class="o">=</span> <span class="n">xmltodict</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="gp">... </span><span class="s2">&lt;a prop=&quot;x&quot;&gt;</span>
+<span class="gp">... </span><span class="s2">  &lt;b&gt;1&lt;/b&gt;</span>
+<span class="gp">... </span><span class="s2">  &lt;b&gt;2&lt;/b&gt;</span>
+<span class="gp">... </span><span class="s2">&lt;/a&gt;</span>
+<span class="gp">... </span><span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">doc</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">][</span><span class="s1">&#39;@prop&#39;</span><span class="p">]</span>
+<span class="go">u&#39;x&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">doc</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">][</span><span class="s1">&#39;b&#39;</span><span class="p">]</span>
+<span class="go">[u&#39;1&#39;, u&#39;2&#39;]</span>
+</pre></div>
+</div>
+<p>If <cite>item_depth</cite> is <cite>0</cite>, the function returns a dictionary for the root
+element (default behavior). Otherwise, it calls <cite>item_callback</cite> every time
+an item at the specified depth is found and returns <cite>None</cite> in the end
+(streaming mode).</p>
+<p>The callback function receives two parameters: the <cite>path</cite> from the document
+root to the item (name-attribs pairs), and the <cite>item</cite> (dict). If the
+callback’s return value is false-ish, parsing will be stopped with the
+<a class="reference internal" href="#xmltodict.ParsingInterrupted" title="xmltodict.ParsingInterrupted"><code class="xref py py-class docutils literal notranslate"><span class="pre">ParsingInterrupted</span></code></a> exception.</p>
+<p>Streaming example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="nb">print</span> <span class="s1">&#39;path:</span><span class="si">%s</span><span class="s1"> item:</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="kc">True</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">xmltodict</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="gp">... </span><span class="s2">&lt;a prop=&quot;x&quot;&gt;</span>
+<span class="gp">... </span><span class="s2">  &lt;b&gt;1&lt;/b&gt;</span>
+<span class="gp">... </span><span class="s2">  &lt;b&gt;2&lt;/b&gt;</span>
+<span class="gp">... </span><span class="s2">&lt;/a&gt;&quot;&quot;&quot;</span><span class="p">,</span> <span class="n">item_depth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">item_callback</span><span class="o">=</span><span class="n">handle</span><span class="p">)</span>
+<span class="go">path:[(u&#39;a&#39;, {u&#39;prop&#39;: u&#39;x&#39;}), (u&#39;b&#39;, None)] item:1</span>
+<span class="go">path:[(u&#39;a&#39;, {u&#39;prop&#39;: u&#39;x&#39;}), (u&#39;b&#39;, None)] item:2</span>
+</pre></div>
+</div>
+<p>The optional argument <cite>postprocessor</cite> is a function that takes <cite>path</cite>,
+<cite>key</cite> and <cite>value</cite> as positional arguments and returns a new <cite>(key, value)</cite>
+pair where both <cite>key</cite> and <cite>value</cite> may have changed. Usage example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">postprocessor</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">try</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;:int&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">xmltodict</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s1">&#39;&lt;a&gt;&lt;b&gt;1&lt;/b&gt;&lt;b&gt;2&lt;/b&gt;&lt;b&gt;x&lt;/b&gt;&lt;/a&gt;&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                <span class="n">postprocessor</span><span class="o">=</span><span class="n">postprocessor</span><span class="p">)</span>
+<span class="go">OrderedDict([(u&#39;a&#39;, OrderedDict([(u&#39;b:int&#39;, [1, 2]), (u&#39;b&#39;, u&#39;x&#39;)]))])</span>
+</pre></div>
+</div>
+<p>You can pass an alternate version of <cite>expat</cite> (such as <cite>defusedexpat</cite>) by
+using the <cite>expat</cite> parameter. E.g:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">defusedexpat</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">xmltodict</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s1">&#39;&lt;a&gt;hello&lt;/a&gt;&#39;</span><span class="p">,</span> <span class="n">expat</span><span class="o">=</span><span class="n">defusedexpat</span><span class="o">.</span><span class="n">pyexpat</span><span class="p">)</span>
+<span class="go">OrderedDict([(u&#39;a&#39;, u&#39;hello&#39;)])</span>
+</pre></div>
+</div>
+<p>You can use the force_list argument to force lists to be created even
+when there is only a single child of a given level of hierarchy. The
+force_list argument is a tuple of keys. If the key for a given level
+of hierarchy is in the force_list argument, that level of hierarchy
+will have a list as a child (even if there is only one sub-element).
+The index_keys operation takes precendence over this. This is applied
+after any user-supplied postprocessor has already run.</p>
+<blockquote>
+<div><p>For example, given this input:
+&lt;servers&gt;</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>&lt;server&gt;</dt>
+<dd><p class="first">&lt;name&gt;host1&lt;/name&gt;
+&lt;os&gt;Linux&lt;/os&gt;
+&lt;interfaces&gt;</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>&lt;interface&gt;</dt>
+<dd>&lt;name&gt;em0&lt;/name&gt;
+&lt;ip_address&gt;10.0.0.1&lt;/ip_address&gt;</dd>
+</dl>
+<p>&lt;/interface&gt;</p>
+</div></blockquote>
+<p class="last">&lt;/interfaces&gt;</p>
+</dd>
+</dl>
+<p>&lt;/server&gt;</p>
+</div></blockquote>
+<p>&lt;/servers&gt;</p>
+<p>If called with force_list=(‘interface’,), it will produce
+this dictionary:
+{‘servers’:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>{‘server’:</dt>
+<dd><dl class="first last docutils">
+<dt>{‘name’: ‘host1’,</dt>
+<dd><p class="first">‘os’: ‘Linux’},
+‘interfaces’:</p>
+<blockquote class="last">
+<div><dl class="docutils">
+<dt>{‘interface’:</dt>
+<dd>[ {‘name’: ‘em0’, ‘ip_address’: ‘10.0.0.1’ } ] } } }</dd>
+</dl>
+</div></blockquote>
+</dd>
+</dl>
+</dd>
+</dl>
+</div></blockquote>
+<p><cite>force_list</cite> can also be a callable that receives <cite>path</cite>, <cite>key</cite> and
+<cite>value</cite>. This is helpful in cases where the logic that decides whether
+a list should be forced is more complex.</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="xmltodict.unparse">
+<code class="descclassname">xmltodict.</code><code class="descname">unparse</code><span class="sig-paren">(</span><em>input_dict</em>, <em>output=None</em>, <em>encoding='utf-8'</em>, <em>full_document=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xmltodict.html#unparse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xmltodict.unparse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Emit an XML document for the given <cite>input_dict</cite> (reverse of <cite>parse</cite>).</p>
+<blockquote>
+<div><p>The resulting XML document is returned as a string, but if <cite>output</cite> (a
+file-like object) is specified, it is written there instead.</p>
+<p>Dictionary keys prefixed with <cite>attr_prefix</cite> (default=`’&#64;’<cite>) are interpreted
+as XML node attributes, whereas keys equal to `cdata_key</cite>
+(default=`’#text’<a href="#id1"><span class="problematic" id="id2">`</span></a>) are treated as character data.</p>
+<p>The <cite>pretty</cite> parameter (default=`False`) enables pretty-printing. In this
+mode, lines are terminated with <a href="#id3"><span class="problematic" id="id4">`</span></a>’</p>
+</div></blockquote>
+<dl class="docutils">
+<dt>‘` and indented with <cite>‘ ‘</cite>, but this</dt>
+<dd>can be customized with the <cite>newl</cite> and <cite>indent</cite> parameters.</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table of Contents</h3>
+          <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Python_Analysis</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="AhmedRes.html">AhmedRes module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="AnalysisGUI.html">AnalysisGUI module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Autocorr.html">Autocorr module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BNLFormFactor.html">BNLFormFactor module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BootStrapping.html">BootStrapping module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BootStrapping_self.html">BootStrapping_self module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ChacoModPlot_heatmap.html">ChacoModPlot_heatmap module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ChacoTest.html">ChacoTest module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CreateTable.html">CreateTable module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DSDefines.html">DSDefines module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FFSolve.html">FFSolve module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FileIO.html">FileIO module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FileIOMat.html">FileIOMat module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FitFunctions.html">FitFunctions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FitFunctions_TF.html">FitFunctions_TF module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FlowOpps.html">FlowOpps module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ForMatAndrea.html">ForMatAndrea module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FormFactors.html">FormFactors module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GammaMatricies.html">GammaMatricies module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Jose_Plots.html">Jose_Plots module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MAH_control.html">MAH_control module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MakeFuns.html">MakeFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Mat_Alpha_Hack.html">Mat_Alpha_Hack module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Mat_Hack_V2.html">Mat_Hack_V2 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Mayavi_Test.html">Mayavi_Test module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MiscFuns.html">MiscFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModPlot.html">ModPlot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModStylePlot.html">ModStylePlot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MomParams.html">MomParams module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MultiWrap.html">MultiWrap module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="NullPlotData.html">NullPlotData module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PandasTest.html">PandasTest module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Params.html">Params module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ParamsOLD.html">ParamsOLD module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PlotData.html">PlotData module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PredefFitFuns.html">PredefFitFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="QuantityLists.html">QuantityLists module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RatioCorrelators.html">RatioCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ReadBinaryCfuns.html">ReadBinaryCfuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ReadBinaryCfuns_SLone.html">ReadBinaryCfuns_SLone module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RunSetCommands.html">RunSetCommands module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFFs.html">SetsOfFFs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFits.html">SetsOfFits module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFlowOps.html">SetsOfFlowOps module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfRatios.html">SetsOfRatios module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfTwoPtCorrs.html">SetsOfTwoPtCorrs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Setup.html">Setup module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Test3dLine.html">Test3dLine module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TestAll.html">TestAll module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TestCorr.html">TestCorr module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ThreePtCorrelators.html">ThreePtCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TimeStuff.html">TimeStuff module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TwoPtCorrelators.html">TwoPtCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VarMethod.html">VarMethod module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VarMethod_self.html">VarMethod_self module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="XmlFormatting.html">XmlFormatting module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mv_graphs.html">mv_graphs module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">xmltodict module</a></li>
+</ul>
+</li>
+</ul>
+
+          <div role="search">
+            <h3 style="margin-top: 1.5em;">Search</h3>
+            <form class="search" action="search.html" method="get">
+                <input type="text" name="q" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+            </form>
+          </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <div role="navigation" aria-label="related navigaton">
+            <a href="mv_graphs.html" title="mv_graphs module"
+              >previous</a> |
+            <a href="py-modindex.html" title="Python Module Index"
+              >modules</a> |
+            <a href="genindex.html" title="General Index"
+              >index</a>
+          </div>
+          <div role="note" aria-label="source link">
+              <br/>
+              <a href="_sources/xmltodict.rst.txt"
+                rel="nofollow">Show Source</a>
+          </div>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Jack Dragos.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>

@@ -20,7 +20,7 @@ from XmlFormatting import tflowTOLeg,tflowstr,tsinkTOLeg,untflowstr,tsumstr,KeyF
 from PredefFitFuns import C2OneStateFitFunNoExp,C2OneStateFitFun,C2TwoStateFitFun,C2TwoStateFitFunNoExp,C2OSFAntiper
 from PredefFitFuns import ConstantFitFun,Alpha_Prop_Fit_plin,C2OSFAntiperDer
 from Autocorr import AutoCorrelate
-from PlotData import null_series
+from NullPlotData import null_series
 from warnings import warn
 import SetsOfFits as sff
 # import traceback
@@ -7878,6 +7878,23 @@ def TestNNQFullCorr(DefWipe=False):
     # dataflow.Fit_All_Tau([['ts1','ts10']])
     return dataflow
 
+def ReformatC2(this_file,out_filename):
+    if 'CFGNUMB' not in out_filename:
+        raise IOError('CFGNUMB not in out_filename.')
+    meta,data = ReadWithMeta(this_file)
+    data = data.reset_index()['C2'].values
+    data = np.array([np.array(idata) for idata in data])
+    data = np.swapaxes(data,0,1)
+    for imom,momdata in enumerate(data):
+        mom_file = out_filename.replace('MOMNUMB','p_'+meta[0][imom].replace(' ','_'))
+        try:
+            os.mkdir(mom_file.replace('Nucleon_CFGNUMB.txt',''))
+        except:
+            pass
+        for ic,idata in enumerate(momdata):
+            np.savetxt(mom_file.replace('CFGNUMB',str(ic).zfill(4)),idata)
+    return data
+
 def TestFlowCorr(DefWipe=False):
     from Params import defInfoFlow
     import PlotData as jpl
@@ -7938,6 +7955,7 @@ def TestFlowCorr(DefWipe=False):
     data_plot.PrintData()
     data_plot.PlotAll()
     return data
+
 
 if __name__ == '__main__':
     tpdata = TestTPCorr()

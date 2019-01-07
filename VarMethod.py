@@ -8,6 +8,9 @@ import PlotData as jpl
 import pandas as pa
 from MiscFuns import map_str
 from BootStrapping import BootStrap
+from NullPlotData import null_series
+from TwoPtCorrelators import TwoPointCorr
+
 
 
 """
@@ -26,12 +29,14 @@ class VariationalMethod(object):
 
     '''
 
-    def __init__(self, matrix_corr = None , t0=2,dt=2,name='',symetrize=True):
+    def __init__(self, matrix_corr = None , t0=2,dt=2,name='',symetrize=True,output_folder=''):
         self.symetrize = symetrize
         self.name = name
         self.t0,self.dt = t0,dt
         self.left_evec = self.right_evec = None,None
         self.state_corrs = None
+        if len(output_folder) > 0:
+            self.output_folder = output_folder
         if matrix_corr is not None:
             self.ImportMatrixCorr(matrix_corr)
 
@@ -39,6 +44,19 @@ class VariationalMethod(object):
         ## matrix_corr is [..., ism, jsm, t]
         if isinstance(this_mc,(list,np.ndarray)):
             this_shape = np.array(this_mc).shape
+            ref_corr = np.array(this_mc).flatten()[0]
+            if 'TwoPtCorrelators.TwoPointCorr' in str(type(ref_corr)):
+                hold_mc = []
+                hold_shape = []
+                for imc in np.array(this_mc).flatten():
+                    this_series = imc.C2_Stats['boot']
+                    hold_shape = map(len,this_series.index.levels)
+                    hold_mc.append(this_series.values.reshape(*map(len,this_series.index.levels)))
+                this_mc = np.array(hold_mc).reshape(this_shape+tuple(hold_shape))
+                this_shape = this_mc.shape
+                ## momentum, ism, jsm, t_sep
+                this_mc = this_mc.transpose(2,0,1,3)
+                self.ref_corr = ref_corr
             key_list = []
             if len(this_shape) > 3:
                 for i in range(len(this_shape)-3):
@@ -70,7 +88,6 @@ class VariationalMethod(object):
             self.matrix_corr = xr.apply_ufunc(lambda x : x.Avg,self.matrix_corr,vectorize=True)
         else:
             self.booted_mcorr = None
-
         self.nism = self.matrix_corr.shape[-3]
         self.njsm = self.matrix_corr.shape[-2]
         self.nt = self.matrix_corr.shape[-1]
@@ -91,6 +108,15 @@ class VariationalMethod(object):
         self.eEnergy.append(-np.log(np.array(eval))/self.dt)
         self.left_evec.append(np.array(left_evec).swapaxes(0,1))
         self.right_evec.append(np.array(right_evec).swapaxes(0,1))
+
+    def VectorizedProny(self,Amat,Bmat):
+        Amat = np.outer(Amat,Bmat)
+        Bmat = np.outer(Bmat,Bmat)
+        eval,left_evec  = lalg.eig(Amat,b=Bmat,left=True,right=False)
+        eval,left_evec,dump = self.SortEs(eval,left_evec.swapaxes(0,1),left_evec.swapaxes(0,1))
+        self.pro_eval.append(np.array(eval))
+        self.pro_eEnergy.append(-np.log(np.array(eval))/self.dt)
+        self.pro_evec.append(np.array(left_evec).swapaxes(0,1))
 
     def SortEs(self,el,lev,rev):
         return list(zip(*[[iel,ilev,irev] for _,iel,ilev,irev in sorted(zip(-np.log(el),el,lev,rev))]))
@@ -147,6 +173,57 @@ class VariationalMethod(object):
             self.right_evec= self.right_evec.stack(higher_dims=self.right_evec.dims[:-2])
         self.ProjectCorrs()
 
+    def PerformProny(self,t0=None,dt=None,ism='First'):
+        if t0 is not None:
+            self.t0 = t0
+        if dt is not None:
+            self.dt = dt
+        these_coords = self.matrix_corr.coords['t_sep'].values
+        if isinstance(these_coords[0],tuple):
+            these_coords = np.array([ival[0] for ival in these_coords])
+        if self.t0 not in these_coords:
+            raise IOError('t0='+str(self.t0) + ' not in correlation matrix')
+        if self.dt not in these_coords:
+            raise IOError('dt='+str(self.dt) + ' not in correlation matrix')
+        if self.t0+self.dt not in these_coords:
+            raise IOError('t0+dt='+str(self.t0+self.dt) + ' not in correlation matrix')
+        Amat = self.matrix_corr.sel(t_sep=self.t0+self.dt)
+        Bmat = self.matrix_corr.sel(t_sep=self.t0)
+        if self.symetrize:
+            warn('symetrized not implemented yet, continuing without it.')
+
+        if ism == 'First':
+            Amat = Amat.isel(ism=0)
+            Bmat = Bmat.isel(ism=0)
+        else:
+            Amat = Amat.sel(ism=ism)
+            Bmat = Bmat.sel(ism=ism)
+        self.pro_eval = []
+        self.pro_eEnergy = []
+        self.pro_evec = []
+        eval_keys = {}
+        evec_keys = {}
+        if self.has_extra_dims:
+            xr.apply_ufunc(self.VectorizedProny,Amat,Bmat,
+                           input_core_dims=[['jsm'],['jsm']],vectorize=True)
+            eval_keys.update(self.other_coords)
+            evec_keys.update(self.other_coords)
+        else:
+            self.VectorizedProny(Amat,Bmat)
+            self.pro_eval = self.pro_eval[0]
+            self.pro_eEnergy = self.pro_eEnergy[0]
+            self.pro_evec = self.pro_evec[0]
+        eval_keys['state'] = range(np.array(self.pro_eval).shape[-1])
+        evec_keys['jsm'] = range(np.array(self.pro_evec).shape[-1])
+        evec_keys['state'] = range(np.array(self.pro_evec).shape[-2])
+        self.pro_eval = Make_DataArray_Keys(self.pro_eval,eval_keys,name='evals')
+        self.pro_eEnergy = Make_DataArray_Keys(self.pro_eEnergy,eval_keys,name='eEnergy')
+        self.pro_evec = Make_DataArray_Keys(self.pro_evec,evec_keys,name='pro_evec')
+        if self.has_extra_dims:
+            self.pro_eval= self.pro_eval.stack(higher_dims=self.pro_eval.dims[:-1])
+            self.pro_eEnergy= self.pro_eEnergy.stack(higher_dims=self.pro_eEnergy.dims[:-1])
+            self.pro_evec= self.pro_evec.stack(higher_dims=self.pro_evec.dims[:-2])
+        self.ProjectCorrsProny(ism=ism)
 
     def ProjectCorrs(self):
         if not hasattr(self,'left_evec') or not hasattr(self,'right_evec'):
@@ -160,31 +237,131 @@ class VariationalMethod(object):
             for iboot in range(self.nboot):
                 this_boot_mcorr = xr.apply_ufunc(lambda x : x.bootvals[iboot],self.booted_mcorr,vectorize=True)
                 this_booted_proj_corr = xr.dot(self.left_evec,this_boot_mcorr,dims='ism')
-                this_booted_proj_corr = xr.dot(self.right_evec,self.proj_corr,dims='jsm')
+                this_booted_proj_corr = xr.dot(self.right_evec,this_booted_proj_corr,dims='jsm')
                 def this_fun(itemp,boot_val):
                     itemp.bootvals = itemp.bootvals.append(pa.Series([boot_val]))
                     return itemp
                 self.booted_proj_corr = xr.apply_ufunc(this_fun,self.booted_proj_corr,this_booted_proj_corr,vectorize=True)
 
 
+    def ProjectCorrsProny(self,ism='First'):
+        if not hasattr(self,'pro_evec'):
+            warn('PerformProny need to be called to project, attempting now with default t0='+str(self.t0)+', dt='+str(self.dt) + ' and ism='+str(ism))
+            self.PerformProny()
+        self.pro_proj_corr = xr.dot(self.pro_evec,self.matrix_corr,dims='jsm')
+        if ism == 'First':
+            self.pro_proj_corr = self.pro_proj_corr.isel(ism=0)
+        else:
+            self.pro_proj_corr = self.pro_proj_corr.sel(ism=ism)
+        if hasattr(self,'booted_mcorr') and self.booted_mcorr is not None:
+            self.booted_pro_proj_corr = self.pro_proj_corr.copy()
+            self.booted_pro_proj_corr = xr.apply_ufunc(lambda x : BootStrap(thisnboot=self.nboot),self.booted_pro_proj_corr,vectorize=True)
+            for iboot in range(self.nboot):
+                this_boot_mcorr = xr.apply_ufunc(lambda x : x.bootvals[iboot],self.booted_mcorr,vectorize=True)
+                # this_booted_proj_corr = xr.dot(self.left_evec,this_boot_mcorr,dims='ism')
+                if ism == 'First':
+                    this_booted_proj_corr = this_boot_mcorr.isel(ism=0)
+                else:
+                    this_booted_proj_corr = this_boot_mcorr.sel(ism=ism)
+                this_booted_proj_corr = xr.dot(self.pro_evec,this_booted_proj_corr,dims='jsm')
+                def this_fun(itemp,boot_val):
+                    itemp.bootvals = itemp.bootvals.append(pa.Series([boot_val]))
+                    return itemp
+                self.booted_pro_proj_corr = xr.apply_ufunc(this_fun,self.booted_pro_proj_corr,this_booted_proj_corr,vectorize=True)
+
+    def ExportVarMeth(self,**kwargs):
+        ## kwards are passed throught to .sel() of the projected correlator
+        ## should be soemthing like ExportVarMeth(higher_dims=##,...,state=##)
+
+        this_state = [ival for ikey,ival in kwargs.items() if ikey == 'state']
+        if len(this_state) == 0:
+            warn('state must be present when exporting variational method, defaulting to ground state')
+            kwargs['state'] = 0
+            this_state = 0
+        else:
+            this_state = this_state[0]
+        for ikey,ival in kwargs.items():
+            if ikey == 'state':
+                this_state = ival
+        if not hasattr(self,'proj_corr'):
+            self.ProjectCorrs()
+        if hasattr(self,'ref_corr'):
+            out_corr = TwoPointCorr(thisnboot=self.ref_corr.nboot, cfglist=self.ref_corr.C2_cfgs,
+                                  Info=self.ref_corr.Info,thissym=self.ref_corr.thissym,thiscol=self.ref_corr.thiscol,thisshift=self.ref_corr.thisshift)
+            out_corr.SetCustomName(string=self.ref_corr.filename+'varmeth_state'+str(this_state),stringLL=self.ref_corr.LegLab+'varmeth_state'+str(this_state),fo_for_cfgs=self.ref_corr.fo_for_cfgs)
+        else:
+            out_corr = TwoPointCorr(thisnboot=self.nboot)
+            out_corr.SetCustomName(string=self.name+'varmeth_state'+str(this_state),stringLL=self.name+'varmeth_state'+str(this_state))
+        try:
+            out_series = self.booted_proj_corr.unstack().sel(**kwargs).to_series()
+        except:
+            out_series = self.booted_proj_corr.sel(**kwargs).unstack().to_series()
+
+        if hasattr(self,'ref_corr'):
+            out_series = out_series.swaplevel().sort_index()
+            out_series.index = self.ref_corr.C2_Stats.index
+        out_corr.C2_Stats.loc[:,'boot'] = out_series
+        out_corr.EffMass()
+        out_corr.Stats()
+        return out_corr
+
+    def ExportProny(self,**kwargs):
+        ## kwards are passed throught to .sel() of the projected correlator
+        ## should be soemthing like ExportProny(higher_dims=##,...,state=##)
+
+        this_state = [ival for ikey,ival in kwargs.items() if ikey == 'state']
+        if len(this_state) == 0:
+            warn('state must be present when exporting variational method, defaulting to ground state')
+            kwargs['state'] = 0
+            this_state = 0
+        else:
+            this_state = this_state[0]
+        for ikey,ival in kwargs.items():
+            if ikey == 'state':
+                this_state = ival
+        if not hasattr(self,'pro_proj_corr'):
+            self.ProjectCorrsProny()
+        if hasattr(self,'ref_corr'):
+            out_corr = TwoPointCorr(thisnboot=self.ref_corr.nboot, cfglist=self.ref_corr.C2_cfgs,
+                                  Info=self.ref_corr.Info,thissym=self.ref_corr.thissym,thiscol=self.ref_corr.thiscol,thisshift=self.ref_corr.thisshift)
+            out_corr.SetCustomName(string=self.ref_corr.filename+'prony_state'+str(this_state),stringLL=self.ref_corr.LegLab+'prony_state'+str(this_state),fo_for_cfgs=self.ref_corr.fo_for_cfgs)
+        else:
+            out_corr = TwoPointCorr(thisnboot=self.nboot)
+            out_corr.SetCustomName(string=self.name+'prony_state'+str(this_state),stringLL=self.name+'prony_state'+str(this_state))
+        try:
+            out_series = self.booted_pro_proj_corr.unstack().sel(**kwargs).to_series()
+        except:
+            out_series = self.booted_pro_proj_corr.sel(**kwargs).unstack().to_series()
+        if hasattr(self,'ref_corr'):
+            out_series = out_series.swaplevel().sort_index()
+            out_series.index = self.ref_corr.C2_Stats.index
+        out_corr.C2_Stats.loc[:,'boot'] = out_series
+        out_corr.EffMass()
+        out_corr.Stats()
+        return out_corr
+
 
     def MakeEffMass(self):
         self.eff_mass = np.log(self.matrix_corr / self.matrix_corr.roll(t_sep=-1,roll_coords=False))
         if not hasattr(self,'proj_corr'):
             self.ProjectCorrs()
+        if not hasattr(self,'pro_proj_corr'):
+            self.ProjectCorrsProny()
         self.proj_eff_mass = np.log(self.proj_corr / self.proj_corr.roll(t_sep=-1,roll_coords=False))
+        self.pro_proj_eff_mass = np.log(self.pro_proj_corr / self.pro_proj_corr.roll(t_sep=-1,roll_coords=False))
         if hasattr(self,'booted_mcorr')  and self.booted_mcorr is not None:
             def boot_log_fun(num,denom):
                 this_out = (num/denom).Log()
                 return this_out
             self.booted_eff_mass = xr.apply_ufunc(boot_log_fun,self.booted_mcorr,self.booted_mcorr.roll(t_sep=-1,roll_coords=False),vectorize=True)
             self.booted_proj_eff_mass = xr.apply_ufunc(boot_log_fun,self.booted_proj_corr,self.booted_proj_corr.roll(t_sep=-1,roll_coords=False),vectorize=True)
+            self.booted_pro_proj_eff_mass = xr.apply_ufunc(boot_log_fun,self.booted_pro_proj_corr,self.booted_pro_proj_corr.roll(t_sep=-1,roll_coords=False),vectorize=True)
 
     def PlotEffMass_Boot(self,plot_plane,**kwargs):
         if not hasattr(self,'booted_eff_mass') or self.booted_eff_mass is None:
             print('effective mass not computed, computing now')
             self.MakeEffMass()
-        hold_series = jpl.null_series
+        hold_series = null_series
         if 'color' in kwargs.keys():
             hold_series['color'] = kwargs['color']
             del kwargs['color']
@@ -218,7 +395,7 @@ class VariationalMethod(object):
         if not hasattr(self,'booted_proj_eff_mass')  or self.booted_proj_eff_mass is None:
             print('effective mass not computed, computing now')
             self.MakeEffMass()
-        hold_series = jpl.null_series
+        hold_series = null_series
         if 'color' in kwargs.keys():
             hold_series['color'] = kwargs['color']
             del kwargs['color']
@@ -249,13 +426,49 @@ class VariationalMethod(object):
         plot_plane.AppendData(hold_series)
         return plot_plane
 
+    def PlotEffMass_Prony_Boot(self,plot_plane,**kwargs):
+        if not hasattr(self,'booted_pro_proj_eff_mass')  or self.booted_pro_proj_eff_mass is None:
+            print('effective mass not computed, computing now')
+            self.MakeEffMass()
+        hold_series = null_series
+        if 'color' in kwargs.keys():
+            hold_series['color'] = kwargs['color']
+            del kwargs['color']
+        if 'shift' in kwargs.keys():
+            hold_series['shift'] = kwargs['shift']
+            del kwargs['shift']
+        try:
+            data_plot = self.booted_pro_proj_eff_mass.unstack().sel(**kwargs)
+        except:
+            data_plot = self.booted_pro_proj_eff_mass.sel(**kwargs).unstack()
+        data_plot = data_plot.stack(all=self.booted_pro_proj_eff_mass.dims).to_pandas()
+        this_index = pa.MultiIndex.from_tuples(list(map_str(data_plot.index)),names=data_plot.index.names)
+        data_plot = pa.Series(data_plot.values,index =this_index)
+        data_plot.apply(lambda x : x.Stats())
+        data_avg = data_plot.apply(lambda x : x.Avg)
+        data_std = data_plot.apply(lambda x : x.Std)
+        hold_series['x_data'] = 'from_keys'
+        hold_series['key_select'] = data_plot.index[0]
+        hold_series['type'] = 'error_bar'
+        if isinstance(data_plot.index[0],(tuple,list,np.ndarray)):
+            if len(data_plot.index[0])>1:
+                hold_series['key_select'] = data_plot.index[0]
+                hold_series['key_select'] = list(hold_series['key_select'])[:-1]+[slice(None)]
+                hold_series['type'] += '_vary'
+        hold_series['y_data'] = data_avg
+        hold_series['yerr_data'] = data_std
+        hold_series['label'] = self.name+' Prony'
+        plot_plane.AppendData(hold_series)
+        return plot_plane
+
+
     def PlotEffMass(self,plot_plane,**kwargs):
         if hasattr(self,'booted_mcorr')  and self.booted_mcorr is not None:
             return self.PlotEffMass_Boot(plot_plane,**kwargs)
         if not hasattr(self,'eff_mass'):
             print('effective mass not computed, computing now')
             self.MakeEffMass()
-        hold_series = jpl.null_series
+        hold_series = null_series
         if 'color' in kwargs.keys():
             hold_series['color'] = kwargs['color']
             del kwargs['color']
@@ -287,7 +500,7 @@ class VariationalMethod(object):
         if not hasattr(self,'eff_mass'):
             print('effective mass not computed, computing now')
             self.PlotEffMass_VarMeth()
-        hold_series = jpl.null_series
+        hold_series = null_series
         if 'color' in kwargs.keys():
             hold_series['color'] = kwargs['color']
             del kwargs['color']
@@ -313,6 +526,46 @@ class VariationalMethod(object):
         hold_series['label'] = self.name+' VarMeth'
         plot_plane.AppendData(hold_series)
         return plot_plane
+
+
+    def PlotEffMass_Prony(self,plot_plane,**kwargs):
+        if hasattr(self,'booted_pro_proj_corr')  and self.booted_pro_proj_corr is not None:
+            return self.PlotEffMass_Prony_Boot(plot_plane,**kwargs)
+        if not hasattr(self,'eff_mass'):
+            print('effective mass not computed, computing now')
+            self.PlotEffMass_Prony()
+        hold_series = null_series
+        if 'color' in kwargs.keys():
+            hold_series['color'] = kwargs['color']
+            del kwargs['color']
+        if 'shift' in kwargs.keys():
+            hold_series['shift'] = kwargs['shift']
+            del kwargs['shift']
+        try:
+            data_plot = self.pro_proj_eff_mass.unstack().sel(**kwargs)
+        except:
+            data_plot = self.pro_proj_eff_mass.sel(**kwargs).unstack()
+        data_plot = data_plot.stack(all=self.pro_proj_eff_mass.dims).to_pandas()
+        this_index = pa.MultiIndex.from_tuples(list(map_str(data_plot.index)),names=data_plot.index.names)
+        data_plot = pa.Series(data_plot.values,index =this_index)
+        hold_series['x_data'] = 'from_keys'
+        hold_series['key_select'] = data_plot.index[0]
+        hold_series['type'] = 'plot'
+        if isinstance(data_plot.index[0],(tuple,list,np.ndarray)):
+            if len(data_plot.index[0])>1:
+                hold_series['key_select'] = data_plot.index[0]
+                hold_series['key_select'] = list(hold_series['key_select'])[:-1]+[slice(None)]
+                hold_series['type'] += '_vary'
+        hold_series['y_data'] = data_plot
+        hold_series['label'] = self.name+' Prony'
+        plot_plane.AppendData(hold_series)
+        return plot_plane
+
+    def Write(self,output_folder='PreDef'):
+        if output_folder != 'PreDef':
+            self.output_folder = output_folder
+        if not hasattr(self,'output_folder'):
+            raise EnvironmentError('output_folder needs tobe defined in object to output to file')
 
 
 def Make_DataArray(this_data,key_list,name=''):
@@ -341,17 +594,23 @@ def CreateTestData():
                            [0.1,0.2,0.4,0.8],
                            [0.1,1,10,100]]).T
 
+    # energy_states = np.array([0.5,0.63,0.8])
+    # coeff_list = np.array([[1,0.5,0.25  ],
+    #                        [0.5,0.25,0.125],
+    #                        [0.1,0.2,0.4 ]]).T
+
     coeff_err_per = 0
     energy_err_per = 2
-    this_nboot = 20
-    this_ncfg = 20
-    nt = 50
+    this_nboot = 200
+    this_ncfg = 200
+    nt = 32
     booted = True
     coeff_list = np.array([np.outer(ival,ival) for ival in coeff_list])
     coeff_list[1]
     coeff_err = coeff_list*coeff_err_per
     coeff_err = np.random.normal(loc=0,scale=coeff_err_per,size=list(coeff_list.shape)+[this_ncfg])
     # energy_states_err = np.random.normal(loc=1,scale=energy_err_per,size=list(energy_states.shape)+[this_ncfg])
+    # energy_states_err = np.random.lognormal(mean=0,sigma=energy_err_per,size=list(energy_states.shape)+[this_ncfg])
     energy_states_err = np.random.normal(loc=0,scale=energy_err_per,size=list(energy_states.shape)+[this_ncfg])
     def exp_fun(val,ism,jsm,size):
         rand_coeff = np.array([iblist+icoeff for iblist,icoeff in zip(coeff_list[:,ism,jsm],coeff_err[:,ism,jsm,:])])
@@ -373,6 +632,7 @@ def CreateTestData():
                     for it in range(loop_shape[3]):
                         if booted:
                             this_vals = exp_fun(it,ism,jsm,this_ncfg)
+                            # values.append(BootStrap(thisnboot = this_nboot,bootvals=this_vals))
                             values.append(BootStrap(thisnboot = this_nboot,cfgvals=this_vals))
                         else:
                             values.append(exp_fun(it,ism,jsm,1))
@@ -384,24 +644,94 @@ def CreateTestData():
                     if booted:
                         this_vals = exp_fun(it,ism,jsm,this_nboot)
                         values.append(BootStrap(thisnboot = this_nboot,cfgvals=this_vals))
+                        # values.append(BootStrap(thisnboot = this_nboot,bootvals=this_vals))
                     else:
                         values.append(exp_fun(it,ism,jsm,1))
                     # values.append(exp_fun(it,ism,jsm))
     return np.array(values).reshape(data_shape)
 
+def CreateAndreaTest(nt=64,boot=True):
+    # energy_states = np.array([0.2,0.4,0.8,1.6])
+    # coeff_list = np.array([[1,0.5,0.25,0.125],
+    #                        [0.5,0.5,0.25,0.25],
+    #                        [0.1,0.2,0.4,0.8],
+    #                        [0.1,1,10,100]]).T
+
+    energy_states = np.array([0.5,0.63,0.8])
+    coeff_list = np.array([1,0.1,0.01])
+    err_per_start = 0.01
+    err_per_end = 0.5
+    def sig_fun(t):
+        return err_per_start + (err_per_end - err_per_start)*t/32
+    this_nboot = 200
+    this_ncfg = 200
+    booted = boot
+    def exp_fun(val,this_size):
+        this_sum = np.sum( coeff_list* np.exp(-energy_states*val))
+        rand_list = np.exp(np.random.normal(loc=1,scale=sig_fun(val+1),size=this_size))
+        return this_sum * rand_list
+        # return np.random.lognormal(mean=this_sum,sigma=sig_fun(val+1)*this_sum,size=this_size)
+    values = []
+    for it in range(nt):
+        if booted:
+            this_vals = exp_fun(it,this_ncfg)
+            values.append(BootStrap(thisnboot = this_nboot,cfgvals=this_vals))
+            # values.append(BootStrap(thisnboot = this_nboot,bootvals=this_vals))
+        else:
+            values.append(exp_fun(it,this_ncfg))
+    return np.array(values)
+
 if __name__ == '__main__':
     raw_data = CreateTestData()
     test_class = VariationalMethod(matrix_corr=raw_data,symetrize=False)
     test_class.PerformVarMeth(t0=1,dt=5)
+    test_class.PerformProny(t0=1,dt=5,ism=0)
     # test_class.booted_mcorr
     # test_class.eEnergy
     # test_class.left_evec
+    # test_class.matrix_corr.sel(t_sep=0)
+    nt = 32
+    boot = True
+    raw_data = CreateAndreaTest(nt=nt,boot=boot)
     this_info = pa.Series()
     this_info['save_file'] = '/home/jackdra/LQCD/Scripts/Python_Analysis/TestGraphs/TestVar.pdf'
-    this_info['title'] = 'Var Meth'
-    this_info['x_label'] = 't'
+    this_info['title'] = 'TestData'
+    this_info['x_label'] = 't/a'
     this_info['y_label'] = 'EffMass'
     data_plot = jpl.Plotting(plot_info=this_info)
+
+    # hold_series = null_series
+    # hold_series['x_data'] = list(range(nt))
+    # hold_series['type'] = 'error_bar'
+    # if boot:
+    #     hold_series['y_data'] = [ival.Avg for ival in raw_data]
+    #     hold_series['yerr_data'] = [ival.Std for ival in raw_data]
+    # else:
+    #     hold_series['y_data'] = [np.mean(ival) for ival in raw_data]
+    #     hold_series['yerr_data'] = [np.std(ival) for ival in raw_data]
+    # hold_series['label'] = 'test 2pt'
+    # data_plot.AppendData(hold_series)
+    #
+    # if boot:
+    #     eff_mass = [(ival/ivalp1).Log() for ival,ivalp1 in zip(raw_data[:-1],raw_data[1:])]
+    #     [ival.Stats() for ival in eff_mass]
+    # else:
+    #     eff_mass = [np.log(raw_data[:-1]/raw_data[1:])]
+    # hold_series = null_series
+    #
+    # hold_series['x_data'] = list(range(nt-1))
+    # hold_series['type'] = 'error_bar'
+    # if boot:
+    #     hold_series['y_data'] = [ival.Avg for ival in eff_mass]
+    #     hold_series['yerr_data'] = [ival.Std for ival in eff_mass]
+    # else:
+    #     hold_series['y_data'] = [np.mean(ival) for ival in eff_mass]
+    #     hold_series['yerr_data'] = [np.std(ival) for ival in eff_mass]
+    # hold_series['label'] = 'test effmass 2pt'
+    # data_plot.AppendData(hold_series)
+
+
     data_plot = test_class.PlotEffMass(data_plot)
     data_plot = test_class.PlotEffMass_VarMeth(data_plot)
+    data_plot = test_class.PlotEffMass_Prony(data_plot)
     data_plot.PlotAll()

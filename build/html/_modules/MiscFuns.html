@@ -1,0 +1,799 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>MiscFuns &#8212; LQCD Analysis Codebase TF Fits documentation</title>
+    <link rel="stylesheet" href="../_static/agogo.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="header-wrapper" role="banner">
+      <div class="header">
+        <div class="headertitle"><a
+          href="../index.html">LQCD Analysis Codebase TF Fits documentation</a></div>
+        <div class="rel" role="navigation" aria-label="related navigation">
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for MiscFuns</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span><span class="p">,</span><span class="n">Callable</span>
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">errno</span><span class="o">,</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">from</span> <span class="nn">types</span> <span class="k">import</span> <span class="n">ModuleType</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pa</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">product</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">TimeStuff</span> <span class="k">import</span> <span class="n">Timer</span>
+<span class="kn">import</span> <span class="nn">operator</span> <span class="k">as</span> <span class="nn">op</span>
+<span class="kn">import</span> <span class="nn">imp</span>
+<span class="kn">import</span> <span class="nn">string</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<div class="viewcode-block" id="mindex_iloc_md"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.mindex_iloc_md">[docs]</a><span class="k">def</span> <span class="nf">mindex_iloc_md</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="n">index_list</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">iindex</span> <span class="ow">in</span> <span class="n">index_list</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">multindex_iloc</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="n">iindex</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span></div>
+
+<div class="viewcode-block" id="multindex_iloc"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.multindex_iloc">[docs]</a><span class="k">def</span> <span class="nf">multindex_iloc</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+    <span class="n">label</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">levels</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">index</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="n">label</span><span class="p">)]</span></div>
+
+<span class="n">myeps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span>
+
+<span class="n">numeric_const_pattern</span> <span class="o">=</span> <span class="s1">&#39;[-+]? (?: (?: \d* \. \d+ ) | (?: \d+ \.? ) )(?: [Ee] [+-]? \d+ ) ?&#39;</span>
+<span class="n">rx</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">numeric_const_pattern</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">)</span>
+
+<div class="viewcode-block" id="map_str"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.map_str">[docs]</a><span class="k">def</span> <span class="nf">map_str</span><span class="p">(</span><span class="n">this_list</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[[</span><span class="nb">str</span><span class="p">(</span><span class="n">jval</span><span class="p">)</span> <span class="k">for</span> <span class="n">jval</span> <span class="ow">in</span> <span class="n">ival</span><span class="p">]</span> <span class="k">for</span> <span class="n">ival</span> <span class="ow">in</span> <span class="n">this_list</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="DEBUGprint"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.DEBUGprint">[docs]</a><span class="k">def</span> <span class="nf">DEBUGprint</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;DEBUG&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Series_fix_key"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.Series_fix_key">[docs]</a><span class="k">def</span> <span class="nf">Series_fix_key</span><span class="p">(</span><span class="n">this_series</span><span class="p">,</span><span class="n">index</span><span class="p">,</span><span class="n">str_rep_from</span><span class="p">,</span><span class="n">str_rep_too</span><span class="p">):</span>
+    <span class="n">is_series</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">this_series</span><span class="p">,</span><span class="n">pa</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">is_series</span><span class="p">:</span>
+        <span class="n">this_series</span> <span class="o">=</span> <span class="n">this_series</span><span class="o">.</span><span class="n">to_frame</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">)</span>
+    <span class="n">this_list</span> <span class="o">=</span> <span class="n">this_series</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span>
+    <span class="n">this_header</span> <span class="o">=</span> <span class="n">this_list</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+    <span class="n">this_series</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">this_series</span><span class="p">[</span><span class="n">this_header</span><span class="p">]</span> <span class="o">=</span> <span class="n">this_series</span><span class="p">[</span><span class="n">this_header</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">str_rep_from</span><span class="p">,</span><span class="n">str_rep_too</span><span class="p">))</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">this_series</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">this_list</span><span class="p">,</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">is_series</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">this_series</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">this_series</span></div>
+
+
+<div class="viewcode-block" id="StreamToNumb"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.StreamToNumb">[docs]</a><span class="k">def</span> <span class="nf">StreamToNumb</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+    <span class="n">val</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span><span class="s1">&#39;1&#39;</span><span class="p">)</span>
+    <span class="n">val</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">,</span><span class="s1">&#39;2&#39;</span><span class="p">)</span>
+    <span class="n">val</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">,</span><span class="s1">&#39;3&#39;</span><span class="p">)</span>
+    <span class="n">val</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;d&#39;</span><span class="p">,</span><span class="s1">&#39;4&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">val</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="logNA_list"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.logNA_list">[docs]</a><span class="k">def</span> <span class="nf">logNA_list</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">filled</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">value</span><span class="p">)),</span><span class="o">-</span><span class="n">myeps</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="logNA"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.logNA">[docs]</a><span class="k">def</span> <span class="nf">logNA</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">pa</span><span class="o">.</span><span class="n">Series</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">logNA</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">pa</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">applymap</span><span class="p">(</span><span class="n">logNA</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,(</span><span class="nb">list</span><span class="p">,</span><span class="nb">tuple</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="n">logNA_list</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="nb">complex</span><span class="p">)</span> <span class="p">:</span>
+            <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">imag</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span>  <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+<div class="viewcode-block" id="human_format"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.human_format">[docs]</a><span class="k">def</span> <span class="nf">human_format</span><span class="p">(</span><span class="n">num</span><span class="p">):</span>
+    <span class="n">magnitude</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="nb">abs</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1000</span><span class="p">:</span>
+        <span class="n">magnitude</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">num</span> <span class="o">/=</span> <span class="mf">1000.0</span>
+    <span class="c1"># add more suffixes if you need them</span>
+    <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%.0f%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">,</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">][</span><span class="n">magnitude</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="MultiSplit"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.MultiSplit">[docs]</a><span class="k">def</span> <span class="nf">MultiSplit</span><span class="p">(</span><span class="n">this_str</span><span class="p">,</span><span class="n">delim_list</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">idelim</span> <span class="ow">in</span> <span class="n">delim_list</span><span class="p">:</span>
+        <span class="n">this_str</span> <span class="o">=</span> <span class="n">this_str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">idelim</span><span class="p">,</span><span class="n">delim_list</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">this_str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">delim_list</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span></div>
+
+<span class="n">op_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">op</span><span class="o">.</span><span class="n">add</span><span class="p">,</span><span class="n">op</span><span class="o">.</span><span class="n">sub</span><span class="p">,</span><span class="n">op</span><span class="o">.</span><span class="n">mul</span><span class="p">,</span><span class="n">op</span><span class="o">.</span><span class="n">truediv</span><span class="p">,</span><span class="n">op</span><span class="o">.</span><span class="n">pow</span><span class="p">]</span>
+<span class="n">op_dict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">iop</span> <span class="ow">in</span> <span class="n">op_list</span><span class="p">:</span>
+    <span class="n">op_dict</span><span class="p">[</span><span class="n">iop</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span> <span class="o">=</span> <span class="n">iop</span>
+<span class="n">op_str_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">op_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+<span class="n">op_dict_std</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+<div class="viewcode-block" id="add_std"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.add_std">[docs]</a><span class="k">def</span> <span class="nf">add_std</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">xbar</span><span class="p">,</span><span class="n">ybar</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span></div>
+<div class="viewcode-block" id="sub_std"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.sub_std">[docs]</a><span class="k">def</span> <span class="nf">sub_std</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">xbar</span><span class="p">,</span><span class="n">ybar</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span></div>
+<div class="viewcode-block" id="mul_std"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.mul_std">[docs]</a><span class="k">def</span> <span class="nf">mul_std</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">xbar</span><span class="p">,</span><span class="n">ybar</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">xbar</span><span class="o">*</span><span class="n">y</span> <span class="o">+</span> <span class="n">ybar</span><span class="o">*</span><span class="n">x</span></div>
+<div class="viewcode-block" id="div_std"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.div_std">[docs]</a><span class="k">def</span> <span class="nf">div_std</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">xbar</span><span class="p">,</span><span class="n">ybar</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span><span class="o">/</span><span class="n">ybar</span> <span class="o">-</span> <span class="n">xbar</span><span class="o">*</span><span class="n">y</span><span class="o">/</span><span class="p">(</span><span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span></div>
+<div class="viewcode-block" id="pow_std"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.pow_std">[docs]</a><span class="k">def</span> <span class="nf">pow_std</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">xbar</span><span class="p">,</span><span class="n">ybar</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">ybar</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">ybar</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">xbar</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">xbar</span><span class="o">**</span><span class="n">ybar</span><span class="p">)</span> <span class="o">*</span> <span class="n">y</span></div>
+<span class="n">op_dict_std</span><span class="p">[</span><span class="n">op</span><span class="o">.</span><span class="n">add</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span> <span class="o">=</span> <span class="n">add_std</span>
+<span class="n">op_dict_std</span><span class="p">[</span><span class="n">op</span><span class="o">.</span><span class="n">sub</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span> <span class="o">=</span> <span class="n">sub_std</span>
+<span class="n">op_dict_std</span><span class="p">[</span><span class="n">op</span><span class="o">.</span><span class="n">mul</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span> <span class="o">=</span> <span class="n">mul_std</span>
+<span class="n">op_dict_std</span><span class="p">[</span><span class="n">op</span><span class="o">.</span><span class="n">truediv</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span> <span class="o">=</span> <span class="n">div_std</span>
+<span class="n">op_dict_std</span><span class="p">[</span><span class="n">op</span><span class="o">.</span><span class="n">pow</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span> <span class="o">=</span> <span class="n">pow_std</span>
+
+
+<div class="viewcode-block" id="GetCfgMissmatch"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.GetCfgMissmatch">[docs]</a><span class="k">def</span> <span class="nf">GetCfgMissmatch</span><span class="p">(</span><span class="n">cfg_list1</span><span class="p">,</span><span class="n">cfg_list2</span><span class="p">,</span><span class="n">max_len_write</span> <span class="o">=</span> <span class="mi">10</span><span class="p">):</span>
+    <span class="c1"># cfg_diff = list(set(cfg_list1).symmetric_difference(set(cfg_list2)))</span>
+    <span class="n">left_diff</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">cfg_list1</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">cfg_list2</span><span class="p">)</span>
+    <span class="n">right_diff</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">cfg_list2</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">cfg_list1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">left_diff</span><span class="p">)</span><span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">right_diff</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">max_len_write</span><span class="p">:</span>
+        <span class="n">left_str</span><span class="p">,</span><span class="n">right_str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">left_diff</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">left_str</span> <span class="o">=</span> <span class="s1">&#39;cfgs not in cfg file: </span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">left_diff</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">right_diff</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">right_str</span> <span class="o">=</span> <span class="s1">&#39;cfgs not in setup: </span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">right_diff</span><span class="p">))</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">left_str</span><span class="p">,</span><span class="n">right_str</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">len_diff</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">left_diff</span><span class="p">)</span><span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">right_diff</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">len_diff</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;setup has &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">len_diff</span><span class="p">)</span><span class="o">+</span> <span class="s1">&#39; more configs&#39;</span>
+        <span class="k">elif</span> <span class="n">len_diff</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;cfg file has &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="o">-</span><span class="n">len_diff</span><span class="p">)</span><span class="o">+</span> <span class="s1">&#39; more configs&#39;</span></div>
+
+
+<div class="viewcode-block" id="fmt_file_type"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.fmt_file_type">[docs]</a><span class="k">def</span> <span class="nf">fmt_file_type</span><span class="p">(</span><span class="n">this_type</span><span class="p">):</span>
+    <span class="n">this_type</span> <span class="o">=</span> <span class="n">this_type</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;feather&#39;</span><span class="p">,</span><span class="s1">&#39;fe&#39;</span><span class="p">)</span>
+    <span class="n">this_type</span> <span class="o">=</span> <span class="n">this_type</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;parquet&#39;</span><span class="p">,</span><span class="s1">&#39;par&#39;</span><span class="p">)</span>
+    <span class="n">this_type</span> <span class="o">=</span> <span class="n">this_type</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;msgpack&#39;</span><span class="p">,</span><span class="s1">&#39;msg&#39;</span><span class="p">)</span>
+    <span class="n">this_type</span> <span class="o">=</span> <span class="n">this_type</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;pickle&#39;</span><span class="p">,</span><span class="s1">&#39;p&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;.&#39;</span> <span class="ow">in</span> <span class="n">this_type</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">this_type</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;.&#39;</span><span class="o">+</span><span class="n">this_type</span></div>
+
+
+<div class="viewcode-block" id="RemoveAllBoots"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.RemoveAllBoots">[docs]</a><span class="k">def</span> <span class="nf">RemoveAllBoots</span><span class="p">(</span><span class="n">boot_data</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">boot_data</span><span class="p">,</span><span class="s1">&#39;bootvals&#39;</span><span class="p">):</span>
+        <span class="n">boot_data</span><span class="o">.</span><span class="n">RemoveBoots</span><span class="p">()</span>
+        <span class="n">boot_data</span><span class="o">.</span><span class="n">RemoveVals</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">boot_data</span></div>
+
+
+<div class="viewcode-block" id="convert_to_hex"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.convert_to_hex">[docs]</a><span class="k">def</span> <span class="nf">convert_to_hex</span><span class="p">(</span><span class="n">rgba_color</span><span class="p">)</span> <span class="p">:</span>
+    <span class="n">red</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">rgba_color</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">255</span><span class="p">)</span>
+    <span class="n">green</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">rgba_color</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">255</span><span class="p">)</span>
+    <span class="n">blue</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">rgba_color</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="mi">255</span><span class="p">)</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">rgba_color</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="mi">255</span><span class="p">)</span>
+    <span class="c1"># return &#39;0x{r:02x}{g:02x}{b:02x}&#39;.format(r=red,g=green,b=blue)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">red</span><span class="p">,</span><span class="n">green</span><span class="p">,</span><span class="n">blue</span><span class="p">,</span><span class="n">alpha</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="fmt_Qt5_col"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.fmt_Qt5_col">[docs]</a><span class="k">def</span> <span class="nf">fmt_Qt5_col</span><span class="p">(</span><span class="n">this_class</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">this_class</span><span class="p">,(</span><span class="nb">str</span><span class="p">,</span><span class="nb">list</span><span class="p">,</span><span class="nb">tuple</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="n">this_class</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">x</span><span class="o">/</span><span class="mf">255.</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">this_class</span><span class="o">.</span><span class="n">getRgb</span><span class="p">()]</span></div>
+
+
+<div class="viewcode-block" id="get_val_float_0"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.get_val_float_0">[docs]</a><span class="k">def</span> <span class="nf">get_val_float_0</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+    <span class="n">this_val</span> <span class="o">=</span> <span class="n">get_val</span><span class="p">(</span><span class="n">val</span><span class="p">,</span><span class="n">this_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span><span class="n">suppress_warn</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">this_val</span><span class="p">,</span><span class="nb">float</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">this_val</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">this_val</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="nb">float</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">this_val</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;float not found in get_val_float_0 call, using first character ordering&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">string</span><span class="o">.</span><span class="n">ascii_lowercase</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">this_val</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="get_val_float"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.get_val_float">[docs]</a><span class="k">def</span> <span class="nf">get_val_float</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">get_val</span><span class="p">(</span><span class="n">val</span><span class="p">,</span><span class="n">this_type</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="get_val"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.get_val">[docs]</a><span class="k">def</span> <span class="nf">get_val</span><span class="p">(</span><span class="n">val</span><span class="p">,</span><span class="n">Phys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">this_type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span><span class="n">suppress_warn</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">this_type</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+    <span class="n">out_str</span> <span class="o">=</span> <span class="n">rx</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">out_str</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">suppress_warn</span><span class="p">:</span> <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">this_type</span><span class="o">+</span><span class="s1">&#39; not found in &quot;get_val&quot; call&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">val</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">out_str</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">this_type</span><span class="p">(</span><span class="n">out_str</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">this_type</span><span class="p">,</span><span class="n">out_str</span><span class="p">))</span></div>
+    <span class="c1"># if not isinstance(val,str):</span>
+    <span class="c1">#     return val</span>
+    <span class="c1"># new_str = &#39;&#39;</span>
+    <span class="c1"># for ichar in val:</span>
+    <span class="c1">#     if ichar.isdigit() or ichar == &#39;.&#39;:</span>
+    <span class="c1">#         new_str += ichar</span>
+    <span class="c1"># if len(new_str) &gt; 0:</span>
+    <span class="c1">#     try:</span>
+    <span class="c1">#         return int(new_str)</span>
+    <span class="c1">#     except:</span>
+    <span class="c1">#         return float(new_str)</span>
+    <span class="c1"># else:</span>
+    <span class="c1">#     return 0</span>
+
+<div class="viewcode-block" id="ReductList"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.ReductList">[docs]</a><span class="k">def</span> <span class="nf">ReductList</span><span class="p">(</span><span class="n">this_list</span><span class="p">,</span><span class="n">max_len</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">this_list</span><span class="p">,(</span><span class="nb">list</span><span class="p">,</span><span class="nb">tuple</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">this_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">max_len</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">this_list</span><span class="p">[:</span><span class="n">max_len</span><span class="o">/</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;...&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">this_list</span><span class="p">[</span><span class="o">-</span><span class="n">max_len</span><span class="o">/</span><span class="mi">2</span><span class="p">:])</span>
+    <span class="k">return</span> <span class="n">this_list</span></div>
+
+<div class="viewcode-block" id="is_number"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.is_number">[docs]</a><span class="k">def</span> <span class="nf">is_number</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">unicodedata</span>
+        <span class="n">unicodedata</span><span class="o">.</span><span class="n">numeric</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+        <span class="k">pass</span>
+    <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="Remove_Empty_Str"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.Remove_Empty_Str">[docs]</a><span class="k">def</span> <span class="nf">Remove_Empty_Str</span><span class="p">(</span><span class="n">thislist</span><span class="p">):</span>
+    <span class="n">out_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">ival</span> <span class="ow">in</span> <span class="n">thislist</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ival</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">out_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ival</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">out_list</span></div>
+
+<div class="viewcode-block" id="MIndex_to_numpy"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.MIndex_to_numpy">[docs]</a><span class="k">def</span> <span class="nf">MIndex_to_numpy</span><span class="p">(</span><span class="n">this_df</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">this_df</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="n">this_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">levels</span><span class="p">)))))</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="n">this_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">levels</span><span class="p">)))</span></div>
+
+
+<span class="c1">##</span>
+<div class="viewcode-block" id="flip_fun_2arg"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.flip_fun_2arg">[docs]</a><span class="k">def</span> <span class="nf">flip_fun_2arg</span><span class="p">(</span><span class="n">this_fun</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">result_fun</span><span class="p">(</span><span class="n">var1</span><span class="p">,</span><span class="n">var2</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">this_fun</span><span class="p">(</span><span class="n">var2</span><span class="p">,</span><span class="n">var1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result_fun</span></div>
+
+<span class="c1"># def Intersect_DataFrame_2col(this_df):</span>
+<span class="c1">#     out_df = pa.Series(&#39;False&#39;,index=this_df.index)</span>
+<span class="c1">#     for istream,stream_df in this_df.groupby(level=&#39;stream&#39;):</span>
+<span class="c1">#         stream_series = stream_df.iloc[:,1][stream_df.isin(stream_df.iloc[:,0].values).iloc[:,1].values]</span>
+<span class="c1">#         for ikey,ival in stream_series.iteritems():</span>
+<span class="c1">#             out_df[ikey] = ival</span>
+<span class="c1">#     return out_df[out_df != &#39;False&#39;]</span>
+
+<span class="c1">## if only one dataframe has a xsrc list, it MUST be df_one</span>
+<div class="viewcode-block" id="Intersect_DataFrame_2col_xsrc"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.Intersect_DataFrame_2col_xsrc">[docs]</a><span class="k">def</span> <span class="nf">Intersect_DataFrame_2col_xsrc</span><span class="p">(</span><span class="n">df_one</span><span class="p">,</span><span class="n">df_two</span><span class="p">):</span>
+    <span class="n">cfglist</span><span class="p">,</span> <span class="n">xsrc_list</span> <span class="o">=</span> <span class="p">[],[[]]</span>
+    <span class="n">ilist</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">no_two_xsrc</span> <span class="o">=</span> <span class="ow">not</span> <span class="p">(</span><span class="s1">&#39;xsrc_list&#39;</span> <span class="ow">in</span> <span class="n">df_two</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+    <span class="n">no_xsrc</span> <span class="o">=</span> <span class="ow">not</span> <span class="p">(</span><span class="s1">&#39;xsrc_list&#39;</span> <span class="ow">in</span> <span class="n">df_one</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">istream</span><span class="p">,</span><span class="n">iccfg</span><span class="p">),</span><span class="n">idf</span> <span class="ow">in</span> <span class="n">df_one</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">istream</span> <span class="ow">in</span> <span class="n">df_two</span><span class="p">[</span><span class="s1">&#39;configs&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">levels</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="n">icfg</span> <span class="o">=</span> <span class="n">idf</span><span class="p">[</span><span class="s1">&#39;configs&#39;</span><span class="p">]</span>
+            <span class="n">this_where</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">df_two</span><span class="p">[</span><span class="s1">&#39;configs&#39;</span><span class="p">][</span><span class="n">istream</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="o">==</span> <span class="n">icfg</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">this_where</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="k">continue</span>
+            <span class="n">second_key</span> <span class="o">=</span> <span class="n">this_where</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="s1">&#39;xsrc_list&#39;</span> <span class="ow">in</span> <span class="n">idf</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">ixsrc</span> <span class="ow">in</span> <span class="n">idf</span><span class="p">[</span><span class="s1">&#39;xsrc_list&#39;</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="n">no_two_xsrc</span> <span class="ow">or</span> <span class="p">(</span><span class="n">ixsrc</span> <span class="ow">in</span> <span class="n">df_two</span><span class="p">[</span><span class="s1">&#39;xsrc_list&#39;</span><span class="p">][</span><span class="n">istream</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">second_key</span><span class="p">]):</span>
+                        <span class="n">xsrc_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ixsrc</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">no_xsrc</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">xsrc_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">ilist</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">istream</span><span class="p">,</span><span class="n">iccfg</span><span class="p">))</span>
+                <span class="n">cfglist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">icfg</span><span class="p">)</span>
+                <span class="n">xsrc_list</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ilist</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;DataFrame 1:&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">df_one</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;DataFrame 2:&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">df_two</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="ne">EnvironmentError</span><span class="p">(</span><span class="s1">&#39;No common configs&#39;</span><span class="p">)</span>
+    <span class="n">indicies</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">MultiIndex</span><span class="o">.</span><span class="n">from_tuples</span><span class="p">(</span><span class="n">ilist</span><span class="p">,</span><span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;stream&#39;</span><span class="p">,</span><span class="s1">&#39;config_number&#39;</span><span class="p">])</span>
+    <span class="n">cfg_df</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">cfglist</span><span class="p">,</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;configs&#39;</span><span class="p">],</span><span class="n">index</span><span class="o">=</span><span class="n">indicies</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">no_xsrc</span><span class="p">:</span> <span class="n">cfg_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span><span class="s1">&#39;xsrc_list&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">xsrc_list</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">index</span><span class="o">=</span><span class="n">indicies</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">cfg_df</span></div>
+
+<div class="viewcode-block" id="Series_TO_ODict"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.Series_TO_ODict">[docs]</a><span class="k">def</span> <span class="nf">Series_TO_ODict</span><span class="p">(</span><span class="n">this_series</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">this_series</span><span class="o">.</span><span class="n">index</span><span class="p">,</span><span class="n">pa</span><span class="o">.</span><span class="n">MultiIndex</span><span class="p">):</span>
+        <span class="n">outdict</span> <span class="o">=</span> <span class="n">ODNested</span><span class="p">()</span>
+        <span class="n">keysize</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">this_series</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">ikey</span><span class="p">,</span><span class="n">ival</span> <span class="ow">in</span> <span class="n">this_series</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">ikey</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span><span class="n">ikey</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">keysize</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">outdict</span><span class="p">[</span><span class="n">ikey</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">ival</span>
+            <span class="k">elif</span> <span class="n">keysize</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">outdict</span><span class="p">[</span><span class="n">ikey</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="n">ikey</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">ival</span>
+            <span class="k">elif</span> <span class="n">keysize</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">outdict</span><span class="p">[</span><span class="n">ikey</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="n">ikey</span><span class="p">[</span><span class="mi">1</span><span class="p">]][</span><span class="n">ikey</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span> <span class="o">=</span> <span class="n">ival</span>
+            <span class="k">elif</span> <span class="n">keysize</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+                <span class="n">outdict</span><span class="p">[</span><span class="n">ikey</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="n">ikey</span><span class="p">[</span><span class="mi">1</span><span class="p">]][</span><span class="n">ikey</span><span class="p">[</span><span class="mi">2</span><span class="p">]][</span><span class="n">ikey</span><span class="p">[</span><span class="mi">3</span><span class="p">]]</span> <span class="o">=</span> <span class="n">ival</span>
+        <span class="k">return</span> <span class="n">outdict</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span><span class="nb">list</span><span class="p">(</span><span class="n">this_series</span><span class="o">.</span><span class="n">keys</span><span class="p">()))),</span><span class="n">this_series</span><span class="o">.</span><span class="n">values</span><span class="p">])))</span></div>
+
+<div class="viewcode-block" id="rreload"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.rreload">[docs]</a><span class="k">def</span> <span class="nf">rreload</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">paths</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">],</span> <span class="n">mdict</span><span class="o">=</span><span class="p">{}):</span>
+    <span class="sd">&quot;&quot;&quot;Recursively reload modules.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">module</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">mdict</span><span class="p">:</span>
+        <span class="c1"># modules reloaded from this module</span>
+        <span class="n">mdict</span><span class="p">[</span><span class="n">module</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">imp</span><span class="o">.</span><span class="n">reload</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">attribute_name</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">module</span><span class="p">):</span>
+        <span class="n">attribute</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">attribute_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">attribute</span><span class="p">)</span> <span class="ow">is</span> <span class="n">ModuleType</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">attribute</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">mdict</span><span class="p">[</span><span class="n">module</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">attribute</span><span class="o">.</span><span class="vm">__name__</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">builtin_module_names</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">attribute</span><span class="o">.</span><span class="vm">__file__</span><span class="p">)</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">:</span>
+                        <span class="n">mdict</span><span class="p">[</span><span class="n">module</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attribute</span><span class="p">)</span>
+                        <span class="n">rreload</span><span class="p">(</span><span class="n">attribute</span><span class="p">,</span> <span class="n">paths</span><span class="p">,</span> <span class="n">mdict</span><span class="p">)</span>
+    <span class="n">imp</span><span class="o">.</span><span class="n">reload</span><span class="p">(</span><span class="n">module</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="intersect"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.intersect">[docs]</a><span class="k">def</span> <span class="nf">intersect</span><span class="p">(</span><span class="o">*</span><span class="n">d</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="k">return</span> <span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">sets</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">set</span><span class="p">,</span> <span class="n">d</span><span class="p">))</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">sets</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sets</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DOO"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.DOO">[docs]</a><span class="k">class</span> <span class="nc">DOO</span><span class="p">(</span><span class="n">OrderedDict</span><span class="p">):</span>
+    <span class="c1"># Source: http://stackoverflow.com/a/6190500/562769</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">default_factory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span>
+            <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default_factory</span><span class="p">,</span> <span class="n">Callable</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;first argument must be callable&#39;</span><span class="p">)</span>
+        <span class="n">OrderedDict</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">default_factory</span> <span class="o">=</span> <span class="n">default_factory</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">OrderedDict</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__missing__</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__missing__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_factory</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_factory</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">value</span>
+
+    <span class="k">def</span> <span class="nf">__reduce__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_factory</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_factory</span><span class="p">,</span>
+            <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="n">args</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">iter</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
+
+<div class="viewcode-block" id="DOO.copy"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.DOO.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__copy__</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">__copy__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">default_factory</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__deepcopy__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memo</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">default_factory</span><span class="p">,</span>
+        <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">())))</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;DOO(</span><span class="si">%s</span><span class="s1">, </span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">default_factory</span><span class="p">,</span>
+                                <span class="n">OrderedDict</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span></div>
+
+
+
+<span class="c1"># class OrderedDefaultDict(OrderedDict):</span>
+<span class="c1">#     def __init__(self, default_factory=None, *args, **kwargs):</span>
+<span class="c1">#         OrderedDict.__init__(self,*args,**kwargs)</span>
+<span class="c1">#         self.default_factory = default_factory</span>
+<span class="c1">#     def __missing__(self, key):</span>
+<span class="c1">#         if self.default_factory is None:</span>
+<span class="c1">#             raise KeyError(key)</span>
+<span class="c1">#         val = self[key] = self.default_factory()</span>
+<span class="c1">#         return val</span>
+
+
+
+<div class="viewcode-block" id="ODNested"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.ODNested">[docs]</a><span class="k">def</span> <span class="nf">ODNested</span><span class="p">():</span>
+    <span class="c1"># return OrderedDefaultDict(ODNested)</span>
+    <span class="k">return</span> <span class="n">DOO</span><span class="p">(</span><span class="n">ODNested</span><span class="p">)</span></div>
+    <span class="c1"># return defaultdict(ODNested)</span>
+
+
+<div class="viewcode-block" id="FixDictArray"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.FixDictArray">[docs]</a><span class="k">def</span> <span class="nf">FixDictArray</span><span class="p">(</span><span class="n">thislist</span><span class="p">,</span><span class="n">ikey</span><span class="p">):</span>
+    <span class="n">outDict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">ic</span><span class="p">,</span><span class="n">ilist</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">thislist</span><span class="p">):</span>
+        <span class="n">outDict</span><span class="p">[</span><span class="n">ikey</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">ic</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="n">ilist</span>
+    <span class="k">return</span> <span class="n">outDict</span></div>
+
+
+<div class="viewcode-block" id="mkdir_p"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.mkdir_p">[docs]</a><span class="k">def</span> <span class="nf">mkdir_p</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span> <span class="c1"># Python &gt;2.5</span>
+        <span class="k">if</span> <span class="n">exc</span><span class="o">.</span><span class="n">errno</span> <span class="o">==</span> <span class="n">errno</span><span class="o">.</span><span class="n">EEXIST</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span> <span class="k">raise</span></div>
+
+<div class="viewcode-block" id="NumbToFileName"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.NumbToFileName">[docs]</a><span class="k">def</span> <span class="nf">NumbToFileName</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span><span class="nb">int</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">val</span> <span class="o">&gt;</span> <span class="mf">0.01</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{:.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;0&#39;</span></div>
+
+
+<div class="viewcode-block" id="GetFileNames"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.GetFileNames">[docs]</a><span class="k">def</span> <span class="nf">GetFileNames</span><span class="p">(</span><span class="n">thisdir</span><span class="p">,</span><span class="n">strcomp</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">thisdir</span><span class="o">+</span><span class="s2">&quot;/&quot;</span><span class="o">+</span><span class="n">strcomp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;*&#39;</span><span class="o">+</span><span class="n">strcomp</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
+
+<span class="c1">#Pulls out a class &quot;atribute&quot; out of a numpy tensor &quot;data&quot; of classes ##</span>
+<span class="c1">#e.g. return data[:,:,...,:,:].atribute</span>
+<div class="viewcode-block" id="Pullflag"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.Pullflag">[docs]</a><span class="k">def</span> <span class="nf">Pullflag</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">atribute</span><span class="p">):</span>
+    <span class="n">npdata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">dataout</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">npdata</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="k">return</span> <span class="n">data</span>
+    <span class="k">for</span> <span class="n">idata</span> <span class="ow">in</span> <span class="n">npdata</span><span class="o">.</span><span class="n">flatten</span><span class="p">():</span>
+        <span class="n">flagdim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">idata</span><span class="p">,</span><span class="n">atribute</span><span class="p">))</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">dataout</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dataout</span><span class="p">,</span><span class="nb">getattr</span><span class="p">(</span><span class="n">idata</span><span class="p">,</span><span class="n">atribute</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">dataout</span><span class="p">,</span><span class="n">npdata</span><span class="o">.</span><span class="n">shape</span> <span class="o">+</span> <span class="n">flagdim</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="VecDelta"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.VecDelta">[docs]</a><span class="k">def</span> <span class="nf">VecDelta</span><span class="p">(</span><span class="n">tvec</span><span class="p">,</span><span class="n">val</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span><span class="n">val</span><span class="o">==</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tvec</span><span class="p">)))</span></div>
+
+
+<span class="c1">## assuming class2 is what is being read in</span>
+<span class="c1">## and class1 is what the parameters are</span>
+<div class="viewcode-block" id="CheckClass"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.CheckClass">[docs]</a><span class="k">def</span> <span class="nf">CheckClass</span><span class="p">(</span><span class="n">class1</span><span class="p">,</span><span class="n">class2</span><span class="p">,</span><span class="n">checklist</span><span class="p">):</span>
+    <span class="n">sub_vector_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;tflowlist&#39;</span><span class="p">,</span><span class="s1">&#39;checkmomlist&#39;</span><span class="p">,</span><span class="s1">&#39;boot_tsum_list&#39;</span><span class="p">,</span><span class="s1">&#39;tflow_list&#39;</span><span class="p">]</span>
+    <span class="n">fun_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Fun&#39;</span><span class="p">,</span><span class="s1">&#39;FunDer&#39;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">icheck</span> <span class="ow">in</span> <span class="n">checklist</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">icheck</span> <span class="ow">in</span> <span class="n">fun_list</span><span class="p">:</span>
+            <span class="n">icheck_name</span> <span class="o">=</span> <span class="n">icheck</span><span class="o">+</span><span class="s1">&#39;_name&#39;</span>
+            <span class="k">if</span> <span class="n">icheck</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">class1</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="n">c1check</span> <span class="o">=</span> <span class="n">class1</span><span class="p">[</span><span class="n">icheck</span><span class="p">]</span><span class="o">.</span><span class="vm">__name__</span>
+            <span class="k">elif</span> <span class="n">icheck_name</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">class1</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="n">c1check</span> <span class="o">=</span> <span class="n">class1</span><span class="p">[</span><span class="n">icheck_name</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">icheck</span> <span class="p">,</span> <span class="s1">&#39;not in file &#39;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="n">icheck</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">class2</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="n">c2check</span> <span class="o">=</span> <span class="n">class2</span><span class="p">[</span><span class="n">icheck</span><span class="p">]</span><span class="o">.</span><span class="vm">__name__</span>
+            <span class="k">elif</span> <span class="n">icheck_name</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">class2</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="n">c2check</span> <span class="o">=</span> <span class="n">class2</span><span class="p">[</span><span class="n">icheck_name</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">icheck</span> <span class="p">,</span> <span class="s1">&#39;not in setup class &#39;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="k">if</span>  <span class="n">c1check</span> <span class="o">!=</span> <span class="n">c2check</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Fit Functions differe in classes:&#39;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;class1:&#39;</span><span class="p">,</span><span class="n">c1check</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;class2:&#39;</span><span class="p">,</span><span class="n">c2check</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">icheck</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">class2</span><span class="o">.</span><span class="n">keys</span><span class="p">())):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">icheck</span> <span class="p">,</span> <span class="s1">&#39;not in setup class &#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">icheck</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">class1</span><span class="o">.</span><span class="n">keys</span><span class="p">())):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">icheck</span> <span class="p">,</span> <span class="s1">&#39;not in file &#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">elif</span> <span class="n">icheck</span> <span class="ow">in</span> <span class="n">sub_vector_list</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">ival</span> <span class="ow">in</span> <span class="n">class1</span><span class="p">[</span><span class="n">icheck</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">ival</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">class2</span><span class="p">[</span><span class="n">icheck</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="s1">&#39;HumanFile&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">class2</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;value &#39;</span> <span class="p">,</span> <span class="n">ival</span> <span class="p">,</span> <span class="s1">&#39; not found in &#39;</span><span class="p">,</span> <span class="n">class2</span><span class="p">[</span><span class="s1">&#39;HumanFile&#39;</span><span class="p">])</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;value &#39;</span> <span class="p">,</span> <span class="n">ival</span> <span class="p">,</span> <span class="s1">&#39; not found in class2&#39;</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">elif</span> <span class="p">((</span><span class="s1">&#39;_cfgs&#39;</span> <span class="ow">in</span> <span class="n">icheck</span> <span class="ow">or</span> <span class="s1">&#39;cfglist&#39;</span> <span class="ow">in</span> <span class="n">icheck</span><span class="p">)</span> <span class="ow">and</span> <span class="s1">&#39;fo_for_cfgs&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">icheck</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">class1</span><span class="p">[</span><span class="n">icheck</span><span class="p">],</span><span class="nb">bool</span><span class="p">):</span>
+            <span class="k">if</span> <span class="s1">&#39;xsrc_list&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">class1</span><span class="p">[</span><span class="n">icheck</span><span class="p">]</span> <span class="ow">or</span> <span class="s1">&#39;xsrc_list&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">class2</span><span class="p">[</span><span class="n">icheck</span><span class="p">]:</span>
+                <span class="k">for</span> <span class="p">(</span><span class="n">istream</span><span class="p">,</span><span class="n">iccfg</span><span class="p">),</span><span class="n">icfg</span> <span class="ow">in</span> <span class="n">class1</span><span class="p">[</span><span class="n">icheck</span><span class="p">][</span><span class="s1">&#39;configs&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">istream</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">class2</span><span class="p">[</span><span class="n">icheck</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">levels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span> <span class="n">icfg</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">class2</span><span class="p">[</span><span class="n">icheck</span><span class="p">][</span><span class="s1">&#39;configs&#39;</span><span class="p">][</span><span class="n">istream</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="s1">&#39;HumanFile&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">class2</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;config number &#39;</span> <span class="p">,</span> <span class="n">istream</span> <span class="p">,</span><span class="n">icfg</span> <span class="p">,</span> <span class="s1">&#39; not found in &#39;</span><span class="p">,</span> <span class="n">class2</span><span class="p">[</span><span class="s1">&#39;HumanFile&#39;</span><span class="p">])</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;config number &#39;</span> <span class="p">,</span> <span class="n">istream</span> <span class="p">,</span><span class="n">icfg</span> <span class="p">,</span> <span class="s1">&#39; not found in class2&#39;</span><span class="p">)</span>
+                        <span class="k">return</span> <span class="kc">False</span>
+                <span class="k">for</span> <span class="p">(</span><span class="n">istream</span><span class="p">,</span><span class="n">iccfg</span><span class="p">),</span><span class="n">icfg</span> <span class="ow">in</span> <span class="n">class2</span><span class="p">[</span><span class="n">icheck</span><span class="p">][</span><span class="s1">&#39;configs&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">istream</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">class1</span><span class="p">[</span><span class="n">icheck</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">levels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span> <span class="n">icfg</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">class1</span><span class="p">[</span><span class="n">icheck</span><span class="p">][</span><span class="s1">&#39;configs&#39;</span><span class="p">][</span><span class="n">istream</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="s1">&#39;HumanFile&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">class1</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;config number &#39;</span> <span class="p">,</span> <span class="n">istream</span> <span class="p">,</span><span class="n">icfg</span> <span class="p">,</span> <span class="s1">&#39; not found in &#39;</span><span class="p">,</span> <span class="n">class1</span><span class="p">[</span><span class="s1">&#39;HumanFile&#39;</span><span class="p">])</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;config number &#39;</span> <span class="p">,</span> <span class="n">istream</span> <span class="p">,</span><span class="n">icfg</span> <span class="p">,</span> <span class="s1">&#39; not found in class1&#39;</span><span class="p">)</span>
+                        <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="p">(</span><span class="n">istream</span><span class="p">,</span><span class="n">iccfg</span><span class="p">),</span><span class="n">icfg</span> <span class="ow">in</span> <span class="n">class1</span><span class="p">[</span><span class="n">icheck</span><span class="p">][</span><span class="s1">&#39;configs&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">xsrc_test</span><span class="p">,</span><span class="n">cfg_test</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span><span class="kc">False</span>
+                    <span class="n">stream_test</span> <span class="o">=</span> <span class="n">istream</span> <span class="ow">in</span> <span class="n">class2</span><span class="p">[</span><span class="n">icheck</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">levels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">stream_test</span><span class="p">:</span>
+                        <span class="n">cfg_test</span> <span class="o">=</span> <span class="n">icfg</span> <span class="ow">in</span> <span class="n">class2</span><span class="p">[</span><span class="n">icheck</span><span class="p">][</span><span class="s1">&#39;configs&#39;</span><span class="p">][</span><span class="n">istream</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+                        <span class="k">if</span> <span class="n">cfg_test</span><span class="p">:</span>
+                            <span class="n">thisindex</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">class2</span><span class="p">[</span><span class="n">icheck</span><span class="p">][</span><span class="s1">&#39;configs&#39;</span><span class="p">][</span><span class="n">istream</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="o">==</span> <span class="n">icfg</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                            <span class="n">xsrc_set1</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">class1</span><span class="p">[</span><span class="n">icheck</span><span class="p">][</span><span class="s1">&#39;xsrc_list&#39;</span><span class="p">][</span><span class="n">istream</span><span class="p">,</span><span class="n">iccfg</span><span class="p">])</span>
+                            <span class="n">xsrc_set2</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">class2</span><span class="p">[</span><span class="n">icheck</span><span class="p">][</span><span class="s1">&#39;xsrc_list&#39;</span><span class="p">][</span><span class="n">istream</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">thisindex</span><span class="p">])</span>
+                            <span class="n">xsrc_test</span> <span class="o">=</span> <span class="n">xsrc_set1</span> <span class="o">==</span> <span class="n">xsrc_set2</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">cfg_test</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="s1">&#39;HumanFile&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">class2</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;config number missmatch for&#39;</span> <span class="p">,</span> <span class="n">istream</span> <span class="p">,</span><span class="n">icfg</span> <span class="p">,</span> <span class="s1">&#39; not the same as &#39;</span><span class="p">,</span> <span class="n">class2</span><span class="p">[</span><span class="s1">&#39;HumanFile&#39;</span><span class="p">])</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;config number missmatch for&#39;</span> <span class="p">,</span> <span class="n">istream</span> <span class="p">,</span><span class="n">icfg</span> <span class="p">,</span> <span class="s1">&#39; not the same as class2&#39;</span><span class="p">)</span>
+                        <span class="k">return</span> <span class="kc">False</span>
+                    <span class="k">elif</span> <span class="ow">not</span> <span class="n">xsrc_test</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;x_source missmatch&#39;</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">ixsrc</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">xsrc_set1</span><span class="o">-</span><span class="n">xsrc_set2</span><span class="p">):</span>
+                            <span class="k">if</span> <span class="s1">&#39;HumanFile&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">class2</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                                <span class="nb">print</span><span class="p">(</span><span class="n">class2</span><span class="p">[</span><span class="s1">&#39;HumanFile&#39;</span><span class="p">]</span> <span class="p">,</span> <span class="s1">&#39;is missing &#39;</span><span class="p">,</span><span class="n">istream</span> <span class="p">,</span><span class="n">icfg</span> <span class="p">,</span><span class="n">ixsrc</span><span class="p">)</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;class2 has is missing &#39;</span><span class="p">,</span><span class="n">istream</span> <span class="p">,</span><span class="n">icfg</span> <span class="p">,</span><span class="n">ixsrc</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">ixsrc</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">xsrc_set2</span><span class="o">-</span><span class="n">xsrc_set1</span><span class="p">):</span>
+                            <span class="k">if</span> <span class="s1">&#39;HumanFile&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">class2</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                                <span class="nb">print</span><span class="p">(</span><span class="n">class1</span><span class="p">[</span><span class="s1">&#39;HumanFile&#39;</span><span class="p">]</span> <span class="p">,</span> <span class="s1">&#39;is missing &#39;</span><span class="p">,</span><span class="n">istream</span> <span class="p">,</span><span class="n">icfg</span> <span class="p">,</span><span class="n">ixsrc</span><span class="p">)</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;class1 has is missing &#39;</span><span class="p">,</span><span class="n">istream</span> <span class="p">,</span><span class="n">icfg</span> <span class="p">,</span><span class="n">ixsrc</span><span class="p">)</span>
+                        <span class="k">return</span> <span class="kc">False</span>
+                <span class="k">for</span> <span class="p">(</span><span class="n">istream</span><span class="p">,</span><span class="n">iccfg</span><span class="p">),</span><span class="n">icfg</span> <span class="ow">in</span> <span class="n">class2</span><span class="p">[</span><span class="n">icheck</span><span class="p">][</span><span class="s1">&#39;configs&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">cfg_test</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="n">stream_test</span> <span class="o">=</span> <span class="n">istream</span> <span class="ow">in</span> <span class="n">class1</span><span class="p">[</span><span class="n">icheck</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">levels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">stream_test</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">icfg</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">class1</span><span class="p">[</span><span class="n">icheck</span><span class="p">][</span><span class="s1">&#39;configs&#39;</span><span class="p">][</span><span class="n">istream</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="s1">&#39;HumanFile&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">class1</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;config number missmatch for&#39;</span> <span class="p">,</span> <span class="n">istream</span> <span class="p">,</span><span class="n">icfg</span> <span class="p">,</span> <span class="s1">&#39; not the same as &#39;</span><span class="p">,</span> <span class="n">class1</span><span class="p">[</span><span class="s1">&#39;HumanFile&#39;</span><span class="p">])</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;config number missmatch for&#39;</span> <span class="p">,</span> <span class="n">istream</span> <span class="p">,</span><span class="n">icfg</span> <span class="p">,</span> <span class="s1">&#39; not the same as class1&#39;</span><span class="p">)</span>
+                            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">class1</span><span class="p">[</span><span class="n">icheck</span><span class="p">],</span><span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">class1</span><span class="p">[</span><span class="n">icheck</span><span class="p">],</span><span class="nb">tuple</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">class1</span><span class="p">[</span><span class="n">icheck</span><span class="p">],</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">class1</span><span class="p">[</span><span class="n">icheck</span><span class="p">])</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">class2</span><span class="p">[</span><span class="n">icheck</span><span class="p">]):</span>
+                <span class="n">checkbool</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">checkbool</span> <span class="o">=</span> <span class="n">class1</span><span class="p">[</span><span class="n">icheck</span><span class="p">]</span> <span class="o">==</span> <span class="n">class2</span><span class="p">[</span><span class="n">icheck</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">checkbool</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span> <span class="n">checkbool</span> <span class="o">=</span> <span class="nb">all</span><span class="p">(</span><span class="n">checkbool</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">checkbool</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;missmatch&#39;</span> <span class="p">,</span> <span class="n">icheck</span><span class="p">,</span> <span class="n">class1</span><span class="p">[</span><span class="n">icheck</span><span class="p">],</span><span class="n">class2</span><span class="p">[</span><span class="n">icheck</span><span class="p">])</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># print &#39;DEBUG&#39;</span>
+            <span class="c1"># print icheck</span>
+            <span class="c1"># print class1[icheck]</span>
+            <span class="c1"># print class2[icheck]</span>
+            <span class="n">lcheck</span><span class="p">,</span><span class="n">rcheck</span> <span class="o">=</span> <span class="n">class1</span><span class="p">[</span><span class="n">icheck</span><span class="p">],</span><span class="n">class2</span><span class="p">[</span><span class="n">icheck</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lcheck</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+                <span class="n">lcheck</span> <span class="o">=</span> <span class="n">lcheck</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.bak&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+                <span class="n">lcheck</span> <span class="o">=</span> <span class="n">lcheck</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;//&#39;</span><span class="p">,</span><span class="sa">r</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rcheck</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+                <span class="n">rcheck</span> <span class="o">=</span> <span class="n">rcheck</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.bak&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+                <span class="n">rcheck</span> <span class="o">=</span> <span class="n">rcheck</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;//&#39;</span><span class="p">,</span><span class="sa">r</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+            <span class="n">checkbool</span> <span class="o">=</span> <span class="n">rcheck</span> <span class="o">==</span> <span class="n">lcheck</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">checkbool</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span> <span class="n">checkbool</span> <span class="o">=</span> <span class="nb">all</span><span class="p">(</span><span class="n">checkbool</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">checkbool</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;missmatch&#39;</span> <span class="p">,</span> <span class="n">icheck</span><span class="p">,</span> <span class="n">rcheck</span><span class="p">,</span><span class="n">lcheck</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="CombineListCfgs"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.CombineListCfgs">[docs]</a><span class="k">def</span> <span class="nf">CombineListCfgs</span><span class="p">(</span><span class="n">list_cfgs</span><span class="p">,</span><span class="n">this_attr</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">list_cfgs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">list_cfgs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">list_cfgs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">this_attr</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">parselist</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">list_cfgs</span><span class="p">)</span>
+        <span class="n">out_cfgs</span> <span class="o">=</span> <span class="n">CombineCfgs</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">parselist</span><span class="p">),</span><span class="n">this_attr</span><span class="p">),</span><span class="nb">getattr</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">parselist</span><span class="p">),</span><span class="n">this_attr</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">icfg</span> <span class="ow">in</span> <span class="n">parselist</span><span class="p">:</span>
+            <span class="n">out_cfgs</span> <span class="o">=</span> <span class="n">CombineCfgs</span><span class="p">(</span><span class="n">out_cfgs</span><span class="p">,</span><span class="nb">getattr</span><span class="p">(</span><span class="n">icfg</span><span class="p">,</span><span class="n">this_attr</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">out_cfgs</span></div>
+
+
+<div class="viewcode-block" id="MakeStreamCfgs"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.MakeStreamCfgs">[docs]</a><span class="k">def</span> <span class="nf">MakeStreamCfgs</span><span class="p">(</span><span class="n">cfg_df</span><span class="p">):</span>
+    <span class="n">cfg_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span><span class="s1">&#39;stream_cfgs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="s1">&#39;00&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">istream</span><span class="p">,</span><span class="n">icfg</span><span class="p">))</span> <span class="k">for</span> <span class="p">(</span><span class="n">istream</span><span class="p">,</span><span class="n">iccfg</span><span class="p">),</span><span class="n">icfg</span> <span class="ow">in</span> <span class="n">cfg_df</span><span class="p">[</span><span class="s1">&#39;configs&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()],</span><span class="n">index</span><span class="o">=</span><span class="n">cfg_df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">cfg_df</span></div>
+
+<div class="viewcode-block" id="CombineCfgs"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.CombineCfgs">[docs]</a><span class="k">def</span> <span class="nf">CombineCfgs</span><span class="p">(</span><span class="n">cfga</span><span class="p">,</span><span class="n">cfgb</span><span class="p">):</span>
+    <span class="k">if</span> <span class="s1">&#39;xsrc_list&#39;</span> <span class="ow">in</span> <span class="n">cfga</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">Intersect_DataFrame_2col_xsrc</span><span class="p">(</span><span class="n">cfga</span><span class="p">,</span><span class="n">cfgb</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">Intersect_DataFrame_2col_xsrc</span><span class="p">(</span><span class="n">cfgb</span><span class="p">,</span><span class="n">cfga</span><span class="p">)</span>
+    <span class="c1"># print &#39;DEBUG&#39;</span>
+    <span class="c1"># print &#39;cfga&#39;</span>
+    <span class="c1"># print cfga</span>
+    <span class="c1"># print</span>
+    <span class="c1"># print &#39;cfgb&#39;</span>
+    <span class="c1"># print cfga</span>
+    <span class="c1"># print</span>
+    <span class="c1"># print &#39;comb_cfg&#39;</span>
+    <span class="c1"># print MakeStreamCfgs(output)</span>
+    <span class="c1"># print</span>
+    <span class="k">return</span> <span class="n">MakeStreamCfgs</span><span class="p">(</span><span class="n">output</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ReduceCfgs"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.ReduceCfgs">[docs]</a><span class="k">def</span> <span class="nf">ReduceCfgs</span><span class="p">(</span><span class="n">twopt</span><span class="p">,</span><span class="n">threept</span><span class="p">):</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">threept</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;stream_cfgs&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">threept</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">threept</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span><span class="s1">&#39;stream_cfgs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="s1">&#39;00&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">istream</span><span class="p">,</span><span class="n">icfg</span><span class="p">))</span> <span class="k">for</span> <span class="p">(</span><span class="n">istream</span><span class="p">,</span><span class="n">iccfg</span><span class="p">),</span><span class="n">icfg</span> <span class="ow">in</span> <span class="n">threept</span><span class="p">[</span><span class="s1">&#39;configs&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()],</span><span class="n">index</span><span class="o">=</span><span class="n">threept</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;stream_cfgs&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">twopt</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">twopt</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span><span class="s1">&#39;stream_cfgs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="s1">&#39;00&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">istream</span><span class="p">,</span><span class="n">icfg</span><span class="p">))</span> <span class="k">for</span> <span class="p">(</span><span class="n">istream</span><span class="p">,</span><span class="n">iccfg</span><span class="p">),</span><span class="n">icfg</span> <span class="ow">in</span> <span class="n">twopt</span><span class="p">[</span><span class="s1">&#39;configs&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()],</span><span class="n">index</span><span class="o">=</span><span class="n">twopt</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">ikey</span><span class="p">,</span><span class="n">stream_cfg</span> <span class="ow">in</span> <span class="n">threept</span><span class="p">[</span><span class="s1">&#39;stream_cfgs&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">stream_cfg</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">twopt</span><span class="p">[</span><span class="s1">&#39;stream_cfgs&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
+            <span class="n">output</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">ikey</span><span class="p">,</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">output</span></div>
+    <span class="c1">#</span>
+    <span class="c1"># twoptout = OrderedDict()</span>
+    <span class="c1"># for icfg,isrclist in twopt.iteritems():</span>
+    <span class="c1">#     if icfg in threept.keys():</span>
+    <span class="c1">#         twoptout[icfg] = isrclist</span>
+    <span class="c1"># for icfg in threept.keys():</span>
+    <span class="c1">#     if icfg not in twopt.keys():</span>
+    <span class="c1">#         print icfg</span>
+    <span class="c1">#         raise IOError(&#39;cfg in 3pt not in 2pt, please delete three point correlator configuration&#39;)</span>
+    <span class="c1"># return twoptout</span>
+
+
+<div class="viewcode-block" id="GetInfoList"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.GetInfoList">[docs]</a><span class="k">def</span> <span class="nf">GetInfoList</span><span class="p">(</span><span class="n">thisInfo</span><span class="p">):</span>
+    <span class="k">if</span> <span class="s1">&#39;sm2ptRat&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">thisInfo</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+        <span class="k">if</span> <span class="s1">&#39;jsmCoeffs&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">thisInfo</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="n">jsmcoeffs</span> <span class="o">=</span> <span class="n">thisInfo</span><span class="p">[</span><span class="s1">&#39;jsmCoeffs&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;jsm coefficients are needed when passing in jsm2ptRat&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;sinklab&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">thisInfo</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="n">sinklab</span> <span class="o">=</span> <span class="n">thisInfo</span><span class="p">[</span><span class="s1">&#39;sinklab&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sinklab</span> <span class="o">=</span> <span class="s1">&#39;Comb&#39;</span>
+
+        <span class="n">sm2ptList</span> <span class="o">=</span> <span class="n">thisInfo</span><span class="p">[</span><span class="s1">&#39;sm2ptRat&#39;</span><span class="p">]</span>
+        <span class="n">thisInfoList</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">jsm</span> <span class="ow">in</span> <span class="n">thisInfo</span><span class="p">[</span><span class="s1">&#39;sm2ptRat&#39;</span><span class="p">]:</span>
+            <span class="n">thisInfoPass</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">thisInfo</span><span class="p">)</span>
+            <span class="c1"># thisInfoPass[&#39;Interp&#39;] = &#39;CPEven&#39;</span>
+            <span class="n">thisInfoPass</span><span class="p">[</span><span class="s1">&#39;jsm&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">jsm</span>
+            <span class="n">thisInfoList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">thisInfoPass</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">jsmcoeffs</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s1">&#39;jsm&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">thisInfo</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="n">sinklab</span> <span class="o">=</span> <span class="s1">&#39;jsm&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">thisInfo</span><span class="p">[</span><span class="s1">&#39;jsm&#39;</span><span class="p">])</span>
+            <span class="n">sm2ptList</span> <span class="o">=</span> <span class="n">thisInfo</span><span class="p">[</span><span class="s1">&#39;jsm&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sm2ptList</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">sinklab</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">thisInfoList</span> <span class="o">=</span> <span class="p">[</span><span class="n">thisInfo</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">sinklab</span><span class="p">,</span><span class="n">jsmcoeffs</span><span class="p">,</span><span class="n">sm2ptList</span><span class="p">,</span><span class="n">thisInfoList</span></div>
+
+
+<div class="viewcode-block" id="GenSinkFun"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.GenSinkFun">[docs]</a><span class="k">def</span> <span class="nf">GenSinkFun</span><span class="p">(</span><span class="n">jsmcoeffs</span><span class="p">,</span><span class="n">show_timer</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">SinkCombFun</span><span class="p">(</span><span class="o">*</span><span class="n">c2list</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">c2list</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">jsmcoeffs</span><span class="p">)</span> <span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">jsmcoeffs</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">c2list</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">EnvironmentError</span><span class="p">(</span><span class="s1">&#39;SinkCombFun expects &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">jsmcoeffs</span><span class="p">))</span><span class="o">+</span><span class="s1">&#39; c2funs, got &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">jsmcoeffs</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="n">show_timer</span><span class="p">:</span> <span class="n">thistimer</span> <span class="o">=</span> <span class="n">Timer</span><span class="p">(</span><span class="n">linklist</span><span class="o">=</span><span class="n">c2list</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Sink Comb: &#39;</span><span class="p">)</span>
+        <span class="n">c2list</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">c2list</span><span class="p">)</span>
+        <span class="n">this_jsmc</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">jsmcoeffs</span><span class="p">)</span>
+        <span class="c1"># if isinstance(coeff,basestring):</span>
+        <span class="c1">#     print &#39;Warning, combining correlators had incorrect coefficient&#39;, coeff</span>
+        <span class="c1">#     continue</span>
+        <span class="n">icoeff</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">this_jsmc</span><span class="p">)</span>
+        <span class="n">ic2</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">c2list</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">icoeff</span> <span class="o">==</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">ic2</span>
+        <span class="k">elif</span> <span class="n">icoeff</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">ic2</span><span class="o">*</span><span class="n">icoeff</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">if</span> <span class="n">show_timer</span><span class="p">:</span> <span class="n">thistimer</span><span class="o">.</span><span class="n">Lap</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">ic2</span><span class="p">,</span><span class="n">icoeff</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">c2list</span><span class="p">,</span><span class="n">this_jsmc</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">icoeff</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Warning, combining correlators had incorrect coefficient&#39;</span><span class="p">,</span> <span class="n">icoeff</span><span class="p">)</span>
+                <span class="k">continue</span>
+            <span class="c1"># print</span>
+            <span class="c1"># print &#39;test&#39;</span>
+            <span class="c1"># print &#39;coeff&#39;,coeff</span>
+            <span class="c1"># if hasattr(ic2,&#39;NNQ_Stats&#39;):</span>
+            <span class="c1">#     print &#39;NNQ&#39;</span>
+            <span class="c1">#     print [ival.bootvals[0] for ival in ic2.NNQ_Stats[&#39;boot&#39;].values[:5]]</span>
+            <span class="c1"># else:</span>
+            <span class="c1">#     print &#39;C2&#39;</span>
+            <span class="c1">#     print [ival.bootvals[0] for ival in ic2.C2_Stats[&#39;boot&#39;].values[:5]]</span>
+
+            <span class="c1"># print</span>
+            <span class="c1"># print &#39;test2&#39;</span>
+            <span class="c1"># print [ival.bootvals[0] for ival in output.values()]</span>
+            <span class="k">if</span> <span class="n">icoeff</span> <span class="o">==</span> <span class="mf">1.0</span><span class="p">:</span>
+                <span class="n">output</span> <span class="o">=</span> <span class="n">output</span> <span class="o">+</span> <span class="n">ic2</span>
+            <span class="k">elif</span> <span class="n">icoeff</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
+                <span class="n">output</span> <span class="o">=</span> <span class="n">output</span> <span class="o">+</span> <span class="n">ic2</span><span class="o">*</span><span class="n">icoeff</span>
+            <span class="k">if</span> <span class="n">show_timer</span><span class="p">:</span> <span class="n">thistimer</span><span class="o">.</span><span class="n">Lap</span><span class="p">()</span>
+            <span class="c1"># print &#39;testComb&#39;</span>
+            <span class="c1"># if hasattr(ic2,&#39;NNQ_Stats&#39;):</span>
+            <span class="c1">#     print [ival.bootvals[0] for ival in output.NNQ_Stats[&#39;boot&#39;].values[:5]]</span>
+            <span class="c1"># else:</span>
+            <span class="c1">#     print [ival.bootvals[0] for ival in output.C2_Stats[&#39;boot&#39;].values[:5]]</span>
+            <span class="c1"># print</span>
+        <span class="k">return</span> <span class="n">output</span>
+    <span class="k">return</span> <span class="n">SinkCombFun</span></div>
+
+<div class="viewcode-block" id="CreateNameAndLL"><a class="viewcode-back" href="../MiscFuns.html#MiscFuns.CreateNameAndLL">[docs]</a><span class="k">def</span> <span class="nf">CreateNameAndLL</span><span class="p">(</span><span class="n">thisset</span><span class="p">,</span><span class="n">thissink</span><span class="p">,</span><span class="n">from_index</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="n">firstkey</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">thisset</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="n">from_index</span><span class="p">]</span>
+    <span class="n">thisname</span> <span class="o">=</span> <span class="n">thisset</span><span class="p">[</span><span class="n">firstkey</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
+    <span class="n">thisleglab</span> <span class="o">=</span> <span class="n">thisset</span><span class="p">[</span><span class="n">firstkey</span><span class="p">]</span><span class="o">.</span><span class="n">LegLab</span>
+    <span class="n">firstjsm</span> <span class="o">=</span> <span class="n">thisset</span><span class="p">[</span><span class="n">firstkey</span><span class="p">]</span><span class="o">.</span><span class="n">jsm</span>
+    <span class="n">thisname</span> <span class="o">=</span> <span class="n">thisname</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">firstjsm</span><span class="p">,</span><span class="n">thissink</span><span class="p">)</span>
+    <span class="n">thisleglab</span> <span class="o">=</span> <span class="n">thisleglab</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">firstjsm</span><span class="p">,</span><span class="n">thissink</span><span class="p">)</span>
+    <span class="n">jsmlab</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">thissm</span><span class="o">.</span><span class="n">jsm</span> <span class="k">for</span> <span class="n">thissm</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">thisset</span><span class="o">.</span><span class="n">values</span><span class="p">())])</span>
+    <span class="k">return</span> <span class="n">thisname</span><span class="p">,</span><span class="n">thisleglab</span><span class="p">,</span><span class="n">jsmlab</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table of Contents</h3>
+          <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Python_Analysis</a></li>
+</ul>
+
+          <div role="search">
+            <h3 style="margin-top: 1.5em;">Search</h3>
+            <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+            </form>
+          </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <div role="navigation" aria-label="related navigaton">
+            <a href="../py-modindex.html" title="Python Module Index"
+              >modules</a> |
+            <a href="../genindex.html" title="General Index"
+              >index</a>
+          </div>
+          <div role="note" aria-label="source link">
+          </div>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Jack Dragos.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>

@@ -83,6 +83,12 @@ def c3FFDer(x,p):
         tf = x[0].Sqrt()
     return [makexunit(tf),1/tf,tf]
 
+def c3FitFun_nosqrt(x,p):
+    return 1+p[0] + p[1]*(x[0]**-2) + p[2]*x[0]**2
+
+def c3FFDer_nosqrt(x,p):
+    return [makexunit(x[0]),x[0]**-2,x[0]**2]
+
 def c3FitFun_V2(x,p):
     try:
         tf = np.sqrt(x[0])

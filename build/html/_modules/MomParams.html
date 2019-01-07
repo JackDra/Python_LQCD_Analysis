@@ -1,0 +1,1136 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>MomParams &#8212; LQCD Analysis Codebase TF Fits documentation</title>
+    <link rel="stylesheet" href="../_static/agogo.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="header-wrapper" role="banner">
+      <div class="header">
+        <div class="headertitle"><a
+          href="../index.html">LQCD Analysis Codebase TF Fits documentation</a></div>
+        <div class="rel" role="navigation" aria-label="related navigation">
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for MomParams</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pa</span>
+<span class="kn">from</span> <span class="nn">MiscFuns</span> <span class="k">import</span> <span class="n">mkdir_p</span><span class="p">,</span><span class="n">ODNested</span>
+<span class="kn">from</span> <span class="nn">Params</span> <span class="k">import</span> <span class="n">defmom2list</span><span class="p">,</span><span class="n">nxyzt</span><span class="p">,</span><span class="n">hbarc</span><span class="p">,</span><span class="n">latspace</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="c1"># import dill as pickle</span>
+<span class="kn">from</span> <span class="nn">Params</span> <span class="k">import</span> <span class="n">defInfo</span>
+<span class="kn">from</span> <span class="nn">FileIO</span> <span class="k">import</span> <span class="n">WriteXml</span><span class="p">,</span><span class="n">WritePickle</span><span class="p">,</span><span class="n">ReadPickleWrap</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">XmlFormatting</span> <span class="k">import</span> <span class="n">AvgStdToFormat</span>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">Updated version of MomParams.py, now contains a class for specific momenta lists.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">physcial_pion_mass</span> <span class="o">=</span> <span class="mf">139.57061</span> <span class="c1">##MeV  from http://pdg.lbl.gov/2017/tables/rpp2017-tab-mesons-light.pdf</span>
+<span class="n">physcial_pion_mass_err</span> <span class="o">=</span> <span class="mf">0.00024</span> <span class="c1">##MeV  from http://pdg.lbl.gov/2017/tables/rpp2017-tab-mesons-light.pdf</span>
+
+
+
+<div class="viewcode-block" id="LatticeParameters"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters">[docs]</a><span class="k">class</span> <span class="nc">LatticeParameters</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Contains routines and parameters for momentum</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">mom2list</span><span class="o">=</span><span class="n">defmom2list</span><span class="p">,</span><span class="n">Info</span><span class="o">=</span><span class="n">defInfo</span><span class="p">,</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mom2list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mom2list</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Info</span> <span class="o">=</span> <span class="n">Info</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mom2max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mom2list</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mom2min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mom2list</span><span class="p">)</span>
+
+
+        <span class="c1">## Box verticies in each dimension (nx,ny,nz,nt)</span>
+        <span class="k">if</span> <span class="s1">&#39;nxyzt&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">Info</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span> <span class="bp">self</span><span class="o">.</span><span class="n">nxyzt</span> <span class="o">=</span> <span class="n">Info</span><span class="p">[</span><span class="s1">&#39;nxyzt&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">nxyzt</span> <span class="o">=</span> <span class="n">nxyzt</span>
+
+
+        <span class="c1">## this is needed</span>
+        <span class="k">if</span> <span class="s1">&#39;outdir&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">Info</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">outputdir</span> <span class="o">=</span> <span class="n">Info</span><span class="p">[</span><span class="s1">&#39;outdir&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">Info</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;output directory is needed in information dictionary, (Info[&#39;outdir&#39;] = ...) &quot;</span><span class="p">)</span>
+
+
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">hbarc</span> <span class="o">=</span> <span class="n">hbarc</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nxyz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nxyzt</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nxyzt</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="c1"># self.nx,self.ny,self.nz = self.nxyz</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nxyz</span> <span class="o">!=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">nxyz</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">nxyz</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">nxyz</span><span class="p">[</span><span class="mi">0</span><span class="p">]]:</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;code only works for square spatial lattices&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nxyz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nxyz</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dim_label</span> <span class="o">=</span> <span class="s1">&#39;RC&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nxyz</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;x&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nt</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">qunit</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nxyz</span><span class="p">)</span>
+
+        <span class="c1">## lattice spacing in fm</span>
+        <span class="k">if</span> <span class="s1">&#39;a&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">Info</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span> <span class="bp">self</span><span class="o">.</span><span class="n">latspace</span> <span class="o">=</span> <span class="n">Info</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">latspace</span> <span class="o">=</span> <span class="n">latspace</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hbarcdivlat</span> <span class="o">=</span> <span class="n">hbarc</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">latspace</span> <span class="c1">## in GeV</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qunitPhys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qunit</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">hbarcdivlat</span> <span class="c1">## in GeV</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Lxyz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">latspace</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">nxyz</span> <span class="c1">## in fm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Lt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">latspace</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">nt</span> <span class="c1">## FIX UNITS TODO SLD:HGSGH</span>
+
+        <span class="c1">## kappa up down (in integer form)</span>
+        <span class="k">if</span> <span class="s1">&#39;kud&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">Info</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span> <span class="bp">self</span><span class="o">.</span><span class="n">kud</span> <span class="o">=</span> <span class="s1">&#39;kud&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">Info</span><span class="p">[</span><span class="s1">&#39;kud&#39;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">kud</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="c1">## kappa strange (in integer form)</span>
+        <span class="k">if</span> <span class="s1">&#39;ks&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">Info</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span> <span class="bp">self</span><span class="o">.</span><span class="n">ks</span> <span class="o">=</span> <span class="s1">&#39;ks&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">Info</span><span class="p">[</span><span class="s1">&#39;ks&#39;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ks</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">kappafolder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim_label</span><span class="o">+</span><span class="s1">&#39;Kud0&#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">kud</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;kud&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;Ks0&#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">ks</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;ks&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">kud</span> <span class="ow">in</span> <span class="s1">&#39;kud1370000&#39;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">ks</span> <span class="ow">in</span> <span class="s1">&#39;ks1364000&#39;</span> <span class="ow">and</span> <span class="s1">&#39;RC32x64&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim_label</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">NucleonMass</span> <span class="o">=</span> <span class="mf">0.7277</span> <span class="c1">## Lat Units</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">NucleonMassErr</span> <span class="o">=</span> <span class="mf">0.0022</span> <span class="c1">## Lat Units</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">PionMass</span> <span class="o">=</span> <span class="mf">0.3213</span> <span class="c1">## Lat Units</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">PionMassErr</span> <span class="o">=</span> <span class="mf">0.00015</span> <span class="c1">## Lat Units</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">UDMass</span> <span class="o">=</span> <span class="mf">0.030753</span> <span class="c1"># am_ud in MSbar</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">UDMassErr</span> <span class="o">=</span> <span class="mf">0.000110</span> <span class="c1"># am_ud in MSbar</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">SMass</span> <span class="o">=</span> <span class="mf">0.047142</span> <span class="c1"># am_s in MSbar</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">SMassErr</span> <span class="o">=</span> <span class="mf">0.0000110</span> <span class="c1"># am_s in MSbar</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">kud</span> <span class="o">==</span> <span class="s1">&#39;kud1375400&#39;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">ks</span> <span class="o">==</span> <span class="s1">&#39;ks1364000&#39;</span><span class="ow">and</span> <span class="s1">&#39;RC32x64&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim_label</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">NucleonMass</span> <span class="o">=</span> <span class="mf">0.5584</span> <span class="c1">## Lat Units</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">NucleonMassErr</span> <span class="o">=</span> <span class="mf">0.0053</span> <span class="c1">## Lat Units</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">PionMass</span> <span class="o">=</span> <span class="mf">0.1883</span> <span class="c1">## Lat Units</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">PionMassErr</span> <span class="o">=</span> <span class="mf">0.0003</span> <span class="c1">## Lat Units</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">UDMass</span> <span class="o">=</span> <span class="mf">0.011028</span> <span class="c1"># am_ud in MSbar</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">UDMassErr</span> <span class="o">=</span> <span class="mf">0.000080</span> <span class="c1"># am_ud in MSbar</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">SMass</span> <span class="o">=</span> <span class="mf">0.042355</span> <span class="c1"># am_s in MSbar</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">SMassErr</span> <span class="o">=</span> <span class="mf">0.000079</span> <span class="c1"># am_s in MSbar</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">kud</span> <span class="o">==</span> <span class="s1">&#39;kud1372700&#39;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">ks</span> <span class="o">==</span> <span class="s1">&#39;ks1364000&#39;</span><span class="ow">and</span> <span class="s1">&#39;RC32x64&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim_label</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">NucleonMass</span> <span class="o">=</span> <span class="mf">0.6487</span> <span class="c1">## Lat Units</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">NucleonMassErr</span> <span class="o">=</span> <span class="mf">0.0056</span> <span class="c1">## Lat Units</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">PionMass</span> <span class="o">=</span> <span class="mf">0.2609</span> <span class="c1">## Lat Units</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">PionMassErr</span> <span class="o">=</span> <span class="mf">0.00015</span> <span class="c1">## Lat Units</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">UDMass</span> <span class="o">=</span> <span class="mf">0.020834</span> <span class="c1"># am_ud in MSbar</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">UDMassErr</span> <span class="o">=</span> <span class="mf">0.000066</span> <span class="c1"># am_ud in MSbar</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">SMass</span> <span class="o">=</span> <span class="mf">0.044674</span> <span class="c1"># am_s in MSbar</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">SMassErr</span> <span class="o">=</span> <span class="mf">0.000072</span> <span class="c1"># am_s in MSbar</span>
+        <span class="k">elif</span> <span class="s1">&#39;RC16x32&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim_label</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">NucleonMass</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)</span> <span class="c1">## Lat Units</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">NucleonMassErr</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)</span> <span class="c1">## Lat Units</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">PionMass</span> <span class="o">=</span> <span class="mf">0.3940</span> <span class="c1">## Lat Units Taken from kud 13700</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">PionMassErr</span> <span class="o">=</span> <span class="mf">0.00055</span> <span class="c1">## Lat Units</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">UDMass</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)</span> <span class="c1"># am_ud in MSbar</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">UDMassErr</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)</span> <span class="c1"># am_ud in MSbar</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">SMass</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)</span> <span class="c1"># am_s in MSbar</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">SMassErr</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)</span> <span class="c1"># am_s in MSbar</span>
+        <span class="k">elif</span> <span class="s1">&#39;RC20x40&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim_label</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">NucleonMass</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)</span> <span class="c1">## Lat Units</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">NucleonMassErr</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)</span> <span class="c1">## Lat Units</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">PionMass</span> <span class="o">=</span> <span class="mf">0.3208</span> <span class="c1">## Lat Units Taken from kud 13700</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">PionMassErr</span> <span class="o">=</span> <span class="mf">0.00033</span> <span class="c1">## Lat Units</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">UDMass</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)</span> <span class="c1"># am_ud in MSbar</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">UDMassErr</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)</span> <span class="c1"># am_ud in MSbar</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">SMass</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)</span> <span class="c1"># am_s in MSbar</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">SMassErr</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)</span> <span class="c1"># am_s in MSbar</span>
+        <span class="k">elif</span> <span class="s1">&#39;RC28x56&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim_label</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">NucleonMass</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)</span> <span class="c1">## Lat Units</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">NucleonMassErr</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)</span> <span class="c1">## Lat Units</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">PionMass</span> <span class="o">=</span> <span class="mf">0.2289</span> <span class="c1">## Lat Units Taken from kud 13700</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">PionMassErr</span> <span class="o">=</span> <span class="mf">0.00024</span> <span class="c1">## Lat Units</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">UDMass</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)</span> <span class="c1"># am_ud in MSbar</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">UDMassErr</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)</span> <span class="c1"># am_ud in MSbar</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">SMass</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)</span> <span class="c1"># am_s in MSbar</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">SMassErr</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)</span> <span class="c1"># am_s in MSbar</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ensemble not found for parameters, setting to NaN&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">NucleonMass</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)</span> <span class="c1">## Lat Units</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">NucleonMassErr</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)</span> <span class="c1">## Lat Units</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">PionMass</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)</span> <span class="c1">## Lat Units Taken from kud 13700</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">PionMassErr</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)</span> <span class="c1">## Lat Units</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">UDMass</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)</span> <span class="c1"># am_ud in MSbar</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">UDMassErr</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)</span> <span class="c1"># am_ud in MSbar</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">SMass</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)</span> <span class="c1"># am_s in MSbar</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">SMassErr</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)</span> <span class="c1"># am_s in MSbar</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetCustomName</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="LatticeParameters.RemoveDup"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.RemoveDup">[docs]</a>    <span class="k">def</span> <span class="nf">RemoveDup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">thislist</span><span class="p">):</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">ival</span> <span class="ow">in</span> <span class="n">thislist</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ival</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">output</span><span class="p">:</span>
+                <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ival</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thislist</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">output</span></div>
+
+<div class="viewcode-block" id="LatticeParameters.Set_t0"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.Set_t0">[docs]</a>    <span class="k">def</span> <span class="nf">Set_t0</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">this_to</span><span class="p">,</span><span class="n">cfglist</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t0_values</span> <span class="o">=</span> <span class="n">this_to</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t0_cfglist</span> <span class="o">=</span> <span class="n">cfglist</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Write</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="LatticeParameters.Get_t0"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.Get_t0">[docs]</a>    <span class="k">def</span> <span class="nf">Get_t0</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s1">&#39;t0_values&#39;</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;t0 not present in&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">PickleFile</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Reload</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s1">&#39;t0_values&#39;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">EnvironmentError</span><span class="p">(</span><span class="s1">&#39;t0 not previously computed&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">t0_values</span></div>
+
+
+<div class="viewcode-block" id="LatticeParameters.SetCustomName"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.SetCustomName">[docs]</a>    <span class="k">def</span> <span class="nf">SetCustomName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;psqrd&#39;</span><span class="o">+</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">mom2list</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kappafolder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim_label</span><span class="o">+</span><span class="s1">&#39;Kud0&#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">kud</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;kud&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;Ks0&#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">ks</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;ks&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thisdir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputdir</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">kappafolder</span><span class="o">+</span><span class="s1">&#39;/Parameters/&#39;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">mkdir_p</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">thisdir</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">HumanFile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">thisdir</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">+</span><span class="s1">&#39;.xml&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">PickleFile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">thisdir</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">+</span><span class="s1">&#39;.py3p&#39;</span></div>
+
+<div class="viewcode-block" id="LatticeParameters.FixRead"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.FixRead">[docs]</a>    <span class="k">def</span> <span class="nf">FixRead</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">readdict</span><span class="p">):</span>
+        <span class="n">readdict</span><span class="p">[</span><span class="s1">&#39;PickleFile&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">PickleFile</span>
+        <span class="n">readdict</span><span class="p">[</span><span class="s1">&#39;HumanFile&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">HumanFile</span>
+        <span class="n">readdict</span><span class="p">[</span><span class="s1">&#39;outputdir&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputdir</span>
+        <span class="k">return</span> <span class="n">readdict</span></div>
+
+<div class="viewcode-block" id="LatticeParameters.Reload"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.Reload">[docs]</a>    <span class="k">def</span> <span class="nf">Reload</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">PickleFile</span><span class="p">):</span>
+            <span class="n">loadeddict</span> <span class="o">=</span> <span class="n">ReadPickleWrap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">PickleFile</span><span class="p">)</span>
+            <span class="c1"># loadeddict = self.FixDict(loadeddict)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">loadeddict</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;momparams Reload failed, cannot find file:&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">PickleFile</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LatticeParameters.LoadPickle"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.LoadPickle">[docs]</a>    <span class="k">def</span> <span class="nf">LoadPickle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">DefWipe</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">no_write</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">PickleFile</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">DefWipe</span><span class="p">:</span>
+            <span class="c1"># print &#39;Loading Pickle for &#39; , self.name</span>
+            <span class="n">loadeddict</span> <span class="o">=</span> <span class="n">ReadPickleWrap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">PickleFile</span><span class="p">)</span>
+            <span class="c1"># loadeddict = self.FixDict(loadeddict)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">loadeddict</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">no_write</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Avgmomlist</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Chromamomlist</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ReadAndWrite</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="LatticeParameters.ReadAndWrite"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.ReadAndWrite">[docs]</a>    <span class="k">def</span> <span class="nf">ReadAndWrite</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Avgmomlist</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Chromamomlist</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Write</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="LatticeParameters.Write"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.Write">[docs]</a>    <span class="k">def</span> <span class="nf">Write</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1">## Write human readable file with data</span>
+        <span class="k">def</span> <span class="nf">FixDictArray</span><span class="p">(</span><span class="n">thislist</span><span class="p">,</span><span class="n">ikey</span><span class="p">):</span>
+            <span class="n">outDict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">ic</span><span class="p">,</span><span class="n">ilist</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">thislist</span><span class="p">):</span>
+                <span class="n">outDict</span><span class="p">[</span><span class="n">ikey</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">ic</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="n">ilist</span>
+            <span class="k">return</span> <span class="n">outDict</span>
+
+        <span class="n">outDict</span> <span class="o">=</span> <span class="n">ODNested</span><span class="p">()</span>
+        <span class="n">outDict</span><span class="p">[</span><span class="s1">&#39;kud&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kud</span>
+        <span class="n">outDict</span><span class="p">[</span><span class="s1">&#39;ks&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ks</span>
+        <span class="n">outDict</span><span class="p">[</span><span class="s1">&#39;q_unit&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qunit</span>
+        <span class="n">outDict</span><span class="p">[</span><span class="s1">&#39;q_unit_Phys_GeV&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qunitPhys</span>
+        <span class="n">outDict</span><span class="p">[</span><span class="s1">&#39;lattice_space_fm&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">latspace</span>
+        <span class="n">outDict</span><span class="p">[</span><span class="s1">&#39;nt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nt</span>
+        <span class="n">outDict</span><span class="p">[</span><span class="s1">&#39;nxyz&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nxyz</span>
+        <span class="n">outDict</span><span class="p">[</span><span class="s1">&#39;Lt_fm&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Lt</span>
+        <span class="n">outDict</span><span class="p">[</span><span class="s1">&#39;Lxyz_fm&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Lxyz</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s1">&#39;t0_values&#39;</span><span class="p">):</span>
+            <span class="n">outDict</span><span class="p">[</span><span class="s1">&#39;t0_flow&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">AvgStdToFormat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t0_values</span><span class="p">[</span><span class="s1">&#39;boot&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">Avg</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">t0_values</span><span class="p">[</span><span class="s1">&#39;boot&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">Std</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">PickleFile</span><span class="p">):</span>
+                <span class="n">file_data</span> <span class="o">=</span> <span class="n">ReadPickleWrap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">PickleFile</span><span class="p">)</span>
+                <span class="k">if</span> <span class="s1">&#39;t0_values&#39;</span> <span class="ow">in</span> <span class="n">file_data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">t0_values</span> <span class="o">=</span> <span class="n">file_data</span><span class="p">[</span><span class="s1">&#39;t0_values&#39;</span><span class="p">]</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">t0_cfglist</span> <span class="o">=</span> <span class="n">file_data</span><span class="p">[</span><span class="s1">&#39;t0_cfglist&#39;</span><span class="p">]</span>
+                    <span class="n">outDict</span><span class="p">[</span><span class="s1">&#39;t0_flow&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">AvgStdToFormat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t0_values</span><span class="p">[</span><span class="s1">&#39;boot&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">Avg</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">t0_values</span><span class="p">[</span><span class="s1">&#39;boot&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">Std</span><span class="p">)</span>
+
+
+
+        <span class="n">outDict</span><span class="p">[</span><span class="s1">&#39;kappafolder&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kappafolder</span>
+        <span class="n">outDict</span><span class="p">[</span><span class="s1">&#39;PionMass&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">PionMass</span>
+        <span class="n">outDict</span><span class="p">[</span><span class="s1">&#39;NucleonMass&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">NucleonMass</span>
+        <span class="n">outDict</span><span class="p">[</span><span class="s1">&#39;PickleFile&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">PickleFile</span>
+        <span class="n">outDict</span><span class="p">[</span><span class="s1">&#39;outputdir&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputdir</span>
+        <span class="n">outDict</span><span class="p">[</span><span class="s1">&#39;momentum_list_average&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">FixDictArray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">momformlistAvg</span><span class="p">,</span><span class="s1">&#39;pAvg_&#39;</span><span class="p">)</span>
+        <span class="n">outDict</span><span class="p">[</span><span class="s1">&#39;momentum_list&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">FixDictArray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">momformlist</span><span class="p">,</span><span class="s1">&#39;p_&#39;</span><span class="p">)</span>
+
+
+
+        <span class="n">WriteXml</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">HumanFile</span><span class="p">,{</span><span class="s1">&#39;Results&#39;</span><span class="p">:</span><span class="n">outDict</span><span class="p">})</span>
+        <span class="c1">## pickles rest of data for reading</span>
+        <span class="n">WritePickle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">PickleFile</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">,</span><span class="n">Bak</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LatticeParameters.GetNucleonMass"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.GetNucleonMass">[docs]</a>    <span class="k">def</span> <span class="nf">GetNucleonMass</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">Phys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">MeV</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">Phys</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">MeV</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">NucleonMass</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">hbarcdivlat</span><span class="o">*</span><span class="mi">1000</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">NucleonMass</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">hbarcdivlat</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">NucleonMass</span></div>
+
+<div class="viewcode-block" id="LatticeParameters.GetNucleonMassErr"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.GetNucleonMassErr">[docs]</a>    <span class="k">def</span> <span class="nf">GetNucleonMassErr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">Phys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">MeV</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">Phys</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">MeV</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">NucleonMassErr</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">hbarcdivlat</span><span class="o">*</span><span class="mi">1000</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">NucleonMassErr</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">hbarcdivlat</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">NucleonMassErr</span></div>
+
+
+<div class="viewcode-block" id="LatticeParameters.GetPionMass"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.GetPionMass">[docs]</a>    <span class="k">def</span> <span class="nf">GetPionMass</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">Phys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">MeV</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">Phys</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">MeV</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">PionMass</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">hbarcdivlat</span><span class="o">*</span><span class="mi">1000</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">PionMass</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">hbarcdivlat</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">PionMass</span></div>
+
+<div class="viewcode-block" id="LatticeParameters.GetPionMassErr"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.GetPionMassErr">[docs]</a>    <span class="k">def</span> <span class="nf">GetPionMassErr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">Phys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">MeV</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">Phys</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">MeV</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">PionMassErr</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">hbarcdivlat</span><span class="o">*</span><span class="mi">1000</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">PionMassErr</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">hbarcdivlat</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">PionMassErr</span></div>
+
+<div class="viewcode-block" id="LatticeParameters.GetUDMass"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.GetUDMass">[docs]</a>    <span class="k">def</span> <span class="nf">GetUDMass</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">Phys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">MeV</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">Phys</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">MeV</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">UDMass</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">hbarcdivlat</span><span class="o">*</span><span class="mi">1000</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">UDMass</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">hbarcdivlat</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">UDMass</span></div>
+
+<div class="viewcode-block" id="LatticeParameters.GetUDMassErr"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.GetUDMassErr">[docs]</a>    <span class="k">def</span> <span class="nf">GetUDMassErr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">Phys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">MeV</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">Phys</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">MeV</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">UDMassErr</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">hbarcdivlat</span><span class="o">*</span><span class="mi">1000</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">UDMassErr</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">hbarcdivlat</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">UDMassErr</span></div>
+
+<div class="viewcode-block" id="LatticeParameters.GetSMass"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.GetSMass">[docs]</a>    <span class="k">def</span> <span class="nf">GetSMass</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">Phys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">MeV</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">Phys</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">MeV</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">SMass</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">hbarcdivlat</span><span class="o">*</span><span class="mi">1000</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">SMass</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">hbarcdivlat</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">SMass</span></div>
+
+<div class="viewcode-block" id="LatticeParameters.GetSMassErr"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.GetSMassErr">[docs]</a>    <span class="k">def</span> <span class="nf">GetSMassErr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">Phys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">MeV</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">Phys</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">MeV</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">SMassErr</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">hbarcdivlat</span><span class="o">*</span><span class="mi">1000</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">SMassErr</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">hbarcdivlat</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">SMassErr</span></div>
+
+
+
+
+<div class="viewcode-block" id="LatticeParameters.GetNucleonMassLab"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.GetNucleonMassLab">[docs]</a>    <span class="k">def</span> <span class="nf">GetNucleonMassLab</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">Phys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">MeV</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">Phys</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">MeV</span><span class="p">:</span>
+                <span class="k">return</span> <span class="sa">r</span><span class="s1">&#39;\quad m_{{N}}=</span><span class="si">{:.3f}</span><span class="s1"> MeV &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">GetNucleonMass</span><span class="p">(</span><span class="n">Phys</span><span class="o">=</span><span class="n">Phys</span><span class="p">,</span><span class="n">MeV</span><span class="o">=</span><span class="n">MeV</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="sa">r</span><span class="s1">&#39;\quad m_{{N}}=</span><span class="si">{:.3f}</span><span class="s1"> GeV &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">GetNucleonMass</span><span class="p">(</span><span class="n">Phys</span><span class="o">=</span><span class="n">Phys</span><span class="p">,</span><span class="n">MeV</span><span class="o">=</span><span class="n">MeV</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">r</span><span class="s1">&#39;\quad m_{{N}}=</span><span class="si">{:.3f}</span><span class="s1"> &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">GetNucleonMass</span><span class="p">(</span><span class="n">Phys</span><span class="o">=</span><span class="n">Phys</span><span class="p">,</span><span class="n">MeV</span><span class="o">=</span><span class="n">MeV</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="LatticeParameters.GetPionMassLab"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.GetPionMassLab">[docs]</a>    <span class="k">def</span> <span class="nf">GetPionMassLab</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">Phys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">MeV</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">Phys</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">MeV</span><span class="p">:</span>
+                <span class="k">return</span> <span class="sa">r</span><span class="s1">&#39;\quad m_{{\pi}}=</span><span class="si">{:.3f}</span><span class="s1"> MeV &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">GetPionMass</span><span class="p">(</span><span class="n">Phys</span><span class="o">=</span><span class="n">Phys</span><span class="p">,</span><span class="n">MeV</span><span class="o">=</span><span class="n">MeV</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="sa">r</span><span class="s1">&#39;\quad m_{{\pi}}=</span><span class="si">{:.3f}</span><span class="s1"> GeV &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">GetPionMass</span><span class="p">(</span><span class="n">Phys</span><span class="o">=</span><span class="n">Phys</span><span class="p">,</span><span class="n">MeV</span><span class="o">=</span><span class="n">MeV</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">r</span><span class="s1">&#39;\quad m_{{\pi}}=</span><span class="si">{:.3f}</span><span class="s1"> &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">GetPionMass</span><span class="p">(</span><span class="n">Phys</span><span class="o">=</span><span class="n">Phys</span><span class="p">,</span><span class="n">MeV</span><span class="o">=</span><span class="n">MeV</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="LatticeParameters.GetLatSpaceLab"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.GetLatSpaceLab">[docs]</a>    <span class="k">def</span> <span class="nf">GetLatSpaceLab</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">r</span><span class="s1">&#39;\quad a=</span><span class="si">{:.3f}</span><span class="s1"> fm &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">latspace</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LatticeParameters.GetBoxSizeLab"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.GetBoxSizeLab">[docs]</a>    <span class="k">def</span> <span class="nf">GetBoxSizeLab</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">r</span><span class="s1">&#39;\quad La=</span><span class="si">{:.3f}</span><span class="s1"> fm &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Lxyz</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LatticeParameters.pvecTOpstr"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.pvecTOpstr">[docs]</a>    <span class="k">def</span> <span class="nf">pvecTOpstr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ip</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span><span class="n">ip</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="LatticeParameters.pstrTOpvec"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.pstrTOpvec">[docs]</a>    <span class="k">def</span> <span class="nf">pstrTOpvec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ip</span><span class="p">,</span><span class="n">actual</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">actual</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="n">iq</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">qunit</span> <span class="k">for</span> <span class="n">iq</span> <span class="ow">in</span> <span class="n">ip</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span><span class="n">ip</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]))</span></div>
+
+<div class="viewcode-block" id="LatticeParameters.pstrTOpform"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.pstrTOpform">[docs]</a>    <span class="k">def</span> <span class="nf">pstrTOpform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ip</span><span class="p">,</span><span class="n">pref</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">pref</span><span class="o">+</span><span class="n">ip</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LatticeParameters.pformTOpstr"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.pformTOpstr">[docs]</a>    <span class="k">def</span> <span class="nf">pformTOpstr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ip</span><span class="p">,</span><span class="n">nopref</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">nopref</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ip</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;p&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;q&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;- &#39;</span><span class="p">,</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ip</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;- &#39;</span><span class="p">,</span><span class="s1">&#39;-&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LatticeParameters.pformTOpvec"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.pformTOpvec">[docs]</a>    <span class="k">def</span> <span class="nf">pformTOpvec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ip</span><span class="p">,</span><span class="n">actual</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="n">pout</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ip</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;- &#39;</span><span class="p">,</span><span class="s1">&#39;-&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">actual</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="n">iq</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">qunit</span> <span class="k">for</span> <span class="n">iq</span> <span class="ow">in</span> <span class="n">pout</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span><span class="n">pout</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]))</span></div>
+
+<div class="viewcode-block" id="LatticeParameters.pvecTOpform"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.pvecTOpform">[docs]</a>    <span class="k">def</span> <span class="nf">pvecTOpform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ip</span><span class="p">,</span><span class="n">pref</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">pref</span><span class="o">+</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span><span class="n">ip</span><span class="p">))</span></div>
+
+    <span class="c1">## use these instead of the above ones</span>
+    <span class="c1">## these work for any type</span>
+<div class="viewcode-block" id="LatticeParameters.TOpstr"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.TOpstr">[docs]</a>    <span class="k">def</span> <span class="nf">TOpstr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ip</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="s1">&#39; &#39;</span> <span class="ow">in</span> <span class="n">ip</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">ip</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pformTOpstr</span><span class="p">(</span><span class="n">ip</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pvecTOpstr</span><span class="p">(</span><span class="n">ip</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LatticeParameters.TOpvec"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.TOpvec">[docs]</a>    <span class="k">def</span> <span class="nf">TOpvec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ip</span><span class="p">,</span><span class="n">actual</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="s1">&#39; &#39;</span> <span class="ow">in</span> <span class="n">ip</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pstrTOpvec</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span><span class="n">actual</span><span class="o">=</span><span class="n">actual</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pformTOpvec</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span><span class="n">actual</span><span class="o">=</span><span class="n">actual</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">actual</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">ip</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">qunit</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">ip</span></div>
+
+
+<div class="viewcode-block" id="LatticeParameters.TOpform"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.TOpform">[docs]</a>    <span class="k">def</span> <span class="nf">TOpform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ip</span><span class="p">,</span><span class="n">pref</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="s1">&#39; &#39;</span> <span class="ow">in</span> <span class="n">ip</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pstrTOpform</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span><span class="n">pref</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">pref</span><span class="o">+</span><span class="n">ip</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pvecTOpform</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span><span class="n">pref</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LatticeParameters.TOip"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.TOip">[docs]</a>    <span class="k">def</span> <span class="nf">TOip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ip</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="s1">&#39; &#39;</span> <span class="ow">in</span> <span class="n">ip</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">momstrlist</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">ip</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">momformlist</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">ip</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">momlist</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">ip</span><span class="p">)</span></div>
+
+
+    <span class="c1">## acutal=True corresponds to the actual p^2 ( in lattice units )</span>
+    <span class="c1">## actual=False corresponds to the integer amount of p^{2} [ in units of self.punit**2 = (2pi/L)**2]</span>
+<div class="viewcode-block" id="LatticeParameters.Getpsqrd"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.Getpsqrd">[docs]</a>    <span class="k">def</span> <span class="nf">Getpsqrd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ip</span><span class="p">,</span><span class="n">actual</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="n">thisip</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">TOpvec</span><span class="p">(</span><span class="n">ip</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">actual</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Buffpsqrd</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">momlist</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">thisip</span><span class="p">)]</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qunit</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Buffpsqrd</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">momlist</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">thisip</span><span class="p">)]</span></div>
+
+<div class="viewcode-block" id="LatticeParameters.Getpsqrdform"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.Getpsqrdform">[docs]</a>    <span class="k">def</span> <span class="nf">Getpsqrdform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ip</span><span class="p">,</span><span class="n">pre</span><span class="o">=</span><span class="s1">&#39;p&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">pre</span><span class="o">+</span><span class="s1">&#39;sqrd&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Getpsqrd</span><span class="p">(</span><span class="n">ip</span><span class="p">))</span></div>
+
+    <span class="c1">## converts the momenta to the version which has been averaged</span>
+    <span class="c1">## usefull for reading in corresponding 2 point correlator from the 3 point correlator</span>
+<div class="viewcode-block" id="LatticeParameters.GetAvgmom"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.GetAvgmom">[docs]</a>    <span class="k">def</span> <span class="nf">GetAvgmom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ip</span><span class="p">):</span>
+        <span class="n">thispsqrd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Getpsqrd</span><span class="p">(</span><span class="n">ip</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">momlistAvg</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mom2list</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">thispsqrd</span><span class="p">)]</span></div>
+
+    <span class="c1">## converts the momenta to the version which has been averaged</span>
+    <span class="c1">## usefull for reading in corresponding 2 point correlator from the 3 point correlator</span>
+<div class="viewcode-block" id="LatticeParameters.GetAvgmomstr"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.GetAvgmomstr">[docs]</a>    <span class="k">def</span> <span class="nf">GetAvgmomstr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ip</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">TOpstr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">GetAvgmom</span><span class="p">(</span><span class="n">ip</span><span class="p">))</span></div>
+
+    <span class="c1">## converts the momenta to the version which has been averaged</span>
+    <span class="c1">## usefull for reading in corresponding 2 point correlator from the 3 point correlator</span>
+<div class="viewcode-block" id="LatticeParameters.GetAvgmomform"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.GetAvgmomform">[docs]</a>    <span class="k">def</span> <span class="nf">GetAvgmomform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ip</span><span class="p">,</span><span class="n">pref</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">TOpform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">GetAvgmom</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stripmom</span><span class="p">(</span><span class="n">ip</span><span class="p">)),</span><span class="n">pref</span><span class="o">=</span><span class="n">pref</span><span class="p">)</span></div>
+
+
+
+
+    <span class="c1">## for making p###, pp###, q### (see other routines</span>
+<div class="viewcode-block" id="LatticeParameters.momlistPref"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.momlistPref">[docs]</a>    <span class="k">def</span> <span class="nf">momlistPref</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">pref</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">pref</span><span class="o">+</span><span class="n">imom</span> <span class="k">for</span> <span class="n">imom</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">momformlist</span> <span class="p">]</span></div>
+
+<div class="viewcode-block" id="LatticeParameters.momlistAvgPref"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.momlistAvgPref">[docs]</a>    <span class="k">def</span> <span class="nf">momlistAvgPref</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">pref</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">pref</span><span class="o">+</span><span class="n">imom</span> <span class="k">for</span> <span class="n">imom</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">momformlistAvg</span> <span class="p">]</span></div>
+
+    <span class="c1">## for making p###, pp###, q### (see other routines</span>
+<div class="viewcode-block" id="LatticeParameters.stripmom"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.stripmom">[docs]</a>    <span class="k">def</span> <span class="nf">stripmom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">thismom</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thismom</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">thismom</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;p&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;q&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;- &#39;</span><span class="p">,</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">thismom</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span></div>
+
+
+
+    <span class="c1">## note, ordering of momenta is important</span>
+<div class="viewcode-block" id="LatticeParameters.Avgmomlist"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.Avgmomlist">[docs]</a>    <span class="k">def</span> <span class="nf">Avgmomlist</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">momlistAvg</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">momstrlistAvg</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">momformlistAvg</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">mom2listhold</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">iq1</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mom2max</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">iq2</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mom2max</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">iq3</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mom2max</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">iq1</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">iq2</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">iq3</span><span class="o">**</span><span class="mi">2</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mom2list</span><span class="p">:</span> <span class="k">continue</span>
+                    <span class="k">if</span> <span class="n">iq1</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">iq2</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">iq3</span><span class="o">**</span><span class="mi">2</span> <span class="ow">in</span> <span class="n">mom2listhold</span><span class="p">:</span> <span class="k">continue</span>
+                    <span class="n">mom2listhold</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">iq1</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">iq2</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">iq3</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+                    <span class="c1"># qlist = np.append(qlist,&#39;q = &#39; + str(iq3) + &#39; &#39; + str(iq2) + &#39; &#39; + str(iq1))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">momlistAvg</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">iq3</span> <span class="p">,</span> <span class="n">iq2</span> <span class="p">,</span> <span class="n">iq1</span><span class="p">))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">momstrlistAvg</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,(</span><span class="n">iq3</span> <span class="p">,</span> <span class="n">iq2</span> <span class="p">,</span> <span class="n">iq1</span><span class="p">))))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">momformlistAvg</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,(</span><span class="n">iq3</span> <span class="p">,</span> <span class="n">iq2</span> <span class="p">,</span> <span class="n">iq1</span><span class="p">))))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">momlistAvg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">momlistAvg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">momstrlistAvg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">momstrlistAvg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">momformlistAvg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">momformlistAvg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mom2list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mom2listhold</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mom2max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mom2list</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mom2min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mom2list</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LatticeParameters.GetMomList"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.GetMomList">[docs]</a>    <span class="k">def</span> <span class="nf">GetMomList</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">list_type</span><span class="o">=</span><span class="s1">&#39;form&#39;</span><span class="p">,</span><span class="n">list_order</span><span class="o">=</span><span class="s1">&#39;Def&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">list_order</span> <span class="o">==</span> <span class="s1">&#39;Def&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;Avg&#39;</span> <span class="ow">in</span> <span class="n">list_type</span><span class="p">:</span>
+                <span class="n">list_order</span> <span class="o">=</span> <span class="s1">&#39;squared&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">list_order</span> <span class="o">=</span> <span class="s1">&#39;flat&#39;</span>
+        <span class="k">if</span> <span class="s1">&#39;form&#39;</span> <span class="ow">in</span> <span class="n">list_type</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;Avg&#39;</span> <span class="ow">in</span> <span class="n">list_type</span><span class="p">:</span>
+                <span class="n">this_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">momformlistAvg</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">this_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">momformlist</span>
+        <span class="k">elif</span> <span class="s1">&#39;number&#39;</span> <span class="ow">in</span> <span class="n">list_type</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;Avg&#39;</span> <span class="ow">in</span> <span class="n">list_type</span><span class="p">:</span>
+                <span class="n">this_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">momlistAvg</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">this_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">momlist</span>
+        <span class="k">elif</span> <span class="s1">&#39;str&#39;</span> <span class="ow">in</span> <span class="n">list_type</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;Avg&#39;</span> <span class="ow">in</span> <span class="n">list_type</span><span class="p">:</span>
+                <span class="n">this_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">momstrlistAvg</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">this_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">momstrlist</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">list_type</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;not recognised as momentum list type, select form, number, or str (w/wo Avg)&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;flat&#39;</span> <span class="ow">in</span> <span class="n">list_order</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;rev&#39;</span> <span class="ow">in</span> <span class="n">list_order</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">this_list</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">this_list</span>
+        <span class="k">elif</span> <span class="s1">&#39;squared&#39;</span> <span class="ow">in</span> <span class="n">list_order</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;rev&#39;</span> <span class="ow">in</span> <span class="n">list_order</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">MomSqrdSort</span><span class="p">(</span><span class="n">this_list</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">MomSqrdSort</span><span class="p">(</span><span class="n">this_list</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">list_order</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;not recognised ordering for mom list, select flat, qsqrd, (w/wo rev)&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LatticeParameters.MomSqrdSort"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.MomSqrdSort">[docs]</a>    <span class="k">def</span> <span class="nf">MomSqrdSort</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">this_mom_list</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">this_mom_list</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Getpsqrd</span><span class="p">))</span></div>
+
+
+
+    <span class="c1">## note, ordering of momenta is important</span>
+<div class="viewcode-block" id="LatticeParameters.Chromamomlist"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.Chromamomlist">[docs]</a>    <span class="k">def</span> <span class="nf">Chromamomlist</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">momlist</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">momstrlist</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">momformlist</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Buffpsqrd</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">iq1</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">mom2max</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">mom2max</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">iq2</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">mom2max</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">mom2max</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">iq3</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">mom2max</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">mom2max</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">iq1</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">iq2</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">iq3</span><span class="o">**</span><span class="mi">2</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mom2list</span><span class="p">:</span> <span class="k">continue</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">Buffpsqrd</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">iq1</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">iq2</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">iq3</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">momlist</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">iq3</span> <span class="p">,</span> <span class="n">iq2</span> <span class="p">,</span> <span class="n">iq1</span><span class="p">))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">momstrlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,(</span><span class="n">iq3</span> <span class="p">,</span> <span class="n">iq2</span> <span class="p">,</span> <span class="n">iq1</span><span class="p">))))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">momformlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,(</span><span class="n">iq3</span> <span class="p">,</span> <span class="n">iq2</span> <span class="p">,</span> <span class="n">iq1</span><span class="p">))))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">momlist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">momlist</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">momstrlist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">momstrlist</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">momformlist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">momformlist</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Buffpsqrd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Buffpsqrd</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LatticeParameters.TOLatEBoot"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.TOLatEBoot">[docs]</a>    <span class="k">def</span> <span class="nf">TOLatEBoot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ip</span><span class="p">,</span><span class="n">mass</span><span class="p">,</span><span class="n">Disp</span><span class="o">=</span><span class="mf">0.</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="p">(</span><span class="n">mass</span><span class="o">/</span><span class="n">Disp</span><span class="p">)</span>
+        <span class="n">value</span><span class="o">.</span><span class="n">sinh</span><span class="p">()</span>
+        <span class="n">ipvec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TOpvec</span><span class="p">(</span><span class="n">ip</span><span class="p">)</span>
+        <span class="n">psqrdval</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ipvec</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">qunit</span><span class="p">)</span><span class="o">/</span><span class="n">Disp</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="p">(</span><span class="n">psqrdval</span> <span class="o">+</span> <span class="n">value</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">**</span><span class="mf">0.5</span>
+        <span class="n">value</span><span class="o">.</span><span class="n">arcsinh</span><span class="p">()</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">*</span> <span class="n">Disp</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="s1">&#39;Stats&#39;</span><span class="p">):</span> <span class="n">value</span><span class="o">.</span><span class="n">Stats</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">value</span></div>
+
+
+
+<div class="viewcode-block" id="LatticeParameters.TOEBoot"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.TOEBoot">[docs]</a>    <span class="k">def</span> <span class="nf">TOEBoot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ip</span><span class="p">,</span><span class="n">mass</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Getpsqrd</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span><span class="n">actual</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">+</span> <span class="n">mass</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">**</span><span class="mf">0.5</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="s1">&#39;Stats&#39;</span><span class="p">):</span> <span class="n">value</span><span class="o">.</span><span class="n">Stats</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">value</span></div>
+
+    <span class="c1">## expecting any momenta</span>
+    <span class="c1">## MassBoot BS or number</span>
+    <span class="c1">## output is in lattice units</span>
+<div class="viewcode-block" id="LatticeParameters.EnergyFromRecRel"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.EnergyFromRecRel">[docs]</a>    <span class="k">def</span> <span class="nf">EnergyFromRecRel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ip</span><span class="p">,</span><span class="n">MassBoot</span><span class="p">,</span><span class="n">DispIn</span><span class="o">=</span><span class="mf">0.</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">DispIn</span> <span class="o">==</span> <span class="mf">0.</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">TOEBoot</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span><span class="n">MassBoot</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">TOLatEBoot</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span><span class="n">MassBoot</span><span class="p">,</span><span class="n">Disp</span><span class="o">=</span><span class="n">DispIn</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LatticeParameters.Fmt_pmom_index"><a class="viewcode-back" href="../MomParams.html#MomParams.LatticeParameters.Fmt_pmom_index">[docs]</a>    <span class="k">def</span> <span class="nf">Fmt_pmom_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">this_series</span><span class="p">,</span><span class="n">pmom_index</span><span class="p">,</span><span class="n">pre</span><span class="o">=</span><span class="s1">&#39;p&#39;</span><span class="p">):</span>
+        <span class="n">is_series</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">this_series</span><span class="p">,</span><span class="n">pa</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">is_series</span><span class="p">:</span>
+            <span class="n">this_series</span> <span class="o">=</span> <span class="n">this_series</span><span class="o">.</span><span class="n">to_frame</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">)</span>
+        <span class="n">pmom_list</span> <span class="o">=</span> <span class="n">this_series</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span>
+        <span class="n">pmom_header</span> <span class="o">=</span> <span class="n">pmom_list</span><span class="p">[</span><span class="n">pmom_index</span><span class="p">]</span>
+        <span class="n">this_series</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">this_series</span><span class="p">[</span><span class="n">pmom_header</span><span class="p">]</span> <span class="o">=</span> <span class="n">this_series</span><span class="p">[</span><span class="n">pmom_header</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">Getpsqrdform</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">pre</span><span class="o">=</span><span class="n">pre</span><span class="p">))</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">this_series</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">pmom_list</span><span class="p">,</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">is_series</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">this_series</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">this_series</span></div></div>
+
+
+<div class="viewcode-block" id="TestMom"><a class="viewcode-back" href="../MomParams.html#MomParams.TestMom">[docs]</a><span class="k">def</span> <span class="nf">TestMom</span><span class="p">(</span><span class="n">this_info</span> <span class="o">=</span> <span class="n">defInfo</span><span class="p">):</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">LatticeParameters</span><span class="p">(</span><span class="n">mom2list</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span><span class="n">Info</span><span class="o">=</span><span class="n">this_info</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">LoadPickle</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">TestMom</span><span class="p">()</span>
+
+<span class="c1"># CHROMA = True ## For using chroma output</span>
+
+
+<span class="c1"># def GetMpiSom(kappa,r0Scale):</span>
+<span class="c1">#     kappa = str(kappa).replace(&#39;kud&#39;,&#39;&#39;)</span>
+<span class="c1">#     return DefPionMass[str(kappa)]*r0Scale[0]/latspace</span>
+
+
+
+
+<span class="c1"># DiagPList = [[1, 1, 1, 2], [2, 2, 2, 4], [3, 3, 3, 6], [4, 4, 4, 8], [5, 5, 5, 10], [6, 6, 6, 12], [7, 7, 7, 14], [8, 8, 8, 16]]</span>
+<span class="c1"># DiagPListtdiv = [[1, 1, 1, 1], [2, 2, 2, 2], [3, 3, 3, 3], [4, 4, 4, 4], [5, 5, 5, 5], [6, 6, 6, 6], [7, 7, 7, 7], [8, 8, 8, 8]]</span>
+
+
+<span class="c1"># def GetQsqrd(nqsqrd,Mass,Phys=True):</span>
+<span class="c1">#     if Phys:</span>
+<span class="c1">#         MassPhys = Mass*hbarcdivlat</span>
+<span class="c1">#         qsqrd = nqsqrd*(qunitPhys**2)</span>
+<span class="c1">#         Ep = np.sqrt(MassPhys**2 + qsqrd)</span>
+<span class="c1">#         return qsqrd - (Ep-MassPhys)**2</span>
+<span class="c1">#     else:</span>
+<span class="c1">#         qsqrd = nqsqrd*(qunit**2)</span>
+<span class="c1">#         Ep = np.sqrt(Mass**2 + qsqrd)</span>
+<span class="c1">#         return qsqrd - (Ep-Mass)**2</span>
+
+<span class="c1"># def Getpvec(ip,phys=True):</span>
+<span class="c1">#     if phys: qmult = qunit</span>
+<span class="c1">#     else: qmult = 1.0</span>
+<span class="c1">#     if isinstance(ip,basestring):</span>
+<span class="c1">#         ip.replace(&#39;p&#39;,&#39;&#39;).replace(&#39;q&#39;,&#39;&#39;)</span>
+<span class="c1">#         if &#39; &#39; not in ip:</span>
+<span class="c1">#             ip = &#39; &#39;.join(ip).replace(&#39;- &#39;,&#39;-&#39;)</span>
+<span class="c1">#         return np.array(map(float,ip.split(&#39; &#39;)))*qunit</span>
+<span class="c1">#     elif isinstance(ip,list):</span>
+<span class="c1">#         return np.array(ip)*qunit</span>
+<span class="c1">#     elif isinstance(ip,np.ndarray):</span>
+<span class="c1">#         return ip * qunit</span>
+<span class="c1">#     return ip,qunit</span>
+
+
+
+<span class="c1"># def makeqlist(thisMaxqsqrd):</span>
+<span class="c1">#     qlist = np.array([])</span>
+<span class="c1">#     for iq1 in xrange(-thisMaxqsqrd,thisMaxqsqrd+1):</span>
+<span class="c1">#         for iq2 in xrange(-thisMaxqsqrd,thisMaxqsqrd+1):</span>
+<span class="c1">#             for iq3 in xrange(-thisMaxqsqrd,thisMaxqsqrd+1):</span>
+<span class="c1">#                 if iq1**2 + iq2**2 + iq3**2 &gt; thisMaxqsqrd: continue</span>
+<span class="c1">#                 qlist = np.append(qlist,&#39;q = &#39; + str(iq1) + &#39; &#39; + str(iq2) + &#39; &#39; + str(iq3))</span>
+<span class="c1">#     return qlist</span>
+
+
+<span class="c1"># if CHROMA:</span>
+<span class="c1">#     qvecSet = Chromaqlist(defqsqrdMax)</span>
+<span class="c1">#     qvecAvgSet = Avgqlist(defqsqrdMax)</span>
+<span class="c1"># else:</span>
+<span class="c1">#     qvecSet = makeqlist(defqsqrdMax)</span>
+<span class="c1">#     qvecAvgSet = makeqlist(defqsqrdMax)</span>
+
+
+<span class="c1"># nmom = len(qvecSet)</span>
+<span class="c1"># qhigh = nmom/2</span>
+
+<span class="c1"># def OrderMomList(momset):</span>
+<span class="c1">#     qout = []</span>
+<span class="c1">#     for iq in qvecSet:</span>
+<span class="c1">#         if iq in momset:</span>
+<span class="c1">#             qout.append(iq)</span>
+<span class="c1">#     return qout</span>
+
+<span class="c1"># ## momlist in p indexing</span>
+<span class="c1"># def DragpZ(momlist,Avg=False):</span>
+<span class="c1">#     if iqTOip(0) in momlist:</span>
+<span class="c1">#         momlist.insert(0, momlist.pop(momlist.index(iqTOip(0))))</span>
+<span class="c1">#     return momlist</span>
+
+<span class="c1"># ## momlist in str indexing</span>
+<span class="c1"># def DragpZstr(momlist,Avg=False):</span>
+<span class="c1">#     momlistout = momlist</span>
+<span class="c1">#     if &#39;q = 0 0 0&#39; in momlist:</span>
+<span class="c1">#         if isinstance(momlist, np.ndarray):</span>
+<span class="c1">#             momlistout = np.array(momlist)</span>
+<span class="c1">#         momlistout.insert(0, momlistout.pop(momlist.index(&#39;q = 0 0 0&#39;)))</span>
+<span class="c1">#     return momlistout</span>
+
+<span class="c1"># qvecSetZfirst = DragpZstr(qvecSet.tolist())</span>
+
+<span class="c1"># ZeroMomIndex = int(open(&#39;./parfiles/ZeroMom.par&#39;,&#39;r&#39;).read())</span>
+
+<span class="c1">### NOTE: ALWAYS MAKE q = 0 0 0 the FIRST MOMENTA!!! ###</span>
+<span class="c1"># ZeroMomIndex = 0</span>
+
+
+<span class="c1"># def PrintZMomI(val):</span>
+<span class="c1">#     open(&#39;./parfiles/ZeroMom.par&#39;,&#39;w&#39;).write(str(val))</span>
+
+<span class="c1"># def PrintAllMom():</span>
+<span class="c1">#     f = open(&#39;./parfiles/AllMom.par&#39;,&#39;w&#39;)</span>
+<span class="c1">#     for line in qvecSet:</span>
+<span class="c1">#         f.write(line+&#39;\n&#39;)</span>
+
+<span class="c1">#ip from 0 -&gt; nmom, iq from -qhigh -&gt; qhigh</span>
+<span class="c1"># def ipTOiq(ip):</span>
+<span class="c1">#     return ip - qhigh</span>
+
+<span class="c1"># def iqTOip(iq):</span>
+<span class="c1">#     return iq + qhigh</span>
+
+
+<span class="c1"># def ipTOqstr(ip,Avg=False):</span>
+<span class="c1">#     if Avg:</span>
+<span class="c1">#         return qvecAvgSet[int(ip)]</span>
+<span class="c1">#     else:</span>
+<span class="c1">#         return qvecSet[int(ip)]</span>
+
+
+<span class="c1"># def qcondTOqstr(iq):</span>
+<span class="c1">#     return &#39; &#39;.join(iq).replace(&#39;q &#39;,&#39;q = &#39;).replace(&#39;- &#39;,&#39;-&#39;)</span>
+
+<span class="c1"># def qstrTOqcond(iq):</span>
+<span class="c1">#     return &#39; &#39;.join(iq).replace(&#39;=&#39;,&#39;&#39;).replace(&#39; &#39;,&#39;&#39;)</span>
+
+<span class="c1"># def ipTOqcond(ip,Avg=False):</span>
+<span class="c1">#     return qstrTOqcond(ipTOqstr(ip,Avg=Avg))</span>
+
+<span class="c1"># def iqTOqstr(iq):</span>
+<span class="c1">#     return qvecSet[iqTOip(iq)]</span>
+
+<span class="c1"># def ipZshiftTOqstr(ip):</span>
+<span class="c1">#     return qvecSetZfirst[ip]</span>
+
+<span class="c1"># def qvecTOqstr(qvec,Avg=False):</span>
+<span class="c1">#     return qvecSet[qvecTOip(qvec,Avg=Avg)]</span>
+
+<span class="c1"># def qstrTOqvec(qstr):</span>
+<span class="c1">#     sqvec = qstr.split()</span>
+<span class="c1">#     return [int(sqvec[2]),int(sqvec[3]),int(sqvec[4])]</span>
+
+
+<span class="c1"># def qstrTOip(qstr,Avg=False):</span>
+<span class="c1">#     return qvecTOip(qstrTOqvec(qstr),Avg=Avg)</span>
+
+<span class="c1"># def qstrTOiq(qstr):</span>
+<span class="c1">#     return qvecTOiq(qstrTOqvec(qstr))</span>
+
+<span class="c1"># def ipTOqvec(ip):</span>
+<span class="c1">#     sqvec = qvecSet[ip].split()</span>
+<span class="c1">#     return [int(sqvec[2]),int(sqvec[3]),int(sqvec[4])]</span>
+
+<span class="c1"># def qvecTOip(qvec,Avg=False):</span>
+<span class="c1">#     strqvec = &#39;q = &#39; + str(qvec[0]) + &#39; &#39; + str(qvec[1]) + &#39; &#39; + str(qvec[2])</span>
+<span class="c1">#     if Avg:</span>
+<span class="c1">#         return np.where(qvecAvgSet==strqvec)[0][0]</span>
+<span class="c1">#     else:</span>
+<span class="c1">#         return np.where(qvecSet==strqvec)[0][0]</span>
+
+<span class="c1"># def iqTOqvec(iq):</span>
+<span class="c1">#     return ipTOqvec(iqTOip(iq))</span>
+
+<span class="c1"># def qvecTOiq(qvec,Avg=False):</span>
+<span class="c1">#     return ipTOiq(qvecTOip(qvec,Avg=Avg))</span>
+
+<span class="c1"># def qsqrdstr(thisqvec):</span>
+<span class="c1">#     sqvec = thisqvec.split()</span>
+<span class="c1">#     return int(sqvec[2])**2+int(sqvec[3])**2+int(sqvec[4])**2</span>
+
+<span class="c1"># def qvecINqsqrd(thisqsqrd):</span>
+<span class="c1">#     qvecout = []</span>
+<span class="c1">#     for iq in qvecSet:</span>
+<span class="c1">#         if qsqrdstr(iq) == thisqsqrd:</span>
+<span class="c1">#             qvecout.append(iq)</span>
+<span class="c1">#     return qvecout</span>
+
+<span class="c1"># DefMomList = [iqTOip(0),iqTOip(1),qvecTOip([-1,0,0],Avg=False)]</span>
+
+<span class="c1"># def SmallestMomList(data):</span>
+<span class="c1">#     dataout = []</span>
+<span class="c1">#     for idata in data[data.keys()[0]]:</span>
+<span class="c1">#         if all(idata in testdata for testdata in data.itervalues()):</span>
+<span class="c1">#             dataout.append(idata)</span>
+<span class="c1">#     return dataout</span>
+
+
+<span class="c1"># def MomOrderLists(MLread,MLsort,*SortThese):</span>
+<span class="c1">#     IndexShuff = [MLread.index(iMLs) for iMLs in MLsort]</span>
+<span class="c1">#     STout = []</span>
+<span class="c1">#     for iST in SortThese:</span>
+<span class="c1">#         STout.append(np.array(iST)[IndexShuff])</span>
+<span class="c1">#     return STout</span>
+
+
+<span class="c1"># def ipTOE(ip,mass,Avg=False):</span>
+<span class="c1">#     return np.sqrt((qsqrdstr(ipTOqstr(ip,Avg=Avg))*(qunit**2)) + mass**2)</span>
+
+
+<span class="c1"># def qstrTOE(ip,mass):</span>
+<span class="c1">#     return np.sqrt(qsqrdstr(ip)*(qunit**2) + mass**2)</span>
+
+<span class="c1"># def qstrTOEBoot(ip,mass):</span>
+<span class="c1">#     value = ((qsqrdstr(ip)*(qunit**2)) + mass**2)</span>
+<span class="c1">#     value.sqrt()</span>
+<span class="c1">#     return value</span>
+
+
+<span class="c1"># LatDisDenominator = 0.</span>
+<span class="c1"># # LatDispList = [0.,1.,2.,4.]</span>
+<span class="c1"># LatDispList = [0.]</span>
+
+<span class="c1"># DispKeyList = []</span>
+<span class="c1"># for iDisp in  LatDispList:</span>
+<span class="c1">#     if iDisp == 0.:</span>
+<span class="c1">#         DispKeyList.append(&#39;E^{2} = p^{2} + m^{2}&#39;)</span>
+<span class="c1">#     else:</span>
+<span class="c1">#         DispKeyList.append(&#39;Lat\ Disp\ Den=&#39;+str(iDisp))</span>
+
+
+<span class="c1"># def qstrTOLatEBoot(ip,mass,Disp=LatDisDenominator):</span>
+<span class="c1">#     value = (mass/Disp)</span>
+<span class="c1">#     value.sinh()</span>
+<span class="c1">#     ipvec = qstrTOqvec(ip)</span>
+<span class="c1">#     psqrdval = np.sum((np.sin(np.array(ipvec)*qunit)/Disp)**2)</span>
+<span class="c1">#     value = (psqrdval + value**2)</span>
+<span class="c1">#     value.sqrt()</span>
+<span class="c1">#     value.arcsinh()</span>
+<span class="c1">#     return value*Disp</span>
+
+
+<span class="c1"># def qstrTOLatEList(ip,mass,Disp=LatDisDenominator):</span>
+<span class="c1">#     value = np.sinh(np.array(mass)/Disp)</span>
+<span class="c1">#     ipvec = qstrTOqvec(ip)</span>
+<span class="c1">#     psqrdval = np.sum((np.sin(np.array(ipvec)*qunit)/Disp)**2)</span>
+<span class="c1">#     value = np.arcsinh(np.sqrt(psqrdval + value**2))</span>
+<span class="c1">#     return value*Disp</span>
+
+<span class="c1"># def iqTOE(ip,mass):</span>
+<span class="c1">#     return np.sqrt((qsqrdstr(iqTOqstr(ip))*(qunit**2)) + mass**2)</span>
+
+<span class="c1"># def qvecTOE(ip,mass):</span>
+<span class="c1">#     return np.sqrt((qsqrdstr(qvecTOqstr(ip))*(qunit**2)) + mass**2)</span>
+
+
+
+<span class="c1"># ## expecting qstr</span>
+<span class="c1"># ## MassBoot [tsink] BS</span>
+<span class="c1"># def ScaledEffMass(ip,MassBoot,DispIn=LatDisDenominator):</span>
+<span class="c1">#     outdict = []</span>
+<span class="c1">#     for tboot in MassBoot:</span>
+<span class="c1">#         if DispIn == 0.:</span>
+<span class="c1">#             outdict.append(qstrTOEBoot(ip,tboot))</span>
+<span class="c1">#         else:</span>
+<span class="c1">#             outdict.append(qstrTOLatEBoot(ip,tboot,Disp=DispIn))</span>
+<span class="c1">#         outdict[-1].Stats()</span>
+<span class="c1">#     return np.array(outdict)</span>
+
+
+<span class="c1"># ## expecting qstr</span>
+<span class="c1"># ## MassBoot [tsink, bootlist ]</span>
+<span class="c1"># def ScaledEffMassList(ip,MassList,DispIn=LatDisDenominator):</span>
+<span class="c1">#     outdict = []</span>
+<span class="c1">#     for tboot in MassList:</span>
+<span class="c1">#         if DispIn == 0.:</span>
+<span class="c1">#             outdict.append(qstrTOE(ip,np.array(tboot)))</span>
+<span class="c1">#         else:</span>
+<span class="c1">#             outdict.append(qstrTOLatEList(ip,tboot,Disp=DispIn))</span>
+<span class="c1">#     return np.array(outdict)</span>
+
+<span class="c1"># def MakeMomDir(ip):</span>
+<span class="c1">#     thisip = ip</span>
+<span class="c1">#     if &#39; &#39; in ip: thisip = qstrTOqcond(ip)</span>
+<span class="c1">#     iqsqrd = qsqrdstr(qcondTOqstr(thisip))</span>
+<span class="c1">#     return &#39;/qsqrd&#39;+str(iqsqrd)+&#39;/&#39;+thisip+&#39;/&#39;</span>
+
+<span class="c1"># def GetqcondFromFilename(filename):</span>
+<span class="c1">#     for ip in qvecSet:</span>
+<span class="c1">#         if qstrTOqcond(ip) in filename:</span>
+<span class="c1">#             return qstrTOqcond(ip)</span>
+<span class="c1">#     raise IOError(&#39;No Momenta in filename :&#39; + filename)</span>
+
+<span class="c1"># ## plistout = [ plistindex , pabc combinations , backward/forward , pxyzt]</span>
+<span class="c1"># def CreateSMOMPairs(plist):</span>
+<span class="c1">#     plistout = []</span>
+<span class="c1">#     for ip in plist:</span>
+<span class="c1">#         if len(ip) != 4: raise IOError(&#39;plist must contain 4vectors: &#39; + &#39; &#39;.join(map(str,ip)))</span>
+<span class="c1">#         pa = ip</span>
+<span class="c1">#         pb = [-ip[0]] + ip[1:]</span>
+<span class="c1">#         pc = [ip[0],-ip[1],-ip[2],ip[3]]</span>
+<span class="c1">#         plistout.append([[pa,pb],[pa,pc],[pb,pc]])</span>
+<span class="c1">#     return plistout</span>
+
+
+
+<span class="c1"># def OutputSMOMPairs(filename):</span>
+<span class="c1">#     def strneg(intin):</span>
+<span class="c1">#         nspace = abs(intin)/10</span>
+<span class="c1">#         if intin &lt; 0: nspace += 1</span>
+<span class="c1">#         return &#39; &#39;*(2-nspace)+str(intin)</span>
+<span class="c1">#     plistout = CreateSMOMPairs(DiagPList)</span>
+<span class="c1">#     plistout = np.rollaxis(np.rollaxis(np.array(plistout),3),3)</span>
+<span class="c1">#     plistout = [[iip.flatten() for iip in ip] for ip in plistout]</span>
+<span class="c1">#     with open(filename,&#39;w&#39;) as f:</span>
+<span class="c1">#         for pbf in plistout:</span>
+<span class="c1">#             f.write(&#39;\n&#39;)</span>
+<span class="c1">#             for pxyzt in pbf:</span>
+<span class="c1">#                 f.write(&#39;( &#39;+&#39; &#39;.join(map(strneg,pxyzt)) + &#39; ) \n&#39;)</span>
+
+
+<span class="c1"># def makeq4list(thisMinqsqrd,thisMaxqsqrd):</span>
+<span class="c1">#     qlist = []</span>
+<span class="c1">#     for iq1 in xrange(-thisMaxqsqrd,thisMaxqsqrd+1):</span>
+<span class="c1">#         for iq2 in xrange(-thisMaxqsqrd,thisMaxqsqrd+1):</span>
+<span class="c1">#             for iq3 in xrange(-thisMaxqsqrd,thisMaxqsqrd+1):</span>
+<span class="c1">#                 for iq4 in xrange(-thisMaxqsqrd,thisMaxqsqrd+1):</span>
+<span class="c1">#                     if iq1**2 + iq2**2 + iq3**2 +  iq4**2 &gt; thisMaxqsqrd: continue</span>
+<span class="c1">#                     if iq1**2 + iq2**2 + iq3**2 +  iq4**2 &lt; thisMinqsqrd : continue</span>
+<span class="c1">#                     qlist.append([iq1,iq2,iq3,iq4])</span>
+<span class="c1">#     return np.array(qlist)</span>
+
+
+
+<span class="c1"># def GetAvgMom(qstr):</span>
+<span class="c1">#     if CHROMA:</span>
+<span class="c1">#         for ip in qvecAvgSet:</span>
+<span class="c1">#             if qsqrdstr(ip) == qsqrdstr(qstr):</span>
+<span class="c1">#                 return ip</span>
+<span class="c1">#         raise IOError(&#39;Mom Not Found in AvgList&#39;)</span>
+<span class="c1">#     else:</span>
+<span class="c1">#         return qstr</span>
+
+<span class="c1"># def GetAvgMomip(ip):</span>
+<span class="c1">#     if CHROMA:</span>
+<span class="c1">#         for ipc,thep in enumerate(qvecAvgSet):</span>
+<span class="c1">#             if qsqrdstr(thep) == qsqrdstr(ipTOqstr(ip)):</span>
+<span class="c1">#                 return ipc</span>
+<span class="c1">#         raise IOError(&#39;Mom Not Found in AvgList&#39;)</span>
+<span class="c1">#     else:</span>
+<span class="c1">#         return ip</span>
+
+<span class="c1"># def GetAvgMomTotal(qlist):</span>
+<span class="c1">#     outlist = []</span>
+<span class="c1">#     for iq in qlist:</span>
+<span class="c1">#         outlist.append(GetAvgMom(iq))</span>
+<span class="c1">#     return outlist</span>
+
+<span class="c1"># def GetAvgMomTotalip(iplist):</span>
+<span class="c1">#     outlist = []</span>
+<span class="c1">#     for iq in iplist:</span>
+<span class="c1">#         outlist.append(GetAvgMomip(iq))</span>
+<span class="c1">#     return outlist</span>
+
+<span class="c1"># def SortAvgMomList(qlist):</span>
+<span class="c1">#     qout = []</span>
+<span class="c1">#     for imom in qvecAvgSet:</span>
+<span class="c1">#         if imom in qlist:</span>
+<span class="c1">#             qout.append(imom)</span>
+<span class="c1">#     return qout</span>
+
+<span class="c1"># def SortAvgMomListip(qlistip):</span>
+<span class="c1">#     qout = []</span>
+<span class="c1">#     avgip = [qstrTOip(ip,True) for ip in qvecAvgSet]</span>
+<span class="c1">#     for imom in avgip:</span>
+<span class="c1">#         if imom in qlistip:</span>
+<span class="c1">#             qout.append(imom)</span>
+<span class="c1">#     return qout</span>
+
+<span class="c1"># def GetAvgMomList(qlist,sort=True):</span>
+<span class="c1">#     outlist = []</span>
+<span class="c1">#     for iq in qlist:</span>
+<span class="c1">#         iqavg = GetAvgMom(iq)</span>
+<span class="c1">#         if iqavg not in outlist:</span>
+<span class="c1">#             outlist.append(iqavg)</span>
+<span class="c1">#     if sort:</span>
+<span class="c1">#         return SortAvgMomList(outlist)</span>
+<span class="c1">#     else:</span>
+<span class="c1">#         return outlist</span>
+
+<span class="c1"># def GetAvgMomListip(iplist,sort=True):</span>
+<span class="c1">#     outlist = []</span>
+<span class="c1">#     for iq in iplist:</span>
+<span class="c1">#         iqavg = GetAvgMomip(iq)</span>
+<span class="c1">#         if iqavg not in outlist:</span>
+<span class="c1">#             outlist.append(iqavg)</span>
+<span class="c1">#     if sort:</span>
+<span class="c1">#         return SortAvgMomListip(outlist)</span>
+<span class="c1">#     else:</span>
+<span class="c1">#         return outlist</span>
+
+
+<span class="c1"># def CreateSMOMNewPairs(thisMinqsqrd,thisMaxqsqrd):</span>
+<span class="c1">#     def Myqsqrd(iq):</span>
+<span class="c1">#         return sum(iq**2)</span>
+<span class="c1">#     Plist = PPlist = makeq4list(thisMinqsqrd,thisMaxqsqrd)</span>
+<span class="c1">#     outplist,outpplist,outqlist,outomegalist = [],[],[],[]</span>
+<span class="c1">#     outp2list,outpp2list = [],[]</span>
+<span class="c1">#     for ip in Plist:</span>
+<span class="c1">#         for ipp in PPlist:</span>
+<span class="c1">#             ip2 = Myqsqrd(ip)</span>
+<span class="c1">#             ipp2 = Myqsqrd(ipp)</span>
+<span class="c1">#             if ip2 != ipp2: continue</span>
+<span class="c1">#             iq = ipp - ip</span>
+<span class="c1">#             iq2 = Myqsqrd(iq)</span>
+<span class="c1">#             w = iq2/ip2</span>
+<span class="c1">#             if not (0 &lt; w &lt; 4): continue</span>
+<span class="c1">#             if w in outomegalist and ip2 in outp2list: continue</span>
+<span class="c1">#             outplist.append(ip)</span>
+<span class="c1">#             outpplist.append(ipp)</span>
+<span class="c1">#             outp2list.append(ip2)</span>
+<span class="c1">#             outpp2list.append(ipp2)</span>
+<span class="c1">#             outqlist.append(iq)</span>
+<span class="c1">#             outomegalist.append(w)</span>
+<span class="c1">#     return outplist,outpplist,outqlist,outomegalist</span>
+
+
+
+<span class="c1"># def GetCharRad(msqVal,Fval=1.):</span>
+<span class="c1">#     return 12*Fval* hbarc**2/msqVal</span>
+<span class="c1"># # return msqVal</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table of Contents</h3>
+          <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Python_Analysis</a></li>
+</ul>
+
+          <div role="search">
+            <h3 style="margin-top: 1.5em;">Search</h3>
+            <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+            </form>
+          </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <div role="navigation" aria-label="related navigaton">
+            <a href="../py-modindex.html" title="Python Module Index"
+              >modules</a> |
+            <a href="../genindex.html" title="General Index"
+              >index</a>
+          </div>
+          <div role="note" aria-label="source link">
+          </div>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Jack Dragos.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>

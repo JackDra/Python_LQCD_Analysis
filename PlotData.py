@@ -15,6 +15,7 @@ from XmlFormatting import AvgStdToFormat,minfmt,maxfmt,MakeValAndErr,MakeVal
 from FileIO import WriteXml,WritePickle,ReadPickleWrap
 from copy import copy
 from XmlFormatting import LegendFmt
+# from NullPlotData import null_series
 
 Py2Read = False
 
@@ -76,51 +77,7 @@ shiftset = [0]
 for ish in np.arange(1,shiftmax+1): shiftset += [-ish*shiftper,ish*shiftper]
 del ish, shiftmax,shiftper
 
-null_series = pa.Series()
-null_series['boot_data'] = None
-null_series['x_data'] = None
-null_series['x_fun'] = None
-null_series['y_data'] = None
-null_series['yerr_data'] = None
-null_series['xerr_data'] = None
-null_series['x_data_median'] = None
-null_series['y_data_median'] = None
-null_series['yerr_data_up'] = None
-null_series['xerr_data_up'] = None
-null_series['yerr_data_down'] = None
-null_series['xerr_data_down'] = None
-null_series['key_select'] = None
-null_series['xerr_data'] = None
-null_series['type'] = None
-null_series['fit_class'] = None
-null_series['label'] = ' '
-null_series['symbol'] = 'o'
-null_series['color'] = None
-null_series['shift'] = 0
-null_series['shift_overlap'] = 0
-null_series['xdatarange'] = 'Data'
-null_series['scale'] = None
-null_series['Phys'] = None
-null_series['ShowPar'] = None
-null_series['ShowEval'] = None
-null_series['Median'] = None
-null_series['suppress_key_index'] = False
-null_series['fmt_class'] = None
-null_series['supres_legend'] = None
-null_series['x_scale'] = 1
-null_series['x_range_min'] = None
-null_series['x_range_max'] = None
-null_series['x_increment'] = None
-null_series['hairline'] = False
-null_series['extrap_fade'] = 0
-null_series['hair_alpha'] = False
-null_series['phys_axies'] = False
-null_series['FPName'] = ''
-null_series['FPUnits'] = ''
-null_series['plot_err'] = ''
-null_series['arrow_text_size'] = 30
-null_series['arrow_color'] = 'black'
-null_series['arrow_style'] = 'fancy'
+
 
 
 def Fix_Se_Keys(this_key,this_Se):
@@ -274,9 +231,7 @@ class Plotting(object):
             self.plot_info['y_plot_scale'] = 'None'
         if 'x_plot_scale' not in plot_info:
             self.plot_info['x_plot_scale'] = 'None'
-        if 'save_file' in self.plot_info and len(self.plot_info['save_file']) > 0:
-            if '.xml' in self.plot_info['save_file'] or '.py3p' in self.plot_info['save_file']:
-                raise IOError('please input save_file as .pdf or without any extension')
+        if 'save_file' in self.plot_info:
             self.HumanFile = self.plot_info['save_file'].replace('.pdf','')+'.xml'
             self.PickleFile = self.plot_info['save_file'].replace('.pdf','')+'.py3p'
             if '.pdf' not in self.plot_info['save_file']:
@@ -531,8 +486,9 @@ class Plotting(object):
                 if 'fit_class' not in col_data:
                     raise EnvironmentError('fit_class not present even though fit was selected!')
                 elif isinstance( col_data['fit_class'],sff.SetOfFitFuns):
-                    col_data['fit_class'] = col_data['fit_class'].Fit_Stats_fmt['Fit']
-                elif isinstance( col_data['fit_class'].iloc[0],sff.SetOfFitFuns):
+                    pass
+                    # col_data['fit_class'] = col_data['fit_class'].Fit_Stats_fmt['Fit']
+                elif len(col_data['fit_class']) > 0 and isinstance( col_data['fit_class'].iloc[0],sff.SetOfFitFuns):
                     col_data['fit_class'] = sff.PullSOFSeries(col_data['fit_class'])
         return True
     # def ScaleY(self,this_plot_data):
@@ -584,7 +540,7 @@ class Plotting(object):
                 data_out.append(None)
         return data_out
 
-    def PlotElement(self,this_plot_data,no_key_formatting=False,IgnorePlot=False):
+    def PlotElement(self,this_plot_data,no_key_formatting=False):
         if not this_plot_data['plot_this']:
             return -1
         # this_plot_data = self.ScaleY(this_plot_data)
@@ -595,8 +551,6 @@ class Plotting(object):
         tupley_err,tuplex_err = False,False
         this_ydata,this_yerrdata = None,None
         this_xdata,this_xerrdata = None,None
-        this_fit = None
-        this_key_select = None
         if 'Median' in this_plot_data and this_plot_data['Median']:
             if 'y_data_median' in this_plot_data:
                 med_leg = 'Medy'
@@ -647,11 +601,16 @@ class Plotting(object):
             else:
                 xerr_bool = False
         if 'fit_class' in this_plot_data:
-            this_fit = this_plot_data['fit_class']
+            if isinstance(this_plot_data['fit_class'],sff.SetOfFitFuns):
+                this_fit = this_plot_data['fit_class'].Fit_Stats_fmt['Fit']
+            else:
+                this_fit = this_plot_data['fit_class']
         else:
             this_fit = False
         if 'boot_data' in this_plot_data:
             this_boot = this_plot_data['boot_data']
+            if isinstance(this_boot,sff.SetOfFitFuns):
+                this_boot = this_boot.Get_Extrapolation(fmted=True)
         else:
             this_boot = False
 
@@ -678,6 +637,8 @@ class Plotting(object):
         else:
             if 'key_select' in this_plot_data and this_plot_data['key_select'] is not False:
                 this_key_select = tuple_wrap(this_plot_data['key_select'])
+            else:
+                this_key_select = 'First'
         if len(med_leg) > 0:
             med_leg += ' '
         output_dict = None
@@ -761,17 +722,16 @@ class Plotting(object):
                 this_xdata = Shift_Duplicates(this_xdata,this_shiftper=float(this_plot_data['shift_overlap']))
                 yup = np.array(this_ydata)+np.array(this_yerrdata)
                 ydown = np.array(this_ydata)-np.array(this_yerrdata)
-                if not IgnorePlot:
-                    self.plot_plane.plot(   np.array(this_xdata)+float(this_plot_data['shift']),
-                                                this_ydata,
-                                                label=this_leg,
-                                                color=this_plot_data['color'])
-                    self.plot_plane.fill_between(   np.array(this_xdata)+float(this_plot_data['shift']),
-                                                yup,
-                                                ydown,
-                                                edgecolor='none',
-                                                alpha=this_plot_data['alpha'],
-                                                color=this_plot_data['color'])
+                self.plot_plane.plot(   np.array(this_xdata)+float(this_plot_data['shift']),
+                                            this_ydata,
+                                            label=this_leg,
+                                            color=this_plot_data['color'])
+                self.plot_plane.fill_between(   np.array(this_xdata)+float(this_plot_data['shift']),
+                                            yup,
+                                            ydown,
+                                            edgecolor='none',
+                                            alpha=this_plot_data['alpha'],
+                                            color=this_plot_data['color'])
 
 
         if 'arrow' in this_plot_data['type']:
@@ -784,13 +744,11 @@ class Plotting(object):
             if this_plot_data['arrow_text_size'] == False:
                 this_plot_data['arrow_text_size'] = 30
             if this_plot_data['supress_legend']:
-                if not IgnorePlot:
-                    self.plot_plane.annotate('', xy=location, xytext=text_loc,
-                        arrowprops={'arrowstyle': this_plot_data['arrow_style'],'color':this_plot_data['arrow_color']}, va='center',size=this_plot_data['arrow_text_size'])
+                self.plot_plane.annotate('', xy=location, xytext=text_loc,
+                    arrowprops={'arrowstyle': this_plot_data['arrow_style'],'color':this_plot_data['arrow_color']}, va='center',size=this_plot_data['arrow_text_size'])
             else:
-                if not IgnorePlot:
-                    self.plot_plane.annotate(LegendFmt(this_plot_data['label']), xy=location, xytext=text_loc,
-                        arrowprops={'arrowstyle': this_plot_data['arrow_style'],'color':this_plot_data['arrow_color']}, va='center',size=this_plot_data['arrow_text_size'])
+                self.plot_plane.annotate(LegendFmt(this_plot_data['label']), xy=location, xytext=text_loc,
+                    arrowprops={'arrowstyle': this_plot_data['arrow_style'],'color':this_plot_data['arrow_color']}, va='center',size=this_plot_data['arrow_text_size'])
         elif 'error_bar' in this_plot_data['type']:
             # if len(this_xdata) == 0: return -1
             #TODO implement median for xdata too
@@ -874,28 +832,31 @@ class Plotting(object):
                 if this_plot_data['supress_legend']: this_leg = None
                 this_boot,this_ydata,this_xdata,this_xerrdata,this_yerrdata = self.XRange_Chop(this_plot_data,[2,3],this_boot,this_ydata,this_xdata,this_xerrdata,this_yerrdata)
                 if len(this_xdata) == 0: return -1
-                if not IgnorePlot:
-                    if 'abs' in this_plot_data['plot_err'].lower():
-                        self.plot_plane.scatter(np.array(this_xdata)+float(this_plot_data['shift']),
-                                                this_yerrdata,
+                if 'abs' in this_plot_data['plot_err'].lower():
+                    self.plot_plane.scatter(np.array(this_xdata)+float(this_plot_data['shift']),
+                                            this_yerrdata,
+                                            label=this_leg,
+                                            marker=this_plot_data['symbol'],
+                                            color=this_plot_data['color'])
+                elif 'rel' in this_plot_data['plot_err'].lower():
+                    self.plot_plane.scatter(np.array(this_xdata)+float(this_plot_data['shift']),
+                                            np.abs(this_yerrdata/this_ydata),
+                                            label=this_leg,
+                                            marker=this_plot_data['symbol'],
+                                            color=this_plot_data['color'])
+                else:
+                    this_xdata = Shift_Duplicates(this_xdata,this_shiftper=float(this_plot_data['shift_overlap']))
+                    this_xdata = np.array(list(map(float,this_xdata)))
+                    this_ydata = np.array(list(map(float,this_ydata)))
+                    this_yerrdata = np.array(list(map(float,this_yerrdata)))
+                    this_xerrdata = np.array(list(map(float,this_xerrdata)))
+                    self.plot_plane.errorbar(   np.array(this_xdata)+float(this_plot_data['shift']),
+                                                this_ydata,
+                                                yerr=this_yerrdata,
+                                                xerr=this_xerrdata,
                                                 label=this_leg,
-                                                marker=this_plot_data['symbol'],
+                                                fmt=this_plot_data['symbol'],
                                                 color=this_plot_data['color'])
-                    elif 'rel' in this_plot_data['plot_err'].lower():
-                        self.plot_plane.scatter(np.array(this_xdata)+float(this_plot_data['shift']),
-                                                np.abs(this_yerrdata/this_ydata),
-                                                label=this_leg,
-                                                marker=this_plot_data['symbol'],
-                                                color=this_plot_data['color'])
-                    else:
-                        this_xdata = Shift_Duplicates(this_xdata,this_shiftper=float(this_plot_data['shift_overlap']))
-                        self.plot_plane.errorbar(   np.array(this_xdata)+float(this_plot_data['shift']),
-                                                    this_ydata,
-                                                    yerr=this_yerrdata,
-                                                    xerr=this_xerrdata,
-                                                    label=this_leg,
-                                                    fmt=this_plot_data['symbol'],
-                                                    color=this_plot_data['color'])
             else:
                 if len(this_xdata) == 0: return -1
                 if isinstance(this_plot_data['shift'],str):
@@ -926,28 +887,27 @@ class Plotting(object):
                     this_ydata = np.array(this_ydata)*this_plot_data['scale']
                 if this_plot_data['supress_legend']: this_leg = None
                 this_boot,this_ydata,this_xdata,this_xerrdata,this_yerrdata = self.XRange_Chop(this_plot_data,[2,3],this_boot,this_ydata,this_xdata,this_xerrdata,this_yerrdata)
-                if not IgnorePlot:
-                    if 'abs' in this_plot_data['plot_err'].lower():
-                        self.plot_plane.scatter(np.array(this_xdata)+float(this_plot_data['shift']),
-                                                this_yerrdata,
+                if 'abs' in this_plot_data['plot_err'].lower():
+                    self.plot_plane.scatter(np.array(this_xdata)+float(this_plot_data['shift']),
+                                            this_yerrdata,
+                                            label=this_leg,
+                                            marker=this_plot_data['symbol'],
+                                            color=this_plot_data['color'])
+                elif 'rel' in this_plot_data['plot_err'].lower():
+                    self.plot_plane.scatter(np.array(this_xdata)+float(this_plot_data['shift']),
+                                            np.abs(this_yerrdata/this_ydata),
+                                            label=this_leg,
+                                            marker=this_plot_data['symbol'],
+                                            color=this_plot_data['color'])
+                else:
+                    this_xdata = Shift_Duplicates(this_xdata,this_shiftper=float(this_plot_data['shift_overlap']))
+                    if len(np.array(this_xdata)) != len(this_ydata): return -1
+                    self.plot_plane.errorbar(   np.array(this_xdata)+float(this_plot_data['shift']),
+                                                this_ydata,
+                                                yerr=this_yerrdata,
                                                 label=this_leg,
-                                                marker=this_plot_data['symbol'],
+                                                fmt=this_plot_data['symbol'],
                                                 color=this_plot_data['color'])
-                    elif 'rel' in this_plot_data['plot_err'].lower():
-                        self.plot_plane.scatter(np.array(this_xdata)+float(this_plot_data['shift']),
-                                                np.abs(this_yerrdata/this_ydata),
-                                                label=this_leg,
-                                                marker=this_plot_data['symbol'],
-                                                color=this_plot_data['color'])
-                    else:
-                        this_xdata = Shift_Duplicates(this_xdata,this_shiftper=float(this_plot_data['shift_overlap']))
-                        if len(np.array(this_xdata)) != len(this_ydata): return -1
-                        self.plot_plane.errorbar(   np.array(this_xdata)+float(this_plot_data['shift']),
-                                                    this_ydata,
-                                                    yerr=this_yerrdata,
-                                                    label=this_leg,
-                                                    fmt=this_plot_data['symbol'],
-                                                    color=this_plot_data['color'])
         elif 'plot' in this_plot_data['type']:
             if len(this_xdata) == 0: return -1
             if is_vary:
@@ -988,17 +948,16 @@ class Plotting(object):
                 this_ydata = np.array(this_ydata)*this_plot_data['scale']
             if this_plot_data['supress_legend']: this_leg = None
             this_boot,this_ydata,this_xdata,this_xerrdata,this_yerrdata = self.XRange_Chop(this_plot_data,[2,3],this_boot,this_ydata,this_xdata,this_xerrdata,this_yerrdata)
-            if not IgnorePlot:
-                self.plot_plane.plot(   np.array(this_xdata)+float(this_plot_data['shift']),
-                                            this_ydata,
-                                            label=this_leg,
-                                            color=this_plot_data['color'])
+            self.plot_plane.plot(   np.array(this_xdata)+float(this_plot_data['shift']),
+                                        this_ydata,
+                                        label=this_leg,
+                                        color=this_plot_data['color'])
         elif 'histogram' in this_plot_data['type']:
             if 'boot_data' in list(this_plot_data.keys()):
                 if is_vary:
                     if not isinstance(this_boot,pa.Series):
                         raise EnvironmentError('wrong data type for _vary')
-                    if isinstance(this_plot_data['key_select'],(list,tuple,np.ndarray)):
+                    if isinstance(this_key_select,(list,tuple,np.ndarray)):
                         this_leg = []
                         for ikey in this_plot_data['key_select']:
                             if isinstance(ikey,str):
@@ -1006,10 +965,15 @@ class Plotting(object):
                         this_leg = ' '.join(this_leg)
                     else:
                         this_leg = ' '
+                    if 'First' == this_key_select:
+                        this_key_select = this_boot.index[0]
+
                     # if hasattr(this_plot_data['fmt_class'],'FormatSeriesKeys'):
                     #     this_boot = this_plot_data['fmt_class'].FormatSeriesKeys(this_boot,
                     #                                                                 this_plot_data['phys_axies'])
                     this_boot = this_boot[this_key_select]
+                    if isinstance(this_boot,pa.Series):
+                        this_boot = this_boot.iloc[0]
                 else:
                     this_leg = ''
                 # if isinstance(this_plot_data,pa.DataFrame):
@@ -1019,7 +983,7 @@ class Plotting(object):
                 # if isinstance(this_plot_data,pa.Series):
                 #     this_plot_data = this_plot_data.iloc[0]
                 if not isinstance(this_boot,BootStrap):
-                    print(type(this_plot_data), 'is not bootstrap class')
+                    print(type(this_plot_data['label']), 'is not bootstrap class')
                     print(this_boot)
                     return -1
                 if not this_plot_data['suppress_key_index']:
@@ -1030,13 +994,12 @@ class Plotting(object):
                     this_boot = np.array(this_boot)*this_plot_data['scale']
                 if this_plot_data['supress_legend']: this_leg = None
                 this_boot,this_ydata,this_xdata,this_xerrdata,this_yerrdata = self.XRange_Chop(this_plot_data,[2,3],this_boot,this_ydata,this_xdata,this_xerrdata,this_yerrdata)
-                if not IgnorePlot:
-                    self.plot_plane = this_boot.BootHistogram(self.plot_plane,
-                                        histtype=this_plot_data['histtype'],
-                                        label=this_leg,
-                                        color=this_plot_data['color'],
-                                        alpha=this_plot_data['alpha'],
-                                        Median=this_plot_data['Median'])
+                self.plot_plane = this_boot.BootHistogram(self.plot_plane,
+                                    histtype=this_plot_data['histtype'],
+                                    label=this_leg,
+                                    color=this_plot_data['color'],
+                                    alpha=this_plot_data['alpha'],
+                                    Median=this_plot_data['Median'])
             elif len(this_xdata) == 0: return -1
             else:
                 if is_vary:
@@ -1063,12 +1026,11 @@ class Plotting(object):
                     this_xdata = np.array(this_xdata)*this_plot_data['scale']
                 if this_plot_data['supress_legend']: this_leg = None
                 this_boot,this_ydata,this_xdata,this_xerrdata,this_yerrdata = self.XRange_Chop(this_plot_data,[2,3],this_boot,this_ydata,this_xdata,this_xerrdata,this_yerrdata)
-                if not IgnorePlot:
-                    self.plot_plane.hist(   np.hstack(this_xdata),
-                                            histtype=this_plot_data['histtype'],
-                                            label=this_leg,
-                                            color=this_plot_data['color'],
-                                            alpha=this_plot_data['alpha'])
+                self.plot_plane.hist(   np.hstack(this_xdata),
+                                        histtype=this_plot_data['histtype'],
+                                        label=this_leg,
+                                        color=this_plot_data['color'],
+                                        alpha=this_plot_data['alpha'])
         elif 'scatter' in this_plot_data['type']:
             if len(this_xdata) == 0: return -1
             if is_vary:
@@ -1105,12 +1067,11 @@ class Plotting(object):
                 this_ydata = np.array(this_ydata)*this_plot_data['scale']
             if this_plot_data['supress_legend']: this_leg = None
             this_boot,this_ydata,this_xdata,this_xerrdata,this_yerrdata = self.XRange_Chop(this_plot_data,[2,3],this_boot,this_ydata,this_xdata,this_xerrdata,this_yerrdata)
-            if not IgnorePlot:
-                self.plot_plane.scatter(   np.array(this_xdata)+float(this_plot_data['shift']),
-                                            this_ydata,
-                                            label=this_leg,
-                                            marker=this_plot_data['symbol'],
-                                            color=this_plot_data['color'])
+            self.plot_plane.scatter(   np.array(this_xdata)+float(this_plot_data['shift']),
+                                        this_ydata,
+                                        label=this_leg,
+                                        marker=this_plot_data['symbol'],
+                                        color=this_plot_data['color'])
         elif 'vline' in this_plot_data['type']:
             if is_vary:
                 if not isinstance(this_xdata,pa.Series):
@@ -1156,10 +1117,9 @@ class Plotting(object):
                 this_xdata = np.array(this_xdata)*this_plot_data['scale']
             if this_plot_data['supress_legend']: this_leg = None
             this_xdata = self.XRange_Chop(this_plot_data,[0],this_xdata)
-            if not IgnorePlot:
-                self.plot_plane.axvline(    np.array(this_xdata)+float(this_plot_data['shift']),
-                                            label=this_leg,
-                                            color=this_plot_data['color'])
+            self.plot_plane.axvline(    np.array(this_xdata)+float(this_plot_data['shift']),
+                                        label=this_leg,
+                                        color=this_plot_data['color'])
             if 'xerr_data' in this_plot_data:
                 if is_vary:
                     mid = this_xdata[this_key_select].values,
@@ -1176,11 +1136,10 @@ class Plotting(object):
                     down = np.array(down)*this_plot_data['scale']
                     up = np.array(up)*this_plot_data['scale']
                 up,down = self.XRange_Chop(this_plot_data,[0,1],up,down)
-                if not IgnorePlot:
-                    self.plot_plane.axvspan(    down+float(this_plot_data['shift']),
-                                                up+float(this_plot_data['shift']),
-                                                alpha=this_plot_data['alpha'],
-                                                color=this_plot_data['color'])
+                self.plot_plane.axvspan(    down+float(this_plot_data['shift']),
+                                            up+float(this_plot_data['shift']),
+                                            alpha=this_plot_data['alpha'],
+                                            color=this_plot_data['color'])
 
         elif 'hline' in this_plot_data['type']:
             if is_vary:
@@ -1231,10 +1190,9 @@ class Plotting(object):
                 this_ydata = np.array(this_ydata)*this_plot_data['scale']
             if this_plot_data['supress_legend']: this_leg = None
             # this_ydata = self.XRange_Chop(this_plot_data,this_ydata)
-            if not IgnorePlot:
-                self.plot_plane.axhline(    this_ydata,
-                                            label=this_leg,
-                                            color=this_plot_data['color'])
+            self.plot_plane.axhline(    this_ydata,
+                                        label=this_leg,
+                                        color=this_plot_data['color'])
             if 'yerr_data' in this_plot_data:
                 if is_vary:
                     try:
@@ -1255,11 +1213,10 @@ class Plotting(object):
                     down = np.array(down)*this_plot_data['scale']
                     up = np.array(up)*this_plot_data['scale']
                 # up,down = self.XRange_Chop(this_plot_data,up,down)
-                if not IgnorePlot:
-                    self.plot_plane.axhspan(    down,
-                                                up,
-                                                alpha=this_plot_data['alpha'],
-                                                color=this_plot_data['color'])
+                self.plot_plane.axhspan(    down,
+                                            up,
+                                            alpha=this_plot_data['alpha'],
+                                            color=this_plot_data['color'])
         elif 'effm_fit' in this_plot_data['type']:
             if 'xdatarange' not in this_plot_data: this_plot_data['xdatarange'] = 'Data'
             if 'thislineres' not in this_plot_data: this_plot_data['thislineres'] = 100
@@ -1284,16 +1241,15 @@ class Plotting(object):
             else:
                 this_scale = lambda x : x
 
-            if not IgnorePlot:
-                self.plot_plane = this_fit.PlotEffMass(
-                                    xdatarange=this_plot_data['xdatarange'],
-                                    thislineres=this_plot_data['thislineres'],
-                                    color=this_plot_data['color'],
-                                    shift=this_plot_data['shift'],
-                                    Phys=this_plot_data['Phys'],
-                                    y_scale=this_plot_data['scale'],
-                                    x_scale=this_plot_data['x_scale'],
-                                    plot_plane = self.plot_plane)
+            self.plot_plane = this_fit.PlotEffMass(
+                                xdatarange=this_plot_data['xdatarange'],
+                                thislineres=this_plot_data['thislineres'],
+                                color=this_plot_data['color'],
+                                shift=this_plot_data['shift'],
+                                Phys=this_plot_data['Phys'],
+                                y_scale=this_plot_data['scale'],
+                                x_scale=this_plot_data['x_scale'],
+                                plot_plane = self.plot_plane)
         elif 'log_fit' in this_plot_data['type']:
             if 'xdatarange' not in this_plot_data: this_plot_data['xdatarange'] = 'Data'
             if 'thislineres' not in this_plot_data: this_plot_data['thislineres'] = 100
@@ -1303,14 +1259,13 @@ class Plotting(object):
                 if not isinstance(this_fit,pa.Series):
                     raise EnvironmentError('wrong data type for _vary')
                 this_fit = this_fit[this_key_select]
-            if not IgnorePlot:
-                self.plot_plane = this_fit.PlotLog(
-                                    xdatarange=this_plot_data['xdatarange'],
-                                    thislineres=this_plot_data['thislineres'],
-                                    scale=this_plot_data['scale'],
-                                    color=this_plot_data['color'],
-                                    shift=this_plot_data['shift'],
-                                    plot_plane = self.plot_plane)
+            self.plot_plane = this_fit.PlotLog(
+                                xdatarange=this_plot_data['xdatarange'],
+                                thislineres=this_plot_data['thislineres'],
+                                scale=this_plot_data['scale'],
+                                color=this_plot_data['color'],
+                                shift=this_plot_data['shift'],
+                                plot_plane = self.plot_plane)
         elif 'fit' in this_plot_data['type']:
             if 'otherXvals' not in this_plot_data: this_plot_data['otherXvals'] = []
             if 'xaxis' not in this_plot_data: this_plot_data['xaxis'] = 0
@@ -1325,8 +1280,6 @@ class Plotting(object):
                 if not isinstance(this_fit,pa.Series):
                     raise EnvironmentError('wrong data type for _vary')
                 this_key = this_key_select
-                if any([type(jkey) == slice for jkey in this_key]):
-                    this_key = this_fit.index[0]
                 if this_key in this_fit.index:
                     this_fit = this_fit[this_key]
                     if isinstance(this_fit,pa.Series):
@@ -1334,6 +1287,9 @@ class Plotting(object):
                 else:
                     if 'First' != this_key:
                         print('Warning, ',this_key, 'not in fit plot keys')
+                    if len(this_fit) == 0:
+                        print('Fit varied was not passed with anything to vary, skipping plot')
+                        return output_dict
                     this_fit = this_fit.iloc[0]
             if this_plot_data['fmt_class'] is not False and this_plot_data['fmt_class'] is not None:
                 def this_scale(val):
@@ -1361,35 +1317,29 @@ class Plotting(object):
                 this_fit.hairline_alpha = 1.0
             this_fit.FPName = this_plot_data['FPName']
             this_fit.FPUnits = this_plot_data['FPUnits']
-            if not IgnorePlot:
-                self.plot_plane = this_fit.PlotFunction(
-                                    otherXvals=this_plot_data['otherXvals'],
-                                    xaxis=this_plot_data['xaxis'],
-                                    xdatarange=this_plot_data['xdatarange'],
-                                    thislineres=this_plot_data['thislineres'],
-                                    color=this_plot_data['color'],
-                                    shift=this_plot_data['shift'],
-                                    flowphys=this_plot_data['flowphys'],
-                                    ShowPar=this_plot_data['ShowPar'],
-                                    ShowEval=this_plot_data['ShowEval'],
-                                    y_scale=this_plot_data['scale'],
-                                    x_scale=this_plot_data['x_scale'],
-                                    suppress_key=this_plot_data['suppress_key_index'],
-                                    x_fun=this_plot_data['x_fun'],
-                                    supress_legend=this_plot_data['supress_legend'],
-                                    hairline=this_plot_data['hairline'],
-                                    extrap_fade=this_plot_data['extrap_fade'],
-                                    plot_plane = self.plot_plane)
+            self.plot_plane = this_fit.PlotFunction(
+                                otherXvals=this_plot_data['otherXvals'],
+                                xaxis=this_plot_data['xaxis'],
+                                xdatarange=this_plot_data['xdatarange'],
+                                thislineres=this_plot_data['thislineres'],
+                                color=this_plot_data['color'],
+                                shift=this_plot_data['shift'],
+                                flowphys=this_plot_data['flowphys'],
+                                ShowPar=this_plot_data['ShowPar'],
+                                ShowEval=this_plot_data['ShowEval'],
+                                y_scale=this_plot_data['scale'],
+                                x_scale=this_plot_data['x_scale'],
+                                suppress_key=this_plot_data['suppress_key_index'],
+                                x_fun=this_plot_data['x_fun'],
+                                supress_legend=this_plot_data['supress_legend'],
+                                hairline=this_plot_data['hairline'],
+                                extrap_fade=this_plot_data['extrap_fade'],
+                                plot_plane = self.plot_plane)
         else:
             print('Warning, plpython kill programot type',this_plot_data['type'],'not implemented, skipping data')
-        # return output_dict
-        return  (this_xdata,this_xerrdata,this_ydata,
-                 this_yerrdata,this_fit,this_key_select)
-
-
+        return output_dict
 
     def Animate(self,this_key=0,a_index=0,multi_index=0):
-        raise NotImplementedError('Updates for chaco will render this obsolite')
         self.AddNulls()
         self.plot_plane.cla()
         if isinstance(this_key,int):
@@ -1443,12 +1393,8 @@ class Plotting(object):
             return -1
 
     def Configure_Plane(self):
-        try:
-            self.plot_plane.legend( loc=self.plot_info['leg_loc'],ncol=self.plot_info['leg_ncol'],
-                                    fontsize=self.plot_info['leg_fontsize'],
-                                    framealpha=self.plot_info['leg_alpha'])
-        except:
-            pass
+        self.plot_plane.legend( loc=self.plot_info['leg_loc'],ncol=self.plot_info['leg_ncol'],
+                                fontsize=self.plot_info['leg_fontsize'],framealpha=self.plot_info['leg_alpha'])
         if 'title' in self.plot_info:
             if 'title_dict' in self.plot_info:
                 try:
@@ -1727,18 +1673,29 @@ class Plotting(object):
                     plotval = type(plotval)(np.array(plotval)*iplot_data['scale'])
                 outDict[key_str]['hline_val'] = '{0:10.20e}'.format(plotval)
             elif 'fit' in iplot_data['type']:
+                if 'fit_class' in iplot_data:
+                    if isinstance(iplot_data['fit_class'],sff.SetOfFitFuns):
+                        this_fit = iplot_data['fit_class'].Fit_Stats_fmt['Fit']
+                    else:
+                        this_fit = iplot_data['fit_class']
+                else:
+                    this_fit = False
+
                 if is_vary:
                     this_key = tuple_wrap(iplot_data['key_select'])
                     if any([type(jkey) == slice for jkey in this_key]):
-                        this_key = iplot_data['fit_class'].index[0]
-                    if this_key in iplot_data['fit_class']:
-                        this_plot = iplot_data['fit_class'].loc[this_key]
+                        this_key = this_fit.index[0]
+                    if this_key in this_fit:
+                        this_plot = this_fit.loc[this_key]
                         if isinstance(this_plot,pa.Series):
                             this_plot = this_plot.iloc[0]
                     else:
-                        this_plot = iplot_data['fit_class'].iloc[0]
+                        if len(this_fit) == 0:
+                            print('Fit varied was not passed with anything to vary, skipping write')
+                            return
+                        this_plot = this_fit.iloc[0]
                 else:
-                    this_plot = iplot_data['fit_class']
+                    this_plot = this_fit
                 for iparam,boot_param in this_plot.fit_data['Params'].items():
                     outDict[key_str]['fit_parameters'][iparam] = AvgStdToFormat(boot_param.Avg,boot_param.Std)
                 if 'Chi2DoF' in this_plot.fit_data.iloc[0]:
@@ -2084,19 +2041,62 @@ def Plot_one_on_x2():
     data_plot.PrintData()
     return data_plot
 
-def TestChaco():
-    test_file = '/home/jackdra/LQCD/Data/resultsEDM/graphs/G2/Set1_EffMass'
+def Plot_data():
+    this_data = pa.DataFrame()
+    hold_series = pa.Series()
+    hold_series['type'] = 'error_bar'
+
+    t0_dict = []
+    t0_dict.append(     2.5377162290**-1  )
+    t0_dict.append(     2.3999592122**-1  )
+    t0_dict.append(     2.2590866059**-1  )
+    t0_dict.append(     1.3628954894**-1  )
+    t0_dict.append(     2.2386627909**-1)
+    t0_dict.append(     4.9885618908**-1)
+    t0_dict.append(     3.2060027740**-1)
+
+    val_data =[]
+    val_data.append(5.56)
+    val_data.append(5.40)
+    val_data.append(4.31)
+    val_data.append(7.00)
+    val_data.append(6.21)
+    val_data.append(2.80)
+    val_data.append(2.51)
+
+    err_data =[]
+    err_data.append(.57)
+    err_data.append(.31)
+    err_data.append(.45)
+    err_data.append(.34)
+    err_data.append(.29)
+    err_data.append(.32)
+    err_data.append(.11)
+
+    hold_series['x_data'] = t0_dict
+    hold_series['y_data'] = val_data
+    hold_series['yerr_data'] = err_data
+    hold_series['label'] = r'$bvst0$'
+    this_data['bvst'] = hold_series
+
     this_info = pa.Series()
-    this_info['save_file'] = test_file
-    data_plot = Plotting(plot_info=this_info)
-    data_plot.LoadPickle(DefWipe=False)
+    this_info['save_file'] = '/home/jackdra/LQCD/Scripts/Python_Analysis/TestGraphs/testbvst0.pdf'
+    this_info['title'] = r''
+    this_info['xlabel'] = r''
+    this_info['ylabel'] = r''
+    # this_info['xlims'] = [0,10]
+    # this_info['ylims'] = [0,15]
+    data_plot = Plotting(plot_data=this_data,plot_info=this_info)
+    data_plot.PlotAll()
+    data_plot.ShowFigure()
+    data_plot.PrintData()
     return data_plot
+
 
 if __name__ == '__main__':
     # Test_Plot()
 
-    # data_plot = Test_Papers_FF()
-    data_plot = TestChaco()
+    data_plot = Test_Papers_FF()
 
     # # %matplotlib inline
     # import sys

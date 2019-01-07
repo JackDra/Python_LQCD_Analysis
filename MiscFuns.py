@@ -12,6 +12,8 @@ from copy import deepcopy
 from TimeStuff import Timer
 import operator as op
 import imp
+import string
+import warnings
 
 def mindex_iloc_md(df,index_list):
     for iindex in index_list:
@@ -165,19 +167,25 @@ def fmt_Qt5_col(this_class):
 
 
 def get_val_float_0(val):
-    this_val = get_val(val,this_type=float)
+    this_val = get_val(val,this_type=float,suppress_warn=True)
     if isinstance(this_val,float):
         return this_val
-    else:
+    elif isinstance(this_val[0],float):
         return this_val[0]
+    else:
+        warnings.warn('float not found in get_val_float_0 call, using first character ordering')
+        return string.ascii_lowercase.index(this_val[0])
 
 def get_val_float(val):
     return get_val(val,this_type=float)
 
-def get_val(val,Phys=True,this_type=int):
+def get_val(val,Phys=True,this_type=int,suppress_warn=False):
     if not isinstance(val,str):
         return this_type(val)
     out_str = rx.findall(val)
+    if len(out_str) == 0:
+        if not suppress_warn: warnings.warn(this_type+' not found in "get_val" call')
+        return val
     if len(out_str) == 1:
         return this_type(out_str[0])
     else:

@@ -1,0 +1,606 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>SetsOfFits module &#8212; LQCD Analysis Codebase TF Fits documentation</title>
+    <link rel="stylesheet" href="_static/agogo.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="SetsOfFlowOps module" href="SetsOfFlowOps.html" />
+    <link rel="prev" title="SetsOfFFs module" href="SetsOfFFs.html" /> 
+  </head><body>
+    <div class="header-wrapper" role="banner">
+      <div class="header">
+        <div class="headertitle"><a
+          href="index.html">LQCD Analysis Codebase TF Fits documentation</a></div>
+        <div class="rel" role="navigation" aria-label="related navigation">
+          <a href="SetsOfFFs.html" title="SetsOfFFs module"
+             accesskey="P">previous</a> |
+          <a href="SetsOfFlowOps.html" title="SetsOfFlowOps module"
+             accesskey="N">next</a> |
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-SetsOfFits">
+<span id="setsoffits-module"></span><h1>SetsOfFits module<a class="headerlink" href="#module-SetsOfFits" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="SetsOfFits.PullSOFSeries">
+<code class="descclassname">SetsOfFits.</code><code class="descname">PullSOFSeries</code><span class="sig-paren">(</span><em>this_series</em>, <em>keep_keys=slice(None</em>, <em>None</em>, <em>None)</em>, <em>fmted=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#PullSOFSeries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.PullSOFSeries" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="SetsOfFits.PullSOFSeries_Wpar">
+<code class="descclassname">SetsOfFits.</code><code class="descname">PullSOFSeries_Wpar</code><span class="sig-paren">(</span><em>this_series</em>, <em>keep_keys=slice(None</em>, <em>None</em>, <em>None)</em>, <em>fmted=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#PullSOFSeries_Wpar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.PullSOFSeries_Wpar" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="SetsOfFits.SetOfFitFuns">
+<em class="property">class </em><code class="descclassname">SetsOfFits.</code><code class="descname">SetOfFitFuns</code><span class="sig-paren">(</span><em>thisPrec=1e-08</em>, <em>thisMI=10000</em>, <em>data='None'</em>, <em>name='None'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>FFun(set) “Inherits” from Fitting in FitFunctions.py</p>
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.AddDefault">
+<code class="descname">AddDefault</code><span class="sig-paren">(</span><em>this_dict</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.AddDefault"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.AddDefault" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.CheckRange">
+<code class="descname">CheckRange</code><span class="sig-paren">(</span><em>fit_min</em>, <em>fit_max</em>, <em>fit_info={}</em>, <em>min_fit_len=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.CheckRange"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.CheckRange" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.CheckRange_fitr">
+<code class="descname">CheckRange_fitr</code><span class="sig-paren">(</span><em>this_fit</em>, <em>fit_info={}</em>, <em>min_fit_len=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.CheckRange_fitr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.CheckRange_fitr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.Comb_Max_fitr">
+<code class="descname">Comb_Max_fitr</code><span class="sig-paren">(</span><em>fix_max</em>, <em>cut_min=False</em>, <em>resample=False</em>, <em>chi_min=0</em>, <em>chi_max=2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.Comb_Max_fitr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.Comb_Max_fitr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.Comb_Min_fitr">
+<code class="descname">Comb_Min_fitr</code><span class="sig-paren">(</span><em>fix_min</em>, <em>cut_max=False</em>, <em>resample=False</em>, <em>chi_min=0</em>, <em>chi_max=2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.Comb_Min_fitr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.Comb_Min_fitr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.Cut_max">
+<code class="descname">Cut_max</code><span class="sig-paren">(</span><em>max_cut</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.Cut_max"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.Cut_max" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.Cut_min">
+<code class="descname">Cut_min</code><span class="sig-paren">(</span><em>min_cut</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.Cut_min"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.Cut_min" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.Cut_min_len">
+<code class="descname">Cut_min_len</code><span class="sig-paren">(</span><em>min_fit_len</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.Cut_min_len"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.Cut_min_len" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.DoFits">
+<code class="descname">DoFits</code><span class="sig-paren">(</span><em>PullParams=False</em>, <em>PullChi=True</em>, <em>show_timer=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.DoFits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.DoFits" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.Eval_Fun_Avg">
+<code class="descname">Eval_Fun_Avg</code><span class="sig-paren">(</span><em>*vals</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.Eval_Fun_Avg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.Eval_Fun_Avg" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.Eval_Fun_AvgStd">
+<code class="descname">Eval_Fun_AvgStd</code><span class="sig-paren">(</span><em>*vals</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.Eval_Fun_AvgStd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.Eval_Fun_AvgStd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.Eval_Fun_AvgStd_fmt">
+<code class="descname">Eval_Fun_AvgStd_fmt</code><span class="sig-paren">(</span><em>*vals</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.Eval_Fun_AvgStd_fmt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.Eval_Fun_AvgStd_fmt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.Eval_Fun_Avg_fmt">
+<code class="descname">Eval_Fun_Avg_fmt</code><span class="sig-paren">(</span><em>*vals</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.Eval_Fun_Avg_fmt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.Eval_Fun_Avg_fmt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.Eval_Fun_Std">
+<code class="descname">Eval_Fun_Std</code><span class="sig-paren">(</span><em>*vals</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.Eval_Fun_Std"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.Eval_Fun_Std" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.Eval_Fun_Std_fmt">
+<code class="descname">Eval_Fun_Std_fmt</code><span class="sig-paren">(</span><em>*vals</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.Eval_Fun_Std_fmt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.Eval_Fun_Std_fmt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.Eval_Function">
+<code class="descname">Eval_Function</code><span class="sig-paren">(</span><em>*vals</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.Eval_Function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.Eval_Function" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.Eval_Function_fmt">
+<code class="descname">Eval_Function_fmt</code><span class="sig-paren">(</span><em>*vals</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.Eval_Function_fmt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.Eval_Function_fmt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="SetsOfFits.SetOfFitFuns.Fit_Stats">
+<code class="descname">Fit_Stats</code><em class="property"> = None</em><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.Fit_Stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.Fit_Col_Names DataFrame:</p>
+<p>columns =   Fitting, Chi2pdf,</p>
+<p>## 1D case
+rows =      Function , iGuess , fit_min , fit_max</p>
+<p>## 2D case “shape”
+rows =      Function , iGuess , fit_min , fit_max, shape</p>
+<p>## 2D case “box”
+rows =      Function , iGuess , fit_min_1 , fit_max_1, fit_min_2, fit_max_2</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="SetsOfFits.SetOfFitFuns.Fit_Stats_fmt">
+<code class="descname">Fit_Stats_fmt</code><em class="property"> = None</em><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.Fit_Stats_fmt" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.Fit_Col_Names DataFrame:</p>
+<p>columns =   Fitting, Chi2pdf,</p>
+<p>## 1D case
+rows =      Function , fitr#-#</p>
+<p>## 2D case “shape”
+rows =      Function , fitr#-#, shape</p>
+<p>## 2D case “box”
+rows =      Function , fitr#-#, fittwor#-#</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.Fitr_Len_Sort">
+<code class="descname">Fitr_Len_Sort</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.Fitr_Len_Sort"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.Fitr_Len_Sort" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.FormatIndex">
+<code class="descname">FormatIndex</code><span class="sig-paren">(</span><em>this_index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.FormatIndex"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.FormatIndex" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.Get1D">
+<code class="descname">Get1D</code><span class="sig-paren">(</span><em>key</em>, <em>fmted=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.Get1D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.Get1D" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.Get2D_box">
+<code class="descname">Get2D_box</code><span class="sig-paren">(</span><em>key</em>, <em>fmted=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.Get2D_box"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.Get2D_box" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.Get2D_shape">
+<code class="descname">Get2D_shape</code><span class="sig-paren">(</span><em>key</em>, <em>fmted=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.Get2D_shape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.Get2D_shape" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.GetBestChi">
+<code class="descname">GetBestChi</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.GetBestChi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.GetBestChi" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.GetBestChi_key">
+<code class="descname">GetBestChi_key</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.GetBestChi_key"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.GetBestChi_key" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.GetChiRange">
+<code class="descname">GetChiRange</code><span class="sig-paren">(</span><em>chi_min=0</em>, <em>chi_max=100</em>, <em>nchi_cutoff=100</em>, <em>fmted=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.GetChiRange"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.GetChiRange" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.GetChiVariation">
+<code class="descname">GetChiVariation</code><span class="sig-paren">(</span><em>chi_min=0</em>, <em>chi_max=100</em>, <em>nchi_cutoff=100</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.GetChiVariation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.GetChiVariation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.GetFuns">
+<code class="descname">GetFuns</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.GetFuns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.GetFuns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.GetMaxFitr">
+<code class="descname">GetMaxFitr</code><span class="sig-paren">(</span><em>fmted=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.GetMaxFitr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.GetMaxFitr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.GetOutputDict">
+<code class="descname">GetOutputDict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.GetOutputDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.GetOutputDict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.GetXdataValue">
+<code class="descname">GetXdataValue</code><span class="sig-paren">(</span><em>fit_min</em>, <em>fit_max</em>, <em>index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.GetXdataValue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.GetXdataValue" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.Get_Extrapolation">
+<code class="descname">Get_Extrapolation</code><span class="sig-paren">(</span><em>fmted=True</em>, <em>with_chi=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.Get_Extrapolation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.Get_Extrapolation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.Get_Formatted_Table">
+<code class="descname">Get_Formatted_Table</code><span class="sig-paren">(</span><em>fmt_latex=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.Get_Formatted_Table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.Get_Formatted_Table" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.ImportData">
+<code class="descname">ImportData</code><span class="sig-paren">(</span><em>read_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.ImportData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.ImportData" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.ImportData_Series">
+<code class="descname">ImportData_Series</code><span class="sig-paren">(</span><em>read_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.ImportData_Series"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.ImportData_Series" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.ImportFits">
+<code class="descname">ImportFits</code><span class="sig-paren">(</span><em>fit_types</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.ImportFits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.ImportFits" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.ImportFunction">
+<code class="descname">ImportFunction</code><span class="sig-paren">(</span><em>Function</em>, <em>thisparlen</em>, <em>FunDer='None'</em>, <em>thisparlab='PreDef'</em>, <em>thisparunits='None'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.ImportFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.ImportFunction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.ImportVarySomething">
+<code class="descname">ImportVarySomething</code><span class="sig-paren">(</span><em>this_list</em>, <em>fit_info</em>, <em>flag</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.ImportVarySomething"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.ImportVarySomething" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.MakeFitRanges">
+<code class="descname">MakeFitRanges</code><span class="sig-paren">(</span><em>fit_min</em>, <em>fit_max</em>, <em>npar</em>, <em>from_xdata=False</em>, <em>index=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.MakeFitRanges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.MakeFitRanges" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.MakeFitRanges_FixEnd">
+<code class="descname">MakeFitRanges_FixEnd</code><span class="sig-paren">(</span><em>fit_min</em>, <em>fit_max</em>, <em>npar</em>, <em>from_xdata=False</em>, <em>index=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.MakeFitRanges_FixEnd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.MakeFitRanges_FixEnd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.MakeFitRanges_Sym">
+<code class="descname">MakeFitRanges_Sym</code><span class="sig-paren">(</span><em>fit_min</em>, <em>fit_max</em>, <em>npar</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.MakeFitRanges_Sym"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.MakeFitRanges_Sym" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.MakeFitRanges_shape">
+<code class="descname">MakeFitRanges_shape</code><span class="sig-paren">(</span><em>fit_min_1</em>, <em>fit_max_1</em>, <em>fit_min_2</em>, <em>fit_max_2</em>, <em>npar</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.MakeFitRanges_shape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.MakeFitRanges_shape" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.MakeFormatted">
+<code class="descname">MakeFormatted</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.MakeFormatted"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.MakeFormatted" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.PlotFunction">
+<code class="descname">PlotFunction</code><span class="sig-paren">(</span><em>ikey</em>, <em>otherXvals=[]</em>, <em>xaxis=0</em>, <em>xdatarange='Data'</em>, <em>thislineres=100</em>, <em>color=None</em>, <em>shift=0.0</em>, <em>flowphys=False</em>, <em>ShowPar='None'</em>, <em>scale=1.0</em>, <em>plot_plane=None</em>, <em>hairline=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.PlotFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.PlotFunction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.PlotVaryFitr">
+<code class="descname">PlotVaryFitr</code><span class="sig-paren">(</span><em>plot_plane</em>, <em>acutal_x=True</em>, <em>chi_min=0</em>, <em>chi_max=2</em>, <em>thiscol=None</em>, <em>thissym=None</em>, <em>thisshift=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.PlotVaryFitr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.PlotVaryFitr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.PullChi">
+<code class="descname">PullChi</code><span class="sig-paren">(</span><em>failed_fit=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.PullChi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.PullChi" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.PullIdenticalParams">
+<code class="descname">PullIdenticalParams</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.PullIdenticalParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.PullIdenticalParams" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.PullParam">
+<code class="descname">PullParam</code><span class="sig-paren">(</span><em>ipar</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.PullParam"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.PullParam" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.PullPlotFitr">
+<code class="descname">PullPlotFitr</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.PullPlotFitr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.PullPlotFitr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.PullPlotLen">
+<code class="descname">PullPlotLen</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.PullPlotLen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.PullPlotLen" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.ReduceViaChi">
+<code class="descname">ReduceViaChi</code><span class="sig-paren">(</span><em>chi_min=0</em>, <em>chi_max=100</em>, <em>nchi_cutoff=100</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.ReduceViaChi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.ReduceViaChi" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.RemoveFuns">
+<code class="descname">RemoveFuns</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.RemoveFuns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.RemoveFuns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.ScanBox">
+<code class="descname">ScanBox</code><span class="sig-paren">(</span><em>fit_min_1</em>, <em>fit_max_1</em>, <em>fit_min_2</em>, <em>fit_max_2</em>, <em>fit_info={}</em>, <em>min_fit_len_1=3</em>, <em>min_fit_len_2=3</em>, <em>from_xdata=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.ScanBox"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.ScanBox" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.ScanBox_FixEnd">
+<code class="descname">ScanBox_FixEnd</code><span class="sig-paren">(</span><em>fit_min_1</em>, <em>fit_max_1</em>, <em>fit_min_2</em>, <em>fit_max_2</em>, <em>fit_info={}</em>, <em>min_fit_len_1=3</em>, <em>min_fit_len_2=3</em>, <em>from_xdata=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.ScanBox_FixEnd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.ScanBox_FixEnd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.ScanBox_FixEnd_maxdim2">
+<code class="descname">ScanBox_FixEnd_maxdim2</code><span class="sig-paren">(</span><em>fit_min_1</em>, <em>fit_max_1</em>, <em>fit_min_2</em>, <em>fit_max_2</em>, <em>fit_info={}</em>, <em>min_fit_len_1=3</em>, <em>min_fit_len_2=3</em>, <em>from_xdata=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.ScanBox_FixEnd_maxdim2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.ScanBox_FixEnd_maxdim2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.ScanBox_fitr">
+<code class="descname">ScanBox_fitr</code><span class="sig-paren">(</span><em>fit_1</em>, <em>fit_2</em>, <em>fit_info={}</em>, <em>min_fit_len_1=3</em>, <em>min_fit_len_2=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.ScanBox_fitr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.ScanBox_fitr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.ScanBox_maxdim2">
+<code class="descname">ScanBox_maxdim2</code><span class="sig-paren">(</span><em>fit_min_1</em>, <em>fit_max_1</em>, <em>fit_min_2</em>, <em>fit_max_2</em>, <em>fit_info={}</em>, <em>min_fit_len_1=3</em>, <em>min_fit_len_2=3</em>, <em>from_xdata=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.ScanBox_maxdim2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.ScanBox_maxdim2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.ScanRange">
+<code class="descname">ScanRange</code><span class="sig-paren">(</span><em>fit_min</em>, <em>fit_max</em>, <em>fit_info={}</em>, <em>min_fit_len=3</em>, <em>from_xdata=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.ScanRange"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.ScanRange" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.ScanRange_Sym">
+<code class="descname">ScanRange_Sym</code><span class="sig-paren">(</span><em>fit_min</em>, <em>fit_max</em>, <em>fit_info={}</em>, <em>min_fit_len=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.ScanRange_Sym"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.ScanRange_Sym" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.ScanRange_fitr">
+<code class="descname">ScanRange_fitr</code><span class="sig-paren">(</span><em>this_fit</em>, <em>fit_info={}</em>, <em>min_fit_len=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.ScanRange_fitr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.ScanRange_fitr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.ScanRange_fitr_Sym">
+<code class="descname">ScanRange_fitr_Sym</code><span class="sig-paren">(</span><em>this_fit</em>, <em>fit_info={}</em>, <em>min_fit_len=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.ScanRange_fitr_Sym"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.ScanRange_fitr_Sym" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.ScanShape">
+<code class="descname">ScanShape</code><span class="sig-paren">(</span><em>fit_min_1</em>, <em>fit_max_1</em>, <em>fit_min_2</em>, <em>fit_max_2</em>, <em>fit_info={}</em>, <em>min_fit_len=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.ScanShape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.ScanShape" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.Set1D">
+<code class="descname">Set1D</code><span class="sig-paren">(</span><em>key</em>, <em>value</em>, <em>fmted=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.Set1D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.Set1D" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.Set2D_box">
+<code class="descname">Set2D_box</code><span class="sig-paren">(</span><em>key</em>, <em>value</em>, <em>fmted=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.Set2D_box"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.Set2D_box" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.Set2D_shape">
+<code class="descname">Set2D_shape</code><span class="sig-paren">(</span><em>key</em>, <em>value</em>, <em>fmted=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.Set2D_shape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.Set2D_shape" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.SingleFitBox">
+<code class="descname">SingleFitBox</code><span class="sig-paren">(</span><em>fit_min_1</em>, <em>fit_max_1</em>, <em>fit_min_2</em>, <em>fit_max_2</em>, <em>fit_info={}</em>, <em>min_fit_len=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.SingleFitBox"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.SingleFitBox" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.SortChi">
+<code class="descname">SortChi</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.SortChi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.SortChi" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.Stats">
+<code class="descname">Stats</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.Stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.Stats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.UnExpParams">
+<code class="descname">UnExpParams</code><span class="sig-paren">(</span><em>paramkeys='All'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.UnExpParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.UnExpParams" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="SetsOfFits.SetOfFitFuns.instances">
+<code class="descname">instances</code><em class="property"> = []</em><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.instances" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.items">
+<code class="descname">items</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.items" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.iteritems">
+<code class="descname">iteritems</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.iteritems"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.iteritems" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.iteritems_fmt">
+<code class="descname">iteritems_fmt</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.iteritems_fmt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.iteritems_fmt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.iterkeys">
+<code class="descname">iterkeys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.iterkeys"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.iterkeys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.itervalues">
+<code class="descname">itervalues</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.itervalues"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.itervalues" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.keys">
+<code class="descname">keys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.keys"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.keys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="SetsOfFits.SetOfFitFuns.parentlist">
+<code class="descname">parentlist</code><em class="property"> = []</em><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.parentlist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFits.SetOfFitFuns.values">
+<code class="descname">values</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#SetOfFitFuns.values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.SetOfFitFuns.values" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="SetsOfFits.TestSetOfFits">
+<code class="descclassname">SetsOfFits.</code><code class="descname">TestSetOfFits</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#TestSetOfFits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.TestSetOfFits" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="SetsOfFits.TestSetOfFits_2D">
+<code class="descclassname">SetsOfFits.</code><code class="descname">TestSetOfFits_2D</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFits.html#TestSetOfFits_2D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFits.TestSetOfFits_2D" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table of Contents</h3>
+          <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Python_Analysis</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="AhmedRes.html">AhmedRes module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="AnalysisGUI.html">AnalysisGUI module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Autocorr.html">Autocorr module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BNLFormFactor.html">BNLFormFactor module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BootStrapping.html">BootStrapping module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BootStrapping_self.html">BootStrapping_self module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ChacoModPlot_heatmap.html">ChacoModPlot_heatmap module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ChacoTest.html">ChacoTest module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CreateTable.html">CreateTable module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DSDefines.html">DSDefines module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FFSolve.html">FFSolve module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FileIO.html">FileIO module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FileIOMat.html">FileIOMat module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FitFunctions.html">FitFunctions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FitFunctions_TF.html">FitFunctions_TF module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FlowOpps.html">FlowOpps module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ForMatAndrea.html">ForMatAndrea module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FormFactors.html">FormFactors module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GammaMatricies.html">GammaMatricies module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Jose_Plots.html">Jose_Plots module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MAH_control.html">MAH_control module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MakeFuns.html">MakeFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Mat_Alpha_Hack.html">Mat_Alpha_Hack module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Mat_Hack_V2.html">Mat_Hack_V2 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Mayavi_Test.html">Mayavi_Test module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MiscFuns.html">MiscFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModPlot.html">ModPlot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModStylePlot.html">ModStylePlot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MomParams.html">MomParams module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MultiWrap.html">MultiWrap module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="NullPlotData.html">NullPlotData module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PandasTest.html">PandasTest module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Params.html">Params module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ParamsOLD.html">ParamsOLD module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PlotData.html">PlotData module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PredefFitFuns.html">PredefFitFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="QuantityLists.html">QuantityLists module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RatioCorrelators.html">RatioCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ReadBinaryCfuns.html">ReadBinaryCfuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ReadBinaryCfuns_SLone.html">ReadBinaryCfuns_SLone module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RunSetCommands.html">RunSetCommands module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFFs.html">SetsOfFFs module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">SetsOfFits module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFlowOps.html">SetsOfFlowOps module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfRatios.html">SetsOfRatios module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfTwoPtCorrs.html">SetsOfTwoPtCorrs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Setup.html">Setup module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Test3dLine.html">Test3dLine module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TestAll.html">TestAll module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TestCorr.html">TestCorr module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ThreePtCorrelators.html">ThreePtCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TimeStuff.html">TimeStuff module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TwoPtCorrelators.html">TwoPtCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VarMethod.html">VarMethod module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VarMethod_self.html">VarMethod_self module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="XmlFormatting.html">XmlFormatting module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mv_graphs.html">mv_graphs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xmltodict.html">xmltodict module</a></li>
+</ul>
+</li>
+</ul>
+
+          <div role="search">
+            <h3 style="margin-top: 1.5em;">Search</h3>
+            <form class="search" action="search.html" method="get">
+                <input type="text" name="q" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+            </form>
+          </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <div role="navigation" aria-label="related navigaton">
+            <a href="SetsOfFFs.html" title="SetsOfFFs module"
+              >previous</a> |
+            <a href="SetsOfFlowOps.html" title="SetsOfFlowOps module"
+              >next</a> |
+            <a href="py-modindex.html" title="Python Module Index"
+              >modules</a> |
+            <a href="genindex.html" title="General Index"
+              >index</a>
+          </div>
+          <div role="note" aria-label="source link">
+              <br/>
+              <a href="_sources/SetsOfFits.rst.txt"
+                rel="nofollow">Show Source</a>
+          </div>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Jack Dragos.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>

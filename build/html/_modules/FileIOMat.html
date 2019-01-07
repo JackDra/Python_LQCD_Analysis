@@ -1,0 +1,171 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>FileIOMat &#8212; LQCD Analysis Codebase TF Fits documentation</title>
+    <link rel="stylesheet" href="../_static/agogo.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="header-wrapper" role="banner">
+      <div class="header">
+        <div class="headertitle"><a
+          href="../index.html">LQCD Analysis Codebase TF Fits documentation</a></div>
+        <div class="rel" role="navigation" aria-label="related navigation">
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for FileIOMat</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pa</span>
+<span class="kn">import</span> <span class="nn">pickle</span> <span class="k">as</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+
+<span class="n">cfg_file_type</span> <span class="o">=</span> <span class="s1">&#39;msgpack&#39;</span>
+
+<div class="viewcode-block" id="fmt_file_type"><a class="viewcode-back" href="../FileIOMat.html#FileIOMat.fmt_file_type">[docs]</a><span class="k">def</span> <span class="nf">fmt_file_type</span><span class="p">(</span><span class="n">this_type</span><span class="p">):</span>
+    <span class="n">this_type</span> <span class="o">=</span> <span class="n">this_type</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;feather&#39;</span><span class="p">,</span><span class="s1">&#39;fe&#39;</span><span class="p">)</span>
+    <span class="n">this_type</span> <span class="o">=</span> <span class="n">this_type</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;parquet&#39;</span><span class="p">,</span><span class="s1">&#39;par&#39;</span><span class="p">)</span>
+    <span class="n">this_type</span> <span class="o">=</span> <span class="n">this_type</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;msgpack&#39;</span><span class="p">,</span><span class="s1">&#39;msg&#39;</span><span class="p">)</span>
+    <span class="n">this_type</span> <span class="o">=</span> <span class="n">this_type</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;pickle&#39;</span><span class="p">,</span><span class="s1">&#39;p&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;.&#39;</span> <span class="ow">in</span> <span class="n">this_type</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">this_type</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;.&#39;</span><span class="o">+</span><span class="n">this_type</span></div>
+
+
+
+<div class="viewcode-block" id="WriteWithMeta"><a class="viewcode-back" href="../FileIOMat.html#FileIOMat.WriteWithMeta">[docs]</a><span class="k">def</span> <span class="nf">WriteWithMeta</span><span class="p">(</span><span class="n">df_data</span><span class="p">,</span><span class="n">meta_data</span><span class="p">,</span><span class="n">this_file</span><span class="p">,</span><span class="n">file_type</span><span class="o">=</span><span class="n">cfg_file_type</span><span class="p">):</span>
+    <span class="k">if</span> <span class="s1">&#39;to_&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">file_type</span><span class="p">:</span>
+        <span class="n">file_type</span> <span class="o">=</span> <span class="s1">&#39;to_&#39;</span><span class="o">+</span><span class="n">file_type</span>
+    <span class="n">file_ext</span> <span class="o">=</span> <span class="n">fmt_file_type</span><span class="p">(</span><span class="n">file_type</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;to_&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="s1">&#39;.&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">file_ext</span><span class="p">:</span>
+        <span class="n">file_ext</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="o">+</span><span class="n">file_ext</span>
+    <span class="k">if</span> <span class="n">file_ext</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">this_file</span><span class="p">:</span>
+        <span class="n">this_file</span> <span class="o">+=</span> <span class="n">file_ext</span>
+    <span class="k">if</span> <span class="n">file_ext</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;.csv&#39;</span><span class="p">,</span><span class="s1">&#39;.json&#39;</span><span class="p">,</span><span class="s1">&#39;.html&#39;</span><span class="p">]:</span>
+        <span class="nb">getattr</span><span class="p">(</span><span class="n">df_data</span><span class="p">,</span><span class="n">file_type</span><span class="p">)(</span><span class="n">this_file</span><span class="p">)</span>
+        <span class="nb">getattr</span><span class="p">(</span><span class="n">pa</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">meta_data</span><span class="p">),</span><span class="n">file_type</span><span class="p">)(</span><span class="n">this_file</span><span class="o">+</span><span class="s1">&#39;.meta&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">this_file</span><span class="p">,</span><span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">meta_data</span><span class="p">,</span><span class="n">f</span><span class="p">)</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="n">df_data</span><span class="p">,</span><span class="n">file_type</span><span class="p">)(</span><span class="n">f</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ReadWithMeta"><a class="viewcode-back" href="../FileIOMat.html#FileIOMat.ReadWithMeta">[docs]</a><span class="k">def</span> <span class="nf">ReadWithMeta</span><span class="p">(</span><span class="n">this_file</span><span class="p">,</span><span class="n">file_type</span><span class="o">=</span><span class="n">cfg_file_type</span><span class="p">):</span>
+    <span class="k">if</span> <span class="s1">&#39;read_&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">file_type</span><span class="p">:</span>
+        <span class="n">file_type</span> <span class="o">=</span> <span class="s1">&#39;read_&#39;</span><span class="o">+</span><span class="n">file_type</span>
+    <span class="n">file_ext</span> <span class="o">=</span> <span class="n">fmt_file_type</span><span class="p">(</span><span class="n">file_type</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;read_&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="s1">&#39;.&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">file_ext</span><span class="p">:</span>
+        <span class="n">file_ext</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="o">+</span><span class="n">file_ext</span>
+    <span class="k">if</span> <span class="n">file_ext</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">this_file</span><span class="p">:</span>
+        <span class="n">this_file</span> <span class="o">+=</span> <span class="n">file_ext</span>
+    <span class="k">if</span> <span class="n">file_ext</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;.csv&#39;</span><span class="p">,</span><span class="s1">&#39;.json&#39;</span><span class="p">,</span><span class="s1">&#39;.html&#39;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">EnvironmentError</span><span class="p">(</span><span class="s1">&#39;reading human readable types: csv, json, html not supported&#39;</span><span class="p">)</span>
+        <span class="c1"># meta_data = getattr(pa,file_type)(this_file+&#39;.meta&#39;)</span>
+        <span class="c1"># df_data = getattr(pa,file_type)(this_file)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">this_file</span><span class="p">,</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">meta_data</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="n">df_data</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">pa</span><span class="p">,</span><span class="n">file_type</span><span class="p">)(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">meta_data</span><span class="p">,</span><span class="n">df_data</span></div>
+
+<div class="viewcode-block" id="ReadWithMeta_NP"><a class="viewcode-back" href="../FileIOMat.html#FileIOMat.ReadWithMeta_NP">[docs]</a><span class="k">def</span> <span class="nf">ReadWithMeta_NP</span><span class="p">(</span><span class="n">this_file</span><span class="p">,</span><span class="n">file_type</span><span class="o">=</span><span class="n">cfg_file_type</span><span class="p">,</span><span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;Op&#39;</span><span class="p">):</span>
+    <span class="n">meta</span><span class="p">,</span><span class="n">data</span> <span class="o">=</span> <span class="n">ReadWithMeta</span><span class="p">(</span><span class="n">this_file</span><span class="p">,</span><span class="n">file_type</span><span class="o">=</span><span class="n">file_type</span><span class="p">)</span>
+    <span class="n">outlist</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">data_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+        <span class="n">out_str</span> <span class="o">=</span> <span class="s1">&#39;data_type not found for reading data</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="n">out_str</span> <span class="o">+=</span> <span class="n">data_type</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="n">out_str</span> <span class="o">+=</span> <span class="s1">&#39;found in file:</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="n">out_str</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">out_str</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">ival</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="n">data_type</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
+        <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">ival</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">meta</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">outlist</span><span class="p">)</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+    <span class="n">file_name</span> <span class="o">=</span> <span class="s1">&#39;/home/jackdra/PHD/CHROMA/TestVar/Scripts/Python_Analysis/Configs/FlowOps//RC32x64_kud1370000_ks1364000_-b-_Weinberg_Full.cfgs.msg&#39;</span>
+    <span class="n">metadata</span><span class="p">,</span><span class="n">data</span> <span class="o">=</span> <span class="n">ReadWithMeta</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+    <span class="n">configs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;configs&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+    <span class="n">data_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ival</span><span class="p">)</span> <span class="k">for</span> <span class="n">ival</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Op&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">])</span>
+    <span class="n">metadata</span><span class="p">,</span><span class="n">data</span> <span class="o">=</span> <span class="n">ReadWithMeta_NP</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+    <span class="n">metadata</span><span class="p">,</span><span class="n">data</span> <span class="o">=</span> <span class="n">ReadWithMeta_NP</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span><span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;C2&#39;</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table of Contents</h3>
+          <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Python_Analysis</a></li>
+</ul>
+
+          <div role="search">
+            <h3 style="margin-top: 1.5em;">Search</h3>
+            <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+            </form>
+          </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <div role="navigation" aria-label="related navigaton">
+            <a href="../py-modindex.html" title="Python Module Index"
+              >modules</a> |
+            <a href="../genindex.html" title="General Index"
+              >index</a>
+          </div>
+          <div role="note" aria-label="source link">
+          </div>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Jack Dragos.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>

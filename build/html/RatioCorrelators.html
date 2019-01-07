@@ -1,0 +1,1004 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>RatioCorrelators module &#8212; LQCD Analysis Codebase TF Fits documentation</title>
+    <link rel="stylesheet" href="_static/agogo.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ReadBinaryCfuns module" href="ReadBinaryCfuns.html" />
+    <link rel="prev" title="QuantityLists module" href="QuantityLists.html" /> 
+  </head><body>
+    <div class="header-wrapper" role="banner">
+      <div class="header">
+        <div class="headertitle"><a
+          href="index.html">LQCD Analysis Codebase TF Fits documentation</a></div>
+        <div class="rel" role="navigation" aria-label="related navigation">
+          <a href="QuantityLists.html" title="QuantityLists module"
+             accesskey="P">previous</a> |
+          <a href="ReadBinaryCfuns.html" title="ReadBinaryCfuns module"
+             accesskey="N">next</a> |
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-RatioCorrelators">
+<span id="ratiocorrelators-module"></span><h1>RatioCorrelators module<a class="headerlink" href="#module-RatioCorrelators" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="RatioCorrelators.CenterT">
+<code class="descclassname">RatioCorrelators.</code><code class="descname">CenterT</code><span class="sig-paren">(</span><em>tlist</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#CenterT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.CenterT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="RatioCorrelators.RatioCorr">
+<em class="property">class </em><code class="descclassname">RatioCorrelators.</code><code class="descname">RatioCorr</code><span class="sig-paren">(</span><em>thisnboot=200</em>, <em>cfglist={}</em>, <em>Info={}</em>, <em>name=''</em>, <em>filename=''</em>, <em>thissym='Not Set'</em>, <em>thiscol='Not Set'</em>, <em>thisshift=0.0</em>, <em>man_load_cfgs=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Rat(q,tau,pp,t) uses bootstrap class
+pp  = sink momentum
+t   = source sink separation time
+q   = current insersion momentum
+tau = current insersion time</p>
+<p>Info is a dictionary containing information for the correlator:
+see comments below to see what is required.
+missing elements just sets field to default</p>
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.Bootstrap">
+<code class="descname">Bootstrap</code><span class="sig-paren">(</span><em>WipeData=True</em>, <em>DefWipe=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.Bootstrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.Bootstrap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.CalcRatio">
+<code class="descname">CalcRatio</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.CalcRatio"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.CalcRatio" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.CalcSqrtFac">
+<code class="descname">CalcSqrtFac</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.CalcSqrtFac"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.CalcSqrtFac" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.CalcSqrtFacMom">
+<code class="descname">CalcSqrtFacMom</code><span class="sig-paren">(</span><em>data2ptpp</em>, <em>data2ptp</em>, <em>thistsink</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.CalcSqrtFacMom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.CalcSqrtFacMom" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.CheckCol">
+<code class="descname">CheckCol</code><span class="sig-paren">(</span><em>thiscol</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.CheckCol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.CheckCol" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.CheckNegForSqrt">
+<code class="descname">CheckNegForSqrt</code><span class="sig-paren">(</span><em>thisboot</em>, <em>negsqrt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.CheckNegForSqrt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.CheckNegForSqrt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.CheckSym">
+<code class="descname">CheckSym</code><span class="sig-paren">(</span><em>thissym</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.CheckSym"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.CheckSym" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.CombineCfgLists">
+<code class="descname">CombineCfgLists</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.CombineCfgLists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.CombineCfgLists" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.CombineWithAlpha">
+<code class="descname">CombineWithAlpha</code><span class="sig-paren">(</span><em>alpha_in</em>, <em>flow_time</em>, <em>this_fun=&lt;built-in function truediv&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.CombineWithAlpha"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.CombineWithAlpha" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.CreateC2Sink">
+<code class="descname">CreateC2Sink</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.CreateC2Sink"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.CreateC2Sink" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.Fit">
+<code class="descname">Fit</code><span class="sig-paren">(</span><em>fit_range='PreDef'</em>, <em>iGuess='PreDef'</em>, <em>EstDir=False</em>, <em>WipeFit=True</em>, <em>show_timer=False</em>, <em>min_fitr=2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.Fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.Fit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.FitPlot">
+<code class="descname">FitPlot</code><span class="sig-paren">(</span><em>plot_class</em>, <em>fitr</em>, <em>xlims='Data'</em>, <em>gammamomlist={}</em>, <em>thiscol='PreDefine'</em>, <em>thisshift='PreDefine'</em>, <em>tflowlist=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.FitPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.FitPlot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.FixDict">
+<code class="descname">FixDict</code><span class="sig-paren">(</span><em>thisdict</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.FixDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.FixDict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.FixRead">
+<code class="descname">FixRead</code><span class="sig-paren">(</span><em>readdict</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.FixRead"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.FixRead" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.GetBestFitr">
+<code class="descname">GetBestFitr</code><span class="sig-paren">(</span><em>igamma</em>, <em>ip</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.GetBestFitr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.GetBestFitr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.GetCfgList">
+<code class="descname">GetCfgList</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.GetCfgList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.GetCfgList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.GetFuns">
+<code class="descname">GetFuns</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.GetFuns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.GetFuns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.GetShift">
+<code class="descname">GetShift</code><span class="sig-paren">(</span><em>xlims</em>, <em>thisshift</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.GetShift"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.GetShift" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.GetTflowList">
+<code class="descname">GetTflowList</code><span class="sig-paren">(</span><em>load_dict</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.GetTflowList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.GetTflowList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.Get_Extrapolation">
+<code class="descname">Get_Extrapolation</code><span class="sig-paren">(</span><em>keep_keys=slice(None</em>, <em>None</em>, <em>None)</em>, <em>fmted=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.Get_Extrapolation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.Get_Extrapolation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.ImportCfgList">
+<code class="descname">ImportCfgList</code><span class="sig-paren">(</span><em>cfglist</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.ImportCfgList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.ImportCfgList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.ImportFitRanges">
+<code class="descname">ImportFitRanges</code><span class="sig-paren">(</span><em>fit_range</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.ImportFitRanges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.ImportFitRanges" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.ImportPlotParams">
+<code class="descname">ImportPlotParams</code><span class="sig-paren">(</span><em>thiscol</em>, <em>thissym</em>, <em>thisshift</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.ImportPlotParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.ImportPlotParams" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.LoadCfgs">
+<code class="descname">LoadCfgs</code><span class="sig-paren">(</span><em>cfglist</em>, <em>name=''</em>, <em>filename=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.LoadCfgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.LoadCfgs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.LoadPickle">
+<code class="descname">LoadPickle</code><span class="sig-paren">(</span><em>DefWipe=False</em>, <em>WipeData=True</em>, <em>CheckCfgs=False</em>, <em>CheckMom=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.LoadPickle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.LoadPickle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.Overload_wrap">
+<code class="descname">Overload_wrap</code><span class="sig-paren">(</span><em>Rat2</em>, <em>this_fun</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.Overload_wrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.Overload_wrap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.Plot">
+<code class="descname">Plot</code><span class="sig-paren">(</span><em>plot_class</em>, <em>xlims='tsink'</em>, <em>gammamomlist={}</em>, <em>thiscol='PreDefine'</em>, <em>thissym='PreDefine'</em>, <em>thisshift='PreDefine'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.Plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.Plot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="RatioCorrelators.RatioCorr.Rat_Fit_Stats">
+<code class="descname">Rat_Fit_Stats</code><em class="property"> = None</em><a class="headerlink" href="#RatioCorrelators.RatioCorr.Rat_Fit_Stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.Rat_Fit_Stats DataFrame:</p>
+<p>columns =   boot</p>
+<p>rows =      current_operator, momenta</p>
+<dl class="docutils">
+<dt>Avg/Std elements are pa.Series instances with:</dt>
+<dd>index = fit parameters
+values = Avg/Std values</dd>
+</dl>
+<p>boot elements are SetOfFitFuns objects</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="RatioCorrelators.RatioCorr.Rat_Stats">
+<code class="descname">Rat_Stats</code><em class="property"> = None</em><a class="headerlink" href="#RatioCorrelators.RatioCorr.Rat_Stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.Rat_Stats DataFrame:</p>
+<p>columns =   boot,   Avg,        Std</p>
+<p>rows =      current_operator,   momenta,    time separation</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.Read">
+<code class="descname">Read</code><span class="sig-paren">(</span><em>WipeData=True</em>, <em>DefWipe=False</em>, <em>CheckMom=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.Read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.Read" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.ReadAndWrite">
+<code class="descname">ReadAndWrite</code><span class="sig-paren">(</span><em>WipeData=True</em>, <em>DefWipe=False</em>, <em>CheckCfgs=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.ReadAndWrite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.ReadAndWrite" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.ReduceIndicies">
+<code class="descname">ReduceIndicies</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.ReduceIndicies"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.ReduceIndicies" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.RemoveFuns">
+<code class="descname">RemoveFuns</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.RemoveFuns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.RemoveFuns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.RemoveVals">
+<code class="descname">RemoveVals</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.RemoveVals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.RemoveVals" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.SetCustomName">
+<code class="descname">SetCustomName</code><span class="sig-paren">(</span><em>string=''</em>, <em>stringfn=''</em>, <em>stringLL=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.SetCustomName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.SetCustomName" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.Stats">
+<code class="descname">Stats</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.Stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.Stats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.Write">
+<code class="descname">Write</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.Write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.Write" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.cos">
+<code class="descname">cos</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.cos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.cos" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.items">
+<code class="descname">items</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.items" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.itemsAvgStd">
+<code class="descname">itemsAvgStd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.itemsAvgStd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.itemsAvgStd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.iteritems">
+<code class="descname">iteritems</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.iteritems"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.iteritems" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.itervalues">
+<code class="descname">itervalues</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.itervalues"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.itervalues" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.keys">
+<code class="descname">keys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.keys"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.keys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="RatioCorrelators.RatioCorr.parentlist">
+<code class="descname">parentlist</code><em class="property"> = ['SetOfCorrs.SetsOfRatios', 'RatioCorrelators.RatioFOCorr', 'RatioCorrelators.RatioFOFullCorr']</em><a class="headerlink" href="#RatioCorrelators.RatioCorr.parentlist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.sin">
+<code class="descname">sin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.sin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.sin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.values">
+<code class="descname">values</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.values" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioCorr.valuesAvgStd">
+<code class="descname">valuesAvgStd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioCorr.valuesAvgStd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioCorr.valuesAvgStd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="RatioCorrelators.RatioFOCorr">
+<em class="property">class </em><code class="descclassname">RatioCorrelators.</code><code class="descname">RatioFOCorr</code><span class="sig-paren">(</span><em>thisnboot=200</em>, <em>cfglist={}</em>, <em>Info={}</em>, <em>name=''</em>, <em>filename=''</em>, <em>thissym='Not Set'</em>, <em>thiscol='Not Set'</em>, <em>thisshift=0.0</em>, <em>man_load_cfgs=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Rat(q,tau,pp,t,tflow) uses bootstrap class
+pp  = sink momentum
+t   = source sink separation time
+q   = current insersion momentum
+tau = current insersion time
+tflow = flow time</p>
+<p>Info is a dictionary containing information for the correlator:
+see comments below to see what is required.
+missing elements just sets field to default</p>
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.Bootstrap">
+<code class="descname">Bootstrap</code><span class="sig-paren">(</span><em>WipeData=True</em>, <em>DefWipe=False</em>, <em>CheckCfgs=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.Bootstrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.Bootstrap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.CalcRatio">
+<code class="descname">CalcRatio</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.CalcRatio"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.CalcRatio" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.CalcSqrtFac">
+<code class="descname">CalcSqrtFac</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.CalcSqrtFac"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.CalcSqrtFac" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.CalcSqrtFacMom">
+<code class="descname">CalcSqrtFacMom</code><span class="sig-paren">(</span><em>data2ptpp</em>, <em>data2ptp</em>, <em>thistsink</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.CalcSqrtFacMom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.CalcSqrtFacMom" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.CheckCol">
+<code class="descname">CheckCol</code><span class="sig-paren">(</span><em>thiscol</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.CheckCol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.CheckCol" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.CheckNegForSqrt">
+<code class="descname">CheckNegForSqrt</code><span class="sig-paren">(</span><em>thisboot</em>, <em>negsqrt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.CheckNegForSqrt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.CheckNegForSqrt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.CheckSym">
+<code class="descname">CheckSym</code><span class="sig-paren">(</span><em>thissym</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.CheckSym"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.CheckSym" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.CombineCfgLists">
+<code class="descname">CombineCfgLists</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.CombineCfgLists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.CombineCfgLists" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.CombineWithAlpha">
+<code class="descname">CombineWithAlpha</code><span class="sig-paren">(</span><em>alpha_in</em>, <em>this_fun=&lt;built-in function truediv&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.CombineWithAlpha"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.CombineWithAlpha" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.CreateC2Sink">
+<code class="descname">CreateC2Sink</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.CreateC2Sink"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.CreateC2Sink" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.DoAlphaCombine">
+<code class="descname">DoAlphaCombine</code><span class="sig-paren">(</span><em>this_fun=&lt;built-in function truediv&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.DoAlphaCombine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.DoAlphaCombine" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.Fit">
+<code class="descname">Fit</code><span class="sig-paren">(</span><em>fit_range='PreDef'</em>, <em>iGuess='PreDef'</em>, <em>EstDir=False</em>, <em>tflowfit=[]</em>, <em>WipeFit=True</em>, <em>show_timer=False</em>, <em>min_fitr=2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.Fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.Fit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.FitPlot">
+<code class="descname">FitPlot</code><span class="sig-paren">(</span><em>plot_class</em>, <em>fitr</em>, <em>xlims='Data'</em>, <em>gammamomlist={}</em>, <em>tflowlist=[]</em>, <em>thiscol='PreDefine'</em>, <em>thisshift='PreDefine'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.FitPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.FitPlot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.FixRead">
+<code class="descname">FixRead</code><span class="sig-paren">(</span><em>readdict</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.FixRead"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.FixRead" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.GetBestFitr">
+<code class="descname">GetBestFitr</code><span class="sig-paren">(</span><em>igamma</em>, <em>ip</em>, <em>itflow</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.GetBestFitr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.GetBestFitr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.GetCfgList">
+<code class="descname">GetCfgList</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.GetCfgList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.GetCfgList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.GetFuns">
+<code class="descname">GetFuns</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.GetFuns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.GetFuns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.GetShift">
+<code class="descname">GetShift</code><span class="sig-paren">(</span><em>xlims</em>, <em>thisshift</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.GetShift"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.GetShift" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.ImportCfgList">
+<code class="descname">ImportCfgList</code><span class="sig-paren">(</span><em>cfglist</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.ImportCfgList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.ImportCfgList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.ImportFitRanges">
+<code class="descname">ImportFitRanges</code><span class="sig-paren">(</span><em>fit_range</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.ImportFitRanges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.ImportFitRanges" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.ImportPlotParams">
+<code class="descname">ImportPlotParams</code><span class="sig-paren">(</span><em>thiscol</em>, <em>thissym</em>, <em>thisshift</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.ImportPlotParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.ImportPlotParams" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.Importtflow">
+<code class="descname">Importtflow</code><span class="sig-paren">(</span><em>tflowlist</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.Importtflow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.Importtflow" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.LoadCfgs">
+<code class="descname">LoadCfgs</code><span class="sig-paren">(</span><em>cfglist</em>, <em>name=''</em>, <em>filename=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.LoadCfgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.LoadCfgs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.LoadPickle">
+<code class="descname">LoadPickle</code><span class="sig-paren">(</span><em>DefWipe=False</em>, <em>WipeData=True</em>, <em>CheckCfgs=False</em>, <em>CheckMom=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.LoadPickle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.LoadPickle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.Overload_wrap">
+<code class="descname">Overload_wrap</code><span class="sig-paren">(</span><em>Rat2</em>, <em>this_fun</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.Overload_wrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.Overload_wrap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.Plot">
+<code class="descname">Plot</code><span class="sig-paren">(</span><em>plot_class</em>, <em>xlims='tsink'</em>, <em>gammamomlist={}</em>, <em>tflowlist=[]</em>, <em>thiscol='PreDefine'</em>, <em>thissym='PreDefine'</em>, <em>thisshift='PreDefine'</em>, <em>alpha_fun='Pre_Def'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.Plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.Plot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="RatioCorrelators.RatioFOCorr.Rat_Fit_Stats">
+<code class="descname">Rat_Fit_Stats</code><em class="property"> = None</em><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.Rat_Fit_Stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.Rat_Fit_Stats DataFrame:</p>
+<p>columns =   boot,   Avg,        Std</p>
+<p>rows =      current_operator, momenta,  flow_times, time fit range</p>
+<dl class="docutils">
+<dt>Avg/Std elements are pa.Series instances with:</dt>
+<dd>index = fit parameters
+values = Avg/Std values</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="RatioCorrelators.RatioFOCorr.Rat_Stats">
+<code class="descname">Rat_Stats</code><em class="property"> = None</em><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.Rat_Stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.Rat_Stats DataFrame:</p>
+<p>columns =   boot,   Avg,        Std</p>
+<p>rows =      current_operator,   momenta,    flow_times,    time separation</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.Read">
+<code class="descname">Read</code><span class="sig-paren">(</span><em>WipeData=True</em>, <em>DefWipe=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.Read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.Read" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.ReadAndWrite">
+<code class="descname">ReadAndWrite</code><span class="sig-paren">(</span><em>WipeData=True</em>, <em>DefWipe=False</em>, <em>CheckCfgs=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.ReadAndWrite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.ReadAndWrite" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.ReduceIndicies">
+<code class="descname">ReduceIndicies</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.ReduceIndicies"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.ReduceIndicies" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.RemoveFuns">
+<code class="descname">RemoveFuns</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.RemoveFuns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.RemoveFuns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.RemoveVals">
+<code class="descname">RemoveVals</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.RemoveVals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.RemoveVals" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.SetCustomName">
+<code class="descname">SetCustomName</code><span class="sig-paren">(</span><em>string=''</em>, <em>stringfn=''</em>, <em>stringLL=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.SetCustomName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.SetCustomName" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.Stats">
+<code class="descname">Stats</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.Stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.Stats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.Write">
+<code class="descname">Write</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.Write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.Write" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.cos">
+<code class="descname">cos</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.cos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.cos" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.items">
+<code class="descname">items</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.items" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.itemsAvgStd">
+<code class="descname">itemsAvgStd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.itemsAvgStd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.itemsAvgStd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.iteritems">
+<code class="descname">iteritems</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.iteritems"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.iteritems" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.itervalues">
+<code class="descname">itervalues</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.itervalues"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.itervalues" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.keys">
+<code class="descname">keys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.keys"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.keys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="RatioCorrelators.RatioFOCorr.parentlist">
+<code class="descname">parentlist</code><em class="property"> = ['SetOfCorrs.SetsOfRatios', 'RatioCorrelators.RatioFOFullCorr']</em><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.parentlist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.sin">
+<code class="descname">sin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.sin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.sin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.values">
+<code class="descname">values</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.values" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOCorr.valuesAvgStd">
+<code class="descname">valuesAvgStd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOCorr.valuesAvgStd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOCorr.valuesAvgStd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="RatioCorrelators.RatioFOFullCorr">
+<em class="property">class </em><code class="descclassname">RatioCorrelators.</code><code class="descname">RatioFOFullCorr</code><span class="sig-paren">(</span><em>thisnboot=200</em>, <em>cfglist={}</em>, <em>Info={}</em>, <em>name=''</em>, <em>filename=''</em>, <em>thissym='Not Set'</em>, <em>thiscol='Not Set'</em>, <em>thisshift=0.0</em>, <em>man_load_cfgs=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Rat(q,tau,pp,t,tflow) uses bootstrap class
+pp  = sink momentum
+t   = source sink separation time
+q   = current insersion momentum
+tau = current insersion time
+tflow = flow time
+tsum = summed current flow time.</p>
+<p>Info is a dictionary containing information for the correlator:
+see comments below to see what is required.
+missing elements just sets field to default</p>
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.Bootstrap">
+<code class="descname">Bootstrap</code><span class="sig-paren">(</span><em>WipeData=True</em>, <em>DefWipe=False</em>, <em>CheckCfgs=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.Bootstrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.Bootstrap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.CalcRatio">
+<code class="descname">CalcRatio</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.CalcRatio"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.CalcRatio" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.CalcSqrtFac">
+<code class="descname">CalcSqrtFac</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.CalcSqrtFac"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.CalcSqrtFac" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.CalcSqrtFacMom">
+<code class="descname">CalcSqrtFacMom</code><span class="sig-paren">(</span><em>data2ptpp</em>, <em>data2ptp</em>, <em>thistsink</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.CalcSqrtFacMom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.CalcSqrtFacMom" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.CheckCol">
+<code class="descname">CheckCol</code><span class="sig-paren">(</span><em>thiscol</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.CheckCol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.CheckCol" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.CheckNegForSqrt">
+<code class="descname">CheckNegForSqrt</code><span class="sig-paren">(</span><em>thisboot</em>, <em>negsqrt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.CheckNegForSqrt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.CheckNegForSqrt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.CheckSym">
+<code class="descname">CheckSym</code><span class="sig-paren">(</span><em>thissym</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.CheckSym"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.CheckSym" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.CombineCfgLists">
+<code class="descname">CombineCfgLists</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.CombineCfgLists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.CombineCfgLists" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.CreateC2Sink">
+<code class="descname">CreateC2Sink</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.CreateC2Sink"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.CreateC2Sink" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.Fit">
+<code class="descname">Fit</code><span class="sig-paren">(</span><em>fit_range='PreDef'</em>, <em>tsum_ranges='PreDef'</em>, <em>iGuess='PreDef'</em>, <em>EstDir=False</em>, <em>WipeFit=True</em>, <em>show_timer=False</em>, <em>min_fitr=2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.Fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.Fit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.FitPlot">
+<code class="descname">FitPlot</code><span class="sig-paren">(</span><em>plot_class</em>, <em>fitr</em>, <em>xlims='Data'</em>, <em>tsum_list=[]</em>, <em>gammamomlist={}</em>, <em>tflowlist=[]</em>, <em>thiscol='PreDefine'</em>, <em>thisshift='PreDefine'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.FitPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.FitPlot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.FitSumPlot">
+<code class="descname">FitSumPlot</code><span class="sig-paren">(</span><em>plot_class</em>, <em>fitr</em>, <em>xlims='Data'</em>, <em>tcurr=[]</em>, <em>gammamomlist={}</em>, <em>tflowlist=[]</em>, <em>thiscol='PreDefine'</em>, <em>thisshift='PreDefine'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.FitSumPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.FitSumPlot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.FixRead">
+<code class="descname">FixRead</code><span class="sig-paren">(</span><em>readdict</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.FixRead"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.FixRead" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.GetBestFitr">
+<code class="descname">GetBestFitr</code><span class="sig-paren">(</span><em>igamma</em>, <em>ip</em>, <em>itflow</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.GetBestFitr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.GetBestFitr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.GetCfgList">
+<code class="descname">GetCfgList</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.GetCfgList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.GetCfgList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.GetFuns">
+<code class="descname">GetFuns</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.GetFuns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.GetFuns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.GetShift">
+<code class="descname">GetShift</code><span class="sig-paren">(</span><em>xlims</em>, <em>thisshift</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.GetShift"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.GetShift" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.GetTflowList">
+<code class="descname">GetTflowList</code><span class="sig-paren">(</span><em>load_dict</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.GetTflowList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.GetTflowList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.ImportCfgList">
+<code class="descname">ImportCfgList</code><span class="sig-paren">(</span><em>cfglist</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.ImportCfgList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.ImportCfgList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.ImportFitRanges">
+<code class="descname">ImportFitRanges</code><span class="sig-paren">(</span><em>tau_fit_range</em>, <em>tsum_fit_range</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.ImportFitRanges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.ImportFitRanges" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.ImportPlotParams">
+<code class="descname">ImportPlotParams</code><span class="sig-paren">(</span><em>thiscol</em>, <em>thissym</em>, <em>thisshift</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.ImportPlotParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.ImportPlotParams" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.Importtflow">
+<code class="descname">Importtflow</code><span class="sig-paren">(</span><em>tflowlist</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.Importtflow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.Importtflow" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.LoadCfgs">
+<code class="descname">LoadCfgs</code><span class="sig-paren">(</span><em>cfglist</em>, <em>name=''</em>, <em>filename=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.LoadCfgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.LoadCfgs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.LoadPickle">
+<code class="descname">LoadPickle</code><span class="sig-paren">(</span><em>DefWipe=False</em>, <em>WipeData=True</em>, <em>CheckCfgs=False</em>, <em>CheckMom=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.LoadPickle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.LoadPickle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.Overload_wrap">
+<code class="descname">Overload_wrap</code><span class="sig-paren">(</span><em>Rat2</em>, <em>this_fun</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.Overload_wrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.Overload_wrap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.Plot">
+<code class="descname">Plot</code><span class="sig-paren">(</span><em>plot_class</em>, <em>xlims='tsink'</em>, <em>gammamomlist={}</em>, <em>tflowlist=[]</em>, <em>tsum_list=[]</em>, <em>thiscol='PreDefine'</em>, <em>thissym='PreDefine'</em>, <em>thisshift='PreDefine'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.Plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.Plot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.PlotTsum">
+<code class="descname">PlotTsum</code><span class="sig-paren">(</span><em>plot_class</em>, <em>xlims='All'</em>, <em>gammamomlist={}</em>, <em>tflowlist=[]</em>, <em>tcurr=[]</em>, <em>thiscol='PreDefine'</em>, <em>thissym='PreDefine'</em>, <em>thisshift='PreDefine'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.PlotTsum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.PlotTsum" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="RatioCorrelators.RatioFOFullCorr.RatInt_Fit_Stats">
+<code class="descname">RatInt_Fit_Stats</code><em class="property"> = None</em><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.RatInt_Fit_Stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.RatInt_Fit_Stats DataFrame:</p>
+<p>columns =   boot,   Avg,        Std</p>
+<p>rows =      current_operator, momenta,  flow_times, time fit range</p>
+<dl class="docutils">
+<dt>Avg/Std elements are pa.Series instances with:</dt>
+<dd>index = fit parameters
+values = Avg/Std values</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="RatioCorrelators.RatioFOFullCorr.RatInt_Stats">
+<code class="descname">RatInt_Stats</code><em class="property"> = None</em><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.RatInt_Stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.RatInt_Stats DataFrame:</p>
+<p>columns =   boot,   Avg,        Std</p>
+<dl class="docutils">
+<dt>rows =      current_operator,   momenta,    flow_times,</dt>
+<dd>time separation</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="RatioCorrelators.RatioFOFullCorr.Rat_Fit_Stats">
+<code class="descname">Rat_Fit_Stats</code><em class="property"> = None</em><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.Rat_Fit_Stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.Rat_Fit_Stats DataFrame:</p>
+<p>columns =   boot,   Avg,        Std</p>
+<p>rows =      current_operator, momenta,  flow_times, time fit range, flow op trange</p>
+<dl class="docutils">
+<dt>Avg/Std elements are pa.Series instances with:</dt>
+<dd>index = fit parameters
+values = Avg/Std values</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="RatioCorrelators.RatioFOFullCorr.Rat_Stats">
+<code class="descname">Rat_Stats</code><em class="property"> = None</em><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.Rat_Stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.Rat_Stats DataFrame:</p>
+<p>columns =   boot,   Avg,        Std</p>
+<dl class="docutils">
+<dt>rows =      current_operator,   momenta,    flow_times,</dt>
+<dd>time separation,    flow op trange</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.Read">
+<code class="descname">Read</code><span class="sig-paren">(</span><em>WipeData=True</em>, <em>DefWipe=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.Read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.Read" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.ReadAndWrite">
+<code class="descname">ReadAndWrite</code><span class="sig-paren">(</span><em>WipeData=True</em>, <em>DefWipe=False</em>, <em>CheckCfgs=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.ReadAndWrite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.ReadAndWrite" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.ReduceIndicies">
+<code class="descname">ReduceIndicies</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.ReduceIndicies"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.ReduceIndicies" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.RemoveFuns">
+<code class="descname">RemoveFuns</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.RemoveFuns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.RemoveFuns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.RemoveVals">
+<code class="descname">RemoveVals</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.RemoveVals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.RemoveVals" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.SetCustomName">
+<code class="descname">SetCustomName</code><span class="sig-paren">(</span><em>string=''</em>, <em>stringfn=''</em>, <em>stringLL=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.SetCustomName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.SetCustomName" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.Stats">
+<code class="descname">Stats</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.Stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.Stats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.Write">
+<code class="descname">Write</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.Write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.Write" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.cos">
+<code class="descname">cos</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.cos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.cos" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.items">
+<code class="descname">items</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.items" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.itemsAvgStd">
+<code class="descname">itemsAvgStd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.itemsAvgStd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.itemsAvgStd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.iteritems">
+<code class="descname">iteritems</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.iteritems"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.iteritems" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.itervalues">
+<code class="descname">itervalues</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.itervalues"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.itervalues" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.keys">
+<code class="descname">keys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.keys"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.keys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="RatioCorrelators.RatioFOFullCorr.parentlist">
+<code class="descname">parentlist</code><em class="property"> = ['SetOfCorrs.SetsOfRatios']</em><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.parentlist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.sin">
+<code class="descname">sin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.sin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.sin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.values">
+<code class="descname">values</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.values" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="RatioCorrelators.RatioFOFullCorr.valuesAvgStd">
+<code class="descname">valuesAvgStd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#RatioFOFullCorr.valuesAvgStd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.RatioFOFullCorr.valuesAvgStd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="RatioCorrelators.TestRat">
+<code class="descclassname">RatioCorrelators.</code><code class="descname">TestRat</code><span class="sig-paren">(</span><em>DefWipe=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#TestRat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.TestRat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="RatioCorrelators.TestRat2">
+<code class="descclassname">RatioCorrelators.</code><code class="descname">TestRat2</code><span class="sig-paren">(</span><em>DefWipe=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#TestRat2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.TestRat2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="RatioCorrelators.TestRatFO">
+<code class="descclassname">RatioCorrelators.</code><code class="descname">TestRatFO</code><span class="sig-paren">(</span><em>DefWipe=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#TestRatFO"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.TestRatFO" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="RatioCorrelators.TestRatFO2">
+<code class="descclassname">RatioCorrelators.</code><code class="descname">TestRatFO2</code><span class="sig-paren">(</span><em>DefWipe=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#TestRatFO2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.TestRatFO2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="RatioCorrelators.TestRatFOFull">
+<code class="descclassname">RatioCorrelators.</code><code class="descname">TestRatFOFull</code><span class="sig-paren">(</span><em>DefWipe=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/RatioCorrelators.html#TestRatFOFull"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#RatioCorrelators.TestRatFOFull" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table of Contents</h3>
+          <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Python_Analysis</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="AhmedRes.html">AhmedRes module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="AnalysisGUI.html">AnalysisGUI module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Autocorr.html">Autocorr module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BNLFormFactor.html">BNLFormFactor module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BootStrapping.html">BootStrapping module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BootStrapping_self.html">BootStrapping_self module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ChacoModPlot_heatmap.html">ChacoModPlot_heatmap module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ChacoTest.html">ChacoTest module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CreateTable.html">CreateTable module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DSDefines.html">DSDefines module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FFSolve.html">FFSolve module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FileIO.html">FileIO module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FileIOMat.html">FileIOMat module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FitFunctions.html">FitFunctions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FitFunctions_TF.html">FitFunctions_TF module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FlowOpps.html">FlowOpps module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ForMatAndrea.html">ForMatAndrea module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FormFactors.html">FormFactors module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GammaMatricies.html">GammaMatricies module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Jose_Plots.html">Jose_Plots module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MAH_control.html">MAH_control module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MakeFuns.html">MakeFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Mat_Alpha_Hack.html">Mat_Alpha_Hack module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Mat_Hack_V2.html">Mat_Hack_V2 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Mayavi_Test.html">Mayavi_Test module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MiscFuns.html">MiscFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModPlot.html">ModPlot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModStylePlot.html">ModStylePlot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MomParams.html">MomParams module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MultiWrap.html">MultiWrap module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="NullPlotData.html">NullPlotData module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PandasTest.html">PandasTest module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Params.html">Params module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ParamsOLD.html">ParamsOLD module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PlotData.html">PlotData module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PredefFitFuns.html">PredefFitFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="QuantityLists.html">QuantityLists module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">RatioCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ReadBinaryCfuns.html">ReadBinaryCfuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ReadBinaryCfuns_SLone.html">ReadBinaryCfuns_SLone module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RunSetCommands.html">RunSetCommands module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFFs.html">SetsOfFFs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFits.html">SetsOfFits module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFlowOps.html">SetsOfFlowOps module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfRatios.html">SetsOfRatios module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfTwoPtCorrs.html">SetsOfTwoPtCorrs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Setup.html">Setup module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Test3dLine.html">Test3dLine module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TestAll.html">TestAll module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TestCorr.html">TestCorr module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ThreePtCorrelators.html">ThreePtCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TimeStuff.html">TimeStuff module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TwoPtCorrelators.html">TwoPtCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VarMethod.html">VarMethod module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VarMethod_self.html">VarMethod_self module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="XmlFormatting.html">XmlFormatting module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mv_graphs.html">mv_graphs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xmltodict.html">xmltodict module</a></li>
+</ul>
+</li>
+</ul>
+
+          <div role="search">
+            <h3 style="margin-top: 1.5em;">Search</h3>
+            <form class="search" action="search.html" method="get">
+                <input type="text" name="q" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+            </form>
+          </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <div role="navigation" aria-label="related navigaton">
+            <a href="QuantityLists.html" title="QuantityLists module"
+              >previous</a> |
+            <a href="ReadBinaryCfuns.html" title="ReadBinaryCfuns module"
+              >next</a> |
+            <a href="py-modindex.html" title="Python Module Index"
+              >modules</a> |
+            <a href="genindex.html" title="General Index"
+              >index</a>
+          </div>
+          <div role="note" aria-label="source link">
+              <br/>
+              <a href="_sources/RatioCorrelators.rst.txt"
+                rel="nofollow">Show Source</a>
+          </div>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Jack Dragos.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>

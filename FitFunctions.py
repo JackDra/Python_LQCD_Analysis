@@ -8,6 +8,7 @@ from scipy.optimize import leastsq
 from BootStrapping import BootStrap
 from XmlFormatting import AvgStdToFormat,MakeValAndErr,LegendFmt
 from PredefFitFuns import LinearFitFun,SchiffFFDer,C2OSFAntiper
+from Params import normed_histograms
 
 # import matplotlib
 # matplotlib.use('Agg') # Must be before importing matplotlib.pyplot or pylab!
@@ -19,7 +20,7 @@ from PredefFitFuns import DPfitfunOneParDer,ParmDivXDer,ChitFitFunDer,ParmDivXPD
 from PredefFitFuns import c3PFDer,c3PFDer2,c3PFDer3,c3PFDer_skip1,c3PFDer2_skip1,c3PFDer3_skip1
 from PredefFitFuns import c3EFFDer,c3EFFDer2,c3EFFDer_nosqrt,c3EFFDer2_nosqrt,c3EFFDer3_nosqrt
 from PredefFitFuns import DPfitfun2Der,DPfitfunDer,OORNFFDer,SquaredFFDer,SquaredFFDer_x0
-from PredefFitFuns import Chi_Prop_Der,Chi_Prop_Der_2exp,LinFFDer_2D,LogFFDer,LogFFDer_x0,c3FFDer
+from PredefFitFuns import Chi_Prop_Der,Chi_Prop_Der_2exp,LinFFDer_2D,LogFFDer,LogFFDer_x0,c3FFDer,c3FFDer_nosqrt
 from PredefFitFuns import Alpha_Prop_Der,Alpha_Prop_Der_2exp,RF_Prop_Der,Alpha_Prop_Der_plin,c3FFDer_NoA
 from PredefFitFuns import SqPlLogFFDer,SqPlLogFFDer_x0,c3ContFFDer
 from PredefFitFuns import ContFFDer,ContFFDer_x0,ContPlLogFFDer,ContPlLogFFDer_x0
@@ -54,9 +55,12 @@ Make sure all functions used for fitting must have form:
 """
 
 
-def PullFitSeries(this_series):
+def PullFitSeries(this_series,with_chi=False):
     if len(this_series) == 0:
-        return this_series
+        if with_chi:
+            return this_series,[]
+        else:
+            return this_series
     outl,indexl = [],[]
     for ikey,NNQ_data in this_series.items():
         if 'Params' not in NNQ_data.fit_data: continue
@@ -68,10 +72,26 @@ def PullFitSeries(this_series):
             print(this_series)
             raise EnvironmentError('No labels set up for series')
         indicies = pa.MultiIndex.from_tuples(indexl,names=this_series.index.names + ['fit parameter'])
-        return pa.Series(outl,index=indicies).dropna()
+        out_data = pa.Series(outl,index=indicies).dropna()
     else:
-        return pa.Series()
-
+        out_data = pa.Series()
+    if with_chi:
+        outl,indexl = [],[]
+        for ikey,NNQ_data in this_series.items():
+            if 'Chi2DoF' not in NNQ_data.fit_data: continue
+            for fit_key,fit_data in NNQ_data.fit_data['Chi2DoF'].items():
+                indexl.append(ikey+(fit_key,))
+                outl.append(fit_data)
+        if len(indexl) > 0:
+            if this_series.index.names is None:
+                print(this_series)
+                raise EnvironmentError('No labels set up for series')
+            indicies = pa.MultiIndex.from_tuples(indexl,names=this_series.index.names + ['fit parameter'])
+            return out_data, pa.Series(outl,index=indicies).dropna()
+        else:
+            return out_data, pa.Series()
+    else:
+        return out_data
 
 
 class Fitting(object):
@@ -108,9 +128,9 @@ class Fitting(object):
         '''
         self.fit_data = DataFrame
 
-        columns =   Params,     CoVar_thispar,      Chi2Dof
-                    ParamsAvg,  CoVarAvg_thispar,   Chi2DofAvg
-                    ParamsStd,  CoVarStd_thispar,   Chi2DofStd
+        columns =   Params,     CoVar_thispar,      Chi2DoF
+                    ParamsAvg,  CoVarAvg_thispar,   Chi2DoFAvg
+                    ParamsStd,  CoVarStd_thispar,   Chi2DoFStd
                     Params_units
         rows = Fit Parameters
         '''
@@ -394,7 +414,28 @@ class Fitting(object):
 
 
 
-
+    def FitMean(self,DefWipe=True):
+        def GetXavg():
+            if self.xbooted:
+                return np.array(Pullflag(self.xdata,'Avg'))
+            else:
+                return self.xdata
+        if all([isinstance(iyval,BootStrap) for iyval in self.ydata]):
+            [thisavg,thisCVavg,thisCDFavg] = self.LSFit(GetXavg(),Pullflag(self.ydata,'Avg'),self.yerr)
+        else:
+            [thisavg,thisCVavg,thisCDFavg] = self.LSFit(GetXavg(),self.ydata,self.yerr)
+        out_df = pa.DataFrame()
+        out_df.loc[:,'Params'] = pa.Series(thisavg,index=self.paramlist)
+        for icp,ipar in enumerate(self.paramlist):
+            if isinstance(thisCVavg,np.ndarray):
+                out_df.loc[:,'Covar_'+ipar] = pa.Series(thisCVavg[icp],index=self.paramlist)
+            else:
+                out_df.loc[:,'Covar_'+ipar] = pa.Series(np.nan,index=self.paramlist)
+        if not isinstance(thisCDFavg,np.ndarray):
+            out_df.loc[:,'Chi2DoF'] = pa.Series(thisCDFavg,index=self.paramlist)
+        else:
+            out_df.loc[:,'Chi2DoF'] = pa.Series(np.nan,index=self.paramlist)
+        return out_df
     ##Note, xdatain must be in the form
     ## xdata [ [x1values] , [x2values] , ..... [xnvalues] ]
     ## for fitting functions over variables F( x1, x2, ... xn )
@@ -429,9 +470,9 @@ class Fitting(object):
             else:
                 self.fit_data.loc[:,'CovarAvg_'+ipar] = pa.Series(np.nan,index=self.paramlist)
         if not isinstance(thisCDFavg,np.ndarray):
-            self.fit_data.loc[:,'Chi2DofAvg'] = pa.Series(np.nan,index=self.paramlist)
+            self.fit_data.loc[:,'Chi2DoFAvg'] = pa.Series(np.nan,index=self.paramlist)
         else:
-            self.fit_data.loc[:,'Chi2DofAvg'] = pa.Series(thisCDFavg,index=self.paramlist)
+            self.fit_data.loc[:,'Chi2DoFAvg'] = pa.Series(thisCDFavg,index=self.paramlist)
         tempPar,tempCovar,tempChi2 = [],[],[]
         thisnboot = 0
         CovarError = False
@@ -505,6 +546,19 @@ class Fitting(object):
     def Eval_Fun_AvgStd(self,*vals):
         output = self.Eval_Function(*vals)
         return output.Avg,output.Std
+
+    def PlotHistogram(self,plot_plane,this_par='First',histtype='stepfilled',
+                      label='',color=None,alpha=None,
+                      key_val=True,norm=normed_histograms,Median=False):
+        if this_par == 'First':
+            this_par = self.fit_data['Params'].index[0]
+        if this_par not in self.fit_data['Params'].keys():
+            raise IOError(this_par + ' is not in fit parameters: \n' + '\n'.join(self.fit_data['Params'].keys()))
+        plot_data = self.fit_data.loc[this_par,'Params']
+        return plot_data.BootHistogram(plot_plane,histtype=histtype,
+                             label=label,color=color,alpha=alpha,
+                             key_val=key_val,norm=norm,Median=Median)
+
 
     def PlotHairlineFun(self,otherXvals=[],xaxis=0,xdatarange='Data',thislineres=100,
                         color=None,shift=0.0,flowphys=False,ShowPar='None',ShowEval=None,
@@ -1134,6 +1188,8 @@ class Fitting(object):
             return [-1,-1,-1]
         elif self.Fun.__name__ == 'c3FitFun':
             return [1,1,1]
+        elif self.Fun.__name__ == 'c3FitFun_nosqrt':
+            return [-1,-1,-1]
         # elif self.Fun.__name__ == 'c3FitFun_V2':
         #     return [2.8,-0.11,-1]
         elif self.Fun.__name__ == 'c3ExpFitFun':
@@ -1252,6 +1308,9 @@ class Fitting(object):
         elif self.Fun.__name__ == 'c3FitFun':
             # return 'Estimate'
             return c3FFDer
+        elif self.Fun.__name__ == 'c3FitFun_nosqrt':
+            # return 'Estimate'
+            return c3FFDer_nosqrt
         elif self.Fun.__name__ == 'c3FitFun_NoA':
             return c3FFDer_NoA
         elif self.Fun.__name__ == 'c3PolyFun':
@@ -1399,6 +1458,8 @@ class Fitting(object):
             return ['b','c']
         elif self.Fun.__name__ == 'c3FitFun':
             return ['a','b','c']
+        elif self.Fun.__name__ == 'c3FitFun_nosqrt':
+            return ['a','b','c']
         # elif self.Fun.__name__ == 'c3FitFun_V2':
         #     return ['b','c','d']
         elif self.Fun.__name__ == 'c3ExpFitFun':
@@ -1427,6 +1488,7 @@ class Fitting(object):
             return 'Def'
         else:
             return 'Def'
+
 
     def Overload_wrap(self,FF2,this_fun):
         ## TODO, include some name and filename formatting

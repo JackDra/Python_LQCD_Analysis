@@ -1,0 +1,408 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>FitFunctions module &#8212; LQCD Analysis Codebase TF Fits documentation</title>
+    <link rel="stylesheet" href="_static/agogo.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="FitFunctions_TF module" href="FitFunctions_TF.html" />
+    <link rel="prev" title="FileIOMat module" href="FileIOMat.html" /> 
+  </head><body>
+    <div class="header-wrapper" role="banner">
+      <div class="header">
+        <div class="headertitle"><a
+          href="index.html">LQCD Analysis Codebase TF Fits documentation</a></div>
+        <div class="rel" role="navigation" aria-label="related navigation">
+          <a href="FileIOMat.html" title="FileIOMat module"
+             accesskey="P">previous</a> |
+          <a href="FitFunctions_TF.html" title="FitFunctions_TF module"
+             accesskey="N">next</a> |
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-FitFunctions">
+<span id="fitfunctions-module"></span><h1>FitFunctions module<a class="headerlink" href="#module-FitFunctions" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="FitFunctions.Fitting">
+<em class="property">class </em><code class="descclassname">FitFunctions.</code><code class="descname">Fitting</code><span class="sig-paren">(</span><em>thisPrec=1e-08</em>, <em>thisMI=10000</em>, <em>data='None'</em>, <em>Funs='None'</em>, <em>iGuess='None'</em>, <em>name='None'</em>, <em>paramlist='PreDef'</em>, <em>paramunits='None'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FitFunctions.html#Fitting"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FitFunctions.Fitting" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="method">
+<dt id="FitFunctions.Fitting.CheckParams">
+<code class="descname">CheckParams</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FitFunctions.html#Fitting.CheckParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FitFunctions.Fitting.CheckParams" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FitFunctions.Fitting.ChiOfDer">
+<code class="descname">ChiOfDer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FitFunctions.html#Fitting.ChiOfDer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FitFunctions.Fitting.ChiOfDer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FitFunctions.Fitting.ChiOfFun">
+<code class="descname">ChiOfFun</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FitFunctions.html#Fitting.ChiOfFun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FitFunctions.Fitting.ChiOfFun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FitFunctions.Fitting.DerOfFun">
+<code class="descname">DerOfFun</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FitFunctions.html#Fitting.DerOfFun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FitFunctions.Fitting.DerOfFun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FitFunctions.Fitting.Eval_Fun_Avg">
+<code class="descname">Eval_Fun_Avg</code><span class="sig-paren">(</span><em>*vals</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FitFunctions.html#Fitting.Eval_Fun_Avg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FitFunctions.Fitting.Eval_Fun_Avg" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FitFunctions.Fitting.Eval_Fun_AvgStd">
+<code class="descname">Eval_Fun_AvgStd</code><span class="sig-paren">(</span><em>*vals</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FitFunctions.html#Fitting.Eval_Fun_AvgStd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FitFunctions.Fitting.Eval_Fun_AvgStd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FitFunctions.Fitting.Eval_Fun_Std">
+<code class="descname">Eval_Fun_Std</code><span class="sig-paren">(</span><em>*vals</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FitFunctions.html#Fitting.Eval_Fun_Std"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FitFunctions.Fitting.Eval_Fun_Std" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FitFunctions.Fitting.Eval_Function">
+<code class="descname">Eval_Function</code><span class="sig-paren">(</span><em>*vals</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FitFunctions.html#Fitting.Eval_Function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FitFunctions.Fitting.Eval_Function" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FitFunctions.Fitting.FitBoots">
+<code class="descname">FitBoots</code><span class="sig-paren">(</span><em>DefWipe=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FitFunctions.html#Fitting.FitBoots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FitFunctions.Fitting.FitBoots" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FitFunctions.Fitting.FitMean">
+<code class="descname">FitMean</code><span class="sig-paren">(</span><em>DefWipe=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FitFunctions.html#Fitting.FitMean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FitFunctions.Fitting.FitMean" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FitFunctions.Fitting.GetFuns">
+<code class="descname">GetFuns</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FitFunctions.html#Fitting.GetFuns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FitFunctions.Fitting.GetFuns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FitFunctions.Fitting.GetOutputDict">
+<code class="descname">GetOutputDict</code><span class="sig-paren">(</span><em>show_maxiter=False</em>, <em>show_prec=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FitFunctions.html#Fitting.GetOutputDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FitFunctions.Fitting.GetOutputDict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FitFunctions.Fitting.Get_Chi2DoF">
+<code class="descname">Get_Chi2DoF</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FitFunctions.html#Fitting.Get_Chi2DoF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FitFunctions.Fitting.Get_Chi2DoF" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FitFunctions.Fitting.GuessFromFun">
+<code class="descname">GuessFromFun</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FitFunctions.html#Fitting.GuessFromFun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FitFunctions.Fitting.GuessFromFun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FitFunctions.Fitting.ImportData">
+<code class="descname">ImportData</code><span class="sig-paren">(</span><em>xdata</em>, <em>ydata</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FitFunctions.html#Fitting.ImportData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FitFunctions.Fitting.ImportData" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FitFunctions.Fitting.ImportData_DF">
+<code class="descname">ImportData_DF</code><span class="sig-paren">(</span><em>this_df</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FitFunctions.html#Fitting.ImportData_DF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FitFunctions.Fitting.ImportData_DF" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FitFunctions.Fitting.ImportFunction">
+<code class="descname">ImportFunction</code><span class="sig-paren">(</span><em>Function</em>, <em>thisparlen</em>, <em>FunDer='None'</em>, <em>thisparlab='PreDef'</em>, <em>thisparunits='None'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FitFunctions.html#Fitting.ImportFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FitFunctions.Fitting.ImportFunction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FitFunctions.Fitting.LSFit">
+<code class="descname">LSFit</code><span class="sig-paren">(</span><em>thisxdata</em>, <em>thisydata</em>, <em>thisyerr</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FitFunctions.html#Fitting.LSFit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FitFunctions.Fitting.LSFit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FitFunctions.Fitting.Overload_wrap">
+<code class="descname">Overload_wrap</code><span class="sig-paren">(</span><em>FF2</em>, <em>this_fun</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FitFunctions.html#Fitting.Overload_wrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FitFunctions.Fitting.Overload_wrap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FitFunctions.Fitting.ParamLabFromFun">
+<code class="descname">ParamLabFromFun</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FitFunctions.html#Fitting.ParamLabFromFun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FitFunctions.Fitting.ParamLabFromFun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FitFunctions.Fitting.PlotEffMass">
+<code class="descname">PlotEffMass</code><span class="sig-paren">(</span><em>xdatarange='Data'</em>, <em>thislineres=100</em>, <em>color=None</em>, <em>shift=0.0</em>, <em>y_scale=None</em>, <em>x_scale=None</em>, <em>Phys=True</em>, <em>plot_plane=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FitFunctions.html#Fitting.PlotEffMass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FitFunctions.Fitting.PlotEffMass" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FitFunctions.Fitting.PlotFunction">
+<code class="descname">PlotFunction</code><span class="sig-paren">(</span><em>otherXvals=[]</em>, <em>xaxis=0</em>, <em>xdatarange='Data'</em>, <em>thislineres=100</em>, <em>color=None</em>, <em>shift=0.0</em>, <em>flowphys=False</em>, <em>ShowPar='None'</em>, <em>ShowEval=None</em>, <em>x_scale=1.0</em>, <em>y_scale=1.0</em>, <em>plot_plane=None</em>, <em>suppress_key=False</em>, <em>x_fun=None</em>, <em>supress_legend=False</em>, <em>hairline=False</em>, <em>extrap_fade=1.5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FitFunctions.html#Fitting.PlotFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FitFunctions.Fitting.PlotFunction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FitFunctions.Fitting.PlotHairlineFun">
+<code class="descname">PlotHairlineFun</code><span class="sig-paren">(</span><em>otherXvals=[]</em>, <em>xaxis=0</em>, <em>xdatarange='Data'</em>, <em>thislineres=100</em>, <em>color=None</em>, <em>shift=0.0</em>, <em>flowphys=False</em>, <em>ShowPar='None'</em>, <em>ShowEval=None</em>, <em>x_scale=1.0</em>, <em>y_scale=1.0</em>, <em>plot_plane=None</em>, <em>suppress_key=False</em>, <em>x_fun=None</em>, <em>supress_legend=False</em>, <em>extrap_fade=1.5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FitFunctions.html#Fitting.PlotHairlineFun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FitFunctions.Fitting.PlotHairlineFun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FitFunctions.Fitting.PlotHistogram">
+<code class="descname">PlotHistogram</code><span class="sig-paren">(</span><em>plot_plane</em>, <em>this_par='First'</em>, <em>histtype='stepfilled'</em>, <em>label=''</em>, <em>color=None</em>, <em>alpha=None</em>, <em>key_val=True</em>, <em>norm=True</em>, <em>Median=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FitFunctions.html#Fitting.PlotHistogram"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FitFunctions.Fitting.PlotHistogram" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FitFunctions.Fitting.PlotLog">
+<code class="descname">PlotLog</code><span class="sig-paren">(</span><em>xdatarange='Data'</em>, <em>thislineres=100</em>, <em>scale=1</em>, <em>color=None</em>, <em>shift=0.0</em>, <em>plot_plane=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FitFunctions.html#Fitting.PlotLog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FitFunctions.Fitting.PlotLog" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FitFunctions.Fitting.RemoveData">
+<code class="descname">RemoveData</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FitFunctions.html#Fitting.RemoveData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FitFunctions.Fitting.RemoveData" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FitFunctions.Fitting.RemoveFuns">
+<code class="descname">RemoveFuns</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FitFunctions.html#Fitting.RemoveFuns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FitFunctions.Fitting.RemoveFuns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FitFunctions.Fitting.SetGuess">
+<code class="descname">SetGuess</code><span class="sig-paren">(</span><em>iGuess='None'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FitFunctions.html#Fitting.SetGuess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FitFunctions.Fitting.SetGuess" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FitFunctions.Fitting.SetParamLabels">
+<code class="descname">SetParamLabels</code><span class="sig-paren">(</span><em>paramlist='PreDef'</em>, <em>paramunits='None'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FitFunctions.html#Fitting.SetParamLabels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FitFunctions.Fitting.SetParamLabels" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FitFunctions.Fitting.Stats">
+<code class="descname">Stats</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FitFunctions.html#Fitting.Stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FitFunctions.Fitting.Stats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FitFunctions.Fitting.UnExpParams">
+<code class="descname">UnExpParams</code><span class="sig-paren">(</span><em>paramkeys='All'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FitFunctions.html#Fitting.UnExpParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FitFunctions.Fitting.UnExpParams" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="FitFunctions.Fitting.currlinestyle">
+<code class="descname">currlinestyle</code><em class="property"> = 0</em><a class="headerlink" href="#FitFunctions.Fitting.currlinestyle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="FitFunctions.Fitting.fit_data">
+<code class="descname">fit_data</code><em class="property"> = None</em><a class="headerlink" href="#FitFunctions.Fitting.fit_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.fit_data = DataFrame</p>
+<dl class="docutils">
+<dt>columns =   Params,     CoVar_thispar,      Chi2DoF</dt>
+<dd>ParamsAvg,  CoVarAvg_thispar,   Chi2DoFAvg
+ParamsStd,  CoVarStd_thispar,   Chi2DoFStd
+Params_units</dd>
+</dl>
+<p>rows = Fit Parameters</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="FitFunctions.Fitting.hairline_alpha">
+<code class="descname">hairline_alpha</code><em class="property"> = 1.0</em><a class="headerlink" href="#FitFunctions.Fitting.hairline_alpha" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="FitFunctions.Fitting.hairline_dropoff">
+<code class="descname">hairline_dropoff</code><em class="property"> = 20</em><a class="headerlink" href="#FitFunctions.Fitting.hairline_dropoff" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="FitFunctions.Fitting.linestyles">
+<code class="descname">linestyles</code><em class="property"> = ['-']</em><a class="headerlink" href="#FitFunctions.Fitting.linestyles" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="FitFunctions.Fitting.parentlist">
+<code class="descname">parentlist</code><em class="property"> = []</em><a class="headerlink" href="#FitFunctions.Fitting.parentlist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="FitFunctions.PullFitSeries">
+<code class="descclassname">FitFunctions.</code><code class="descname">PullFitSeries</code><span class="sig-paren">(</span><em>this_series</em>, <em>with_chi=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FitFunctions.html#PullFitSeries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FitFunctions.PullFitSeries" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="FitFunctions.TestComb">
+<code class="descclassname">FitFunctions.</code><code class="descname">TestComb</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FitFunctions.html#TestComb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FitFunctions.TestComb" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="FitFunctions.TestFit">
+<code class="descclassname">FitFunctions.</code><code class="descname">TestFit</code><span class="sig-paren">(</span><em>low=-5</em>, <em>high=5</em>, <em>npoints=10</em>, <em>nboot=200</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FitFunctions.html#TestFit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FitFunctions.TestFit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="FitFunctions.WriteAllFuns">
+<code class="descclassname">FitFunctions.</code><code class="descname">WriteAllFuns</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FitFunctions.html#WriteAllFuns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FitFunctions.WriteAllFuns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="data">
+<dt id="FitFunctions.err_thresh">
+<code class="descclassname">FitFunctions.</code><code class="descname">err_thresh</code><em class="property"> = 1e-05</em><a class="headerlink" href="#FitFunctions.err_thresh" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class has methods for doing least squares fitting on regular and bootstrapped (see BootStrap.py) quantities.</p>
+<dl class="docutils">
+<dt>Fitting Contains:</dt>
+<dd>FitFunction which performs a least squares fit.
+FitBoot which performs a least squares fit to the bootstrapped data.
+Lots of functions which are predefied for fitting.
+Initial conditions for all fit functions</dd>
+</dl>
+<p>FitFuns is a class containing all pre-defined fit functions.
+Add to this to add predefined functions for fitting
+Make sure all functions used for fitting must have form:</p>
+<blockquote>
+<div>f(x,p), where:
+x is an array of independant variables
+p is an array of fit parameters to extract
+(look at my defined functions to see how).</div></blockquote>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table of Contents</h3>
+          <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Python_Analysis</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="AhmedRes.html">AhmedRes module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="AnalysisGUI.html">AnalysisGUI module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Autocorr.html">Autocorr module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BNLFormFactor.html">BNLFormFactor module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BootStrapping.html">BootStrapping module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BootStrapping_self.html">BootStrapping_self module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ChacoModPlot_heatmap.html">ChacoModPlot_heatmap module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ChacoTest.html">ChacoTest module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CreateTable.html">CreateTable module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DSDefines.html">DSDefines module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FFSolve.html">FFSolve module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FileIO.html">FileIO module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FileIOMat.html">FileIOMat module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">FitFunctions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FitFunctions_TF.html">FitFunctions_TF module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FlowOpps.html">FlowOpps module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ForMatAndrea.html">ForMatAndrea module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FormFactors.html">FormFactors module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GammaMatricies.html">GammaMatricies module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Jose_Plots.html">Jose_Plots module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MAH_control.html">MAH_control module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MakeFuns.html">MakeFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Mat_Alpha_Hack.html">Mat_Alpha_Hack module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Mat_Hack_V2.html">Mat_Hack_V2 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Mayavi_Test.html">Mayavi_Test module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MiscFuns.html">MiscFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModPlot.html">ModPlot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModStylePlot.html">ModStylePlot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MomParams.html">MomParams module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MultiWrap.html">MultiWrap module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="NullPlotData.html">NullPlotData module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PandasTest.html">PandasTest module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Params.html">Params module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ParamsOLD.html">ParamsOLD module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PlotData.html">PlotData module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PredefFitFuns.html">PredefFitFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="QuantityLists.html">QuantityLists module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RatioCorrelators.html">RatioCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ReadBinaryCfuns.html">ReadBinaryCfuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ReadBinaryCfuns_SLone.html">ReadBinaryCfuns_SLone module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RunSetCommands.html">RunSetCommands module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFFs.html">SetsOfFFs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFits.html">SetsOfFits module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFlowOps.html">SetsOfFlowOps module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfRatios.html">SetsOfRatios module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfTwoPtCorrs.html">SetsOfTwoPtCorrs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Setup.html">Setup module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Test3dLine.html">Test3dLine module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TestAll.html">TestAll module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TestCorr.html">TestCorr module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ThreePtCorrelators.html">ThreePtCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TimeStuff.html">TimeStuff module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TwoPtCorrelators.html">TwoPtCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VarMethod.html">VarMethod module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VarMethod_self.html">VarMethod_self module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="XmlFormatting.html">XmlFormatting module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mv_graphs.html">mv_graphs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xmltodict.html">xmltodict module</a></li>
+</ul>
+</li>
+</ul>
+
+          <div role="search">
+            <h3 style="margin-top: 1.5em;">Search</h3>
+            <form class="search" action="search.html" method="get">
+                <input type="text" name="q" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+            </form>
+          </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <div role="navigation" aria-label="related navigaton">
+            <a href="FileIOMat.html" title="FileIOMat module"
+              >previous</a> |
+            <a href="FitFunctions_TF.html" title="FitFunctions_TF module"
+              >next</a> |
+            <a href="py-modindex.html" title="Python Module Index"
+              >modules</a> |
+            <a href="genindex.html" title="General Index"
+              >index</a>
+          </div>
+          <div role="note" aria-label="source link">
+              <br/>
+              <a href="_sources/FitFunctions.rst.txt"
+                rel="nofollow">Show Source</a>
+          </div>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Jack Dragos.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>

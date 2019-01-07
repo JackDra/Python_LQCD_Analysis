@@ -7,9 +7,11 @@ import traits.api as ta
 import traitsui.api as tua
 import PlotData as jpl
 import QuantityLists as ql
+import SetsOfFits as sff
 import pandas as pad
 from copy import deepcopy
 from collections import OrderedDict
+from BootStrapping import BootStrap
 from MiscFuns import convert_to_hex,op_dict,op_dict_std
 import pickle as pickle
 import os
@@ -57,11 +59,25 @@ class DataFrame( ta.HasTraits ):
     Create_Arrow = ta.Button()
     Combine = ta.Button()
 
+
+    resample = ta.Str('1000')
+    transpose_table = ta.Bool(False)
+    chi_min = ta.Float(0)
+    chi_max = ta.Float(2)
+    fix_min = ta.Int(0)
+    cut_max = ta.Int(100)
+    Hist_Comb_Min = ta.Button()
+    fix_max = ta.Int(100)
+    cut_min = ta.Int(0)
+    Hist_Comb_Max = ta.Button()
+
     this_aindex = ta.Int(0)
     animate_dim = ta.Int(0)
     Animate = ta.Button()
 
-
+    Dump_Fit_Table = ta.Button()
+    fit_file_name = ta.File()
+    fmt_latex = ta.Bool(True)
 
     x_range_min = ta.Int(0)
     x_range_max = ta.Int(-1)
@@ -103,6 +119,8 @@ class DataFrame( ta.HasTraits ):
     fit_custom_xrange = ta.Bool(False)
     fit_x_min = ta.Str('FromDataMin')
     fit_x_max = ta.Str('ToDataMax')
+
+
     suppress_key_index = ta.Bool(False)
     dim_list = ta.List([''])
     pick_dimension = ta.Enum(values='dim_list')
@@ -223,6 +241,9 @@ class DataFrame( ta.HasTraits ):
         tua.Item('Wipe', show_label=False),
         tua.Item('Undo_Wipe', show_label=False),
         tua.Item('Create_Arrow',show_label=False),
+        tua.Item('fit_file_name'),
+        tua.Item('transpose_table'),
+        tua.Item('Dump_Fit_Table', show_label=False),
         label='Arrow'
         ),tua.Group(
         tua.Item('this_key'),
@@ -230,11 +251,97 @@ class DataFrame( ta.HasTraits ):
         tua.Item('combine_operation'),
         tua.Item('new_label'),
         tua.Item('Combine', show_label=False),
+        tua.Item('fit_file_name'),
+        tua.Item('fmt_latex'),
+        tua.Item('resample'),
+        tua.Item('chi_min'),
+        tua.Item('chi_max'),
+        tua.Item('fix_min'),
+        tua.Item('cut_max'),
+        tua.Item('Hist_Comb_Min', show_label=False),
+        tua.Item('fix_max'),
+        tua.Item('cut_min'),
+        tua.Item('Hist_Comb_Max', show_label=False),
+        tua.Item('fit_file_name'),
+        tua.Item('transpose_table'),
+        tua.Item('Dump_Fit_Table', show_label=False),
         label='Combine'
         ),
         buttons=['OK'],
         resizable=True
     )
+
+    def _Hist_Comb_Max_fired(self):
+        global data_plot
+        this_data = data_plot.plot_data.loc[:,self.this_key]
+        if 'histogram_vary' == this_data['type']:
+            if 'boot_data' in this_data and hasattr(this_data['boot_data'],'Comb_Max_fitr'):
+                app_data = deepcopy(this_data)
+                app_data['type'] = 'histogram_vary'
+                if self.resample.lower() == 'false':
+                    app_data['boot_data'] = app_data['boot_data'].Comb_Max_fitr(self.fix_max,cut_min=self.cut_min,
+                                                                                chi_min=self.chi_min,chi_max=self.chi_max)
+                else:
+                    app_data['boot_data'] = app_data['boot_data'].Comb_Max_fitr(self.fix_max,cut_min=self.cut_min,
+                                                                                resample=int(self.resample),
+                                                                                chi_min=self.chi_min,chi_max=self.chi_max)
+                app_data['label'] = app_data['label']+'_fixmax='+str(self.fix_max)+'_cutmin='+str(self.cut_min)
+                app_data['key_select'] = app_data['boot_data'].index[0]
+                data_plot.AppendData(app_data)
+                self.key_list = list(data_plot.plot_data.keys())
+                self._Load_fired()
+                self._Apply_fired()
+
+    def _Hist_Comb_Min_fired(self):
+        global data_plot
+        this_data = data_plot.plot_data.loc[:,self.this_key]
+        if 'histogram_vary' == this_data['type']:
+            if 'boot_data' in this_data and hasattr(this_data['boot_data'],'Comb_Min_fitr'):
+                app_data = deepcopy(this_data)
+                app_data['type'] = 'histogram_vary'
+                if self.resample.lower() == 'false':
+                    app_data['boot_data'] = app_data['boot_data'].Comb_Min_fitr(self.fix_min,cut_max=self.cut_max,
+                                                                    chi_min=self.chi_min,chi_max=self.chi_max)
+                else:
+                    app_data['boot_data'] = app_data['boot_data'].Comb_Min_fitr(self.fix_min,cut_max=self.cut_max,
+                                                                    resample=int(self.resample),
+                                                                    chi_min=self.chi_min,chi_max=self.chi_max)
+                app_data['label'] = app_data['label']+'_fixmin='+str(self.fix_min)+'_cutmax='+str(self.fit_max)
+                app_data['key_select'] = app_data['boot_data'].index[0]
+                data_plot.AppendData(app_data)
+                self.key_list = list(data_plot.plot_data.keys())
+                self._Load_fired()
+                self._Apply_fired()
+
+    def _Dump_Fit_Table_fired(self):
+        global data_plot
+        this_data = data_plot.plot_data.loc[:,self.this_key]
+        if 'type' in this_data and ('fit_vary' == this_data['type'] or 'histogram_vary' == this_data['type']):
+            if 'fit_class' in this_data and hasattr(this_data['fit_class'],'Get_Formatted_Table'):
+                this_type = 'fit_class'
+                do_GFT = True
+            elif 'boot_data' in this_data:
+                this_type = 'boot_data'
+                do_GFT = hasattr(this_data['boot_data'],'Get_Formatted_Table')
+            else:
+                do_GFT = False
+            if do_GFT:
+                this_xml = this_data[this_type].Get_Formatted_Table(fmt_latex=self.fmt_latex)
+            elif isinstance(this_data[this_type].iloc[0],BootStrap):
+                this_xml = this_data[this_type].apply(lambda x : x.MakeValAndErr(Dec=2,latex=True))
+            else:
+                this_xml = this_data[this_type]
+            if self.transpose_table:
+                this_xml = this_xml.transpose()
+            with open(self.fit_file_name,'w') as f:
+                f.write(this_xml.to_latex(escape=False))
+            with open(self.fit_file_name+'.py3p','wb') as f:
+                if hasattr(this_data[this_type],'RemoveFuns'): this_data[this_type].RemoveFuns()
+                pickle.dump(this_data[this_type],f)
+                if hasattr(this_data[this_type],'GetFuns'): this_data[this_type].GetFuns()
+        else:
+            print('Type of data is not fit vary')
+
 
     def _Combine_fired(self):
         first_data = deepcopy(data_plot.plot_data.loc[:,self.this_key])
@@ -466,7 +573,10 @@ class DataFrame( ta.HasTraits ):
                 self.fit_custom_xrange = False
             else:
                 self.fit_custom_xrange = True
-                self.fit_x_min,self.fit_x_max = tuple(map(str,data_plot.plot_data.loc['xdatarange',self.this_key]))
+                try:
+                    self.fit_x_min,self.fit_x_max = data_plot.plot_data.loc['xdatarange',self.this_key]
+                except:
+                    pass
         else:
             self.fit_custom_xrange = False
         if 'plot_err' in data_plot.plot_data.index:
@@ -569,17 +679,41 @@ class DataFrame( ta.HasTraits ):
         if '_vary' in data_plot.plot_data.loc['type',self.this_key]:
             this_series = data_plot.plot_data.loc[:,self.this_key]
             if 'fit' in this_series['type']:
-                if isinstance(this_series['fit_class'].index,pad.MultiIndex):
+                if 'fit_class' in this_series:
+                    if isinstance(this_series['fit_class'],sff.SetOfFitFuns):
+                        this_fit = this_series['fit_class'].Fit_Stats_fmt['Fit']
+                    else:
+                        this_fit = this_series['fit_class']
+                if isinstance(this_fit.index,pad.MultiIndex):
                     self.test_pick_dim = False
-                    self.vary_len = len(this_series['fit_class'].index.names)
-                    for icd,idim in enumerate(this_series['fit_class'].index.names):
+                    self.vary_len = len(this_fit.index.names)
+                    for icd,idim in enumerate(this_fit.index.names):
                         setattr(self,'test_dim_'+str(icd+1),True)
-                        this_list = list(this_series['fit_class'].index.get_level_values(idim))
+                        this_list = list(this_fit.index.get_level_values(idim))
                         setattr(self,'dim_'+str(icd+1)+'_list',fmt_Range(this_list))
                 else:
+                    self.vary_len = 1
                     self.test_pick_dim = False
                     self.test_dim_1 = True
-                    self.dim_1_list = fmt_Range(list(this_series['fit_class'].index))
+                    self.dim_1_list = fmt_Range(list(this_fit.index))
+            elif 'boot_data' in list(this_series.keys()) and this_series['boot_data'] is not None \
+            and not isinstance(this_series['boot_data'],bool):
+                if isinstance(this_series['boot_data'],sff.SetOfFitFuns):
+                    this_boot = this_series['boot_data'].Get_Extrapolation(fmted=True)
+                else:
+                    this_boot = this_series['boot_data']
+                if isinstance(this_boot.index,pad.MultiIndex):
+                    self.test_pick_dim = False
+                    self.vary_len = len(this_boot.index.names)
+                    for icd,idim in enumerate(this_boot.index.names):
+                        setattr(self,'test_dim_'+str(icd+1),True)
+                        this_list = list(this_boot.index.get_level_values(idim))
+                        setattr(self,'dim_'+str(icd+1)+'_list',fmt_Range(this_list))
+                else:
+                    self.vary_len = 1
+                    self.test_pick_dim = False
+                    self.test_dim_1 = True
+                    self.dim_1_list = fmt_Range(list(this_boot.index))
             elif 'y_data' in list(this_series.keys()) and isinstance(this_series['y_data'],pad.Series):
                 if isinstance(this_series['y_data'].index,pad.MultiIndex):
                     if 'line' in data_plot.plot_data.loc['type',self.this_key]:
@@ -605,18 +739,6 @@ class DataFrame( ta.HasTraits ):
                     self.test_dim_1 = True
                     this_list = list(this_series['y_data'].index)
                     self.dim_1_list = fmt_Range(this_list)
-            elif 'boot_data' in list(this_series.keys()) and isinstance(this_series['boot_data'],pad.Series):
-                if isinstance(this_series['boot_data'].index,pad.MultiIndex):
-                    self.test_pick_dim = False
-                    self.vary_len = len(this_series['boot_data'].index.names)
-                    for icd,idim in enumerate(this_series['boot_data'].index.names):
-                        setattr(self,'test_dim_'+str(icd+1),True)
-                        this_list = list(this_series['boot_data'].index.get_level_values(idim))
-                        setattr(self,'dim_'+str(icd+1)+'_list',fmt_Range(this_list))
-                else:
-                    self.test_pick_dim = False
-                    self.test_dim_1 = True
-                    self.dim_1_list = fmt_Range(list(this_series['boot_data'].index))
             if 'x_data' in list(this_series.keys()) and isinstance(this_series['x_data'],pad.Series):
                 if isinstance(this_series['x_data'].index,pad.MultiIndex):
                     self.test_pick_dim = True
@@ -633,6 +755,7 @@ class DataFrame( ta.HasTraits ):
                     self.test_pick_dim = False
                     self.test_dim_1 = True
                     self.dim_1_list = fmt_Range(list(this_series['x_data'].index))
+        self.fit_file_name = data_plot.plot_info['save_file'].replace('.pdf',self.pick_dimension+'.tex')
 
 
     def _Animate_fired(self):
@@ -748,6 +871,7 @@ class DataFrame( ta.HasTraits ):
             else:
                 this_key = []
                 for ic in range(1,self.vary_len+1):
+
                     if getattr(self,'test_dim_'+str(ic)):
                         this_key.append(str(getattr(self,'dim_'+str(ic))))
                 if len(this_key) == 0:

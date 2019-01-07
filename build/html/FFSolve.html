@@ -1,0 +1,487 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>FFSolve module &#8212; LQCD Analysis Codebase TF Fits documentation</title>
+    <link rel="stylesheet" href="_static/agogo.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="FileIO module" href="FileIO.html" />
+    <link rel="prev" title="DSDefines module" href="DSDefines.html" /> 
+  </head><body>
+    <div class="header-wrapper" role="banner">
+      <div class="header">
+        <div class="headertitle"><a
+          href="index.html">LQCD Analysis Codebase TF Fits documentation</a></div>
+        <div class="rel" role="navigation" aria-label="related navigation">
+          <a href="DSDefines.html" title="DSDefines module"
+             accesskey="P">previous</a> |
+          <a href="FileIO.html" title="FileIO module"
+             accesskey="N">next</a> |
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-FFSolve">
+<span id="ffsolve-module"></span><h1>FFSolve module<a class="headerlink" href="#module-FFSolve" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="FFSolve.FFEquation">
+<em class="property">class </em><code class="descclassname">FFSolve.</code><code class="descname">FFEquation</code><span class="sig-paren">(</span><em>currtype, q2list=[0, 1, 2, 3, 4], pp2list=[0], cfglist={}, cfglist2pt={}, Info={}, fit2pt='From Def', fitAlpha='From Def', name='', thissym='Not Set', thiscol='Not Set', thisshift=0.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>This class uses FormFact from FormFactors.py and RatioCorr from RatioCorrelators.py</p>
+<p>sets up system of equations to solve:</p>
+<p>Af = R , with indicies:
+A_1a * f_a + a_1b * f_b + … = R_1
+A_2a * f_a + a_2b * f_b + … = R_2
+…</p>
+<dl class="docutils">
+<dt>A = coefficients of form factors [ A_1a , A_1b , … ]</dt>
+<dd>[ A_2a , A_2b , … ]
+[ …               ]</dd>
+</dl>
+<p>R = extracted ratio function results (from fits to correlators or ratio functions)
+R = [ R_2, R_1, … ]</p>
+<p>f = form factors to solve for [f_a, f_b,…]</p>
+<p>default q2list is usually [0,1,2,3,4] , (depends on what you calculate, set in MomParams.py if you like )</p>
+<dl class="method">
+<dt id="FFSolve.FFEquation.CheckChi">
+<code class="descname">CheckChi</code><span class="sig-paren">(</span><em>this_chi</em>, <em>chi_list</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.CheckChi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.CheckChi" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.CheckCol">
+<code class="descname">CheckCol</code><span class="sig-paren">(</span><em>thiscol</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.CheckCol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.CheckCol" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.CheckFF">
+<code class="descname">CheckFF</code><span class="sig-paren">(</span><em>thisFF</em>, <em>resub=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.CheckFF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.CheckFF" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.CheckSym">
+<code class="descname">CheckSym</code><span class="sig-paren">(</span><em>thissym</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.CheckSym"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.CheckSym" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.ConvertToBNL">
+<code class="descname">ConvertToBNL</code><span class="sig-paren">(</span><em>show_timer=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.ConvertToBNL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.ConvertToBNL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.DelResidual">
+<code class="descname">DelResidual</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.DelResidual"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.DelResidual" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.DelSystemResults">
+<code class="descname">DelSystemResults</code><span class="sig-paren">(</span><em>show_timer=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.DelSystemResults"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.DelSystemResults" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.F3div2M">
+<code class="descname">F3div2M</code><span class="sig-paren">(</span><em>show_timer=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.F3div2M"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.F3div2M" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="FFSolve.FFEquation.FF_Fit_Stats">
+<code class="descname">FF_Fit_Stats</code><em class="property"> = None</em><a class="headerlink" href="#FFSolve.FFEquation.FF_Fit_Stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.FF_Fit_Stats DataFrame:</p>
+<p>columns =   boot,   Avg,        Std</p>
+<p>rows =      flow_time(if flowed), Chi2pdf_number, form_factor_number,   fit_range</p>
+<p>data is Fitting class instance, fit parameters are for fitting form factor</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="FFSolve.FFEquation.FF_Stats">
+<code class="descname">FF_Stats</code><em class="property"> = None</em><a class="headerlink" href="#FFSolve.FFEquation.FF_Stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.FF_Stats DataFrame:</p>
+<p>columns =   boot,   Avg,        Std</p>
+<p>rows =     ‘flow_time’ (if flowed), Chi2pdf_number, ‘Q_momentum’</p>
+<p>data is Fitting class instance (which includes form factor numbers as parameters)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.Fit">
+<code class="descname">Fit</code><span class="sig-paren">(</span><em>thisFF</em>, <em>thisFFfun='PreDef'</em>, <em>fit_ranges='All'</em>, <em>iGuess='PreDef'</em>, <em>EstDir=False</em>, <em>WipeFit=False</em>, <em>show_timer=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.Fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.Fit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.FitFFs">
+<code class="descname">FitFFs</code><span class="sig-paren">(</span><em>thisFF='All'</em>, <em>fit_ranges='All'</em>, <em>iGuess='PreDef'</em>, <em>EstDir=False</em>, <em>WipeFit=False</em>, <em>show_timer=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.FitFFs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.FitFFs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.FitPlot">
+<code class="descname">FitPlot</code><span class="sig-paren">(</span><em>plot_class, thisFF, fitr='All', tflow='First', xlims=[0, 'ToDataMax'], this_chi_list='Chi0-Chi20', thiscol='PreDefine', thisshift='PreDefine'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.FitPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.FitPlot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.FixRead">
+<code class="descname">FixRead</code><span class="sig-paren">(</span><em>readdict</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.FixRead"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.FixRead" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.FormatProjGamma">
+<code class="descname">FormatProjGamma</code><span class="sig-paren">(</span><em>thisoplist</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.FormatProjGamma"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.FormatProjGamma" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.Get2ptFit">
+<code class="descname">Get2ptFit</code><span class="sig-paren">(</span><em>fit2pt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.Get2ptFit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.Get2ptFit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.GetAlphaFit">
+<code class="descname">GetAlphaFit</code><span class="sig-paren">(</span><em>fitAlpha</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.GetAlphaFit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.GetAlphaFit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.GetEquationsOut">
+<code class="descname">GetEquationsOut</code><span class="sig-paren">(</span><em>FFout</em>, <em>Ratout</em>, <em>Ratout_flow</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.GetEquationsOut"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.GetEquationsOut" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.GetFuns">
+<code class="descname">GetFuns</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.GetFuns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.GetFuns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.GetProj">
+<code class="descname">GetProj</code><span class="sig-paren">(</span><em>thislist</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.GetProj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.GetProj" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.GetQsqrd">
+<code class="descname">GetQsqrd</code><span class="sig-paren">(</span><em>iq</em>, <em>ipp</em>, <em>Phys=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.GetQsqrd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.GetQsqrd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.GetShift">
+<code class="descname">GetShift</code><span class="sig-paren">(</span><em>xlims</em>, <em>thisshift</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.GetShift"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.GetShift" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.Get_Extrapolation">
+<code class="descname">Get_Extrapolation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.Get_Extrapolation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.Get_Extrapolation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.ImportFitRanges">
+<code class="descname">ImportFitRanges</code><span class="sig-paren">(</span><em>fit_ranges</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.ImportFitRanges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.ImportFitRanges" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.ImportPlotParams">
+<code class="descname">ImportPlotParams</code><span class="sig-paren">(</span><em>thiscol</em>, <em>thissym</em>, <em>thisshift</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.ImportPlotParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.ImportPlotParams" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.LineupReducedRF">
+<code class="descname">LineupReducedRF</code><span class="sig-paren">(</span><em>Mcore=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.LineupReducedRF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.LineupReducedRF" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.LoadPickle">
+<code class="descname">LoadPickle</code><span class="sig-paren">(</span><em>DefWipe=False, HardWipe=False, Mcore=False, OnlyFits=False, DoFits=True, RatioFitLists=[False, False]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.LoadPickle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.LoadPickle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.LoadPreFF">
+<code class="descname">LoadPreFF</code><span class="sig-paren">(</span><em>DefWipe=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.LoadPreFF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.LoadPreFF" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.LoadProperFF">
+<code class="descname">LoadProperFF</code><span class="sig-paren">(</span><em>DefWipe=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.LoadProperFF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.LoadProperFF" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.LoadRatios">
+<code class="descname">LoadRatios</code><span class="sig-paren">(</span><em>DefWipe=False</em>, <em>Mcore=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.LoadRatios"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.LoadRatios" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.LoadSystemResults">
+<code class="descname">LoadSystemResults</code><span class="sig-paren">(</span><em>show_timer=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.LoadSystemResults"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.LoadSystemResults" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.LoadSystemResultsFO">
+<code class="descname">LoadSystemResultsFO</code><span class="sig-paren">(</span><em>show_timer=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.LoadSystemResultsFO"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.LoadSystemResultsFO" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.MakeQsqrdList">
+<code class="descname">MakeQsqrdList</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.MakeQsqrdList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.MakeQsqrdList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.Overload_wrap">
+<code class="descname">Overload_wrap</code><span class="sig-paren">(</span><em>FF2</em>, <em>this_fun</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.Overload_wrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.Overload_wrap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.Plot">
+<code class="descname">Plot</code><span class="sig-paren">(</span><em>plot_class</em>, <em>thisFF</em>, <em>thiscol='PreDefine'</em>, <em>thisshift='PreDefine'</em>, <em>thissym='PreDefine'</em>, <em>plottflow='PreDefine'</em>, <em>this_chi_list='Chi0-Chi20'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.Plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.Plot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.PlotFitDistribution">
+<code class="descname">PlotFitDistribution</code><span class="sig-paren">(</span><em>plot_class</em>, <em>thisFF</em>, <em>fitr='All'</em>, <em>tflow='First'</em>, <em>thiscol='PreDefine'</em>, <em>chi_colapse=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.PlotFitDistribution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.PlotFitDistribution" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.PreGet2ptFit">
+<code class="descname">PreGet2ptFit</code><span class="sig-paren">(</span><em>fit2pt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.PreGet2ptFit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.PreGet2ptFit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.PullFits">
+<code class="descname">PullFits</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.PullFits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.PullFits" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.RemoveFuns">
+<code class="descname">RemoveFuns</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.RemoveFuns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.RemoveFuns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.Renorm">
+<code class="descname">Renorm</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.Renorm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.Renorm" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.SetCustomName">
+<code class="descname">SetCustomName</code><span class="sig-paren">(</span><em>name=''</em>, <em>LegLab=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.SetCustomName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.SetCustomName" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.SetFunction">
+<code class="descname">SetFunction</code><span class="sig-paren">(</span><em>thiscurrtype</em>, <em>thisDS</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.SetFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.SetFunction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.SetLegLab">
+<code class="descname">SetLegLab</code><span class="sig-paren">(</span><em>LegLab=''</em>, <em>stream_name=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.SetLegLab"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.SetLegLab" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.SetupPickle">
+<code class="descname">SetupPickle</code><span class="sig-paren">(</span><em>DefWipe=False, HardWipe=False, Mcore=False, RatioFitLists=[False, False]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.SetupPickle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.SetupPickle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.SetupRatios">
+<code class="descname">SetupRatios</code><span class="sig-paren">(</span><em>show_timer=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.SetupRatios"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.SetupRatios" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.SetupRatiosFO">
+<code class="descname">SetupRatiosFO</code><span class="sig-paren">(</span><em>show_timer=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.SetupRatiosFO"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.SetupRatiosFO" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.SolvePickle">
+<code class="descname">SolvePickle</code><span class="sig-paren">(</span><em>DefWipe=False, HardWipe=False, Mcore=False, RatioFitLists=[False, False]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.SolvePickle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.SolvePickle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.SolveSystem">
+<code class="descname">SolveSystem</code><span class="sig-paren">(</span><em>Mcore=False</em>, <em>show_timer=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.SolveSystem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.SolveSystem" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.Stats">
+<code class="descname">Stats</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.Stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.Stats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.TOefm">
+<code class="descname">TOefm</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.TOefm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.TOefm" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.Undo_Over_Renorm">
+<code class="descname">Undo_Over_Renorm</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.Undo_Over_Renorm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.Undo_Over_Renorm" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.ValsAndFitPlot">
+<code class="descname">ValsAndFitPlot</code><span class="sig-paren">(</span><em>plot_class, thisFF, fitr='All', xlims=[0, 'ToDataMax'], thiscol='PreDefine', thisshift='PreDefine', thissym='PreDefine', plottflow='PreDefine', this_chi_list='Chi0-Chi20'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.ValsAndFitPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.ValsAndFitPlot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.WipeAllFits">
+<code class="descname">WipeAllFits</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.WipeAllFits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.WipeAllFits" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.Write">
+<code class="descname">Write</code><span class="sig-paren">(</span><em>WipeData=True</em>, <em>WipeAllFits=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.Write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.Write" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="FFSolve.FFEquation.parentlist">
+<code class="descname">parentlist</code><em class="property"> = []</em><a class="headerlink" href="#FFSolve.FFEquation.parentlist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FFSolve.FFEquation.reInit">
+<code class="descname">reInit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#FFEquation.reInit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.FFEquation.reInit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="FFSolve.TestFFFlowSolve">
+<code class="descclassname">FFSolve.</code><code class="descname">TestFFFlowSolve</code><span class="sig-paren">(</span><em>DefWipe=False, q2list=[1, 4]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#TestFFFlowSolve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.TestFFFlowSolve" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="FFSolve.TestFFSolve">
+<code class="descclassname">FFSolve.</code><code class="descname">TestFFSolve</code><span class="sig-paren">(</span><em>DefWipe=False, q2list=[1, 4], DS='Proton'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FFSolve.html#TestFFSolve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FFSolve.TestFFSolve" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table of Contents</h3>
+          <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Python_Analysis</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="AhmedRes.html">AhmedRes module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="AnalysisGUI.html">AnalysisGUI module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Autocorr.html">Autocorr module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BNLFormFactor.html">BNLFormFactor module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BootStrapping.html">BootStrapping module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BootStrapping_self.html">BootStrapping_self module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ChacoModPlot_heatmap.html">ChacoModPlot_heatmap module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ChacoTest.html">ChacoTest module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CreateTable.html">CreateTable module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DSDefines.html">DSDefines module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">FFSolve module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FileIO.html">FileIO module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FileIOMat.html">FileIOMat module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FitFunctions.html">FitFunctions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FitFunctions_TF.html">FitFunctions_TF module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FlowOpps.html">FlowOpps module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ForMatAndrea.html">ForMatAndrea module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FormFactors.html">FormFactors module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GammaMatricies.html">GammaMatricies module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Jose_Plots.html">Jose_Plots module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MAH_control.html">MAH_control module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MakeFuns.html">MakeFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Mat_Alpha_Hack.html">Mat_Alpha_Hack module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Mat_Hack_V2.html">Mat_Hack_V2 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Mayavi_Test.html">Mayavi_Test module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MiscFuns.html">MiscFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModPlot.html">ModPlot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModStylePlot.html">ModStylePlot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MomParams.html">MomParams module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MultiWrap.html">MultiWrap module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="NullPlotData.html">NullPlotData module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PandasTest.html">PandasTest module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Params.html">Params module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ParamsOLD.html">ParamsOLD module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PlotData.html">PlotData module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PredefFitFuns.html">PredefFitFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="QuantityLists.html">QuantityLists module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RatioCorrelators.html">RatioCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ReadBinaryCfuns.html">ReadBinaryCfuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ReadBinaryCfuns_SLone.html">ReadBinaryCfuns_SLone module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RunSetCommands.html">RunSetCommands module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFFs.html">SetsOfFFs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFits.html">SetsOfFits module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFlowOps.html">SetsOfFlowOps module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfRatios.html">SetsOfRatios module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfTwoPtCorrs.html">SetsOfTwoPtCorrs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Setup.html">Setup module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Test3dLine.html">Test3dLine module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TestAll.html">TestAll module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TestCorr.html">TestCorr module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ThreePtCorrelators.html">ThreePtCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TimeStuff.html">TimeStuff module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TwoPtCorrelators.html">TwoPtCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VarMethod.html">VarMethod module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VarMethod_self.html">VarMethod_self module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="XmlFormatting.html">XmlFormatting module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mv_graphs.html">mv_graphs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xmltodict.html">xmltodict module</a></li>
+</ul>
+</li>
+</ul>
+
+          <div role="search">
+            <h3 style="margin-top: 1.5em;">Search</h3>
+            <form class="search" action="search.html" method="get">
+                <input type="text" name="q" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+            </form>
+          </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <div role="navigation" aria-label="related navigaton">
+            <a href="DSDefines.html" title="DSDefines module"
+              >previous</a> |
+            <a href="FileIO.html" title="FileIO module"
+              >next</a> |
+            <a href="py-modindex.html" title="Python Module Index"
+              >modules</a> |
+            <a href="genindex.html" title="General Index"
+              >index</a>
+          </div>
+          <div role="note" aria-label="source link">
+              <br/>
+              <a href="_sources/FFSolve.rst.txt"
+                rel="nofollow">Show Source</a>
+          </div>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Jack Dragos.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>

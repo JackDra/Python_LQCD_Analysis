@@ -12,7 +12,8 @@ from FileIO import ReadFuns,WriteFuns,ReadWithMeta,WriteWithMeta
 from Params import chitcoeff,defxlimOp,TflowToPhys,Qeps,cfg_file_type,cfgfmtdir
 import MomParams as mp
 from BootStrapping import BootStrap
-from MiscFuns import ODNested,mkdir_p,CheckClass,Series_TO_ODict,fmt_file_type,StreamToNumb
+from MiscFuns import ODNested,mkdir_p,CheckClass,Series_TO_ODict
+from MiscFuns import fmt_file_type,StreamToNumb
 # from XmlFormatting import tstr,untstr,tflowstr,untflowstr,unxmlfitr,AvgStdToFormat,tflowTOLeg
 from XmlFormatting import tstr,untstr,tflowstr,untflowstr
 from XmlFormatting import unxmlfitr_int,AvgStdToFormat,tflowTOLeg,KeyForamtting
@@ -23,7 +24,7 @@ from TimeStuff import Timer
 from copy import deepcopy
 from Autocorr import AutoCorrelate
 from PredefFitFuns import Chi_Prop_Fit_2exp,LinearFitFun
-from PlotData import null_series
+from NullPlotData import null_series
 # from PredefFitFuns import RandTFitFun
 # import cPickle as pickle
 # import dill as pickle
@@ -293,6 +294,10 @@ class FlowOp(object):
 
         if 'cfg_file_type' in list(Info.keys()): self.cfg_file_type = Info['cfg_file_type']
         else: self.cfg_file_type = cfg_file_type
+
+
+        if 'n_block' in list(Info.keys()): self.n_block = Info['n_block']
+        else: self.n_block = 1
 
 
         ## Info can contain fit ranges to be calculated
@@ -728,8 +733,8 @@ class FlowOp(object):
         # pl.xlim(xlims[0],xlims[-1])
 
     def FlowPlot_mul_tf2(self,plot_class,xlims='data',thiscol='PreDefine',
-                         thissym='PreDefine',thisshift='PreDefine',FlowRad=True,BorA='boot',
-                         mul=False,tpow=1,t0_xvals=True,just_E=False,lab_append=''):
+                         thissym='PreDefine',thisshift='PreDefine',FlowRad=True,BorA='boot',                        mul=False,tpow=1,t0_xvals=True,just_E=False,lab_append=''
+                         ,forcet0=False):
         if xlims == 'data':
             xlims = list(map(untflowstr,self.tflowlist))
         self.FlowCheckCol(thiscol)
@@ -755,39 +760,46 @@ class FlowOp(object):
             print('Warning, no flow times found for plot')
             return plot_class
         if t0_xvals:
-            try:
-                this_s8t0 = (8*self.latparams.Get_t0()['boot'].iloc[0]).Sqrt()
-            except Exception as err:
-                print('t0_xvals error:',err)
+            if forcet0 is not False:
+                this_s8t0 = np.sqrt(8*forcet0)
+            else:
+                try:
+                    this_s8t0 = (8*self.latparams.Get_t0()['boot'].iloc[0]).Sqrt()
+                except Exception as err:
+                    print('t0_xvals error:',err)
                 t0_xvals = False
         if t0_xvals:
             tflowphys,tflowphys_err = [],[]
             for itflow in map(untflowstr,tlistplot):
                 it = np.sqrt(8*itflow)/this_s8t0
-                it.Stats()
-                tflowphys.append(it.Avg)
-                tflowphys_err.append(it.Std)
+                if not (forcet0 is not False):
+                    it.Stats()
+                    tflowphys.append(it.Avg)
+                    tflowphys_err.append(it.Std)
+                else:
+                    tflowphys.append(it)
             tflowphys = np.array(tflowphys)
-            tflowphys_err = np.array(tflowphys_err)
+            if not (forcet0 is not False):
+                tflowphys_err = np.array(tflowphys_err)
         else:
             tflowphys = np.array(list(map(untflowstr,tlistplot)))
             tflowphys = TflowToPhys(np.array(tflowphys),self.latparams.latspace)
         thisshift = self.FlowGetShift([tflowphys[0],tflowphys[-1]],thisshift)
         hold_series = null_series
         hold_series['x_data'] = tflowphys
-        if t0_xvals:
+        if t0_xvals and not (forcet0 is not False):
             hold_series['xerr_data'] = tflowphys_err
         hold_series['y_data'] = dataavg
         hold_series['yerr_data'] = dataerr
         hold_series['shift'] = thisshift
-        hold_series['flowphys'] = self.latparams.latspace
+        # hold_series['flowphys'] = self.latparams.latspace
         hold_series['label'] = self.flowLegLab + ' '+lab_append
         if 'Auto' in BorA:
             hold_series['label'] += ' Auto'
         if 'Not Set' not in self.thiscol: hold_series['color'] = self.thiscol
         if 'Not Set' not in self.thissym: hold_series['symbol'] = self.thissym
         hold_series['type'] = 'error_bar'
-        hold_series['fmt_class'] = KeyForamtting(self.latparams)
+        # hold_series['fmt_class'] = KeyForamtting(self.latparams)
         plot_class.AppendData(hold_series)
         return plot_class
 
@@ -838,12 +850,12 @@ class FlowOp(object):
         hold_series['key_select'] = None
         hold_series['fit_class'] = None
         hold_series['shift'] = thisshift
-        hold_series['flowphys'] = self.latparams.latspace
+        # hold_series['flowphys'] = self.latparams.latspace
         hold_series['label'] = self.flowLegLab + ' '+ lab_append
         if 'Not Set' not in self.thiscol: hold_series['color'] = self.thiscol
         if 'Not Set' not in self.thissym: hold_series['symbol'] = self.thissym
         hold_series['type'] = 'error_bar'
-        hold_series['fmt_class'] = KeyForamtting(self.latparams)
+        # hold_series['fmt_class'] = KeyForamtting(self.latparams)
         plot_class.AppendData(hold_series)
         return plot_class
         # pl.errorbar(tflowphys+thisshift,dataavg,dataerr,label=self.flowLegLab,fmt=self.thissym,color=self.thiscol)
@@ -869,9 +881,9 @@ class FlowOp(object):
             hold_series['color'] = self.thiscol
             hold_series['shift'] = thisshift
             hold_series['xdatarange'] = xlims
-            hold_series['flowphys'] = self.latparams.latspace
+            # hold_series['flowphys'] = self.latparams.latspace
             hold_series['ShowPar'] = self.thisparam[0]
-            hold_series['fmt_class'] = KeyForamtting(self.latparams)
+            # hold_series['fmt_class'] = KeyForamtting(self.latparams)
             plot_class.AppendData(hold_series)
         return plot_class
 
@@ -1529,6 +1541,8 @@ class FlowOp(object):
         if thisshift != 'PreDefine': self.thisshift = thisshift
 
     def FlowBootstrap(self,tflowlist='PreDef',WipeData=True,show_timer=True,Improve=False,CheckCfgs=True):
+        if not hasattr(self,'n_block'):
+            self.n_block = 1
         if tflowlist != 'PreDef': self.tflowlist = tflowlist
         ReadAll = (len(self.tflowlist) == 0)
         if 'Op' not in self.Op_cfgs:  self.FlowRead(show_timer=show_timer,CheckCfgs=CheckCfgs)
@@ -1542,10 +1556,14 @@ class FlowOp(object):
                 tdata = self.Op_cfgs['Op'].apply(lambda x: x[ictflow])
                 ##ONLY FOR CHIT
                 if Improve:
-                    bootl.append(BootStrap(self.nboot, name=self.flowfilepref+'('+strit+')',cfgvals=tdata,QforImprov=tdata,rand_list=rlist))
+                    iboot = BootStrap(self.nboot, name=self.flowfilepref+'('+strit+')',cfgvals=tdata,QforImprov=tdata,
+                                           rand_list=rlist,n_block=self.n_block)
+                    bootl.append(iboot.GetSingleBlock(self.n_block))
                 else:
-                    bootl.append(BootStrap(self.nboot, name=self.flowfilepref+'('+strit+')',cfgvals=tdata,rand_list=rlist))
-                rlist = bootl[-1].Get_Rand_List()
+                    iboot = BootStrap(self.nboot, name=self.flowfilepref+'('+strit+')',cfgvals=tdata,
+                                           rand_list=rlist,n_block=self.n_block)
+                    bootl.append(iboot.GetSingleBlock(self.n_block))
+                rlist = iboot.Get_Rand_List()
                 keyl.append(strit)
                 avgl.append(bootl[-1].Avg)
                 stdl.append(bootl[-1].Std)
@@ -4963,6 +4981,27 @@ def TestFO(DefWipe=False):
     data_plot.PrintData()
     data_plot.PlotAll()
     return data,datacomb
+
+def ReformatFO(this_file,out_filename):
+    if 'CFGNUMB' not in out_filename:
+        raise IOError('CFGNUMB not in out_filename.')
+    meta,data = ReadWithMeta(this_file)
+    data = data.reset_index()['Op'].values
+    data = np.array([np.array(idata) for idata in data])
+    for ic,idata in enumerate(data):
+        this_tf_list = list(map(lambda x : float(x.replace('t_f','')),meta))
+        with open(out_filename.replace('CFGNUMB',str(ic).zfill(4)),'w') as f:
+            for itf,ival in zip(this_tf_list,idata):
+                f.write(f'{itf:.2f} {ival:.17e}\n')
+    return data
+
+def ReformatFO_picktf(this_file,out_filename,pic_ft):
+    meta,data = ReadWithMeta(this_file)
+    data = data.reset_index()['Op'].values
+    data = np.array([np.array(idata) for idata in data])
+    data = data[:,list(meta).index(pic_ft)]
+    np.savetxt(out_filename,data)
+    return data
 
 def TestFOFull(DefWipe=False):
     from Params import defInfoFlow

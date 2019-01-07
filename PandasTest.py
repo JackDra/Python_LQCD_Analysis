@@ -92,11 +92,23 @@ myfun(**myfun(this_input=5))
 this_class_data.dtype
 
 import pandas as pa
+from copy import copy
 this_series = pa.Series([1,2,3])
+this_series[::]
 print()
 print(this_series)
 print(this_series.append())
 data = xr.DataArray(this_data,coords=this_coords,dims=list(this_coords.keys()),name='name')
+data.to_series()
+series_data = data.to_series()
+series_data_2 = series_data.copy()
+series_data.index.names = ['one','two','three']
+series_data_2.index = series_data.index
+series_data_2
+df_data = series_data.copy().to_frame('pie')
+series_data.index = series_data_2.index
+df_data.loc[:,'pie2'] = series_data
+df_data
 data = data.stack(first_and_second=['first_dim','second_dim'])
 data.unstack()
 data = data.stack(all=data.dims)
@@ -368,7 +380,10 @@ for icol in this_series:
 this_series['pie'] = this_series.apply(lambda x : x['pie'] + 1,axis=1)
 this_series.sort_values(by=['pie'],ascending=False)
 
-
+this_series['pie']
+this_series['pie'].index.shape
+arr = this_series.values.reshape(*map(len,this_series.index.levels))
+arr.transpose(2,0,1).shape
 this_series['pie'].iloc[5] = float('NaN')
 for this_row,irow in this_series.iterrows():
     print()

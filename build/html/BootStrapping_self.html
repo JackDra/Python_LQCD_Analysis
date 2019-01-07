@@ -1,0 +1,376 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>BootStrapping_self module &#8212; LQCD Analysis Codebase TF Fits documentation</title>
+    <link rel="stylesheet" href="_static/agogo.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ChacoModPlot_heatmap module" href="ChacoModPlot_heatmap.html" />
+    <link rel="prev" title="BootStrapping module" href="BootStrapping.html" /> 
+  </head><body>
+    <div class="header-wrapper" role="banner">
+      <div class="header">
+        <div class="headertitle"><a
+          href="index.html">LQCD Analysis Codebase TF Fits documentation</a></div>
+        <div class="rel" role="navigation" aria-label="related navigation">
+          <a href="BootStrapping.html" title="BootStrapping module"
+             accesskey="P">previous</a> |
+          <a href="ChacoModPlot_heatmap.html" title="ChacoModPlot_heatmap module"
+             accesskey="N">next</a> |
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-BootStrapping_self">
+<span id="bootstrapping-self-module"></span><h1>BootStrapping_self module<a class="headerlink" href="#module-BootStrapping_self" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="BootStrapping_self.BlockCfgs">
+<code class="descclassname">BootStrapping_self.</code><code class="descname">BlockCfgs</code><span class="sig-paren">(</span><em>cfg_list</em>, <em>n_block</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BootStrapping_self.html#BlockCfgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BootStrapping_self.BlockCfgs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="BootStrapping_self.BootStrap">
+<em class="property">class </em><code class="descclassname">BootStrapping_self.</code><code class="descname">BootStrap</code><span class="sig-paren">(</span><em>thisnboot=200</em>, <em>name=''</em>, <em>cfgvals='None'</em>, <em>bootvals='None'</em>, <em>thisDelVal=True</em>, <em>rand_list=None</em>, <em>n_block=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BootStrapping_self.html#BootStrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BootStrapping_self.BootStrap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Class that a single boostrapped quantity Xi for i cfgvals
+And Constructs boostrapped cfgvals Xb for b bootstraped values</p>
+<dl class="method">
+<dt id="BootStrapping_self.BootStrap.BlockCfgs">
+<code class="descname">BlockCfgs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BootStrapping_self.html#BootStrap.BlockCfgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BootStrapping_self.BootStrap.BlockCfgs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="BootStrapping_self.BootStrap.BootHistogram">
+<code class="descname">BootHistogram</code><span class="sig-paren">(</span><em>plot_plane</em>, <em>histtype='stepfilled'</em>, <em>label=''</em>, <em>color=None</em>, <em>alpha=None</em>, <em>key_val=True</em>, <em>norm=True</em>, <em>Median=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BootStrapping_self.html#BootStrap.BootHistogram"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BootStrapping_self.BootStrap.BootHistogram" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="BootStrapping_self.BootStrap.CheckBoot">
+<code class="descname">CheckBoot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BootStrapping_self.html#BootStrap.CheckBoot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BootStrapping_self.BootStrap.CheckBoot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="BootStrapping_self.BootStrap.CheckBoot_Blocked">
+<code class="descname">CheckBoot_Blocked</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BootStrapping_self.html#BootStrap.CheckBoot_Blocked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BootStrapping_self.BootStrap.CheckBoot_Blocked" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="BootStrapping_self.BootStrap.CheckCfgVals">
+<code class="descname">CheckCfgVals</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BootStrapping_self.html#BootStrap.CheckCfgVals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BootStrapping_self.BootStrap.CheckCfgVals" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="BootStrapping_self.BootStrap.CheckCfgVals_Blocked">
+<code class="descname">CheckCfgVals_Blocked</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BootStrapping_self.html#BootStrap.CheckCfgVals_Blocked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BootStrapping_self.BootStrap.CheckCfgVals_Blocked" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="BootStrapping_self.BootStrap.Exp">
+<code class="descname">Exp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BootStrapping_self.html#BootStrap.Exp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BootStrapping_self.BootStrap.Exp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="BootStrapping_self.BootStrap.GetBootVals">
+<code class="descname">GetBootVals</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BootStrapping_self.html#BootStrap.GetBootVals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BootStrapping_self.BootStrap.GetBootVals" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="BootStrapping_self.BootStrap.GetCfgVals">
+<code class="descname">GetCfgVals</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BootStrapping_self.html#BootStrap.GetCfgVals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BootStrapping_self.BootStrap.GetCfgVals" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="BootStrapping_self.BootStrap.GetNaNIndex">
+<code class="descname">GetNaNIndex</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BootStrapping_self.html#BootStrap.GetNaNIndex"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BootStrapping_self.BootStrap.GetNaNIndex" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="BootStrapping_self.BootStrap.GetNanIndex_cfgs">
+<code class="descname">GetNanIndex_cfgs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BootStrapping_self.html#BootStrap.GetNanIndex_cfgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BootStrapping_self.BootStrap.GetNanIndex_cfgs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="BootStrapping_self.BootStrap.Get_Rand_List">
+<code class="descname">Get_Rand_List</code><span class="sig-paren">(</span><em>wipe_rlist=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BootStrapping_self.html#BootStrap.Get_Rand_List"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BootStrapping_self.BootStrap.Get_Rand_List" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="BootStrapping_self.BootStrap.Histogram">
+<code class="descname">Histogram</code><span class="sig-paren">(</span><em>plot_plane</em>, <em>histtype='stepfilled'</em>, <em>label=''</em>, <em>color=None</em>, <em>alpha=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BootStrapping_self.html#BootStrap.Histogram"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BootStrapping_self.BootStrap.Histogram" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="BootStrapping_self.BootStrap.ImportBS">
+<code class="descname">ImportBS</code><span class="sig-paren">(</span><em>inputboot</em>, <em>DelVal=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BootStrapping_self.html#BootStrap.ImportBS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BootStrapping_self.BootStrap.ImportBS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="BootStrapping_self.BootStrap.ImportBS_Blocked">
+<code class="descname">ImportBS_Blocked</code><span class="sig-paren">(</span><em>inputboot</em>, <em>this_block</em>, <em>DelVal=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BootStrapping_self.html#BootStrap.ImportBS_Blocked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BootStrapping_self.BootStrap.ImportBS_Blocked" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="BootStrapping_self.BootStrap.ImportData">
+<code class="descname">ImportData</code><span class="sig-paren">(</span><em>cfgvals</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BootStrapping_self.html#BootStrap.ImportData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BootStrapping_self.BootStrap.ImportData" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="BootStrapping_self.BootStrap.Log">
+<code class="descname">Log</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BootStrapping_self.html#BootStrap.Log"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BootStrapping_self.BootStrap.Log" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="BootStrapping_self.BootStrap.MakeBS">
+<code class="descname">MakeBS</code><span class="sig-paren">(</span><em>DelVal=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BootStrapping_self.html#BootStrap.MakeBS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BootStrapping_self.BootStrap.MakeBS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="BootStrapping_self.BootStrap.MakeBS_Blocked">
+<code class="descname">MakeBS_Blocked</code><span class="sig-paren">(</span><em>DelVal=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BootStrapping_self.html#BootStrap.MakeBS_Blocked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BootStrapping_self.BootStrap.MakeBS_Blocked" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="BootStrapping_self.BootStrap.PlotBlockedError">
+<code class="descname">PlotBlockedError</code><span class="sig-paren">(</span><em>plot_plane</em>, <em>label=''</em>, <em>color=None</em>, <em>rel_err=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BootStrapping_self.html#BootStrap.PlotBlockedError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BootStrapping_self.BootStrap.PlotBlockedError" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="BootStrapping_self.BootStrap.RemoveBoots">
+<code class="descname">RemoveBoots</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BootStrapping_self.html#BootStrap.RemoveBoots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BootStrapping_self.BootStrap.RemoveBoots" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="BootStrapping_self.BootStrap.RemoveVals">
+<code class="descname">RemoveVals</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BootStrapping_self.html#BootStrap.RemoveVals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BootStrapping_self.BootStrap.RemoveVals" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="BootStrapping_self.BootStrap.ResampleBS">
+<code class="descname">ResampleBS</code><span class="sig-paren">(</span><em>new_nboot=200</em>, <em>rand_list=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BootStrapping_self.html#BootStrap.ResampleBS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BootStrapping_self.BootStrap.ResampleBS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="BootStrapping_self.BootStrap.Select_Block">
+<code class="descname">Select_Block</code><span class="sig-paren">(</span><em>this_block</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BootStrapping_self.html#BootStrap.Select_Block"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BootStrapping_self.BootStrap.Select_Block" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="BootStrapping_self.BootStrap.Sqrt">
+<code class="descname">Sqrt</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BootStrapping_self.html#BootStrap.Sqrt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BootStrapping_self.BootStrap.Sqrt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="BootStrapping_self.BootStrap.Stats">
+<code class="descname">Stats</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BootStrapping_self.html#BootStrap.Stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BootStrapping_self.BootStrap.Stats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="BootStrapping_self.BootStrap.arcsinh">
+<code class="descname">arcsinh</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BootStrapping_self.html#BootStrap.arcsinh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BootStrapping_self.BootStrap.arcsinh" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="BootStrapping_self.BootStrap.cfg_corr">
+<code class="descname">cfg_corr</code><span class="sig-paren">(</span><em>bs2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BootStrapping_self.html#BootStrap.cfg_corr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BootStrapping_self.BootStrap.cfg_corr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="BootStrapping_self.BootStrap.corr">
+<code class="descname">corr</code><span class="sig-paren">(</span><em>bs2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BootStrapping_self.html#BootStrap.corr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BootStrapping_self.BootStrap.corr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="BootStrapping_self.BootStrap.cos">
+<code class="descname">cos</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BootStrapping_self.html#BootStrap.cos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BootStrapping_self.BootStrap.cos" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="BootStrapping_self.BootStrap.parentlist">
+<code class="descname">parentlist</code><em class="property"> = ['SetOfCorrs.SetOfTwoPt', 'TwoPtCorrelators.TwoPointCorr', 'TwoPtCorrelators.TwoPointCorr', 'TwoPtCorrelators.NNQCorr']</em><a class="headerlink" href="#BootStrapping_self.BootStrap.parentlist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="BootStrapping_self.BootStrap.sin">
+<code class="descname">sin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BootStrapping_self.html#BootStrap.sin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BootStrapping_self.BootStrap.sin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="BootStrapping_self.BootStrap.sinh">
+<code class="descname">sinh</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BootStrapping_self.html#BootStrap.sinh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BootStrapping_self.BootStrap.sinh" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="BootStrapping_self.FlattenBootstrapDF">
+<code class="descclassname">BootStrapping_self.</code><code class="descname">FlattenBootstrapDF</code><span class="sig-paren">(</span><em>this_df</em>, <em>this_nboot=200</em>, <em>reset_index=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BootStrapping_self.html#FlattenBootstrapDF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BootStrapping_self.FlattenBootstrapDF" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="BootStrapping_self.TestBlock">
+<code class="descclassname">BootStrapping_self.</code><code class="descname">TestBlock</code><span class="sig-paren">(</span><em>n_block=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BootStrapping_self.html#TestBlock"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BootStrapping_self.TestBlock" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="BootStrapping_self.TestBoot">
+<code class="descclassname">BootStrapping_self.</code><code class="descname">TestBoot</code><span class="sig-paren">(</span><em>n_block=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BootStrapping_self.html#TestBoot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BootStrapping_self.TestBoot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="BootStrapping_self.human_format">
+<code class="descclassname">BootStrapping_self.</code><code class="descname">human_format</code><span class="sig-paren">(</span><em>num</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BootStrapping_self.html#human_format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BootStrapping_self.human_format" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="BootStrapping_self.logNA">
+<code class="descclassname">BootStrapping_self.</code><code class="descname">logNA</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BootStrapping_self.html#logNA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BootStrapping_self.logNA" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="BootStrapping_self.logNA_list">
+<code class="descclassname">BootStrapping_self.</code><code class="descname">logNA_list</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BootStrapping_self.html#logNA_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BootStrapping_self.logNA_list" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table of Contents</h3>
+          <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Python_Analysis</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="AhmedRes.html">AhmedRes module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="AnalysisGUI.html">AnalysisGUI module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Autocorr.html">Autocorr module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BNLFormFactor.html">BNLFormFactor module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BootStrapping.html">BootStrapping module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">BootStrapping_self module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ChacoModPlot_heatmap.html">ChacoModPlot_heatmap module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ChacoTest.html">ChacoTest module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CreateTable.html">CreateTable module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DSDefines.html">DSDefines module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FFSolve.html">FFSolve module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FileIO.html">FileIO module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FileIOMat.html">FileIOMat module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FitFunctions.html">FitFunctions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FitFunctions_TF.html">FitFunctions_TF module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FlowOpps.html">FlowOpps module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ForMatAndrea.html">ForMatAndrea module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FormFactors.html">FormFactors module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GammaMatricies.html">GammaMatricies module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Jose_Plots.html">Jose_Plots module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MAH_control.html">MAH_control module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MakeFuns.html">MakeFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Mat_Alpha_Hack.html">Mat_Alpha_Hack module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Mat_Hack_V2.html">Mat_Hack_V2 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Mayavi_Test.html">Mayavi_Test module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MiscFuns.html">MiscFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModPlot.html">ModPlot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModStylePlot.html">ModStylePlot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MomParams.html">MomParams module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MultiWrap.html">MultiWrap module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="NullPlotData.html">NullPlotData module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PandasTest.html">PandasTest module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Params.html">Params module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ParamsOLD.html">ParamsOLD module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PlotData.html">PlotData module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PredefFitFuns.html">PredefFitFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="QuantityLists.html">QuantityLists module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RatioCorrelators.html">RatioCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ReadBinaryCfuns.html">ReadBinaryCfuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ReadBinaryCfuns_SLone.html">ReadBinaryCfuns_SLone module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RunSetCommands.html">RunSetCommands module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFFs.html">SetsOfFFs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFits.html">SetsOfFits module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFlowOps.html">SetsOfFlowOps module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfRatios.html">SetsOfRatios module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfTwoPtCorrs.html">SetsOfTwoPtCorrs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Setup.html">Setup module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Test3dLine.html">Test3dLine module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TestAll.html">TestAll module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TestCorr.html">TestCorr module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ThreePtCorrelators.html">ThreePtCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TimeStuff.html">TimeStuff module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TwoPtCorrelators.html">TwoPtCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VarMethod.html">VarMethod module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VarMethod_self.html">VarMethod_self module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="XmlFormatting.html">XmlFormatting module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mv_graphs.html">mv_graphs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xmltodict.html">xmltodict module</a></li>
+</ul>
+</li>
+</ul>
+
+          <div role="search">
+            <h3 style="margin-top: 1.5em;">Search</h3>
+            <form class="search" action="search.html" method="get">
+                <input type="text" name="q" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+            </form>
+          </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <div role="navigation" aria-label="related navigaton">
+            <a href="BootStrapping.html" title="BootStrapping module"
+              >previous</a> |
+            <a href="ChacoModPlot_heatmap.html" title="ChacoModPlot_heatmap module"
+              >next</a> |
+            <a href="py-modindex.html" title="Python Module Index"
+              >modules</a> |
+            <a href="genindex.html" title="General Index"
+              >index</a>
+          </div>
+          <div role="note" aria-label="source link">
+              <br/>
+              <a href="_sources/BootStrapping_self.rst.txt"
+                rel="nofollow">Show Source</a>
+          </div>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Jack Dragos.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>

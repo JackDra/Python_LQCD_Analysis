@@ -1,0 +1,310 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>FormFactors module &#8212; LQCD Analysis Codebase TF Fits documentation</title>
+    <link rel="stylesheet" href="_static/agogo.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="GammaMatricies module" href="GammaMatricies.html" />
+    <link rel="prev" title="ForMatAndrea module" href="ForMatAndrea.html" /> 
+  </head><body>
+    <div class="header-wrapper" role="banner">
+      <div class="header">
+        <div class="headertitle"><a
+          href="index.html">LQCD Analysis Codebase TF Fits documentation</a></div>
+        <div class="rel" role="navigation" aria-label="related navigation">
+          <a href="ForMatAndrea.html" title="ForMatAndrea module"
+             accesskey="P">previous</a> |
+          <a href="GammaMatricies.html" title="GammaMatricies module"
+             accesskey="N">next</a> |
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-FormFactors">
+<span id="formfactors-module"></span><h1>FormFactors module<a class="headerlink" href="#module-FormFactors" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="FormFactors.FormFact">
+<em class="property">class </em><code class="descclassname">FormFactors.</code><code class="descname">FormFact</code><span class="sig-paren">(</span><em>currtype, q2list, pp2list=[0], Info={'Adjoint_Flow': True, 'Beta': 1900, 'Csw': 1715, 'DoubSing': 'doub', 'FFFits': ['All'], 'Fits': [('state1', 'fitr9-20'), ('state2', 'fitr5-20')], 'Fits3pt': [('state1', 'fitr4-8'), ('state2', 'fitr3-9')], 'FitsRF': ['fitr4-8'], 'FitsRFFull': [['taufitr3-8', 'fitr4-8']], 'Interp': 'CPEven', 'MesOrBar': 'Baryon', 'Projector': 'P4', 'Sparam': 1.5, 'a': 0.0907, 'autocorr': True, 'combine_sinks': False, 'gammas': ['g4'], 'ism': 64, 'jsm': 64, 'jsmCoeffs': array([ 5.52200000e-07, -1.58914300e-04,  9.99999987e-01]), 'ks': 1364000, 'kud': 1375400, 'nxyzt': [32, 32, 32, 64], 'outdir': '/home/jackdra/LQCD/Results/DebugResults/', 'pmom': 'All', 'ppmom': '0 0 0', 'qmom': ['0 0 0'], 'show_cfgs': True, 'sinklab': 'PoF0D1', 'sm2ptRat': [16, 32, 64], 'tsink': 13, 'tsrc': 0}, tflowlist=[], name=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FormFactors.html#FormFact"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FormFactors.FormFact" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>This class should produce all form factor combinations for a particular from factor type
+(e.g. vector, pseudo-vector, tensor etc…)</p>
+<dl class="method">
+<dt id="FormFactors.FormFact.AppendName">
+<code class="descname">AppendName</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FormFactors.html#FormFact.AppendName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FormFactors.FormFact.AppendName" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FormFactors.FormFact.GetFFParms">
+<code class="descname">GetFFParms</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FormFactors.html#FormFact.GetFFParms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FormFactors.FormFact.GetFFParms" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FormFactors.FormFact.GetFuns">
+<code class="descname">GetFuns</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FormFactors.html#FormFact.GetFuns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FormFactors.FormFact.GetFuns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FormFactors.FormFact.GetRedFFParms">
+<code class="descname">GetRedFFParms</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FormFactors.html#FormFact.GetRedFFParms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FormFactors.FormFact.GetRedFFParms" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FormFactors.FormFact.LoadKappaDir">
+<code class="descname">LoadKappaDir</code><span class="sig-paren">(</span><em>mass</em>, <em>alpha='None'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FormFactors.html#FormFact.LoadKappaDir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FormFactors.FormFact.LoadKappaDir" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FormFactors.FormFact.LoadPickle">
+<code class="descname">LoadPickle</code><span class="sig-paren">(</span><em>thismass</em>, <em>thisalpha='No Alpha'</em>, <em>thistflowlist=[]</em>, <em>DefWipe=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FormFactors.html#FormFact.LoadPickle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FormFactors.FormFact.LoadPickle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FormFactors.FormFact.RemoveFuns">
+<code class="descname">RemoveFuns</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FormFactors.html#FormFact.RemoveFuns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FormFactors.FormFact.RemoveFuns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FormFactors.FormFact.SetAlpha">
+<code class="descname">SetAlpha</code><span class="sig-paren">(</span><em>alpha</em>, <em>tflowlist</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FormFactors.html#FormFact.SetAlpha"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FormFactors.FormFact.SetAlpha" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FormFactors.FormFact.SetCustomName">
+<code class="descname">SetCustomName</code><span class="sig-paren">(</span><em>string=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FormFactors.html#FormFact.SetCustomName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FormFactors.FormFact.SetCustomName" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FormFactors.FormFact.SetMass">
+<code class="descname">SetMass</code><span class="sig-paren">(</span><em>mass</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FormFactors.html#FormFact.SetMass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FormFactors.FormFact.SetMass" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FormFactors.FormFact.Write">
+<code class="descname">Write</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FormFactors.html#FormFact.Write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FormFactors.FormFact.Write" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FormFactors.FormFact.items">
+<code class="descname">items</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FormFactors.html#FormFact.items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FormFactors.FormFact.items" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FormFactors.FormFact.itemsAvgStd">
+<code class="descname">itemsAvgStd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FormFactors.html#FormFact.itemsAvgStd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FormFactors.FormFact.itemsAvgStd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FormFactors.FormFact.itemsMass">
+<code class="descname">itemsMass</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FormFactors.html#FormFact.itemsMass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FormFactors.FormFact.itemsMass" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FormFactors.FormFact.itemsParList">
+<code class="descname">itemsParList</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FormFactors.html#FormFact.itemsParList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FormFactors.FormFact.itemsParList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FormFactors.FormFact.itemsParListRed">
+<code class="descname">itemsParListRed</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FormFactors.html#FormFact.itemsParListRed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FormFactors.FormFact.itemsParListRed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FormFactors.FormFact.iteritems">
+<code class="descname">iteritems</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FormFactors.html#FormFact.iteritems"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FormFactors.FormFact.iteritems" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FormFactors.FormFact.iteritemsRed">
+<code class="descname">iteritemsRed</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FormFactors.html#FormFact.iteritemsRed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FormFactors.FormFact.iteritemsRed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FormFactors.FormFact.keys">
+<code class="descname">keys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FormFactors.html#FormFact.keys"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FormFactors.FormFact.keys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FormFactors.FormFact.keysOpMoms">
+<code class="descname">keysOpMoms</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FormFactors.html#FormFact.keysOpMoms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FormFactors.FormFact.keysOpMoms" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FormFactors.FormFact.keysOpMomsRed">
+<code class="descname">keysOpMomsRed</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FormFactors.html#FormFact.keysOpMomsRed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FormFactors.FormFact.keysOpMomsRed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="FormFactors.FormFact.paramRed_Stats">
+<code class="descname">paramRed_Stats</code><em class="property"> = None</em><a class="headerlink" href="#FormFactors.FormFact.paramRed_Stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>columns = FF FFAvg FFStd
+rows are param_Col_Names</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="FormFactors.FormFact.param_Stats">
+<code class="descname">param_Stats</code><em class="property"> = None</em><a class="headerlink" href="#FormFactors.FormFact.param_Stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>columns = FF FFAvg FFStd
+rows are param_Col_Names</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="FormFactors.FormFact.values">
+<code class="descname">values</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FormFactors.html#FormFact.values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FormFactors.FormFact.values" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FormFactors.FormFact.valuesAvgStd">
+<code class="descname">valuesAvgStd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FormFactors.html#FormFact.valuesAvgStd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FormFactors.FormFact.valuesAvgStd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="FormFactors.TestFF">
+<code class="descclassname">FormFactors.</code><code class="descname">TestFF</code><span class="sig-paren">(</span><em>DefWipe=False, this_curr='VectorTop', qsqrdlist=[0, 1]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FormFactors.html#TestFF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FormFactors.TestFF" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table of Contents</h3>
+          <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Python_Analysis</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="AhmedRes.html">AhmedRes module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="AnalysisGUI.html">AnalysisGUI module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Autocorr.html">Autocorr module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BNLFormFactor.html">BNLFormFactor module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BootStrapping.html">BootStrapping module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BootStrapping_self.html">BootStrapping_self module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ChacoModPlot_heatmap.html">ChacoModPlot_heatmap module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ChacoTest.html">ChacoTest module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CreateTable.html">CreateTable module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DSDefines.html">DSDefines module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FFSolve.html">FFSolve module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FileIO.html">FileIO module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FileIOMat.html">FileIOMat module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FitFunctions.html">FitFunctions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FitFunctions_TF.html">FitFunctions_TF module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FlowOpps.html">FlowOpps module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ForMatAndrea.html">ForMatAndrea module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">FormFactors module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GammaMatricies.html">GammaMatricies module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Jose_Plots.html">Jose_Plots module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MAH_control.html">MAH_control module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MakeFuns.html">MakeFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Mat_Alpha_Hack.html">Mat_Alpha_Hack module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Mat_Hack_V2.html">Mat_Hack_V2 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Mayavi_Test.html">Mayavi_Test module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MiscFuns.html">MiscFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModPlot.html">ModPlot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModStylePlot.html">ModStylePlot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MomParams.html">MomParams module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MultiWrap.html">MultiWrap module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="NullPlotData.html">NullPlotData module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PandasTest.html">PandasTest module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Params.html">Params module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ParamsOLD.html">ParamsOLD module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PlotData.html">PlotData module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PredefFitFuns.html">PredefFitFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="QuantityLists.html">QuantityLists module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RatioCorrelators.html">RatioCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ReadBinaryCfuns.html">ReadBinaryCfuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ReadBinaryCfuns_SLone.html">ReadBinaryCfuns_SLone module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RunSetCommands.html">RunSetCommands module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFFs.html">SetsOfFFs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFits.html">SetsOfFits module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFlowOps.html">SetsOfFlowOps module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfRatios.html">SetsOfRatios module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfTwoPtCorrs.html">SetsOfTwoPtCorrs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Setup.html">Setup module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Test3dLine.html">Test3dLine module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TestAll.html">TestAll module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TestCorr.html">TestCorr module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ThreePtCorrelators.html">ThreePtCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TimeStuff.html">TimeStuff module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TwoPtCorrelators.html">TwoPtCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VarMethod.html">VarMethod module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VarMethod_self.html">VarMethod_self module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="XmlFormatting.html">XmlFormatting module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mv_graphs.html">mv_graphs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xmltodict.html">xmltodict module</a></li>
+</ul>
+</li>
+</ul>
+
+          <div role="search">
+            <h3 style="margin-top: 1.5em;">Search</h3>
+            <form class="search" action="search.html" method="get">
+                <input type="text" name="q" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+            </form>
+          </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <div role="navigation" aria-label="related navigaton">
+            <a href="ForMatAndrea.html" title="ForMatAndrea module"
+              >previous</a> |
+            <a href="GammaMatricies.html" title="GammaMatricies module"
+              >next</a> |
+            <a href="py-modindex.html" title="Python Module Index"
+              >modules</a> |
+            <a href="genindex.html" title="General Index"
+              >index</a>
+          </div>
+          <div role="note" aria-label="source link">
+              <br/>
+              <a href="_sources/FormFactors.rst.txt"
+                rel="nofollow">Show Source</a>
+          </div>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Jack Dragos.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>

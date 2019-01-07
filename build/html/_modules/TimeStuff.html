@@ -1,0 +1,212 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>TimeStuff &#8212; LQCD Analysis Codebase TF Fits documentation</title>
+    <link rel="stylesheet" href="../_static/agogo.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="header-wrapper" role="banner">
+      <div class="header">
+        <div class="headertitle"><a
+          href="../index.html">LQCD Analysis Codebase TF Fits documentation</a></div>
+        <div class="rel" role="navigation" aria-label="related navigation">
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for TimeStuff</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+
+<span class="kn">import</span> <span class="nn">time</span><span class="o">,</span><span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">socket</span>
+
+<span class="n">str_buffer</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">*</span><span class="mi">70</span>
+<span class="n">str_buffer_small</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">*</span><span class="mi">20</span>
+<span class="n">myeps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span>
+
+<div class="viewcode-block" id="Timer"><a class="viewcode-back" href="../TimeStuff.html#TimeStuff.Timer">[docs]</a><span class="k">class</span> <span class="nc">Timer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    there are probably default classes that can do this, but meh</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+
+    <span class="c1">## dont pass in linklist if you just want total time measured</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">linklist</span><span class="o">=</span><span class="p">[],</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="n">rewrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">prod_or_sum</span><span class="o">=</span><span class="s1">&#39;prod&#39;</span><span class="p">):</span>
+        <span class="n">socket_name</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">gethostname</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s1">&#39;JackLappy&#39;</span> <span class="ow">in</span> <span class="n">socket_name</span><span class="p">:</span>
+            <span class="n">this_machine</span> <span class="o">=</span> <span class="s1">&#39;jack_lappy&#39;</span>
+        <span class="k">elif</span> <span class="s1">&#39;juqueen&#39;</span> <span class="ow">in</span> <span class="n">socket_name</span><span class="p">:</span>
+            <span class="n">this_machine</span> <span class="o">=</span> <span class="s1">&#39;juqueen&#39;</span>
+        <span class="k">elif</span> <span class="s1">&#39;dev&#39;</span> <span class="ow">in</span> <span class="n">socket_name</span> <span class="ow">or</span> <span class="s1">&#39;gateway&#39;</span> <span class="ow">in</span> <span class="n">socket_name</span> <span class="ow">or</span> <span class="s1">&#39;lac-&#39;</span> <span class="ow">in</span> <span class="n">socket_name</span><span class="p">:</span>
+            <span class="n">this_machine</span> <span class="o">=</span> <span class="s1">&#39;laconia&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">this_machine</span> <span class="o">=</span> <span class="s1">&#39;jack_lappy&#39;</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">linklist</span><span class="p">,(</span><span class="nb">int</span><span class="p">,</span><span class="nb">float</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">llsize</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">linklist</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">linklist</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">linklist</span><span class="p">[</span><span class="mi">0</span><span class="p">],(</span><span class="nb">list</span><span class="p">,</span><span class="nb">tuple</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="s1">&#39;sum&#39;</span> <span class="ow">in</span> <span class="n">prod_or_sum</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">llsize</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">sum</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">ival</span><span class="p">)</span> <span class="k">for</span> <span class="n">ival</span> <span class="ow">in</span> <span class="n">linklist</span><span class="p">]))</span>
+                <span class="k">elif</span> <span class="s1">&#39;prod&#39;</span> <span class="ow">in</span> <span class="n">prod_or_sum</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">llsize</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">ival</span><span class="p">)</span> <span class="k">for</span> <span class="n">ival</span> <span class="ow">in</span> <span class="n">linklist</span><span class="p">]))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">llsize</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">linklist</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rewrite</span> <span class="o">=</span> <span class="n">rewrite</span> <span class="ow">and</span> <span class="n">this_machine</span> <span class="o">!=</span> <span class="s1">&#39;laconia&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Start</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="Timer.Start"><a class="viewcode-back" href="../TimeStuff.html#TimeStuff.Timer.Start">[docs]</a>    <span class="k">def</span> <span class="nf">Start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">noprint</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">starttime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">endtime</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">laplist</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linkcount</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">linkper</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">noprint</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rewrite</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">()</span>
+                <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">+</span><span class="s1">&#39; Starting timer ,&#39;</span> <span class="p">,</span><span class="n">str_buffer</span><span class="p">,</span><span class="s1">&#39;</span><span class="se">\r</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">+</span><span class="s1">&#39; Starting timer &#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Timer.Stop"><a class="viewcode-back" href="../TimeStuff.html#TimeStuff.Timer.Stop">[docs]</a>    <span class="k">def</span> <span class="nf">Stop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">newl</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">endtime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">starttime</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">laplist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">endtime</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linkcount</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linkper</span> <span class="o">=</span> <span class="mi">100</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rewrite</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s1">&#39; Complete, took: &#39;</span> <span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">GetTimeStr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">endtime</span><span class="p">)</span> <span class="p">,</span> <span class="n">str_buffer</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">newl</span><span class="p">:</span> <span class="nb">print</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s1">&#39; Complete, took: &#39;</span> <span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">GetTimeStr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">endtime</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">newl</span><span class="p">:</span> <span class="nb">print</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Start</span><span class="p">(</span><span class="n">noprint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Timer.Lap"><a class="viewcode-back" href="../TimeStuff.html#TimeStuff.Timer.Lap">[docs]</a>    <span class="k">def</span> <span class="nf">Lap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">flag</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">laplist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">starttime</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linkcount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">linkcount</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">llsize</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">llsize</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Stop</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># if self.llsize == 0.0:</span>
+            <span class="c1">#     self.linkper = 100</span>
+            <span class="c1"># else:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">linkper</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">linkcount</span><span class="o">*</span><span class="mi">100</span><span class="p">)</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">llsize</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rewrite</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">GetTimeForm</span><span class="p">(</span><span class="n">flag</span><span class="p">),</span><span class="n">str_buffer_small</span><span class="p">,</span><span class="s1">&#39;</span><span class="se">\r</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">GetTimeForm</span><span class="p">(</span><span class="n">flag</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Timer.Reset"><a class="viewcode-back" href="../TimeStuff.html#TimeStuff.Timer.Reset">[docs]</a>    <span class="k">def</span> <span class="nf">Reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Start</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Timer.GetPercent"><a class="viewcode-back" href="../TimeStuff.html#TimeStuff.Timer.GetPercent">[docs]</a>    <span class="k">def</span> <span class="nf">GetPercent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:.1f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">linkper</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;% &#39;</span></div>
+
+<div class="viewcode-block" id="Timer.GetTimeStr"><a class="viewcode-back" href="../TimeStuff.html#TimeStuff.Timer.GetTimeStr">[docs]</a>    <span class="k">def</span> <span class="nf">GetTimeStr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">thistime</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="n">thistime</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39; h:m:s &#39;</span></div>
+
+<div class="viewcode-block" id="Timer.GetTimeLeft"><a class="viewcode-back" href="../TimeStuff.html#TimeStuff.Timer.GetTimeLeft">[docs]</a>    <span class="k">def</span> <span class="nf">GetTimeLeft</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">perdone</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">linkper</span><span class="o">/</span><span class="mf">100.</span>
+        <span class="k">if</span> <span class="n">perdone</span> <span class="o">&lt;</span> <span class="mf">0.001</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">laplist</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="p">((</span><span class="mi">1</span><span class="o">-</span><span class="n">perdone</span><span class="p">)</span><span class="o">/</span><span class="n">perdone</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Timer.GetTimeLeftStr"><a class="viewcode-back" href="../TimeStuff.html#TimeStuff.Timer.GetTimeLeftStr">[docs]</a>    <span class="k">def</span> <span class="nf">GetTimeLeftStr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetTimeStr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">GetTimeLeft</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="Timer.GetTimeForm"><a class="viewcode-back" href="../TimeStuff.html#TimeStuff.Timer.GetTimeForm">[docs]</a>    <span class="k">def</span> <span class="nf">GetTimeForm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">flag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">screen_size</span><span class="o">=</span><span class="mi">30</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">flag</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">out_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">+</span><span class="s1">&#39; Current Time: &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetTimeStr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">laplist</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39; at &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetPercent</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39; Time Left: &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetTimeLeftStr</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">flag</span><span class="p">,(</span><span class="nb">list</span><span class="p">,</span><span class="nb">tuple</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+            <span class="n">out_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">+</span><span class="s1">&#39; At &#39;</span><span class="o">+</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span><span class="n">flag</span><span class="p">))</span><span class="o">+</span><span class="s1">&#39; Current Time: &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetTimeStr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">laplist</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39; at &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetPercent</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39; Time Left: &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetTimeLeftStr</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">out_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">+</span><span class="s1">&#39; At &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">flag</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39; Current Time: &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetTimeStr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">laplist</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39; at &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetPercent</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39; Time Left: &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetTimeLeftStr</span><span class="p">()</span>
+        <span class="c1"># print &#39;DEBUG&#39;</span>
+        <span class="c1"># print len(out_str),len(out_str) &gt; screen_size</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">out_str</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">screen_size</span><span class="p">:</span>
+            <span class="n">out_str</span> <span class="o">=</span> <span class="n">out_str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">+</span><span class="s1">&#39; &#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out_str</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table of Contents</h3>
+          <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Python_Analysis</a></li>
+</ul>
+
+          <div role="search">
+            <h3 style="margin-top: 1.5em;">Search</h3>
+            <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+            </form>
+          </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <div role="navigation" aria-label="related navigaton">
+            <a href="../py-modindex.html" title="Python Module Index"
+              >modules</a> |
+            <a href="../genindex.html" title="General Index"
+              >index</a>
+          </div>
+          <div role="note" aria-label="source link">
+          </div>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Jack Dragos.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>

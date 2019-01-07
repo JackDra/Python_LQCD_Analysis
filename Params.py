@@ -155,6 +155,7 @@ All_Classes_Names = [ 'AResAlpha','AResChi2','CalculationParams','RunParams','Pl
 # G2_abs = False
 # if G2_abs:
 #     print 'G2_abs is ON! WARNING!'
+# def_nblock = 1
 myeps = np.finfo(0.0).eps
 percentile = 0.158
 Qeps = 10**(-5)

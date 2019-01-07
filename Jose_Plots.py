@@ -1,8 +1,17 @@
 #!/usr/bin/env python
 
+# data = [0.000450407533726283, -9.56943763353717e-22, 0.00125881827032569, 1.45686539151048e-21, 0.00144307889177642, 7.33567031666753e-22, 0.00110937528111652, -3.34872438764729e-22, 0.00087627896599212, -1.05972499343127e-21, 0.000684362650375569, 2.96072498157164e-22, 0.000476396547438195, -2.38728848426779e-22, 0.000311467405236602, 7.3551219857596e-23, 0.000203458813921517, -5.15695413138528e-24, 0.000128290916647265, 1.58230603893444e-23, 7.89872580503493e-05, -5.75633695805945e-24, 5.24843401587603e-05, 1.02084912022841e-23, 3.6917769494426e-05, 0.000631482945704443, -5.74599720040254e-23, 0.000929791000522095, 1.92607066928412e-22, 0.00117727057735764, 2.91128801527452e-23, 0.000940934205012497, 2.73349265118964e-22, 0.000328144847069594, 3.51550144747903e-22]
+#
+# data = [idata for idata in data if idata > 10e-10]
+# import matplotlib.pyplot as pl
+# pl.plot(data)
+# pl.savefig('/home/jackdra/LQCD/Scripts/Python_Analysis/TestGraphs/flow_plot_test.pdf')
+# pl.clf()
+
 import pandas as pa
 import numpy as np
-from PlotData import Plotting,null_series
+from NullPlotData import null_series
+from PlotData import Plotting
 from MomParams import hbarc
 from BootStrapping import BootStrap
 from SetsOfFits import SetOfFitFuns
@@ -13,6 +22,8 @@ from PredefFitFuns import c3PolyFun,c3PolyFun2,c3PolyFun3
 from PredefFitFuns import c3PolyFun_skip1,c3PolyFun2_skip1,c3PolyFun3_skip1
 from PredefFitFuns import c3ExpFitFun,c3ExpFitFun2,c3ExpFitFun_nosqrt
 from PredefFitFuns import c3ExpFitFun2_nosqrt,c3ExpFitFun3_nosqrt
+from PredefFitFuns import C2OSFAntiper,C2OSFAntiperDer
+import FitFunctions as ff
 from ReadBinaryCfuns import RC2Full
 
 import os
@@ -26,6 +37,9 @@ Fit_ens_files['M'] = ['DataFrame_C_32X64_1.csv','DataFrame_C_32X64_2.csv','DataF
 Fit_ens_files['A'] = ['DataFrame_C_16X32.csv','DataFrame_C_20X40.csv','DataFrame_C_28X56.csv']
 
 do_exraps = True
+tree_antit = True
+do_nucleon = False
+double_tree_fix = True
 # Mass_ens_files = {}
 # Mass_ens_files['M'] = ['Ave_E_32X64_1.csv','Ave_E_32X64_2.csv','Ave_E_32X64_3.csv']
 # Mass_ens_files['A'] = ['Ave_E_16X32.csv','Ave_E_20X40.csv','Ave_E_28X56.csv']
@@ -44,6 +58,14 @@ M_labels = ['mpi410','mpi570','mpi700']
 A_labels = ['L16','L20','L28']
 # M_labels = ['mpi410']
 # A_labels = []
+tsink_ens_dict = {}
+tsink_ens_dict['mpi410'] =  64
+tsink_ens_dict['mpi570'] =  64
+tsink_ens_dict['mpi700'] =  64
+tsink_ens_dict['L16'] =  32
+tsink_ens_dict['L20'] =  40
+tsink_ens_dict['L28'] =  56
+
 a_dict = {}
 a_dict['mpi410'] =  0.0907
 a_dict['mpi570'] =  0.0907
@@ -67,9 +89,9 @@ t0_dict_err['L16'] =     0.0015817442
 t0_dict_err['L20'] =     0.0021913620
 t0_dict_err['L28'] =     0.0064980950
 
-from XmlFormatting import MakeValAndErr
-for ival_err,ival in zip(t0_dict_err.values(),t0_dict.values()):
-    print(MakeValAndErr(ival,ival_err,Dec=2))
+# from XmlFormatting import MakeValAndErr
+# for ival_err,ival in zip(t0_dict_err.values(),t0_dict.values()):
+#     print(MakeValAndErr(ival,ival_err,Dec=2))
 use_t0rat = True
 if use_t0rat:
     sqrt8t_key = 'sqrt8t_t0rat'
@@ -87,7 +109,7 @@ def MakeFileList(this_dict):
 Fit_filelist = MakeFileList(Fit_ens_files)
 
 flow_list = [f'{val:.1f}' for val in np.arange(0,1,0.1)]
-flow_list += [f'{val:.1f}' for val in np.arange(0,10,1)]
+flow_list += [f'{val:.1f}' for val in np.arange(1,10,1)]
 def ReadTLFileList(this_dict):
     output_dict = {}
     for ikey,ifile in this_dict.items():
@@ -95,17 +117,24 @@ def ReadTLFileList(this_dict):
         t_list,tf_list = [],[]
         for iflow in flow_list:
             this_file = ifile.replace('FLOW_TIME',iflow)
-            this_data = RC2Full([this_file],['0 0 0'],
-                                InterpNumb='15',
-                                MesOrBar='Meson').data
+            if do_nucleon:
+                this_data = RC2Full([this_file],['0 0 0'],
+                                    InterpNumb='9',
+                                    MesOrBar='Baryon').data
+            else:
+                this_data = RC2Full([this_file],['0 0 0'],
+                                    InterpNumb='15',
+                                    MesOrBar='Meson').data
             this_data = list(np.array(this_data)[0,:,0].flatten())
             tf_data += this_data
-            t_list += [f'{it}' for it in this_data]
+            t_list += [f'{it}' for it in range(len(this_data))]
             tf_list += [iflow for it in this_data]
         output_dict[ikey] = pa.DataFrame()
         output_dict[ikey]['t_sink'] = pa.Series(t_list)
         output_dict[ikey]['t_flow'] = pa.Series(tf_list)
         output_dict[ikey]['Corr'] = pa.Series(tf_data)
+        if double_tree_fix:
+            output_dict[ikey]['Corr'] = output_dict[ikey]['Corr']*2
     return output_dict
 
 def ReadFileList(this_dict):
@@ -116,33 +145,204 @@ def ReadFileList(this_dict):
     return output_dict
 
 Fit_data = ReadFileList(Fit_filelist)
-this_kappa = 'k0.1250'
+# this_kappa = 'k0.1250'
+# this_kappa = 'k0.1260'
+# this_kappa = 'k0.1270'
+# tree_kappa_list = ['k0.1250','k0.1260','k0.1270']
+# tree_kappa_list = ['k0.1250']
+import numpy as np
+tree_kappa_list = ['k0.1250','k0.1237','k0.1225','k0.1212','k0.1200']
+tree_m0_list = [float(ival.replace('k','')) for ival in tree_kappa_list]
+tree_m0_list = [1/ival - 8 for ival in tree_m0_list]
+tree_mp_list = [np.log(1+ival) for ival in tree_m0_list]
+tree_mpi_list = [2*ival for ival in tree_mp_list]
+tree_df_info = pa.DataFrame()
+tree_df_info['kappa'] = pa.Series(tree_kappa_list)
+tree_df_info['m0'] = pa.Series(tree_m0_list)
+tree_df_info['mp'] = pa.Series(tree_mp_list)
+tree_df_info['mpi'] = pa.Series(tree_mpi_list)
+tree_df_info = tree_df_info.set_index('kappa')
+
+if tree_antit:
+    tree_base = '/home/jackdra/LQCD/Scripts/Jose_PoS/DataGraphs/Treelev/'
+else:
+    tree_base = '/home/jackdra/LQCD/Scripts/Jose_PoS/DataGraphs/Treelev_Tper/'
+
 tree_files = {}
-for ikey in Fit_filelist.keys():
-    if 'mpi' in ikey:
-        tree_files[ikey] =        '/home/jackdra/LQCD/Scripts/Jose_PoS/DataGraphs/Treelev/RC32x64_tree/RC32x64_tree_'+this_kappa+'_FLOW_TIME.xml'
+for ikappa in tree_kappa_list:
+    for ikey in Fit_filelist.keys():
+        if 'mpi' in ikey:
+            tree_files[ikey+'_'+ikappa] = tree_base+'/RC32x64_tree/RC32x64_tree_'+ikappa+'_FLOW_TIME.xml'
+        else:
+            this_RC = int(ikey[1:])
+            this_RC = 'RC'+str(this_RC)+'x'+str(this_RC*2)
+            tree_files[ikey+'_'+ikappa] =        tree_base+this_RC+'_tree/'+this_RC+'_tree_'+ikappa+'_FLOW_TIME.xml'
+
+
+tree_data = ReadTLFileList(tree_files)
+tree_data['mpi410_k0.1200']
+effm_tree_data = {}
+from pynverse import inversefunc
+for iens,ens_data in tree_data.items():
+    this_tsink = tsink_ens_dict[iens.split('_')[0]]
+    val_list,AA0_list = [],[]
+    flow_0_data = ens_data[ens_data['t_flow'] == '0.0']['Corr'].values
+    for itflow in flow_list:
+        flow_data = ens_data[ens_data['t_flow'] == itflow]
+        flow_data = flow_data['Corr'].values
+        for it,(tdata,tdatap1) in enumerate(zip(flow_data[:-1],flow_data[1:])):
+            AA0_list.append(tdata/flow_0_data[it])
+            if do_nucleon:
+                val_list.append(np.log(np.abs(tdata/tdatap1)))
+            else:
+                Tshift = this_tsink/2-it
+                def ThisEffMFun(mass):
+                    return np.cosh(-mass*Tshift)/np.cosh(-mass*(Tshift-1))
+                val_list.append(np.abs(inversefunc(ThisEffMFun,y_values=tdata/tdatap1)))
+        val_list.append(float('NaN'))
+        AA0_list.append(float('NaN'))
+    if len(val_list) > 0:
+        tree_data[iens]['EffM'] = pa.Series(val_list,index=tree_data[iens].index)
+        tree_data[iens]['AA0'] = pa.Series(AA0_list,index=tree_data[iens].index)
+
+this_data = pa.DataFrame()
+for iens,ens_data in tree_data.items():
+    plot_data = ens_data.set_index(['t_sink','t_flow'])['EffM']
+    hold_series = null_series
+    hold_series['type'] = 'plot_vary'
+    hold_series['key_select'] = (slice(None),'0.0')
+    hold_series['x_data'] = 'from_keys'
+    hold_series['y_data'] = plot_data
+    hold_series['label'] = iens
+    this_data[iens] = hold_series
+for ikappa,mpi_val in tree_df_info['mpi'].items():
+    hold_series = null_series
+    hold_series['type'] = 'hline'
+    hold_series['y_data'] = [mpi_val]
+    hold_series['label'] = 'from kappa ' + ikappa
+    this_data['from kappa ' + ikappa] = hold_series
+
+this_info = pa.Series()
+this_info['save_file'] = '/home/jackdra/LQCD/Scripts/Jose_PoS/DataGraphs/Jacks/Test_EffM.pdf'
+if tree_antit:
+    this_info['save_file'] = this_info['save_file'].replace('Test_EffM','Test_EffM_antit')
+if do_nucleon:
+    this_info['save_file'] = this_info['save_file'].replace('Test_EffM','Test_EffM_nucleon')
+this_info['title'] = r'$M_{eff}$'
+this_info['ylabel'] = r'$M_{eff}$'
+this_info['xlabel'] = r'$t_{sink}$'
+# this_info['xlims'] = [0,10]
+# this_info['ylims'] = [0,15]
+data_plot = Plotting(plot_data=this_data,plot_info=this_info)
+data_plot.PlotAll()
+
+this_data = pa.DataFrame()
+for iens,ens_data in tree_data.items():
+    # plot_data = ens_data.set_index(['t_sink','t_flow'])['AA0']
+    plot_data = ens_data.set_index(['t_sink','t_flow'])['Corr']
+    hold_series = null_series
+    hold_series['type'] = 'plot_vary'
+    hold_series['key_select'] = (slice(None),'0.0')
+    hold_series['x_data'] = 'from_keys'
+    hold_series['y_data'] = plot_data
+    hold_series['label'] = iens
+    this_data[iens] = hold_series
+this_info = pa.Series()
+this_info['save_file'] = '/home/jackdra/LQCD/Scripts/Jose_PoS/DataGraphs/Jacks/Test_Corr.pdf'
+if tree_antit:
+    this_info['save_file'] = this_info['save_file'].replace('Test_Corr','Test_Corr_antit')
+if do_nucleon:
+    this_info['save_file'] = this_info['save_file'].replace('Test_Corr','Test_Corr_nucleon')
+this_info['title'] = r'$Correlator$'
+this_info['ylabel'] = r'$C$'
+this_info['xlabel'] = r'$t_{sink}$'
+# this_info['xlims'] = [0,10]
+# this_info['ylims'] = [0,15]
+data_plot = Plotting(plot_data=this_data,plot_info=this_info)
+data_plot.PlotAll()
+# tree_data['L16_k0.1250'].set_index(['t_sink','t_flow'])['Corr'][:,'5.0']
+# import matplotlib.pyplot as pl
+# flow_test = tree_data['mpi410_k0.1270']
+# flow_test = flow_test[flow_test['t_flow'] == '0.0']['Corr']
+# flow_test = flow_test
+# flow_test
+# flow_test.plot(color='blue')
+# # pl.savefig('/home/jackdra/LQCD/Scripts/Python_Analysis/TestGraphs/flow_plot_test2.pdf')
+# # pl.clf()
+# flow_test = tree_data['mpi410_k0.1250']
+# flow_test = flow_test[flow_test['t_flow'] == '4.0']
+# flow_test['Corr'].plot(color='red')
+# pl.savefig('/home/jackdra/LQCD/Scripts/Python_Analysis/TestGraphs/flow_plot_test.pdf')
+# pl.clf()
+
+def DoLSFit(x_data,y_data,this_name,this_fun):
+    testdf = pa.DataFrame()
+    testdf.loc[:,'xdata'] = pa.Series([[x_data]])
+    testdf.loc[:,'ydata'] = pa.Series([y_data])
+    testfit = ff.Fitting(data = testdf, Funs=this_fun,name=this_name)
+    return testfit.FitMean()
+
+tree_fit_data = {}
+DefWipe = False
+for iens,ens_data in tree_data.items():
+    tree_fit_file = temp_folder+'/'+iens+'_tree_fit_data.p'
+    if os.path.isfile(tree_fit_file) and not DefWipe:
+        tree_fit_data[iens] = pa.read_pickle(tree_fit_file)
     else:
-        this_RC = int(ikey[1:])
-        this_RC = 'RC'+str(this_RC)+'x'+str(this_RC*2)
-        tree_files[ikey] =        '/home/jackdra/LQCD/Scripts/Jose_PoS/DataGraphs/Treelev/'+this_RC+'_tree/'+this_RC+'_tree_'+this_kappa+'_FLOW_TIME.xml'
+        this_tsink = tsink_ens_dict[iens.split('_')[0]]
+        def C2atT(t,p):
+            return C2OSFAntiper(t,p,this_tsink+1)
+        C2atT.file_name = 'C2atT'+str(this_tsink+1)
+        def C2DeratT(t,p):
+            return C2OSFAntiperDer(t,p,this_tsink+1)
+        C2DeratT.file_name = 'C2DeratT'+str(this_tsink+1)
+        this_fun = [C2atT,2,C2DeratT]
+        all_flow_list,tcut_list = [],[]
+        E_list,A_list,chi_list = [],[],[]
+        print('\r','Begining fit for '+iens,' '*20)
+        for itflow in flow_list:
+            print('\r','     tflow:', itflow, ' '*20)
+            flow_data = ens_data[ens_data['t_flow'] == itflow]
+            for itcut in range(int(this_tsink/2)):
+                print('\r','         itcut:', itcut, end=' '*20)
+                fit_data = flow_data[flow_data['t_sink'].apply(lambda x : int(x)) > itcut]
+                fit_data = fit_data[fit_data['t_sink'].apply(lambda x : int(x)) < this_tsink-itcut+1]
+                xdata,ydata = fit_data['t_sink'].apply(lambda x : float(x)),fit_data['Corr']
+                test_fit_res = DoLSFit(xdata.values,ydata.values,'test_fit',this_fun)
+                all_flow_list.append(itflow)
+                tcut_list.append(itcut)
+                E_list.append(test_fit_res['Params']['Energy'])
+                A_list.append(test_fit_res['Params']['A_Ep'])
+                chi_list.append(test_fit_res['Chi2DoF']['Energy'])
+        print('fitting tree complete ')
+        tree_fit_data[iens] = pa.DataFrame()
+        if len(tcut_list) > 0:
+            tree_fit_data[iens]['flow t'] = pa.Series(all_flow_list)
+            tree_fit_data[iens]['tmin'] = pa.Series(tcut_list)
+            tree_fit_data[iens]['A'] = pa.Series(E_list)
+            tree_fit_data[iens]['E'] = pa.Series(A_list)
+            tree_fit_data[iens]['chisq'] = pa.Series(chi_list)
+        tree_fit_data[iens].to_pickle(tree_fit_file)
+# tree_fit_data['mpi410_k0.1250']
+# # print(tree_fit_data['L16_k0.1250'].to_string())
+# tree_fit_data['L16_k0.1250']
+# tree_fit_data['L16_k0.1250'][tree_fit_data['L16_k0.1250']['flow t']=='4.0']
+# test_fit = test_fit[test_fit['t_sink'].apply(lambda x : int(x)) > 15]
+# test_fit = test_fit[test_fit['t_sink'].apply(lambda x : int(x)) < 64-15]
+# xdata,ydata = test_fit['t_sink'].apply(lambda x : float(x)),test_fit['Corr']
+# this_fun = [C2atT,2,C2DeratT]
+# test_fit_res = DoLSFit(xdata.values,ydata.values,'test_fit',this_fun)
+# test_fit_res
+# fit_eval = np.array([C2atT([ival],[test_fit_res['Params']['A_Ep'],test_fit_res['Params']['Energy']]) for ival in range(15,64-15-1)])
+# ydata.values
+# np.abs(fit_eval-ydata.values)
 
-
-# tree_data = ReadTLFileList(tree_files)
-
-
-def BootStrap_Vals(this_DF,this_tree= None):
+def BootStrap_Vals(this_DF):
     A_list,E_list,chi_list,ilist = [],[],[],[]
     for ikey,iDF in this_DF.groupby(('flow t','tmin')):
-        if this_tree is None:
-            A_list.append(BootStrap(thisnboot=len(iDF),bootvals=iDF['A'].values))
-            E_list.append(BootStrap(thisnboot=len(iDF),bootvals=iDF['E'].values))
-            chi_list.append(BootStrap(thisnboot=len(iDF),bootvals=iDF['chisq'].values))
-        else:
-            A_list.append(BootStrap(thisnboot=len(iDF)+1,
-                                    bootvals=np.append(iDF['A'].values,this_tree['A'])))
-            E_list.append(BootStrap(thisnboot=len(iDF)+1,
-                                    bootvals=np.append(iDF['E'].values,this_tree['E'])))
-            chi_list.append(BootStrap(thisnboot=len(iDF),bootvals=iDF['chisq'].values))
+        A_list.append(BootStrap(thisnboot=len(iDF),bootvals=iDF['A'].values))
+        E_list.append(BootStrap(thisnboot=len(iDF),bootvals=iDF['E'].values))
+        chi_list.append(BootStrap(thisnboot=len(iDF),bootvals=iDF['chisq'].values))
         ilist.append(ikey)
     if len(ilist) > 0:
         ilist = pa.MultiIndex.from_tuples(ilist,names=('flow t','tmin'))
@@ -152,13 +352,19 @@ def BootStrap_Vals(this_DF,this_tree= None):
         this_DF['chisq'] = pa.Series(chi_list,index = ilist)
     return this_DF.reset_index()
 
-def MakeAdiv(this_DF):
+def MakeAdiv(this_DF,flow_str = False):
     out_list,ilist = [],[]
     for it,ival in this_DF.groupby('tmin'):
-        DF_tf0 = ival['A'][ival['flow t'] == 0].values[0]
+        if flow_str:
+            DF_tf0 = ival['A'][ival['flow t'] == '0.0'].values[0]
+        else:
+            DF_tf0 = ival['A'][ival['flow t'] == 0].values[0]
         for jkey,jval in ival['A'].items():
-            outval = jval.__div__(DF_tf0)
-            outval.Stats()
+            if hasattr(jval,'__div__'):
+                outval = jval.__div__(DF_tf0)
+                outval.Stats()
+            else:
+                outval = jval/DF_tf0
             out_list.append(outval)
             ilist.append(jkey)
     if len(ilist) > 0:
@@ -167,24 +373,39 @@ def MakeAdiv(this_DF):
         return pa.Series()
 
 first_key,second_key = {},{}
+# DefWipe = DefWipe or False
+DefWipe = True
 for ikey,ival in Fit_data.items():
-    data_file = temp_folder+'/'+ikey+'_data.p'
-    if os.path.isfile(data_file):
+    data_file = temp_folder+'/'+ikey+'_wtree_data.p'
+    if os.path.isfile(data_file) and not DefWipe:
         with open(data_file,'rb') as f:
             Fit_data[ikey],first_key[ikey],second_key[ikey] = pik.load(f)
     else:
         Fit_data[ikey] = BootStrap_Vals(ival)
         Fit_data[ikey]['A(t)/A(0)'] = MakeAdiv(Fit_data[ikey])
         Fit_data[ikey]['sqrt8t_fm'] = Fit_data[ikey]['flow t'].apply(lambda x : str(np.sqrt(8*x)*a_dict[ikey]))
-        Fit_data[ikey]['sqrt8t_t0rat'] = Fit_data[ikey]['flow t'].apply(lambda x : str(np.sqrt(x/t0_dict[ikey])))
+        print('REMOVE THIS, volume scaling')
+        # Fit_data[ikey]['sqrt8t_t0rat'] = Fit_data[ikey]['flow t'].apply(lambda x : str(np.sqrt(x/t0_dict[ikey])))
+        Fit_data[ikey]['sqrt8t_t0rat'] = Fit_data[ikey]['flow t'].apply(lambda x : str(2*np.sqrt(8*x)/tsink_ens_dict[ikey]))
         Fit_data[ikey]['tmin_fm'] = Fit_data[ikey]['tmin'].apply(lambda x : str(x*a_dict[ikey]))
         Fit_data[ikey]['E_GeV'] = Fit_data[ikey]['E'].apply(lambda x : x*hbarc/a_dict[ikey])
         Fit_data[ikey]['E_GeV'].apply(lambda x : x.Stats())
+        for ikappa in tree_kappa_list:
+            Fit_data[ikey]['A(t)/A(0)_tree_'+ikappa] = MakeAdiv(tree_fit_data[ikey+'_'+ikappa],flow_str = True)
+            # Fit_data[ikey]['A(t)/A(0)_div_tree_'+ikappa] = Fit_data[ikey]['A(t)/A(0)']/Fit_data[ikey]['A(t)/A(0)_tree_'+ikappa]
+            print('THIS FORCES IT TO tree itself, change comment to divide by tree level')
+            Fit_data[ikey]['A(t)/A(0)_div_tree_'+ikappa] = Fit_data[ikey]['A(t)/A(0)']*Fit_data[ikey]['A(t)/A(0)_tree_'+ikappa]/Fit_data[ikey]['A(t)/A(0)']
+            Fit_data[ikey]['A(t)/A(0)_div_tree_'+ikappa].apply(lambda x : x.Stats())
+            Fit_data[ikey]['E_tree_'+ikappa] = tree_fit_data[ikey+'_'+ikappa]['E']
         first_key[ikey] = Fit_data[ikey][sqrt8t_key].iloc[0]
         second_key[ikey] = Fit_data[ikey]['tmin_fm'].iloc[0]
         Fit_data[ikey] = Fit_data[ikey].set_index([sqrt8t_key,'tmin_fm'])
         with open(data_file,'wb') as f:
             pik.dump((Fit_data[ikey],first_key[ikey],second_key[ikey]),f)
+# Fit_data['L20']['A(t)/A(0)_tree_k0.1250'][:,'0.1872'].plot()
+# print(Fit_data['mpi410']['A(t)/A(0)'][:,'2.1768'].apply(lambda x : x.MakeValAndErr()).to_string())
+# Fit_data['mpi410']['A(t)/A(0)_div_tree_'+ikappa].apply(lambda x : x.Stats())
+# Fit_data['mpi410']['A(t)/A(0)_div_tree_'+ikappa].apply(lambda x : x.MakeValAndErr())
 fit_info = {}
 # fit_info['Funs'] = [c3FitFun_NoA,2]
 fit_info['Funs'] = [c3PolyFun,3]
@@ -258,8 +479,11 @@ if use_t0rat:
     print(min_hold,' to ',max_hold, ' in fm corresponds to')
     for ikey in a_dict.keys():
         print(ikey)
-        tflow_fit_min[ikey] = min_hold/(a_dict[ikey]*np.sqrt(8*t0_dict[ikey]))
-        tflow_fit_max[ikey] = max_hold/(a_dict[ikey]*np.sqrt(8*t0_dict[ikey]))
+        # tflow_fit_min[ikey] = min_hold/(a_dict[ikey]*np.sqrt(8*t0_dict[ikey]))
+        # tflow_fit_max[ikey] = max_hold/(a_dict[ikey]*np.sqrt(8*t0_dict[ikey]))
+        print('Volume Scaling fix this too!')
+        tflow_fit_min[ikey] = 2*min_hold/(a_dict[ikey]*tsink_ens_dict[ikey])
+        tflow_fit_max[ikey] = 2*max_hold/(a_dict[ikey]*tsink_ens_dict[ikey])
         print(tflow_fit_min[ikey],' to ',tflow_fit_max[ikey], ' in units of sqrt(8t_{0})')
         print()
 else:
@@ -284,11 +508,26 @@ def GetMass_minfit(this_df,this_tflow,this_t):
     this_df = this_df[this_df['tmin_fm'].apply(lambda x : float(x)) > this_t]
     return this_df['E_GeV'].iloc[0]
 
+DoTree = True
+# picked_kappa = tree_kappa_list[4]
+picked_kappa = tree_kappa_list[1]
+# picked_kappa = tree_kappa_list[2]
+if DoTree:
+    # this_arat_key = 'A(t)/A(0)_tree_'+picked_kappa
+    # file_kappa = 'AA0_tree_'+picked_kappa.replace('k0.','k')
+    this_arat_key = 'A(t)/A(0)_div_tree_'+picked_kappa
+    file_kappa = 'AA0_dtree_'+picked_kappa.replace('k0.','k')
+else:
+    this_arat_key = 'A(t)/A(0)'
+    file_kappa = 'AA0'
+
+
 mpi_dict = {}
+DefWipe = DefWipe or False
 for ikey,ival in Fit_data.items():
-    fit_file = temp_folder+'/fit_'+ikey+'fitr'+'-'.join([str(int(fit_tmin_min*10)),
+    fit_file = temp_folder+'/fit_'+file_kappa+'_'+ikey+'fitr'+'-'.join([str(int(fit_tmin_min*10)),
                                                          str(int(fit_tmin_max*10))])+'_'+fit_info['Funs'][0].__name__+'.p'
-    if os.path.isfile(fit_file):
+    if os.path.isfile(fit_file) and not DefWipe:
         with open(fit_file,'rb') as f:
             this_fit,this_df,mass_val = pik.load(f)
         this_fit.GetFuns()
@@ -300,7 +539,7 @@ for ikey,ival in Fit_data.items():
         # ival = ival[fit_tmin_max>ival['tmin_fm'].apply(lambda x : float(x))]
         # ival = ival.set_index([sqrt8t_key,'tmin_fm'])
         # ival = pa.Series(ival.values,index=ival.index)
-        this_fit = SetOfFitFuns(data = ival['A(t)/A(0)'],name=ikey)
+        this_fit = SetOfFitFuns(data = ival[this_arat_key],name=ikey)
         # fit_info['Funs'] = [ConstantFitFun,1]
         # fit_info['iGuess'] = [0,0]
         # this_fit.ScanBox_FixEnd(tflow_fit_min,tflow_fit_max,
@@ -314,7 +553,7 @@ for ikey,ival in Fit_data.items():
                                 from_xdata=True)
         this_fit.DoFits()
         this_fit.SortChi()
-        this_df = ival.reset_index()[[sqrt8t_key,'tmin_fm','A(t)/A(0)']]
+        this_df = ival.reset_index()[[sqrt8t_key,'tmin_fm',this_arat_key]]
         this_df['ens'] = ikey
         this_df['t0_vals'] = 1/t0_dict[ikey]
         mass_val = GetMass_minfit(Fit_data[ikey]['E_GeV'].reset_index(),tflow_fit_min[ikey],fit_tmin_min)
@@ -357,7 +596,7 @@ Master_Fit_Data = Master_Fit_Data.set_index([sqrt8t_key,'tmin_fm']).sort_index()
 #     del Master_Fit_Data[sqrt8t_key]
 # if 'tmin_fm' in Master_Fit_Data.columns:
 #     del Master_Fit_Data['tmin_fm']
-fit_file = temp_folder+'/fit_combine_fitr'+'-'.join([str(int(fit_tmin_min*10)),
+fit_file = temp_folder+'/fit_combine'+file_kappa+'_fitr'+'-'.join([str(int(fit_tmin_min*10)),
                                                      str(int(fit_tmin_max*10))])+'_'+fit_info['Funs'][0].__name__+'.p'
 
 # Master_Fit_Data
@@ -365,9 +604,10 @@ fit_file = temp_folder+'/fit_combine_fitr'+'-'.join([str(int(fit_tmin_min*10)),
 # Master_Fit_Data['tmin_fm'].apply(lambda x : float(x)) >fit_tmin_min
 # Master_Fit_Data = Master_Fit_Data[Master_Fit_Data['tmin_fm'].apply(lambda x : float(x)) >fit_tmin_min]
 # Master_Fit_Data = Master_Fit_Data[fit_tmin_max>Master_Fit_Data['tmin_fm'].apply(lambda x : float(x))]
+DefWipe = DefWipe or False
 if do_exraps:
     par_fit_list = {}
-    if os.path.isfile(fit_file):
+    if os.path.isfile(fit_file) and not DefWipe:
         with open(fit_file,'rb') as f:
             if len(M_labels) > 1:
                 combine_fit,cont_fit,par_fit_list = pik.load(f)
@@ -375,7 +615,7 @@ if do_exraps:
             else:
                 combine_fit,par_fit_list = pik.load(f)
     else:
-        combine_fit = SetOfFitFuns(data = Master_Fit_Data['A(t)/A(0)'],name='combined')
+        combine_fit = SetOfFitFuns(data = Master_Fit_Data[this_arat_key],name='combined')
         combine_fit.ScanBox_FixEnd_maxdim2( tflow_fit_min['mpi410'],tflow_fit_max['mpi410'],
                                     fit_tmin_min,fit_tmin_max,
                                     fit_info_list,min_fit_len_1=min_par_tflow,min_fit_len_2=min_par_tmin,
@@ -454,8 +694,8 @@ for ikey,ival in Fit_data.items():
     hold_series['type'] = 'error_bar_vary'
     hold_series['key_select'] = (slice(None),second_key[ikey])
     hold_series['x_data'] = 'from_keys'
-    hold_series['y_data'] = ival['A(t)/A(0)'].apply(lambda x : x.Avg)
-    hold_series['yerr_data'] = ival['A(t)/A(0)'].apply(lambda x : x.Std)
+    hold_series['y_data'] = ival[this_arat_key].apply(lambda x : x.Avg)
+    hold_series['yerr_data'] = ival[this_arat_key].apply(lambda x : x.Std)
     hold_series['label'] = ikey
     this_data[ikey] = hold_series
 
@@ -486,8 +726,11 @@ if do_exraps:
     this_data['combine_Fit'] = hold_series
 
 this_info = pa.Series()
-this_info['save_file'] = '/home/jackdra/LQCD/Scripts/Jose_PoS/DataGraphs/Jacks/AA0_master_'+fit_info['Funs'][0].__name__+'.pdf'
-this_info['title'] = r'$A(t_{f})/A(0)$'
+this_info['save_file'] = '/home/jackdra/LQCD/Scripts/Jose_PoS/DataGraphs/Jacks/'+file_kappa+'_master_'+fit_info['Funs'][0].__name__+'.pdf'
+if DoTree:
+    this_info['title'] = r'$A(t_{f})/A(0)$ Div Tree ' + picked_kappa
+else:
+    this_info['title'] = r'$A(t_{f})/A(0)$'
 if use_t0rat:
     this_info['xlabel'] = r'$\frac{\sqrt{8t_{f}}}{\sqrt{8t_{0}}}$'
 else:
@@ -546,8 +789,11 @@ if do_exraps:
         this_data['combine_Fit'] = hold_series
 
     this_info = pa.Series()
-    this_info['save_file'] = '/home/jackdra/LQCD/Scripts/Jose_PoS/DataGraphs/Jacks/AA0_cont_'+fit_info['Funs'][0].__name__+'.pdf'
-    this_info['title'] = r'cont. extraps.'
+    this_info['save_file'] = '/home/jackdra/LQCD/Scripts/Jose_PoS/DataGraphs/Jacks/'+file_kappa+'_cont_'+fit_info['Funs'][0].__name__+'.pdf'
+    if DoTree:
+        this_info['title'] = r'cont. extraps. Div Tree ' + picked_kappa
+    else:
+        this_info['title'] = r'cont. extraps.'
     this_info['xlabel'] = r'$m_{\pi} [GeV]$'
     this_info['ylabel'] = r'$val(m_{\pi},a^{2}/t_{0})$'
     # this_info['xlims'] = [0,10]
@@ -706,8 +952,11 @@ if do_exraps:
 
 
     this_info = pa.Series()
-    this_info['save_file'] = '/home/jackdra/LQCD/Scripts/Jose_PoS/DataGraphs/Jacks/AA0_params_'+fit_info['Funs'][0].__name__+'.pdf'
-    this_info['title'] = r'cont. extraps.'
+    this_info['save_file'] = '/home/jackdra/LQCD/Scripts/Jose_PoS/DataGraphs/Jacks/'+file_kappa+'_params_'+fit_info['Funs'][0].__name__+'.pdf'
+    if DoTree:
+        this_info['title'] = r'cont. extraps. Div Tree ' + picked_kappa
+    else:
+        this_info['title'] = r'cont. extraps.'
     this_info['xlabel'] = r'$m_{\pi} [GeV]$'
     this_info['ylabel'] = r'$val(m_{\pi},a^{2}/t_{0})$'
     # this_info['xlims'] = [0,10]
@@ -746,7 +995,7 @@ for ikey,ival in Fit_data.items():
     hold_series['key_select'] = (first_key[ikey],slice(None))
     hold_series['x_data'] = 'from_keys'
     ivals = []
-    for (itf,itc),this_ival in ival['E_GeV'].iteritems():
+    for (itf,itc),this_ival in ival['E_GeV'].items():
         ivals.append(this_ival/ival['E_GeV'][('0.0',itc)])
         ivals[-1].Stats()
     this_series = pa.Series(ivals,index=ival['E_GeV'].index)

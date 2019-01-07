@@ -341,9 +341,9 @@ def WritePickle(thisfile,outputdict,Bak=True):
     if Bak: BackupFile(thisfile)
     try:
         with open(thisfile,'wb') as f:
-            fcntl.flock(f, fcntl.LOCK_EX)
+            # fcntl.flock(f, fcntl.LOCK_EX)
             pickle.dump( outputdict , f )
-            fcntl.flock(f, fcntl.LOCK_UN)
+            # fcntl.flock(f, fcntl.LOCK_UN)
     except Exception as err:
         print(err)
         WritePickle_NoLock(thisfile,outputdict,this_err=str(err))
@@ -442,17 +442,40 @@ def RecFTDAS(dictin):
         return dictout
 
 def FormatXml(data):
+    data = data.replace(r'$32^{3}\times_64\_\quad_m_{\pi}=0.410_GeV_\_-def-\_<Q>$_','mpi410')
+    data = data.replace(r'$32^{3}\times_64\_\quad_m_{\pi}=0.568_GeV_\_-def-\_<Q>$_','mpi570')
+    data = data.replace(r'$32^{3}\times_64\_\quad_m_{\pi}=0.699_GeV_\_-def-\_<Q>$_','mpi700')
+    data = data.replace(r'$28^{3}\times_56\_\quad_m_{\pi}=0.659_GeV_\_-def-\_<Q>$_','L28')
+    data = data.replace(r'$16^{3}\times_32\_\quad_m_{\pi}=0.640_GeV_\_-def-\_<Q>$_','L16')
+    data = data.replace(r'$20^{3}\times_40\_\quad_m_{\pi}=0.646_GeV_\_-def-\_<Q>$_','L20')
+    data = data.replace(r'$24^{3}\times_48\_\quad_m_{\pi}=nan_GeV_\_-def-\_<Q>$_','qu_L24')
     for ival in ['-a-','-b-','-1-','-2-','-3-','-4-']:
         data = data.replace(ival,'stream_'+ival[1])
     for i in range(10000):
         data = data.replace('<'+str(i)+'>','<cfg_'+str(i)+'>')
         data = data.replace('</'+str(i)+'>','</cfg_'+str(i)+'>')
-    data = data.replace('\\alpha','alpha')
+    data = data.replace(r'\alpha','alpha')
+    data = data.replace(r'0.568','568')
+    data = data.replace(r'0.699','699')
+    data = data.replace(r'0.640','640')
+    data = data.replace(r'0.646','646')
+    data = data.replace(r'0.659','659')
+    data = data.replace(r'0.410','410')
     data = data.replace('^','_pow_')
     data = data.replace('{','')
     data = data.replace('}','')
-    data = data.replace(r'&lt;','<')
-    data = data.replace(r'&gt;','>')
+    data = data.replace(r'&lt;','_lt_')
+    data = data.replace(r'&gt;','_gt_')
+    data = data.replace(r'<Q>','Q')
+    # data = data.replace(r'=','_eq_')
+    # data = data.replace(r'-','_dash_')
+    # data = data.replace(r'<$',r'<pie')
+    # data = data.replace(r'</$',r'</pie')
+    # data = data.replace(r'$_>',r'_>')
+    # data = data.replace(r'\times',r'_times_')
+    # data = data.replace(r'\quad',r'__')
+    # data = data.replace(r'\pi',r'pi')
+    # data = data.replace(r'\_',r'_')
     return data
 
 def ReadXml(thisfile,thisShowRead=ShowRead):
@@ -463,6 +486,7 @@ def ReadXml(thisfile,thisShowRead=ShowRead):
         parse_data = FormatXml(xml_file.read())
         # fcntl.flock(xml_file, fcntl.LOCK_UN)
     # print parse_data
+    # print(parse_data)
     return RecFTDAS(parse(parse_data))
         # return RecFTDAS(parse(FormatXml(xml_file.read())))
     # except Exception as err:

@@ -18,6 +18,8 @@ import pandas as pa
 from TimeStuff import Timer
 from copy import copy
 import PlotData as jpl
+from NullPlotData import null_series
+from VarMethod import VariationalMethod
 
 
 # import matplotlib
@@ -266,23 +268,32 @@ class SetOfTwoPt(object):
                 thisshift = shiftset[varcount%len(shiftset)]
                 varcount += 1
                 if fit_is_dict:
-                    thisxlim = [1,int(fitDict[ikey][1].split('-')[-1])]
-                    data_plot = iC2.EffMassPlot(data_plot,xlims=thisxlim,momlist=momlist[icount],
+                    if ikey in list(fitDict.keys()):
+                        thisxlim = [1,int(fitDict[icount][1].split('-')[-1])]
+                        data_plot = iC2.EffMassPlot(data_plot,xlims=thisxlim,momlist=momlist[min(len(momlist)-1,icount)],
                                                 thiscol=thiscol,thissym=thissym,
                                                 thisshift=thisshift,Phys=Phys)
-                    if ikey in list(fitDict.keys()):
                         data_plot = iC2.EffMassFitPlot( data_plot,*fitDict[ikey][:2],momlist=momlist[icount],
                                             thiscol=thiscol,thisshift = thisshift,Phys=Phys)
-                else:
-                    thisxlim = [1,int(fitDict[icount][1].split('-')[-1])]
-                    data_plot = iC2.EffMassPlot(data_plot,xlims=thisxlim,momlist=momlist[icount],
+                    else:
+                        data_plot = iC2.EffMassPlot(data_plot,momlist=momlist[min(len(momlist)-1,icount)],
                                                 thiscol=thiscol,thissym=thissym,
                                                 thisshift=thisshift,Phys=Phys)
-                    data_plot = iC2.EffMassFitPlot( data_plot,*fitDict[icount][:2],
-                                                    momlist=momlist[icount],thiscol=thiscol,
-                                                    thisshift = thisshift,Phys=Phys)
+                else:
+                    if icount < len(fitDict):
+                        thisxlim = [1,int(fitDict[icount][1].split('-')[-1])]
+                        data_plot =  iC2.EffMassPlot(data_plot,xlims=thisxlim,momlist=momlist[min(len(momlist)-1,icount)],
+                                                thiscol=thiscol,thissym=thissym,
+                                                thisshift=thisshift,Phys=Phys)
+                        data_plot = iC2.EffMassFitPlot( data_plot,*fitDict[icount][:2],
+                                                        momlist=momlist[icount],thiscol=thiscol,
+                                                        thisshift = thisshift,Phys=Phys)
+                    else:
+                        data_plot =  iC2.EffMassPlot(data_plot,momlist=momlist[min(len(momlist)-1,icount)],
+                                                thiscol=thiscol,thissym=thissym,
+                                                thisshift=thisshift,Phys=Phys)
                 if iC2.MesOrBar == 'Baryon':
-                    hold_series = jpl.null_series
+                    hold_series = null_series
                     # hold_series['x_data'] = iC2.latparams.GetPionMass(MeV=True)
                     # hold_series['xerr_data'] = iC2.latparams.GetPionMassErr(MeV=True)
                     hold_series['y_data'] = iC2.latparams.GetNucleonMass()
@@ -442,7 +453,7 @@ class SetOfTwoPt(object):
                 thissym = markerset[varcount%len(markerset)]
                 thisshift = shiftset[varcount%len(shiftset)]
                 varcount += 1
-                data_plot = iC2.Plot(   data_plot,momlist=momlist[icount],norm=norm,
+                data_plot = iC2.Plot(   data_plot,momlist=momlist[min(len(momlist)-1,icount)],norm=norm,
                                         thiscol=thiscol,thissym=thissym,
                                         thisshift=thisshift)
             ## TODO, implement fit plots, just do not have time for it now
@@ -514,7 +525,7 @@ class SetOfTwoPt(object):
         if len(indexl) > 0:
             indicies = pa.MultiIndex.from_tuples(indexl,names=index_names)
             plot_data = pa.Series(vall,index=indicies)
-            hold_series = jpl.null_series
+            hold_series = null_series
             hold_series['x_data'] = 'from_keys'
             hold_series['color'] = colourset8[0%len(colourset8)]
             hold_series['y_data'] = plot_data.apply(lambda x : x.Avg)
@@ -525,7 +536,7 @@ class SetOfTwoPt(object):
             hold_series['type'] = 'error_bar_vary'
             hold_series['label'] = 'This Work'
             data_plot.AppendData(hold_series)
-            hold_series = jpl.null_series
+            hold_series = null_series
             hold_series['x_data'] = np.array(xdataPap)
             hold_series['xerr_data'] = np.array(xdataPaperr)
             hold_series['y_data'] = ydataPap
@@ -590,6 +601,62 @@ class SetOfTwoPt(object):
         data_plot.PlotAll()
         return data_plot
 
+    ## TODO, make results do list of t0 and dt
+    def VariationalMethod(self,t0=2,dt=2,name='',symetrize=True,n_states='All'):
+        if n_states == 'All':
+            mat_corrs = np.array(list(self.SetC2.values()))
+            n_states = len(mat_corrs)**(1/2)
+        elif isinstance(n_states,float) and not n_states.is_integer():
+            raise EnvironmentError('n_states must be integer')
+        else:
+            mat_corrs = np.array(list(self.SetC2.values()))
+            if len(mat_corrs) < n_states**2:
+                print('number of states squared:',n_states**2)
+                print('size of matrix:',len(mat_corrs))
+                raise EnvironmentError('to many states picked for matrix in variational method')
+            mat_corrs = mat_corrs[:int(n_states**2)]
+        if not (isinstance(n_states,int) or n_states.is_integer()):
+            raise EnvironmentError('Set of two-point correlators must be square')
+        n_states = int(n_states)
+        mat_corrs = mat_corrs.reshape(n_states,n_states)
+        var_data = VariationalMethod(matrix_corr=mat_corrs,t0=t0,dt=dt,name=name,symetrize=symetrize)
+        var_data.PerformVarMeth()
+        for istate in range(n_states):
+            self.SetC2['var_state'+str(istate)] = var_data.ExportVarMeth(state=istate)
+        # print('DEBUG')
+        # for ism in [0,1,2]:
+        #     print('     ism and jsm',ism)
+        #     print(var_data.matrix_corr.sel(ism=ism,jsm=ism,higher_dims=0))
+        # for ism in [0,1,2]:
+        #     print('     State',ism)
+        #     print(var_data.left_evec.sel(state=ism,higher_dims=0))
+        #     print(var_data.right_evec.sel(state=ism,higher_dims=0))
+        #     print(var_data.proj_corr.sel(state=ism,higher_dims=0))
+        #     print(self.SetC2['var_state'+str(istate)].C2_Stats.loc[('p000',slice(None)),'boot'].apply(lambda x : x.MakeValAndErr()))
+
+    ## TODO, currently prony needs ism still.
+    def PronyMethod(self,t0=2,dt=2,name='',symetrize=True,ism='First',n_states='All'):
+        if n_states == 'All':
+            mat_corrs = np.array(list(self.SetC2.values()))
+            n_states = len(mat_corrs)**(1/2)
+        elif isinstance(n_states,float) and not n_states.is_integer():
+            raise EnvironmentError('n_states must be integer')
+        else:
+            n_states = int(n_states)
+            mat_corrs = np.array(list(self.SetC2.values()))
+            if len(mat_corrs) < n_states**2:
+                print('number of states squared:',n_states**2)
+                print('size of matrix:',len(mat_corrs))
+                raise EnvironmentError('to many states picked for matrix in variational method')
+            mat_corrs = mat_corrs[:int(n_states**2)]
+        if not (isinstance(n_states,int) or n_states.is_integer()):
+            raise EnvironmentError('Set of two-point correlators must be square')
+        n_states = int(n_states)
+        mat_corrs = mat_corrs.reshape(n_states,n_states)
+        var_data = VariationalMethod(matrix_corr=mat_corrs,t0=t0,dt=dt,name=name,symetrize=symetrize)
+        var_data.PerformProny(ism=ism)
+        for istate in range(n_states):
+            self.SetC2['var_state'+str(istate)+'_ism'+str(ism)] = var_data.ExportProny(state=istate)
 
 
 
@@ -1591,7 +1658,7 @@ class SetOfNNQ(object):
         # thisFF = thisFF.replace('tilde',r'\tilde')
         # thisFF = thisFF.replace('frac',r'\frac')
         thislab = r'$'+r'\ '.join([the_mpi])+r'$ '
-        hold_series = copy(jpl.null_series)
+        hold_series = copy(null_series)
         hold_series['x_data'] = 'from_keys'
         hold_series['y_data'] = ploty.apply(lambda x : x.Avg)
         hold_series['yerr_data'] = ploty.apply(lambda x : x.Std)
@@ -1700,7 +1767,7 @@ class SetOfNNQ(object):
         # thisFF = thisFF.replace('tilde',r'\tilde')
         # thisFF = thisFF.replace('frac',r'\frac')
         thislab = r'$'+r'\ '.join([the_latspace])+r'$ '
-        hold_series = copy(jpl.null_series)
+        hold_series = copy(null_series)
         hold_series['x_data'] = 'from_keys'
         hold_series['y_data'] = ploty.apply(lambda x : x.Avg)
         hold_series['yerr_data'] = ploty.apply(lambda x : x.Std)
@@ -1736,7 +1803,7 @@ class SetOfNNQ(object):
             return plot_data
         # if isinstance(fitr_params,pa.Series): fitr_params = fitr_params.iloc[-1]
         ## TODO, plot from zero to data max
-        hold_series = copy(jpl.null_series)
+        hold_series = copy(null_series)
         hold_series['key_select'] = fit_data.index[0]
         hold_series['type'] = 'fit_vary'
         hold_series['fit_class'] = fit_data
@@ -2615,7 +2682,7 @@ class SetOfNNQFull(object):
         # thisFF = thisFF.replace('tilde',r'\tilde')
         # thisFF = thisFF.replace('frac',r'\frac')
         thislab = r'$'+r'\ '.join([the_mpi])+r'$ '
-        hold_series = copy(jpl.null_series)
+        hold_series = copy(null_series)
         hold_series['x_data'] = 'from_keys'
         hold_series['y_data'] = ploty.apply(lambda x : x.Avg)
         hold_series['yerr_data'] = ploty.apply(lambda x : x.Avg)
@@ -2723,7 +2790,7 @@ class SetOfNNQFull(object):
         # thisFF = thisFF.replace('tilde',r'\tilde')
         # thisFF = thisFF.replace('frac',r'\frac')
         thislab = r'$'+r'\ '.join([the_latspace])+r'$ '
-        hold_series = copy(jpl.null_series)
+        hold_series = copy(null_series)
         hold_series['x_data'] = 'from_keys'
         hold_series['y_data'] = ploty.apply(lambda x : x.Avg)
         hold_series['yerr_data'] = ploty.apply(lambda x : x.Avg)
@@ -2759,7 +2826,7 @@ class SetOfNNQFull(object):
             return plot_data
         # if isinstance(fitr_params,pa.Series): fitr_params = fitr_params.iloc[-1]
         ## TODO, plot from zero to data max
-        hold_series = copy(jpl.null_series)
+        hold_series = copy(null_series)
         hold_series['key_select'] = fit_data.index[0]
         hold_series['type'] = 'fit_vary'
         hold_series['fit_class'] = fit_data

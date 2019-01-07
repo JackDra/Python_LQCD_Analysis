@@ -717,6 +717,11 @@ class TPCorr( ta.HasTraits ):
     EffM_fit_range = ta.Str(pa.defInfo['Fits'][0][1])
     momentum_list = ta.List(ta.Str,pa.defpmomlist)
     momentum_note = ta.Str(' Only the first momentum will be plotted, order correctly ')
+    do_var_method = ta.Bool(True)
+    prony_ism = ta.Int(0)
+    var_symetrize = ta.Bool(True)
+    var_t0 = ta.Int(2)
+    var_dt = ta.Int(2)
     # pformlist = ['p'+imom.replace(' ','') for imom in momentum_list]
 
 
@@ -779,6 +784,20 @@ class TPCorr( ta.HasTraits ):
         tua.Item('WriteBoot',show_label=False),
         tua.Item('RUN', show_label=False ),
         label='Page 2'
+        ),tua.Group(
+        tua.Item('do_var_method'),
+        tua.Item('prony_ism',enabled_when='do_var_method'),
+        tua.Item('var_symetrize',enabled_when='do_var_method'),
+        tua.Item('var_t0',enabled_when='do_var_method'),
+        tua.Item('var_dt',enabled_when='do_var_method'),
+        # tua.Item('Load', show_label=False),
+        tua.Item('Apply', show_label=False),
+        tua.Item('CreateJob', show_label=False ),
+        tua.Item('CreateSeparateJob', show_label=False ),
+        tua.Item('Reformat',show_label=False),
+        tua.Item('WriteBoot',show_label=False),
+        tua.Item('RUN', show_label=False ),
+        label='Variational Method'
         ),
         resizable=True
     )
@@ -816,6 +835,16 @@ class TPCorr( ta.HasTraits ):
             self.source_smearing    = thisInfoList[info_index]['ism']
         if 'tsrc' in list(thisInfoList[info_index].keys()):
             self.t_source           = thisInfoList[info_index]['tsrc']
+        if 'do_var_method' in list(thisInfoList[info_index].keys()):
+            self.do_var_method           = thisInfoList[info_index]['do_var_method']
+        if 'prony_ism' in list(thisInfoList[info_index].keys()):
+            self.prony_ism           = thisInfoList[info_index]['prony_ism']
+        if 'var_symetrize' in list(thisInfoList[info_index].keys()):
+            self.var_symetrize           = thisInfoList[info_index]['var_symetrize']
+        if 'var_t0' in list(thisInfoList[info_index].keys()):
+            self.var_t0           = thisInfoList[info_index]['var_t0']
+        if 'var_dt' in list(thisInfoList[info_index].keys()):
+            self.var_dt           = thisInfoList[info_index]['var_dt']
         if 'jsm' in list(thisInfoList[info_index].keys()):
             self.sink_smearing      = thisInfoList[info_index]['jsm']
         if 'combine_sinks' in list(thisInfoList[info_index].keys()):
@@ -845,8 +874,16 @@ class TPCorr( ta.HasTraits ):
             thisInfoList[info_index]['Interp'] = self.Bar_Mes_Number
 
         thisInfoList[info_index]['ism'] = self.source_smearing
+
         thisInfoList[info_index]['tsrc'] = self.t_source
         thisInfoList[info_index]['jsm'] = self.sink_smearing
+        thisInfoList[info_index]['do_var_method'] = self.do_var_method
+        if self.do_var_method:
+            thisInfoList[info_index]['prony_ism'] = self.prony_ism
+            thisInfoList[info_index]['var_symetrize'] = self.var_symetrize
+            thisInfoList[info_index]['var_t0'] = self.var_t0
+            thisInfoList[info_index]['var_dt'] = self.var_dt
+
         thisInfoList[info_index]['Fits'] = deepcopy([(str(self.EffM_state_fit),str(self.EffM_fit_range))])
         thisInfoList[info_index]['pmom'] = Remove_Empty_Str(list(map(str,self.momentum_list)))
         self.pformlist = [str('p'+imom.replace(' ','')) for imom in thisInfoList[info_index]['pmom']]
@@ -933,6 +970,11 @@ class TPCorr( ta.HasTraits ):
         # data.DoCoeff()
         fitlist = [idict['Fits'][0] for idict in thisInfoList]
         momplotlist = [['p'+idict['pmom'][0].replace(' ','')] for idict in thisInfoList]
+        if self.do_var_method:
+            n_dim = len(thisInfoList)**(1/2)
+            data.VariationalMethod(t0=self.var_t0,dt=self.var_dt,symetrize=self.var_symetrize,n_states=n_dim)
+            data.PronyMethod(t0=self.var_t0,dt=self.var_dt,symetrize=self.var_symetrize,
+                             ism=self.prony_ism,n_states=n_dim)
         for initlist,idict in enumerate(thisInfoList):
             if idict['combine_sinks']:
                 sinkcoeffs = []

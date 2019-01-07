@@ -6,7 +6,7 @@ from collections import OrderedDict
 import pandas as pa
 from Params import hbarc
 from MiscFuns import op_str_list
-from PlotData import null_series
+from NullPlotData import null_series
 
 ## TODO, remember enum is str type i think.
 # NxList = [32]
