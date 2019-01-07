@@ -6,7 +6,7 @@ from Params import outputdir,graphdir
 from XmlFormatting import tflowTOLeg,untflowstr
 from TimeStuff import Timer
 import pandas as pa
-from PlotData import null_series
+from NullPlotData import null_series
 import numpy as np
 import os
 from Autocorr import AutoCorrelate

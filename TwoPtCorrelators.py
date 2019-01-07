@@ -20,7 +20,7 @@ from XmlFormatting import tflowTOLeg,tflowstr,tsinkTOLeg,untflowstr,tsumstr,KeyF
 from PredefFitFuns import C2OneStateFitFunNoExp,C2OneStateFitFun,C2TwoStateFitFun,C2TwoStateFitFunNoExp,C2OSFAntiper
 from PredefFitFuns import ConstantFitFun,Alpha_Prop_Fit_plin,C2OSFAntiperDer
 from Autocorr import AutoCorrelate
-from PlotData import null_series
+from NullPlotData import null_series
 from warnings import warn
 import SetsOfFits as sff
 # import traceback

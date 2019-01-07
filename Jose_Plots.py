@@ -2,7 +2,8 @@
 
 import pandas as pa
 import numpy as np
-from PlotData import Plotting,null_series
+from NullPlotData import null_series
+from PlotData import Plotting
 from MomParams import hbarc
 from BootStrapping import BootStrap
 from SetsOfFits import SetOfFitFuns

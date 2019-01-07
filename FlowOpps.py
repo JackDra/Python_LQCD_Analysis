@@ -23,7 +23,7 @@ from TimeStuff import Timer
 from copy import deepcopy
 from Autocorr import AutoCorrelate
 from PredefFitFuns import Chi_Prop_Fit_2exp,LinearFitFun
-from PlotData import null_series
+from NullPlotData import null_series
 # from PredefFitFuns import RandTFitFun
 # import cPickle as pickle
 # import dill as pickle
