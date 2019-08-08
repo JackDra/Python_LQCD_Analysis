@@ -1,0 +1,936 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Autocorr module &mdash; LQCD Analysis Codebase TF Fits documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/my_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> LQCD Analysis Codebase
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Python_Analysis</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="AnalysisGUI.html">AnalysisGUI module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Autocorr module</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BootStrapping.html">BootStrapping module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CreateTable.html">CreateTable module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DSDefines.html">DSDefines module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FFSolve.html">FFSolve module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FileIO.html">FileIO module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FitFunctions.html">FitFunctions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FitFunctions_TF.html">FitFunctions_TF module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FlowOpps.html">FlowOpps module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FormFactors.html">FormFactors module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GammaMatricies.html">GammaMatricies module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MAH_control.html">MAH_control module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MiscFuns.html">MiscFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModPlot.html">ModPlot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModStylePlot.html">ModStylePlot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MomParams.html">MomParams module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MultiWrap.html">MultiWrap module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="NullPlotData.html">NullPlotData module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Params.html">Params module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PlotData.html">PlotData module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PredefFitFuns.html">PredefFitFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="QuantityLists.html">QuantityLists module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RatioCorrelators.html">RatioCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ReadBinaryCfuns.html">ReadBinaryCfuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ReadFO.html">ReadFO module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RunSetCommands.html">RunSetCommands module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFFs.html">SetsOfFFs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFits.html">SetsOfFits module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFlowOps.html">SetsOfFlowOps module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfRatios.html">SetsOfRatios module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfTwoPtCorrs.html">SetsOfTwoPtCorrs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ThreePtCorrelators.html">ThreePtCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TimeStuff.html">TimeStuff module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TwoPtCorrelators.html">TwoPtCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VarMethod.html">VarMethod module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="XmlFormatting.html">XmlFormatting module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xmltodict.html">xmltodict module</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">LQCD Analysis Codebase</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="modules.html">Python_Analysis</a> &raquo;</li>
+        
+      <li>Autocorr module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/Autocorr.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-Autocorr">
+<span id="autocorr-module"></span><h1>Autocorr module<a class="headerlink" href="#module-Autocorr" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Autocorr.AutoCorrelate">
+<em class="property">class </em><code class="descclassname">Autocorr.</code><code class="descname">AutoCorrelate</code><span class="sig-paren">(</span><em>name=''</em>, <em>Fun='NotDef'</em>, <em>data='None'</em>, <em>Sparam=1.5</em>, <em>save_covar=True</em>, <em>WipeData=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Autocorr.html#AutoCorrelate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Autocorr.AutoCorrelate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Performs Autocorrelation Analysis on data</p>
+<p>Stores an instance of an statsitcal quantity that has had autocorrelation analysis performed on it.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>name</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">name of instance</p>
+</dd>
+<dt><strong>Fun</strong> <span class="classifier-delimiter">:</span> <span class="classifier">[ function, derivative_of_function ]</span></dt>
+<dd><p class="first last">pass in a function and its derivative as a list of length 2</p>
+</dd>
+<dt><strong>data</strong> <span class="classifier-delimiter">:</span> <span class="classifier">[ variable, (replicas), montecarlo_time ]</span></dt>
+<dd><p class="first last">data to be autocorrelated</p>
+</dd>
+<dt><strong>Sparam</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">S parameter for Autocorrlation analysis</p>
+</dd>
+<dt><strong>save_covar</strong> <span class="classifier-delimiter">:</span> <span class="classifier">{True, False}, optional</span></dt>
+<dd><p class="first last">saves the autocorrelation covariance matrix. Set to False to save memory.</p>
+</dd>
+<dt><strong>WipeData</strong> <span class="classifier-delimiter">:</span> <span class="classifier">{True, False}, optional</span></dt>
+<dd><p class="first last">Wipes the configuration data after computing the Autocorreltaion parameters</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Attributes:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>values: [ variable, (replicas), montecarlo_time ]</strong></dt>
+<dd><p class="first last">data to be autocorrelated</p>
+</dd>
+<dt><strong>Fun: function</strong></dt>
+<dd><p class="first last">function for combining the <em>variable</em> dimension of <cite>values</cite></p>
+</dd>
+<dt><strong>FunDer: function</strong></dt>
+<dd><p class="first last">derivative of <cite>Fun</cite></p>
+</dd>
+<dt><strong>Sparam: float</strong></dt>
+<dd><p class="first last">S parameter for Autocorrlation analysis</p>
+</dd>
+<dt><strong>name</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">name of autocorrelation object</p>
+</dd>
+<dt><strong>Avg</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">average value of the data</p>
+</dd>
+<dt><strong>Std</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">Error of the data, taking into account the autocorrelation in the data</p>
+</dd>
+<dt><strong>StdW</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list of float</span></dt>
+<dd><p class="first last">Error of the data, as a function of the parameter W</p>
+</dd>
+<dt><strong>tauW</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list of float</span></dt>
+<dd><p class="first last">Integrated Autocorrelation time as a function of W</p>
+</dd>
+<dt><strong>tauerrW</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list of float</span></dt>
+<dd><p class="first last">Error of the integrated Autocorrelation time as a function of W</p>
+</dd>
+<dt><strong>tau</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">Integrated Autocorrelation time at optimal W</p>
+</dd>
+<dt><strong>tauerr</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">Error of the integrated Autocorrelation time at optimal W</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#Autocorr.AutoCorrelate.AddCoeff" title="Autocorr.AutoCorrelate.AddCoeff"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AddCoeff</span></code></a>(coeff)</td>
+<td>Adds a coefficient to the Autocorrelation result.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#Autocorr.AutoCorrelate.BiasCorrect" title="Autocorr.AutoCorrelate.BiasCorrect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BiasCorrect</span></code></a>(CfW,&nbsp;N)</td>
+<td>Bias corrections using (49) from paper <a class="reference internal" href="#rd5818f2b4ff0-1" id="id1">[1]</a>.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#Autocorr.AutoCorrelate.BlockCfgs" title="Autocorr.AutoCorrelate.BlockCfgs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BlockCfgs</span></code></a>(order)</td>
+<td>returns a blocked set of configurations as to remove all autocorrelation effects</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#Autocorr.AutoCorrelate.GetFuns" title="Autocorr.AutoCorrelate.GetFuns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GetFuns</span></code></a>()</td>
+<td>Gets functions from pickled files</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#Autocorr.AutoCorrelate.ImportData" title="Autocorr.AutoCorrelate.ImportData"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ImportData</span></code></a>(values[,&nbsp;this_index])</td>
+<td>Imports the configuration data into the autocorrelation object</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#Autocorr.AutoCorrelate.ImportFun" title="Autocorr.AutoCorrelate.ImportFun"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ImportFun</span></code></a>(thisfun)</td>
+<td>Imports a function into the autocorrelation routine to perform the autocorreltaion of.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#Autocorr.AutoCorrelate.MultCoeff" title="Autocorr.AutoCorrelate.MultCoeff"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MultCoeff</span></code></a>(coeff)</td>
+<td>Multiplys a coefficient to the Autocorrelation result.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#Autocorr.AutoCorrelate.PlotTauInt" title="Autocorr.AutoCorrelate.PlotTauInt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PlotTauInt</span></code></a>(plot_class[,&nbsp;thiscol,&nbsp;thisshift,&nbsp;…])</td>
+<td>plots the integrated autocorrelation time for this quantity</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#Autocorr.AutoCorrelate.PlotWopt" title="Autocorr.AutoCorrelate.PlotWopt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PlotWopt</span></code></a>(plot_class[,&nbsp;thiscol,&nbsp;thisshift,&nbsp;…])</td>
+<td>Plot the W parameter used to cut off the integrated autocorrelation time.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#Autocorr.AutoCorrelate.Power" title="Autocorr.AutoCorrelate.Power"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Power</span></code></a>(thispow)</td>
+<td>takes the Autocorrelation result to a power.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#Autocorr.AutoCorrelate.RemoveFuns" title="Autocorr.AutoCorrelate.RemoveFuns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RemoveFuns</span></code></a>()</td>
+<td>Removes functions in prep for writing object to file.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#Autocorr.AutoCorrelate.RemoveVals" title="Autocorr.AutoCorrelate.RemoveVals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RemoveVals</span></code></a>()</td>
+<td>deletes configuration values to clear memory</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#Autocorr.AutoCorrelate.VarTau" title="Autocorr.AutoCorrelate.VarTau"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VarTau</span></code></a>(tau,&nbsp;N)</td>
+<td>Using aproximate formula (42) from paper <a class="reference internal" href="#r6ca27741ca8e-1" id="id2">[1]</a>.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#Autocorr.AutoCorrelate.autocorr" title="Autocorr.AutoCorrelate.autocorr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">autocorr</span></code></a>(x,&nbsp;y)</td>
+<td>standard autocorrlation function between two statsitcal quantities</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#Autocorr.AutoCorrelate.autocorr_Reps" title="Autocorr.AutoCorrelate.autocorr_Reps"><code class="xref py py-obj docutils literal notranslate"><span class="pre">autocorr_Reps</span></code></a>(x,&nbsp;y)</td>
+<td>autocorrealtion analysis of quantity including replica streams as described in <a class="reference internal" href="#r39b3e518503b-1" id="id3">[1]</a>.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#Autocorr.AutoCorrelate.gW" title="Autocorr.AutoCorrelate.gW"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gW</span></code></a>(tauW,&nbsp;thisN)</td>
+<td>W parameter used for auto fitting window method used from (52) in <a class="reference internal" href="#r4fee1808d90c-1" id="id4">[1]</a>.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#Autocorr.AutoCorrelate.uWerrMine" title="Autocorr.AutoCorrelate.uWerrMine"><code class="xref py py-obj docutils literal notranslate"><span class="pre">uWerrMine</span></code></a>([data,&nbsp;fun,&nbsp;Sparam,&nbsp;WipeData,&nbsp;…])</td>
+<td>Main function for computing the total autocorrelation of quantity, following the method in <a class="reference internal" href="#r3f97d5e7a634-1" id="id5">[1]</a>.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="Autocorr.AutoCorrelate.AddCoeff">
+<code class="descname">AddCoeff</code><span class="sig-paren">(</span><em>coeff</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Autocorr.html#AutoCorrelate.AddCoeff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Autocorr.AutoCorrelate.AddCoeff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a coefficient to the Autocorrelation result.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>coeff</strong> <span class="classifier-delimiter">:</span> <span class="classifier">(number)</span></dt>
+<dd><p class="first last">coefficient to be added</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Autocorr.AutoCorrelate.BiasCorrect">
+<code class="descname">BiasCorrect</code><span class="sig-paren">(</span><em>CfW</em>, <em>N</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Autocorr.html#AutoCorrelate.BiasCorrect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Autocorr.AutoCorrelate.BiasCorrect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bias corrections using (49) from paper <a class="reference internal" href="#rd5818f2b4ff0-1" id="id6">[1]</a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>CfW: (M,) array_like</strong></dt>
+<dd><p class="first last">CfW list of errors to inflate to correct for bias</p>
+</dd>
+<dt><strong>N: float</strong></dt>
+<dd><p class="first last">number of samples computed (min if replicas are present)</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>CfW: (M,) array_like</strong></dt>
+<dd><p class="first last">CfW list that has been inflated to correct for bais</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="rd5818f2b4ff0-1" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[1]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id6">2</a>, <a class="fn-backref" href="#id9">3</a>)</em> U. Wolff [ALPHA Collaboration],
+<a href="#id7"><span class="problematic" id="id8">``</span></a>Monte Carlo errors with less errors,’’
+Comput.Phys.Commun. {f 156}, 143 (2004)
+Erratum: [Comput.Phys.Commun. {f 176}, 383 (2007)]
+doi:10.1016/S0010-4655(03)00467-3, 10.1016/j.cpc.2006.12.001
+[hep-lat/0306017].</td></tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Autocorr.AutoCorrelate.BlockCfgs">
+<code class="descname">BlockCfgs</code><span class="sig-paren">(</span><em>order</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Autocorr.html#AutoCorrelate.BlockCfgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Autocorr.AutoCorrelate.BlockCfgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns a blocked set of configurations as to remove all autocorrelation effects</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>order: int</strong></dt>
+<dd><p class="first last">order for which to perform blocking of confiuration data at</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>pandas DataFrame:</strong></dt>
+<dd><p class="first last">input data, blocked to order <cite>order</cite></p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Autocorr.AutoCorrelate.GetFuns">
+<code class="descname">GetFuns</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Autocorr.html#AutoCorrelate.GetFuns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Autocorr.AutoCorrelate.GetFuns" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets functions from pickled files</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Autocorr.AutoCorrelate.ImportData">
+<code class="descname">ImportData</code><span class="sig-paren">(</span><em>values</em>, <em>this_index=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Autocorr.html#AutoCorrelate.ImportData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Autocorr.AutoCorrelate.ImportData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Imports the configuration data into the autocorrelation
+object</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>values: [ variable, (replicas), montecarlo_time]</strong></dt>
+<dd><p class="first last">data to be imported into the autocorrelation object</p>
+</dd>
+<dt><strong>this_index: list {None} optional</strong></dt>
+<dd><p class="first last">labels used for index the pandas dataframe</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>EnvironmentError</strong></dt>
+<dd><p class="first last">if data importing is not of correct type</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Autocorr.AutoCorrelate.ImportFun">
+<code class="descname">ImportFun</code><span class="sig-paren">(</span><em>thisfun</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Autocorr.html#AutoCorrelate.ImportFun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Autocorr.AutoCorrelate.ImportFun" title="Permalink to this definition">¶</a></dt>
+<dd><p>Imports a function into the autocorrelation routine
+to perform the autocorreltaion of.
+which is performed over the sampled variables x and y.</p>
+<p>Imports the configuration data into the autocorrelation
+object</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>thisfun: function</strong></dt>
+<dd><p class="first last">function to perform autocorrelation analysis of
+has form myfun(<a href="#id10"><span class="problematic" id="id11">*</span></a>args) for independant variables args[:]
+returns single number</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">myfun</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
+<span class="go">        return x/y</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_object</span><span class="o">.</span><span class="n">ImportFun</span><span class="p">(</span><span class="n">myfun</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="Autocorr.AutoCorrelate.MultCoeff">
+<code class="descname">MultCoeff</code><span class="sig-paren">(</span><em>coeff</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Autocorr.html#AutoCorrelate.MultCoeff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Autocorr.AutoCorrelate.MultCoeff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Multiplys a coefficient to the Autocorrelation result.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>coeff</strong> <span class="classifier-delimiter">:</span> <span class="classifier">(number)</span></dt>
+<dd><p class="first last">coefficient to be multiplied</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Autocorr.AutoCorrelate.PlotTauInt">
+<code class="descname">PlotTauInt</code><span class="sig-paren">(</span><em>plot_class</em>, <em>thiscol=False</em>, <em>thisshift=0.0</em>, <em>thissym=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Autocorr.html#AutoCorrelate.PlotTauInt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Autocorr.AutoCorrelate.PlotTauInt" title="Permalink to this definition">¶</a></dt>
+<dd><p>plots the integrated autocorrelation time for this quantity</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>plot_class: Plotting instance (see PlotData.py)</strong></dt>
+<dd><p class="first last">plot object to append the plot data to</p>
+</dd>
+<dt><strong>thiscol: {False} color (see matplotlib color defines) optional</strong></dt>
+<dd><p class="first last">color to plot data as</p>
+</dd>
+<dt><strong>thisshift: {0.0} optional</strong></dt>
+<dd><p class="first last">value to shift the data by</p>
+</dd>
+<dt><strong>thissym: {False} character (see matplotlib symbol defines) optional</strong></dt>
+<dd><p class="first last">symbol to plot Wopt as</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>plot_class: Plotting instance</strong></dt>
+<dd><p class="first last">same object, just with data added to be plotted</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>IOError</strong></dt>
+<dd><p class="first last">if Wopt is not set properly in the code</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Autocorr.AutoCorrelate.PlotWopt">
+<code class="descname">PlotWopt</code><span class="sig-paren">(</span><em>plot_class</em>, <em>thiscol=False</em>, <em>thisshift=0.0</em>, <em>thissym=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Autocorr.html#AutoCorrelate.PlotWopt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Autocorr.AutoCorrelate.PlotWopt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the W parameter used to cut off the integrated autocorrelation time.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>plot_class: Plotting instance (see PlotData.py)</strong></dt>
+<dd><p class="first last">plot object to append the plot data to</p>
+</dd>
+<dt><strong>thiscol: {False} color (see matplotlib color defines) optional</strong></dt>
+<dd><p class="first last">color to plot data as</p>
+</dd>
+<dt><strong>thisshift: {0.0} optional</strong></dt>
+<dd><p class="first last">value to shift the data by</p>
+</dd>
+<dt><strong>thissym: {False} character (see matplotlib symbol defines) optional</strong></dt>
+<dd><p class="first last">symbol to plot Wopt as</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>plot_class: Plotting instance</strong></dt>
+<dd><p class="first last">same object, just with data added to be plotted</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>IOError</strong></dt>
+<dd><p class="first last">if Wopt is not set properly in the code</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Autocorr.AutoCorrelate.Power">
+<code class="descname">Power</code><span class="sig-paren">(</span><em>thispow</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Autocorr.html#AutoCorrelate.Power"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Autocorr.AutoCorrelate.Power" title="Permalink to this definition">¶</a></dt>
+<dd><p>takes the Autocorrelation result to a power.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>thispow</strong> <span class="classifier-delimiter">:</span> <span class="classifier">number</span></dt>
+<dd><p class="first last">coefficient to take to the power of</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Autocorr.AutoCorrelate.RemoveFuns">
+<code class="descname">RemoveFuns</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Autocorr.html#AutoCorrelate.RemoveFuns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Autocorr.AutoCorrelate.RemoveFuns" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes functions in prep for writing object to file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Autocorr.AutoCorrelate.RemoveVals">
+<code class="descname">RemoveVals</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Autocorr.html#AutoCorrelate.RemoveVals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Autocorr.AutoCorrelate.RemoveVals" title="Permalink to this definition">¶</a></dt>
+<dd><p>deletes configuration values to clear memory</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Autocorr.AutoCorrelate.VarTau">
+<code class="descname">VarTau</code><span class="sig-paren">(</span><em>tau</em>, <em>N</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Autocorr.html#AutoCorrelate.VarTau"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Autocorr.AutoCorrelate.VarTau" title="Permalink to this definition">¶</a></dt>
+<dd><p>Using aproximate formula (42) from paper <a class="reference internal" href="#r6ca27741ca8e-1" id="id12">[1]</a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>tau: (M,) array_like</strong></dt>
+<dd><p class="first last">tau to compute variance of</p>
+</dd>
+<dt><strong>N: float</strong></dt>
+<dd><p class="first last">number of samples computed (min if replicas are present)</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>iW: float</strong></dt>
+<dd><p class="first last">optimal W parameter for when no autocorrelation effects are present.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r6ca27741ca8e-1" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[1]</td><td><em>(<a class="fn-backref" href="#id2">1</a>, <a class="fn-backref" href="#id12">2</a>, <a class="fn-backref" href="#id15">3</a>)</em> U. Wolff [ALPHA Collaboration],
+<a href="#id13"><span class="problematic" id="id14">``</span></a>Monte Carlo errors with less errors,’’
+Comput.Phys.Commun. {f 156}, 143 (2004)
+Erratum: [Comput.Phys.Commun. {f 176}, 383 (2007)]
+doi:10.1016/S0010-4655(03)00467-3, 10.1016/j.cpc.2006.12.001
+[hep-lat/0306017].</td></tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Autocorr.AutoCorrelate.autocorr">
+<code class="descname">autocorr</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Autocorr.html#AutoCorrelate.autocorr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Autocorr.AutoCorrelate.autocorr" title="Permalink to this definition">¶</a></dt>
+<dd><p>standard autocorrlation function between two statsitcal quantities</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>x: (M,) array_like</strong></dt>
+<dd><p class="first last">First list of values to perform autocorrelation analysis of</p>
+</dd>
+<dt><strong>y: (M,) array_like</strong></dt>
+<dd><p class="first last">Second list of values to perform autocorrelation analysis of</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>result: (M,) array_like</strong></dt>
+<dd><p class="first last">autocorrelation result between <cite>x</cite> and <cite>y</cite>, see <a class="reference internal" href="#re86f22609dbe-1" id="id16">[1]</a> and <a class="reference internal" href="#re86f22609dbe-2" id="id17">[2]</a></p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="re86f22609dbe-1" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[1]</td><td><em>(<a class="fn-backref" href="#id16">1</a>, <a class="fn-backref" href="#id18">2</a>)</em> <a class="reference external" href="http://stackoverflow.com/q/14297012/190597">http://stackoverflow.com/q/14297012/190597</a></td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="re86f22609dbe-2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[2]</td><td><em>(<a class="fn-backref" href="#id17">1</a>, <a class="fn-backref" href="#id19">2</a>)</em> <a class="reference external" href="http://en.wikipedia.org/wiki/Autocorrelation#Estimation">http://en.wikipedia.org/wiki/Autocorrelation#Estimation</a></td></tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Autocorr.AutoCorrelate.autocorr_Reps">
+<code class="descname">autocorr_Reps</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Autocorr.html#AutoCorrelate.autocorr_Reps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Autocorr.AutoCorrelate.autocorr_Reps" title="Permalink to this definition">¶</a></dt>
+<dd><p>autocorrealtion analysis of quantity including replica streams as
+described in <a class="reference internal" href="#r39b3e518503b-1" id="id20">[1]</a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>x: (R,M) array_like</strong></dt>
+<dd><p class="first last">First list of lists of values to perform autocorrelation analysis of,
+including the replica streams</p>
+</dd>
+<dt><strong>y: (R,M) array_like</strong></dt>
+<dd><p class="first last">Second list of lists of values to perform autocorrelation analysis of,
+including the replica streams</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>result: (M,) array_like</strong></dt>
+<dd><p class="first last">autocorrelation result between <cite>x</cite> and <cite>y</cite></p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r39b3e518503b-1" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[1]</td><td><em>(<a class="fn-backref" href="#id3">1</a>, <a class="fn-backref" href="#id20">2</a>, <a class="fn-backref" href="#id23">3</a>)</em> U. Wolff [ALPHA Collaboration],
+<a href="#id21"><span class="problematic" id="id22">``</span></a>Monte Carlo errors with less errors,’’
+Comput.Phys.Commun. {f 156}, 143 (2004)
+Erratum: [Comput.Phys.Commun. {f 176}, 383 (2007)]
+doi:10.1016/S0010-4655(03)00467-3, 10.1016/j.cpc.2006.12.001
+[hep-lat/0306017].</td></tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Autocorr.AutoCorrelate.gW">
+<code class="descname">gW</code><span class="sig-paren">(</span><em>tauW</em>, <em>thisN</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Autocorr.html#AutoCorrelate.gW"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Autocorr.AutoCorrelate.gW" title="Permalink to this definition">¶</a></dt>
+<dd><p>W parameter used for auto fitting window method used from (52) in <a class="reference internal" href="#r4fee1808d90c-1" id="id24">[1]</a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>tauW: (M,) array_like</strong></dt>
+<dd><p class="first last">integrated autocorrelation function as a function of W</p>
+</dd>
+<dt><strong>thisN: float</strong></dt>
+<dd><p class="first last">number of samples computed (min if replicas are present)</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>iW: float</strong></dt>
+<dd><p class="first last">optimal W parameter for when no autocorrelation effects are present.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r4fee1808d90c-1" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[1]</td><td><em>(<a class="fn-backref" href="#id4">1</a>, <a class="fn-backref" href="#id24">2</a>, <a class="fn-backref" href="#id27">3</a>)</em> U. Wolff [ALPHA Collaboration],
+<a href="#id25"><span class="problematic" id="id26">``</span></a>Monte Carlo errors with less errors,’’
+Comput.Phys.Commun. {f 156}, 143 (2004)
+Erratum: [Comput.Phys.Commun. {f 176}, 383 (2007)]
+doi:10.1016/S0010-4655(03)00467-3, 10.1016/j.cpc.2006.12.001
+[hep-lat/0306017].</td></tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Autocorr.AutoCorrelate.parentlist">
+<code class="descname">parentlist</code><em class="property"> = ['SetOfCorrs.SetOfTwoPt', 'TwoPtCorrelators.TwoPointCorr', 'TwoPtCorrelators.TwoPointCorr', 'TwoPtCorrelators.NNQCorr']</em><a class="headerlink" href="#Autocorr.AutoCorrelate.parentlist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="Autocorr.AutoCorrelate.uWerrMine">
+<code class="descname">uWerrMine</code><span class="sig-paren">(</span><em>data='PreDef'</em>, <em>fun='PreDef'</em>, <em>Sparam='PreDef'</em>, <em>WipeData=True</em>, <em>save_covar=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Autocorr.html#AutoCorrelate.uWerrMine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Autocorr.AutoCorrelate.uWerrMine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main function for computing the total autocorrelation of quantity,
+following the method in <a class="reference internal" href="#r3f97d5e7a634-1" id="id28">[1]</a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>data: {‘PreDef’} [variable, (replicas), montecarlo time] optional</strong></dt>
+<dd><p class="first last">data to perform autocorrelation analysis over. Not passing in
+any data will default to the data stored in the object</p>
+</dd>
+<dt><strong>fun: {‘PreDef’} function(*variable) optional</strong></dt>
+<dd><p class="first last">function descibing how to combine the indipendant statistical quantities.
+Not passing in any function will default to the data stored in the object</p>
+</dd>
+<dt><strong>Sparam: {‘PreDef’} float optional</strong></dt>
+<dd><p class="first last">S parameter for Autocorrlation analysis</p>
+</dd>
+<dt><strong>WipeData: {True} optional</strong></dt>
+<dd><p class="first last">Wipe the internal configuration data after computing the autocorrelation
+statistical quantities.</p>
+</dd>
+<dt><strong>save_covar: {True} optional</strong></dt>
+<dd><p class="first last">Saves the covariance matrix as an internal variable</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r3f97d5e7a634-1" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[1]</td><td><em>(<a class="fn-backref" href="#id5">1</a>, <a class="fn-backref" href="#id28">2</a>, <a class="fn-backref" href="#id31">3</a>)</em> U. Wolff [ALPHA Collaboration],
+<a href="#id29"><span class="problematic" id="id30">``</span></a>Monte Carlo errors with less errors,’’
+Comput.Phys.Commun. {f 156}, 143 (2004)
+Erratum: [Comput.Phys.Commun. {f 176}, 383 (2007)]
+doi:10.1016/S0010-4655(03)00467-3, 10.1016/j.cpc.2006.12.001
+[hep-lat/0306017].</td></tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="Autocorr.BlockedAutoCorr">
+<em class="property">class </em><code class="descclassname">Autocorr.</code><code class="descname">BlockedAutoCorr</code><span class="sig-paren">(</span><em>name=''</em>, <em>Fun='NotDef'</em>, <em>data='None'</em>, <em>Sparam=1.5</em>, <em>save_covar=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Autocorr.html#BlockedAutoCorr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Autocorr.BlockedAutoCorr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Uses AutoCorrelate class above and repeats it for different blocked amounts until
+it hits a tau int threshold</p>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#Autocorr.BlockedAutoCorr.GetBlockedBS" title="Autocorr.BlockedAutoCorr.GetBlockedBS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GetBlockedBS</span></code></a>([thisnboot,&nbsp;rand_list,&nbsp;…])</td>
+<td>uses the computed amount of blocking required to create a bootstrapped instance result</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#Autocorr.BlockedAutoCorr.RemoveAuto" title="Autocorr.BlockedAutoCorr.RemoveAuto"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RemoveAuto</span></code></a>([tau_cutoff,&nbsp;block_cutoff])</td>
+<td>computes the nessisary amount needed to block to remove all autocorrelation effects</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="Autocorr.BlockedAutoCorr.GetBlockedBS">
+<code class="descname">GetBlockedBS</code><span class="sig-paren">(</span><em>thisnboot=200</em>, <em>rand_list=None</em>, <em>tau_cutoff=0.5</em>, <em>block_cutoff=10</em>, <em>WipeData=True</em>, <em>noblock_comp=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Autocorr.html#BlockedAutoCorr.GetBlockedBS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Autocorr.BlockedAutoCorr.GetBlockedBS" title="Permalink to this definition">¶</a></dt>
+<dd><p>uses the computed amount of blocking required to create a bootstrapped instance
+result</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Autocorr.BlockedAutoCorr.RemoveAuto">
+<code class="descname">RemoveAuto</code><span class="sig-paren">(</span><em>tau_cutoff=1</em>, <em>block_cutoff=10</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Autocorr.html#BlockedAutoCorr.RemoveAuto"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Autocorr.BlockedAutoCorr.RemoveAuto" title="Permalink to this definition">¶</a></dt>
+<dd><p>computes the nessisary amount needed to block to remove all autocorrelation effects</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="Autocorr.TestAuto">
+<code class="descclassname">Autocorr.</code><code class="descname">TestAuto</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Autocorr.html#TestAuto"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Autocorr.TestAuto" title="Permalink to this definition">¶</a></dt>
+<dd><p>testing function for standard autocorrelation analysis</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="Autocorr.TestBlocking">
+<code class="descclassname">Autocorr.</code><code class="descname">TestBlocking</code><span class="sig-paren">(</span><em>tau_cutoff=0.5</em>, <em>block_cutoff=10</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Autocorr.html#TestBlocking"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Autocorr.TestBlocking" title="Permalink to this definition">¶</a></dt>
+<dd><p>testing function for testing the autocorrelation blocking technique</p>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Jack Dragos
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

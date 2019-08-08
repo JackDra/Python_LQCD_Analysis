@@ -1,28 +1,14 @@
 # ReworkAnalysis
 
+see ./build/html/index.html for documentation.
+
 Requirements and inclusions:
 
    THIS LIBARY USES xmltodict.py WHICH WAS PRODUCED BY:
 
    https://github.com/martinblech/xmltodict.git
 
-   THIS LIBARY IS BUILT ONTOP OF ANACONDA.
-
-   THIS LIBARY ALSO USES pathos FOR MPI AND traitsui for GUI, MUST FIND AND INSTALL FROM:
-
-   https://github.com/uqfoundation/pathos.git
-
-   https://github.com/enthought/traitsui.git
-
-   OR IF USING ANACONDA, JUST USE:
-
-   conda install -c conda-forge pathos=0.2.0
-
-   conda install traitsui
-
-NEW:
-
-  include Setup.py script which uses conda
+   Run ./Setup.py script which uses conda to setup environment
 
 MAIN PROGRAM IS ./AnalysisGUI.py.
 
@@ -35,21 +21,37 @@ MAIN PROGRAM IS ./AnalysisGUI.py.
 
      Obviously check all the parameters and make sure they are correct!
 
+NEW TEST FILE HAS BEEN ADDED:
+
+      ipython -i ./TestCode.py
+
+      A help message should come up to help you select which test to do.
+
 
 QUICK TESTS / interactive mode with results:
 
       running each of the files (with python or ipython if avail):
 
-      python -i ./FlowOpps.py
-      python -i ./TwoPtCorrelators.py
-      python -i ./ThreePtCorrelators.py
-      python -i ./RatioCorrelators.py
-      python -i ./FormFactors.py
-      python -i ./FFSolve.py
+      ipython -i ./ReadBinaryCfuns.py /path/to/correlator.2cf
+      ipython -i ./ReadBinaryCfuns.py /path/to/correlator.3cf
+      ipython -i ./ReadFO.py /path/to/flowed_operator.out
+      ipython -i ./ReadFO.py /path/to/flowed_operator.out full
+      ipython -i ./BootStrapping.py
+      ipython -i ./BootStrapping.py
+      ipython -i ./Autocorr.py
+      ipython -i ./FitFunctions.py
+      ipython -i ./FlowOpps.py
+      ipython -i ./TwoPtCorrelators.py
+      ipython -i ./ThreePtCorrelators.py
+      ipython -i ./RatioCorrelators.py
+      ipython -i ./FormFactors.py
+      ipython -i ./FFSolve.py
 
       will run off some default parameter calculation of each command,
       and give you an interactive session with a instance of the class file with all the data contained in it.
 
+      Warning! pickling objects in __main__ runs (which is above) will cause issues when unpickling.
+      Try to use the actual commands.
 
 COMMON DEBUGGING TIPS:
 
@@ -69,12 +71,8 @@ TODO:
 
 	grep TODO *.py to find what needs to be done within the files.
 
-	Params.py Will be reworked. Currently contains default parameters for testing.
-
 	MiscFuncs.py Will hopefully be removed.
 
 	XmlFormatting.py May stay. Taken from old analysis code
 
 	Operator overloading isn't implemented everywhere. Need a clean way of combining self.name
-
-	Make a qmomdir function LatticeParameters (in MomParams.py) to output momentum results in a neat way.

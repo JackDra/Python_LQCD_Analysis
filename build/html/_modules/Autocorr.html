@@ -1,0 +1,1188 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Autocorr &mdash; LQCD Analysis Codebase TF Fits documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/my_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> LQCD Analysis Codebase
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Python_Analysis</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">LQCD Analysis Codebase</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>Autocorr</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for Autocorr</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+
+
+<span class="c1"># IMPORT THIS FIRST, put in base import file</span>
+<span class="c1"># import matplotlib</span>
+<span class="c1"># matplotlib.use(&#39;Agg&#39;) # Must be before importing matplotlib.pyplot or pylab!</span>
+<span class="c1"># import matplotlib.pyplot as pl</span>
+<span class="kn">from</span> <span class="nn">XmlFormatting</span> <span class="k">import</span> <span class="n">MakeValAndErr</span>
+<span class="kn">from</span> <span class="nn">FileIO</span> <span class="k">import</span> <span class="n">WriteFuns</span><span class="p">,</span><span class="n">ReadFuns</span>
+<span class="kn">from</span> <span class="nn">Params</span> <span class="k">import</span> <span class="n">defSparam</span><span class="p">,</span><span class="n">this_dir</span>
+<span class="kn">from</span> <span class="nn">MiscFuns</span> <span class="k">import</span> <span class="n">logNA</span>
+<span class="kn">from</span> <span class="nn">BootStrapping</span> <span class="k">import</span> <span class="n">BlockCfgs</span><span class="p">,</span><span class="n">BootStrap</span>
+<span class="kn">from</span> <span class="nn">Params</span> <span class="k">import</span> <span class="n">nboot</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pa</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">deepcopy</span>
+<span class="c1"># from MiscFuns import MIndex_to_numpy</span>
+
+<span class="c1">##</span>
+
+
+<span class="n">startseed</span> <span class="o">=</span> <span class="mi">1234</span>
+
+
+<div class="viewcode-block" id="AutoCorrelate"><a class="viewcode-back" href="../Autocorr.html#Autocorr.AutoCorrelate">[docs]</a><span class="k">class</span> <span class="nc">AutoCorrelate</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&#39;&#39;&#39;Performs Autocorrelation Analysis on data</span>
+
+<span class="sd">    Stores an instance of an statsitcal quantity that has had autocorrelation analysis performed on it.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    values: [ variable, (replicas), montecarlo_time ]</span>
+<span class="sd">        data to be autocorrelated</span>
+<span class="sd">    Fun: function</span>
+<span class="sd">        function for combining the *variable* dimension of `values`</span>
+<span class="sd">    FunDer: function</span>
+<span class="sd">        derivative of `Fun`</span>
+<span class="sd">    Sparam: float</span>
+<span class="sd">        S parameter for Autocorrlation analysis</span>
+<span class="sd">    name : str</span>
+<span class="sd">        name of autocorrelation object</span>
+<span class="sd">    Avg : float</span>
+<span class="sd">        average value of the data</span>
+<span class="sd">    Std : float</span>
+<span class="sd">        Error of the data, taking into account the autocorrelation in the data</span>
+<span class="sd">    StdW : list of float</span>
+<span class="sd">        Error of the data, as a function of the parameter W</span>
+<span class="sd">    tauW : list of float</span>
+<span class="sd">        Integrated Autocorrelation time as a function of W</span>
+<span class="sd">    tauerrW : list of float</span>
+<span class="sd">        Error of the integrated Autocorrelation time as a function of W</span>
+<span class="sd">    tau : float</span>
+<span class="sd">        Integrated Autocorrelation time at optimal W</span>
+<span class="sd">    tauerr : float</span>
+<span class="sd">        Error of the integrated Autocorrelation time at optimal W</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        name of instance</span>
+<span class="sd">    Fun : [ function, derivative_of_function ]</span>
+<span class="sd">        pass in a function and its derivative as a list of length 2</span>
+<span class="sd">    data : [ variable, (replicas), montecarlo_time ]</span>
+<span class="sd">        data to be autocorrelated</span>
+<span class="sd">    Sparam : float</span>
+<span class="sd">        S parameter for Autocorrlation analysis</span>
+<span class="sd">    save_covar : {True, False}, optional</span>
+<span class="sd">        saves the autocorrelation covariance matrix. Set to False to save memory.</span>
+<span class="sd">    WipeData : {True, False}, optional</span>
+<span class="sd">        Wipes the configuration data after computing the Autocorreltaion parameters</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+
+    <span class="n">parentlist</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;SetOfCorrs.SetOfTwoPt&#39;</span><span class="p">,</span><span class="s1">&#39;TwoPtCorrelators.TwoPointCorr&#39;</span><span class="p">,</span><span class="s1">&#39;TwoPtCorrelators.TwoPointCorr&#39;</span><span class="p">,</span><span class="s1">&#39;TwoPtCorrelators.NNQCorr&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>  <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="n">Fun</span><span class="o">=</span><span class="s1">&#39;NotDef&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span><span class="n">Sparam</span><span class="o">=</span><span class="n">defSparam</span><span class="p">,</span><span class="n">save_covar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">WipeData</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="s1">&#39;Not Present&#39;</span> <span class="c1">## contains regular values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nval</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="c1">## contains length of values</span>
+        <span class="c1">## TODO, implement numerical estimated of defivative</span>
+        <span class="c1">## Fun is (function,Derivate)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Fun</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">FunDer</span> <span class="o">=</span> <span class="s1">&#39;NotDef&#39;</span><span class="p">,</span><span class="s1">&#39;NotDef&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">Fun</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">Fun</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">FunDer</span> <span class="o">=</span> <span class="n">Fun</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_reps</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">Sparam</span> <span class="o">=</span> <span class="n">Sparam</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span> <span class="c1">## Give it a label if you want, might help with plotting?</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Avg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tauerr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">StdW</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tauW</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tauerrW</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Wopt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,(</span><span class="nb">list</span><span class="p">,</span><span class="nb">tuple</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span><span class="n">pa</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ImportData</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Fun</span> <span class="o">!=</span> <span class="s1">&#39;NotDef&#39;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">FunDer</span> <span class="o">!=</span> <span class="s1">&#39;NotDef&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">uWerrMine</span><span class="p">(</span><span class="n">WipeData</span><span class="o">=</span><span class="n">WipeData</span><span class="p">,</span><span class="n">save_covar</span><span class="o">=</span><span class="n">save_covar</span><span class="p">)</span>
+
+    <span class="c1">## TODO overload operators</span>
+<div class="viewcode-block" id="AutoCorrelate.AddCoeff"><a class="viewcode-back" href="../Autocorr.html#Autocorr.AutoCorrelate.AddCoeff">[docs]</a>    <span class="k">def</span> <span class="nf">AddCoeff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">coeff</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Adds a coefficient to the Autocorrelation result.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        coeff : (number)</span>
+<span class="sd">            coefficient to be added</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Avg</span> <span class="o">=</span> <span class="n">coeff</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">Avg</span></div>
+
+<div class="viewcode-block" id="AutoCorrelate.MultCoeff"><a class="viewcode-back" href="../Autocorr.html#Autocorr.AutoCorrelate.MultCoeff">[docs]</a>    <span class="k">def</span> <span class="nf">MultCoeff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">coeff</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Multiplys a coefficient to the Autocorrelation result.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        coeff : (number)</span>
+<span class="sd">            coefficient to be multiplied</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Avg</span> <span class="o">=</span> <span class="n">coeff</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">Avg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Std</span> <span class="o">=</span> <span class="n">coeff</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">Std</span></div>
+
+<div class="viewcode-block" id="AutoCorrelate.Power"><a class="viewcode-back" href="../Autocorr.html#Autocorr.AutoCorrelate.Power">[docs]</a>    <span class="k">def</span> <span class="nf">Power</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">thispow</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        takes the Autocorrelation result to a power.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        thispow : number</span>
+<span class="sd">            coefficient to take to the power of</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Avg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Avg</span><span class="o">**</span><span class="n">thispow</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Std</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Std</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">Avg</span><span class="o">**</span><span class="p">(</span><span class="n">thispow</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">thispow</span></div>
+
+<div class="viewcode-block" id="AutoCorrelate.RemoveVals"><a class="viewcode-back" href="../Autocorr.html#Autocorr.AutoCorrelate.RemoveVals">[docs]</a>    <span class="k">def</span> <span class="nf">RemoveVals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; deletes configuration values to clear memory &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nval</span> <span class="o">=</span> <span class="mf">0.0</span></div>
+
+<div class="viewcode-block" id="AutoCorrelate.ImportData"><a class="viewcode-back" href="../Autocorr.html#Autocorr.AutoCorrelate.ImportData">[docs]</a>    <span class="k">def</span> <span class="nf">ImportData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">values</span><span class="p">,</span><span class="n">this_index</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Imports the configuration data into the autocorrelation</span>
+<span class="sd">        object</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        values: [ variable, (replicas), montecarlo_time]</span>
+<span class="sd">            data to be imported into the autocorrelation object</span>
+<span class="sd">        this_index: list {None} optional</span>
+<span class="sd">            labels used for index the pandas dataframe</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        EnvironmentError</span>
+<span class="sd">            if data importing is not of correct type</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values</span><span class="p">,</span><span class="n">pa</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values</span><span class="p">,(</span><span class="nb">list</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">icv</span><span class="p">,</span><span class="n">ival</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">values</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">icv</span><span class="p">)]</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">ival</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="n">this_index</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">EnvironmentError</span><span class="p">(</span><span class="s1">&#39;Importing data into BootStrap class requires numpy array or list&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="n">values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_reps</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">index</span><span class="p">,</span><span class="n">pa</span><span class="o">.</span><span class="n">MultiIndex</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">levels</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nval</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">)</span></div>
+        <span class="c1"># if self.has_reps: self.WarnRepLen()</span>
+
+    <span class="c1"># def WarnRepLen(self):</span>
+    <span class="c1">#     for ival in self.values:</span>
+    <span class="c1">#         if any([len(ival[0]) != len(jval) for jval in ival]):</span>
+    <span class="c1">#             print &#39;Warning, replicas are not of same length&#39;</span>
+    <span class="c1">#             print &#39;Be weary of configuration list&#39;</span>
+
+<div class="viewcode-block" id="AutoCorrelate.ImportFun"><a class="viewcode-back" href="../Autocorr.html#Autocorr.AutoCorrelate.ImportFun">[docs]</a>    <span class="k">def</span> <span class="nf">ImportFun</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">thisfun</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Imports a function into the autocorrelation routine</span>
+<span class="sd">        to perform the autocorreltaion of.</span>
+<span class="sd">        which is performed over the sampled variables x and y.</span>
+
+<span class="sd">        Imports the configuration data into the autocorrelation</span>
+<span class="sd">        object</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        thisfun: function</span>
+<span class="sd">            function to perform autocorrelation analysis of</span>
+<span class="sd">            has form myfun(*args) for independant variables args[:]</span>
+<span class="sd">            returns single number</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; def myfun(x,y):</span>
+<span class="sd">                return x/y</span>
+<span class="sd">        &gt;&gt;&gt; my_object.ImportFun(myfun)</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Fun</span> <span class="o">=</span> <span class="n">thisfun</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">RemoveFuns</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="AutoCorrelate.BlockCfgs"><a class="viewcode-back" href="../Autocorr.html#Autocorr.AutoCorrelate.BlockCfgs">[docs]</a>    <span class="k">def</span> <span class="nf">BlockCfgs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">order</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        returns a blocked set of configurations as to remove all autocorrelation effects</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        order: int</span>
+<span class="sd">            order for which to perform blocking of confiuration data at</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pandas DataFrame:</span>
+<span class="sd">            input data, blocked to order `order`</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">out_df</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+        <span class="c1">## assumes replicas are first index in pandas.MultiIndex</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_reps</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">icol</span><span class="p">,</span><span class="n">idata</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">for</span> <span class="n">irep</span><span class="p">,</span><span class="n">repdata</span> <span class="ow">in</span> <span class="n">idata</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="mi">0</span><span class="p">]]):</span>
+                    <span class="n">vals_cfgs</span> <span class="o">=</span> <span class="n">BlockCfgs</span><span class="p">(</span><span class="n">repdata</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="n">order</span><span class="p">)</span>
+                    <span class="n">tuple_index</span> <span class="o">=</span> <span class="p">[(</span><span class="n">irep</span><span class="p">,</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">vals_cfgs</span><span class="p">))]</span>
+                    <span class="n">mindex</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">MultiIndex</span><span class="o">.</span><span class="n">from_tuples</span><span class="p">(</span><span class="n">tuple_index</span><span class="p">,</span><span class="n">names</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
+                    <span class="n">out_df</span><span class="p">[</span><span class="n">icol</span><span class="p">]</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">vals_cfgs</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="n">mindex</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">ikey</span><span class="p">,</span><span class="n">idata</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">vals_cfgs</span> <span class="o">=</span> <span class="n">BlockCfgs</span><span class="p">(</span><span class="n">idata</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="n">order</span><span class="p">)</span>
+                <span class="n">out_df</span><span class="p">[</span><span class="n">ikey</span><span class="p">]</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">vals_cfgs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out_df</span></div>
+
+
+
+<div class="viewcode-block" id="AutoCorrelate.PlotWopt"><a class="viewcode-back" href="../Autocorr.html#Autocorr.AutoCorrelate.PlotWopt">[docs]</a>    <span class="k">def</span> <span class="nf">PlotWopt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">plot_class</span><span class="p">,</span><span class="n">thiscol</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">thisshift</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span><span class="n">thissym</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Plot the W parameter used to cut off the integrated autocorrelation time.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        plot_class: Plotting instance (see PlotData.py)</span>
+<span class="sd">            plot object to append the plot data to</span>
+<span class="sd">        thiscol: {False} color (see matplotlib color defines) optional</span>
+<span class="sd">            color to plot data as</span>
+<span class="sd">        thisshift: {0.0} optional</span>
+<span class="sd">            value to shift the data by</span>
+<span class="sd">        thissym: {False} character (see matplotlib symbol defines) optional</span>
+<span class="sd">            symbol to plot Wopt as</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        plot_class: Plotting instance</span>
+<span class="sd">            same object, just with data added to be plotted</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        IOError</span>
+<span class="sd">            if Wopt is not set properly in the code</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Wopt</span> <span class="o">==</span> <span class="s1">&#39;Not Set&#39;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;Wopt not set, please import and do werr&#39;</span><span class="p">)</span>
+        <span class="n">xmax</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Wopt</span><span class="o">*</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">step</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Wopt</span><span class="o">/</span><span class="mi">20</span><span class="p">))</span> <span class="ow">or</span> <span class="mi">1</span>
+        <span class="n">thisshift</span> <span class="o">=</span> <span class="n">xmax</span><span class="o">*</span><span class="mf">0.002</span>
+        <span class="n">GFtplot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GFt</span><span class="p">[:</span><span class="n">xmax</span><span class="p">:</span><span class="n">step</span><span class="p">]</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">GFt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># GFtplot = GFt[:xmax:step]</span>
+        <span class="n">thisshift</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">GFtplot</span><span class="p">)</span><span class="o">*</span><span class="n">thisshift</span>
+        <span class="n">plot_series</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">Series</span><span class="p">()</span>
+        <span class="n">plot_series</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;scatter&#39;</span>
+        <span class="n">plot_series</span><span class="p">[</span><span class="s1">&#39;x_data&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">GFtplot</span><span class="p">))))</span>
+        <span class="n">plot_series</span><span class="p">[</span><span class="s1">&#39;y_data&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">GFtplot</span>
+        <span class="n">plot_series</span><span class="p">[</span><span class="s1">&#39;shift&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">thisshift</span>
+        <span class="n">plot_series</span><span class="p">[</span><span class="s1">&#39;symbol&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">thissym</span>
+        <span class="n">plot_series</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">thiscol</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="n">plot_series</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">plot_class</span><span class="o">.</span><span class="n">AppendData</span><span class="p">(</span><span class="n">plot_series</span><span class="p">)</span>
+        <span class="n">plot_series</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">Series</span><span class="p">()</span>
+        <span class="n">plot_series</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;vline&#39;</span>
+        <span class="n">plot_series</span><span class="p">[</span><span class="s1">&#39;x_data&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">GFtplot</span>
+        <span class="n">plot_series</span><span class="p">[</span><span class="s1">&#39;shift&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;previous&#39;</span>
+        <span class="n">plot_series</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;previous&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="n">plot_series</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;_Wopt&#39;</span>
+        <span class="n">plot_class</span><span class="o">.</span><span class="n">AppendData</span><span class="p">(</span><span class="n">plot_series</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">plot_class</span></div>
+
+<div class="viewcode-block" id="AutoCorrelate.PlotTauInt"><a class="viewcode-back" href="../Autocorr.html#Autocorr.AutoCorrelate.PlotTauInt">[docs]</a>    <span class="k">def</span> <span class="nf">PlotTauInt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">plot_class</span><span class="p">,</span><span class="n">thiscol</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">thisshift</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span><span class="n">thissym</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        plots the integrated autocorrelation time for this quantity</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        plot_class: Plotting instance (see PlotData.py)</span>
+<span class="sd">            plot object to append the plot data to</span>
+<span class="sd">        thiscol: {False} color (see matplotlib color defines) optional</span>
+<span class="sd">            color to plot data as</span>
+<span class="sd">        thisshift: {0.0} optional</span>
+<span class="sd">            value to shift the data by</span>
+<span class="sd">        thissym: {False} character (see matplotlib symbol defines) optional</span>
+<span class="sd">            symbol to plot Wopt as</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        plot_class: Plotting instance</span>
+<span class="sd">            same object, just with data added to be plotted</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        IOError</span>
+<span class="sd">            if Wopt is not set properly in the code</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Wopt</span> <span class="o">==</span> <span class="s1">&#39;Not Set&#39;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;Wopt not set, please import and do werr&#39;</span><span class="p">)</span>
+        <span class="n">xmax</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Wopt</span><span class="o">*</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">step</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Wopt</span><span class="o">/</span><span class="mi">20</span><span class="p">))</span> <span class="ow">or</span> <span class="mi">1</span>
+        <span class="n">tauintplot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tauW</span><span class="p">[:</span><span class="n">xmax</span><span class="p">:</span><span class="n">step</span><span class="p">]</span>
+        <span class="c1"># tauintplot = CFW[:xmax:step]</span>
+        <span class="nb">len</span><span class="p">(</span><span class="n">tauintplot</span><span class="p">)</span><span class="o">*</span><span class="n">thisshift</span>
+        <span class="n">plot_series</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">Series</span><span class="p">()</span>
+        <span class="n">plot_series</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;error_bar&#39;</span>
+        <span class="n">plot_series</span><span class="p">[</span><span class="s1">&#39;x_data&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tauintplot</span><span class="p">))))</span>
+        <span class="n">plot_series</span><span class="p">[</span><span class="s1">&#39;y_data&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tauintplot</span>
+        <span class="n">plot_series</span><span class="p">[</span><span class="s1">&#39;yerr_data&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tauerrW</span><span class="p">)[:</span><span class="n">xmax</span><span class="p">:</span><span class="n">step</span><span class="p">]</span>
+        <span class="n">plot_series</span><span class="p">[</span><span class="s1">&#39;shift&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">thisshift</span>
+        <span class="n">plot_series</span><span class="p">[</span><span class="s1">&#39;symbol&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">thissym</span>
+        <span class="n">plot_series</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">thiscol</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="n">plot_series</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">plot_class</span><span class="o">.</span><span class="n">AppendData</span><span class="p">(</span><span class="n">plot_series</span><span class="p">)</span>
+        <span class="n">plot_series</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">Series</span><span class="p">()</span>
+        <span class="n">plot_series</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;vline&#39;</span>
+        <span class="n">plot_series</span><span class="p">[</span><span class="s1">&#39;x_data&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Wopt</span>
+        <span class="n">plot_series</span><span class="p">[</span><span class="s1">&#39;shift&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;previous&#39;</span>
+        <span class="n">plot_series</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;previous&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="n">plot_series</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;_Wopt&#39;</span>
+        <span class="n">plot_class</span><span class="o">.</span><span class="n">AppendData</span><span class="p">(</span><span class="n">plot_series</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">plot_class</span></div>
+
+
+
+
+
+        <span class="c1"># xmax = int(Wopt*3)</span>
+        <span class="c1"># step = int(np.ceil(Wopt/20)) or 1</span>
+        <span class="c1"># thisshift = xmax*0.002</span>
+        <span class="c1"># fig = pl.figure(1)</span>
+        <span class="c1"># Gplt= fig.add_subplot(211)</span>
+        <span class="c1"># Gplt.set_ylabel(r&#39;$\Gamma$&#39;)</span>
+        <span class="c1"># Gplt.set_xlabel(&#39;$W$&#39;)</span>
+        <span class="c1"># GFtplot = GFt[:xmax:step]/GFt[0]</span>
+        <span class="c1"># # GFtplot = GFt[:xmax:step]</span>
+        <span class="c1"># pl.errorbar(range(len(GFtplot)), GFtplot,fmt=&quot;o&quot;, color=&#39;b&#39;)</span>
+        <span class="c1"># pl.axvline(Wopt+thisshift, color=&#39;r&#39;)</span>
+        <span class="c1"># tplt = fig.add_subplot(212)</span>
+        <span class="c1"># tplt.set_ylabel(r&#39;$\tau_{\mathrm{int}}$&#39;)</span>
+        <span class="c1"># tplt.set_xlabel(r&#39;$W$&#39;)</span>
+        <span class="c1"># tauintplot = tauint[:xmax:step]</span>
+        <span class="c1"># # tauintplot = CFW[:xmax:step]</span>
+        <span class="c1"># pl.errorbar(range(len(tauintplot)), tauintplot,</span>
+        <span class="c1">#              dtauint[:xmax:step], fmt=&quot;o&quot;, color=&#39;b&#39;)</span>
+        <span class="c1"># pl.axvline(Wopt+thisshift, color=&#39;r&#39;)</span>
+        <span class="c1"># if plot == True:</span>
+        <span class="c1">#     pl.show()</span>
+        <span class="c1"># else:</span>
+        <span class="c1">#     pl.savefig(plot+&#39;.pdf&#39;)</span>
+        <span class="c1">#     pl.clf()</span>
+
+
+
+
+
+    <span class="c1"># def MyCorrelate(self,x,y,Norm=True,MinAvg=True):</span>
+    <span class="c1">#     if self.has_reps:</span>
+    <span class="c1">#         return self.MyCorrelateWithRep(x,y,Norm=Norm,MinAvg=MinAvg)</span>
+    <span class="c1">#     if MinAvg:</span>
+    <span class="c1">#         x = x-x.mean()</span>
+    <span class="c1">#         y = y-y.mean()</span>
+    <span class="c1">#     listout = []</span>
+    <span class="c1">#     for it in range(x.size):</span>
+    <span class="c1">#         itval = 0.0</span>
+    <span class="c1">#         for index in range(x.size):</span>
+    <span class="c1">#             if it+index &lt; y.size:</span>
+    <span class="c1">#                 itval += x[index]*y[index+it]</span>
+    <span class="c1">#         if Norm: itval = itval/(x.size-it)</span>
+    <span class="c1">#         listout.append(itval)</span>
+    <span class="c1">#     return np.array(listout)</span>
+    <span class="c1">#</span>
+    <span class="c1"># def MyCorrelateWithRep(self,x,y,Norm=True,MinAvg=True):</span>
+    <span class="c1">#     if MinAvg:</span>
+    <span class="c1">#         for ix,iy in zip(x,y):</span>
+    <span class="c1">#             ix = ix-np.mean(ix)</span>
+    <span class="c1">#             iy = iy-np.mean(iy)</span>
+    <span class="c1">#     ## if replicas are of different length, they will revert to smallest list</span>
+    <span class="c1">#     ## and cut the bigger replicas to the smaller length size.</span>
+    <span class="c1">#     rlen = len(x)</span>
+    <span class="c1">#     tlen = max(map(len,x))</span>
+    <span class="c1">#     totlen = sum(map(len,x))</span>
+    <span class="c1">#     listout = []</span>
+    <span class="c1">#     for it in xrange(tlen):</span>
+    <span class="c1">#         itval = 0.0s</span>
+    <span class="c1">#         for ix,iy in zip(x,y):</span>
+    <span class="c1">#             for index in xrange(tlen):</span>
+    <span class="c1">#                 if it+index &lt; iy.size and index &lt; ix.size:</span>
+    <span class="c1">#                     itval = itval + ix[index]*iy[index+it]</span>
+    <span class="c1">#         if Norm: itval = itval/(totlen-(rlen*it))</span>
+    <span class="c1">#         listout.append(itval)</span>
+    <span class="c1">#     return np.array(listout)</span>
+    <span class="c1">#</span>
+
+
+    <span class="c1">### autocorrelation work taken from https://arxiv.org/pdf/hep-lat/0306017.pdf</span>
+<div class="viewcode-block" id="AutoCorrelate.autocorr"><a class="viewcode-back" href="../Autocorr.html#Autocorr.AutoCorrelate.autocorr">[docs]</a>    <span class="k">def</span> <span class="nf">autocorr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        standard autocorrlation function between two statsitcal quantities</span>
+
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x: (M,) array_like</span>
+<span class="sd">            First list of values to perform autocorrelation analysis of</span>
+<span class="sd">        y: (M,) array_like</span>
+<span class="sd">            Second list of values to perform autocorrelation analysis of</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result: (M,) array_like</span>
+<span class="sd">            autocorrelation result between `x` and `y`, see [1]_ and [2]_</span>
+
+<span class="sd">        References</span>
+<span class="sd">        ----------</span>
+<span class="sd">        .. [1] http://stackoverflow.com/q/14297012/190597</span>
+<span class="sd">        .. [2] http://en.wikipedia.org/wiki/Autocorrelation#Estimation</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_reps</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">autocorr_Reps</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="c1"># variance = x.var()</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">-</span><span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">-</span><span class="n">y</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">correlate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;full&#39;</span><span class="p">)[</span><span class="o">-</span><span class="n">n</span><span class="p">:]</span>
+        <span class="c1"># assert np.allclose(r, np.array([(x[:n-k]*x[-(n-k):]).sum() for k in xrange(n)]))</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">r</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="AutoCorrelate.autocorr_Reps"><a class="viewcode-back" href="../Autocorr.html#Autocorr.AutoCorrelate.autocorr_Reps">[docs]</a>    <span class="k">def</span> <span class="nf">autocorr_Reps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        autocorrealtion analysis of quantity including replica streams as</span>
+<span class="sd">        described in [1]_.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x: (R,M) array_like</span>
+<span class="sd">            First list of lists of values to perform autocorrelation analysis of,</span>
+<span class="sd">            including the replica streams</span>
+<span class="sd">        y: (R,M) array_like</span>
+<span class="sd">            Second list of lists of values to perform autocorrelation analysis of,</span>
+<span class="sd">            including the replica streams</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result: (M,) array_like</span>
+<span class="sd">            autocorrelation result between `x` and `y`</span>
+
+<span class="sd">        References</span>
+<span class="sd">        ----------</span>
+<span class="sd">        .. [1]  U. Wolff [ALPHA Collaboration],</span>
+<span class="sd">           ``Monte Carlo errors with less errors,&#39;&#39;</span>
+<span class="sd">           Comput.\ Phys.\ Commun.\  {\bf 156}, 143 (2004)</span>
+<span class="sd">           Erratum: [Comput.\ Phys.\ Commun.\  {\bf 176}, 383 (2007)]</span>
+<span class="sd">           doi:10.1016/S0010-4655(03)00467-3, 10.1016/j.cpc.2006.12.001</span>
+<span class="sd">           [hep-lat/0306017].</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">totn</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span><span class="n">x</span><span class="p">))</span>
+        <span class="n">n_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span><span class="n">x</span><span class="p">)))</span>
+        <span class="n">result</span><span class="p">,</span><span class="n">Rlist</span> <span class="o">=</span> <span class="mf">0.</span><span class="p">,</span><span class="mf">0.</span>
+        <span class="k">for</span> <span class="n">ix</span><span class="p">,</span><span class="n">iy</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ix</span><span class="p">)</span>
+            <span class="c1"># variance = ix.var()</span>
+            <span class="n">ix</span> <span class="o">=</span> <span class="n">ix</span><span class="o">-</span><span class="n">ix</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+            <span class="n">iy</span> <span class="o">=</span> <span class="n">iy</span><span class="o">-</span><span class="n">iy</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">correlate</span><span class="p">(</span><span class="n">ix</span><span class="p">,</span> <span class="n">iy</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;full&#39;</span><span class="p">)[</span><span class="o">-</span><span class="n">n</span><span class="p">:]</span>
+            <span class="c1"># assert np.allclose(r, np.array([(ix[:n-k]*ix[-(n-k):]).sum() for k in xrange(n)]))</span>
+            <span class="n">result</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_max</span><span class="o">-</span><span class="n">n</span><span class="p">))</span>
+            <span class="n">Rlist</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">n</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_max</span><span class="o">-</span><span class="n">n</span><span class="p">))</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">result</span> <span class="o">/</span> <span class="p">(</span><span class="n">totn</span><span class="o">-</span><span class="n">Rlist</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">n_max</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="AutoCorrelate.gW"><a class="viewcode-back" href="../Autocorr.html#Autocorr.AutoCorrelate.gW">[docs]</a>    <span class="k">def</span> <span class="nf">gW</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">tauW</span><span class="p">,</span><span class="n">thisN</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        W parameter used for auto fitting window method used from (52) in [1]_.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        tauW: (M,) array_like</span>
+<span class="sd">            integrated autocorrelation function as a function of W</span>
+<span class="sd">        thisN: float</span>
+<span class="sd">            number of samples computed (min if replicas are present)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        iW: float</span>
+<span class="sd">            optimal W parameter for when no autocorrelation effects are present.</span>
+
+<span class="sd">        References</span>
+<span class="sd">        ----------</span>
+<span class="sd">        .. [1]  U. Wolff [ALPHA Collaboration],</span>
+<span class="sd">           ``Monte Carlo errors with less errors,&#39;&#39;</span>
+<span class="sd">           Comput.\ Phys.\ Commun.\  {\bf 156}, 143 (2004)</span>
+<span class="sd">           Erratum: [Comput.\ Phys.\ Commun.\  {\bf 176}, 383 (2007)]</span>
+<span class="sd">           doi:10.1016/S0010-4655(03)00467-3, 10.1016/j.cpc.2006.12.001</span>
+<span class="sd">           [hep-lat/0306017].</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">for</span> <span class="n">iW</span><span class="p">,</span><span class="n">it</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tauW</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">iW</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="k">continue</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">iW</span><span class="o">/</span><span class="n">it</span><span class="p">)</span><span class="o">-</span><span class="n">it</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">iW</span><span class="o">*</span><span class="n">thisN</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">val</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">iW</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AutoCorrelate.VarTau"><a class="viewcode-back" href="../Autocorr.html#Autocorr.AutoCorrelate.VarTau">[docs]</a>    <span class="k">def</span> <span class="nf">VarTau</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">tau</span><span class="p">,</span><span class="n">N</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Using aproximate formula (42) from paper [1]_.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        tau: (M,) array_like</span>
+<span class="sd">            tau to compute variance of</span>
+<span class="sd">        N: float</span>
+<span class="sd">            number of samples computed (min if replicas are present)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        iW: float</span>
+<span class="sd">            optimal W parameter for when no autocorrelation effects are present.</span>
+
+<span class="sd">        References</span>
+<span class="sd">        ----------</span>
+<span class="sd">        .. [1]  U. Wolff [ALPHA Collaboration],</span>
+<span class="sd">           ``Monte Carlo errors with less errors,&#39;&#39;</span>
+<span class="sd">           Comput.\ Phys.\ Commun.\  {\bf 156}, 143 (2004)</span>
+<span class="sd">           Erratum: [Comput.\ Phys.\ Commun.\  {\bf 176}, 383 (2007)]</span>
+<span class="sd">           doi:10.1016/S0010-4655(03)00467-3, 10.1016/j.cpc.2006.12.001</span>
+<span class="sd">           [hep-lat/0306017].</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">4</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">N</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">iW</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">-</span> <span class="n">itau</span><span class="p">)</span> <span class="o">*</span> <span class="n">itau</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">iW</span><span class="p">,</span><span class="n">itau</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tau</span><span class="p">)]</span></div>
+
+<div class="viewcode-block" id="AutoCorrelate.BiasCorrect"><a class="viewcode-back" href="../Autocorr.html#Autocorr.AutoCorrelate.BiasCorrect">[docs]</a>    <span class="k">def</span> <span class="nf">BiasCorrect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">CfW</span><span class="p">,</span><span class="n">N</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Bias corrections using (49) from paper [1]_.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        CfW: (M,) array_like</span>
+<span class="sd">            CfW list of errors to inflate to correct for bias</span>
+<span class="sd">        N: float</span>
+<span class="sd">            number of samples computed (min if replicas are present)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        CfW: (M,) array_like</span>
+<span class="sd">            CfW list that has been inflated to correct for bais</span>
+
+<span class="sd">        References</span>
+<span class="sd">        ----------</span>
+<span class="sd">        .. [1]  U. Wolff [ALPHA Collaboration],</span>
+<span class="sd">           ``Monte Carlo errors with less errors,&#39;&#39;</span>
+<span class="sd">           Comput.\ Phys.\ Commun.\  {\bf 156}, 143 (2004)</span>
+<span class="sd">           Erratum: [Comput.\ Phys.\ Commun.\  {\bf 176}, 383 (2007)]</span>
+<span class="sd">           doi:10.1016/S0010-4655(03)00467-3, 10.1016/j.cpc.2006.12.001</span>
+<span class="sd">           [hep-lat/0306017].</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">W</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">CfW</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">CfW</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="p">((</span><span class="mi">2</span><span class="o">*</span><span class="n">W</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">N</span><span class="p">)))</span></div>
+        <span class="c1"># ## Testing</span>
+        <span class="c1"># return CfW</span>
+
+
+<div class="viewcode-block" id="AutoCorrelate.uWerrMine"><a class="viewcode-back" href="../Autocorr.html#Autocorr.AutoCorrelate.uWerrMine">[docs]</a>    <span class="k">def</span> <span class="nf">uWerrMine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="s1">&#39;PreDef&#39;</span><span class="p">,</span><span class="n">fun</span><span class="o">=</span><span class="s1">&#39;PreDef&#39;</span><span class="p">,</span>
+                  <span class="n">Sparam</span><span class="o">=</span><span class="s1">&#39;PreDef&#39;</span><span class="p">,</span><span class="n">WipeData</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">save_covar</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Main function for computing the total autocorrelation of quantity,</span>
+<span class="sd">        following the method in [1]_.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data: {&#39;PreDef&#39;} [variable, (replicas), montecarlo time] optional</span>
+<span class="sd">            data to perform autocorrelation analysis over. Not passing in</span>
+<span class="sd">            any data will default to the data stored in the object</span>
+<span class="sd">        fun: {&#39;PreDef&#39;} function(*variable) optional</span>
+<span class="sd">            function descibing how to combine the indipendant statistical quantities.</span>
+<span class="sd">            Not passing in any function will default to the data stored in the object</span>
+<span class="sd">        Sparam: {&#39;PreDef&#39;} float optional</span>
+<span class="sd">            S parameter for Autocorrlation analysis</span>
+<span class="sd">        WipeData: {True} optional</span>
+<span class="sd">            Wipe the internal configuration data after computing the autocorrelation</span>
+<span class="sd">            statistical quantities.</span>
+<span class="sd">        save_covar: {True} optional</span>
+<span class="sd">            Saves the covariance matrix as an internal variable</span>
+
+<span class="sd">        References</span>
+<span class="sd">        ----------</span>
+<span class="sd">        .. [1]  U. Wolff [ALPHA Collaboration],</span>
+<span class="sd">           ``Monte Carlo errors with less errors,&#39;&#39;</span>
+<span class="sd">           Comput.\ Phys.\ Commun.\  {\bf 156}, 143 (2004)</span>
+<span class="sd">           Erratum: [Comput.\ Phys.\ Commun.\  {\bf 176}, 383 (2007)]</span>
+<span class="sd">           doi:10.1016/S0010-4655(03)00467-3, 10.1016/j.cpc.2006.12.001</span>
+<span class="sd">           [hep-lat/0306017].        &#39;&#39;&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">GetFuns</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="o">==</span> <span class="s1">&#39;PreDef&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;data not imported for &#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span>
+        <span class="k">if</span> <span class="n">fun</span> <span class="o">==</span> <span class="s1">&#39;PreDef&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Fun</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Function and derivative have not been defined for &#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">fun</span><span class="p">,</span><span class="n">funder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Fun</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">FunDer</span>
+        <span class="k">if</span> <span class="n">Sparam</span><span class="o">==</span><span class="s1">&#39;PreDef&#39;</span><span class="p">:</span> <span class="n">Sparam</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Sparam</span>
+        <span class="n">avgdata</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="n">icol</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="k">for</span> <span class="n">icol</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
+
+
+        <span class="n">glen</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span><span class="n">pa</span><span class="o">.</span><span class="n">MultiIndex</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_reps</span><span class="p">:</span>
+                <span class="n">data_numpy</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">icol</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                    <span class="n">data_numpy</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+                    <span class="k">for</span> <span class="n">istream</span><span class="p">,</span><span class="n">stream_data</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="n">icol</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="s1">&#39;stream&#39;</span><span class="p">):</span>
+                        <span class="c1"># glen = max(glen,stream_data.size)</span>
+                        <span class="n">glen</span> <span class="o">+=</span> <span class="n">stream_data</span><span class="o">.</span><span class="n">size</span>
+                        <span class="n">data_numpy</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stream_data</span><span class="p">[</span><span class="n">istream</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+                <span class="n">data_numpy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data_numpy</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">data_numpy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">swapaxes</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">glen</span> <span class="o">=</span> <span class="n">data_numpy</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">data_numpy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">swapaxes</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">glen</span> <span class="o">=</span> <span class="n">data_numpy</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+
+        <span class="c1">## (31) matrix of autocorrelations w.r.t ab= variables</span>
+        <span class="n">G_ab_t</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">adat</span> <span class="ow">in</span> <span class="n">data_numpy</span><span class="p">:</span>
+            <span class="n">G_ab_t</span><span class="o">.</span><span class="n">append</span><span class="p">([</span> <span class="bp">self</span><span class="o">.</span><span class="n">autocorr</span><span class="p">(</span><span class="n">adat</span><span class="p">,</span><span class="n">bdat</span><span class="p">)</span> <span class="k">for</span> <span class="n">bdat</span> <span class="ow">in</span> <span class="n">data_numpy</span><span class="p">])</span>
+            <span class="c1"># G_ab_t.append([ self.MyCorrelate(adat,bdat) for bdat in data_numpy])</span>
+        <span class="n">G_ab_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">G_ab_t</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">save_covar</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">covar</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">G_ab_0</span> <span class="o">=</span> <span class="n">G_ab_t</span><span class="p">[:,:,</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">ia</span><span class="p">,</span><span class="n">Ga</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">G_ab_t</span><span class="p">[:,:,</span><span class="mi">0</span><span class="p">]):</span>
+                <span class="k">for</span> <span class="n">ib</span><span class="p">,</span><span class="n">Gab</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">Ga</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">covar</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Gab</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">G_ab_0</span><span class="p">[</span><span class="n">ia</span><span class="p">,</span><span class="n">ia</span><span class="p">]</span><span class="o">*</span><span class="n">G_ab_0</span><span class="p">[</span><span class="n">ib</span><span class="p">,</span><span class="n">ib</span><span class="p">]))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">covar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">covar</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">G_ab_0</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">covar_NoNorm</span> <span class="o">=</span> <span class="n">G_ab_0</span><span class="o">/</span><span class="n">glen</span>
+        <span class="c1">## (33) alpha function derivates (w.r.t variables)</span>
+        <span class="n">f_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">funder</span><span class="p">(</span><span class="o">*</span><span class="n">avgdata</span><span class="p">))</span>
+        <span class="n">f_ab</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">if_a</span> <span class="ow">in</span> <span class="n">f_a</span><span class="p">:</span>
+            <span class="n">f_ab</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">if_b</span><span class="o">*</span><span class="n">if_a</span> <span class="k">for</span> <span class="n">if_b</span> <span class="ow">in</span> <span class="n">f_a</span><span class="p">])</span>
+        <span class="n">f_ab</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">f_ab</span><span class="p">)</span>
+
+        <span class="c1"># print &#39;debug&#39; , data.shape, G_ab_t.shape, f_ab.shape, (f_ab * G_ab_t[:,:,0]).shape,np.sum(f_ab * G_ab_t[:,:,0]).shape</span>
+
+        <span class="c1"># print &#39;debug&#39;,self.name,</span>
+        <span class="c1"># print f_ab * G_ab_t[:,:,5]</span>
+        <span class="c1"># print</span>
+        <span class="c1">## (33)</span>
+        <span class="n">GFt</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">f_ab</span> <span class="o">*</span> <span class="n">G_ab</span><span class="p">)</span> <span class="k">for</span> <span class="n">G_ab</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">rollaxis</span><span class="p">(</span><span class="n">G_ab_t</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">]</span>
+
+        <span class="c1">## (35)</span>
+        <span class="n">CFW</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">GFt</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">+</span><span class="p">[</span><span class="n">GFt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">GFt</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="n">W</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">W</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">GFt</span><span class="p">))])</span>
+
+        <span class="c1"># Bias corrections (49)</span>
+        <span class="n">CFW</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">BiasCorrect</span><span class="p">(</span><span class="n">CFW</span><span class="p">,</span><span class="n">glen</span><span class="p">)</span>
+
+
+        <span class="c1">## (34)</span>
+        <span class="n">nuF</span> <span class="o">=</span> <span class="n">CFW</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+
+        <span class="c1">## equation (41)</span>
+        <span class="n">tauint</span> <span class="o">=</span> <span class="n">CFW</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">nuF</span><span class="p">)</span>
+
+
+
+        <span class="c1">## From Paper</span>
+        <span class="n">tau</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">it</span><span class="p">,</span><span class="n">itauint</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tauint</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">itauint</span> <span class="o">&lt;=</span> <span class="mf">0.5</span><span class="p">:</span>
+                <span class="n">tau</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">0.00000001</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1">## (51)</span>
+                <span class="n">tau</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Sparam</span><span class="o">/</span><span class="n">logNA</span><span class="p">((</span><span class="mi">2</span><span class="o">*</span><span class="n">itauint</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">itauint</span><span class="o">-</span><span class="mi">1</span><span class="p">)))</span>
+
+        <span class="c1"># ## From Matlab</span>
+        <span class="c1"># tau = []</span>
+        <span class="c1"># for iGFt in GFt:</span>
+        <span class="c1">#     if iGFt &lt;= 0.0:</span>
+        <span class="c1">#         tau.append(0.0000001)</span>
+        <span class="c1">#     else:</span>
+        <span class="c1">#         tau.append(Sparam/logNA((iGFt+1)/iGFt))</span>
+
+        <span class="c1">## (52)</span>
+        <span class="n">Wopt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gW</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tau</span><span class="p">),</span><span class="n">glen</span><span class="p">)</span>
+
+        <span class="c1">## (42)</span>
+        <span class="n">dtauint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">VarTau</span><span class="p">(</span><span class="n">tauint</span><span class="p">,</span><span class="n">glen</span><span class="p">)</span>
+
+
+        <span class="c1">## average, error(W), tau(W), tauerr(W), GFt(W), Wopt</span>
+        <span class="c1">## average, error[Woptimal], tau[Woptimal], tauerr[Woptimal]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Avg</span> <span class="o">=</span> <span class="n">fun</span><span class="p">(</span><span class="o">*</span><span class="n">avgdata</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Avg_paras</span> <span class="o">=</span> <span class="n">avgdata</span>
+        <span class="c1"># self.Avg = np.mean([fun(*ival) for ival in np.swapaxes(data,0,1)])</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">CFW</span><span class="p">[</span><span class="n">Wopt</span><span class="p">])</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">glen</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Std_corr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">CFW</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">glen</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Wopt</span> <span class="o">=</span> <span class="n">Wopt</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">GFt</span> <span class="o">=</span> <span class="n">GFt</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="o">=</span> <span class="n">tauint</span><span class="p">[</span><span class="n">Wopt</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tauerr</span> <span class="o">=</span> <span class="n">dtauint</span><span class="p">[</span><span class="n">Wopt</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;NaN for Autocorr&#39;</span><span class="p">)</span>
+            <span class="n">Wopt</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">CFW</span><span class="p">[</span><span class="n">Wopt</span><span class="p">])</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">glen</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Std_corr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">CFW</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">glen</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Wopt</span> <span class="o">=</span> <span class="n">Wopt</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">GFt</span> <span class="o">=</span> <span class="n">GFt</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="o">=</span> <span class="n">tauint</span><span class="p">[</span><span class="n">Wopt</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tauerr</span> <span class="o">=</span> <span class="n">dtauint</span><span class="p">[</span><span class="n">Wopt</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">StdW</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">CFW</span><span class="p">)</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">glen</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tauW</span> <span class="o">=</span> <span class="n">tauint</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tauerrW</span> <span class="o">=</span> <span class="n">dtauint</span>
+        <span class="k">if</span> <span class="n">WipeData</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">RemoveVals</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">RemoveFuns</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="AutoCorrelate.GetFuns"><a class="viewcode-back" href="../Autocorr.html#Autocorr.AutoCorrelate.GetFuns">[docs]</a>    <span class="k">def</span> <span class="nf">GetFuns</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Gets functions from pickled files</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s1">&#39;Fun&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s1">&#39;FunDer&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Fun</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">FunDer</span> <span class="o">=</span> <span class="n">ReadFuns</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Fun_name</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">FunDer_name</span><span class="p">)</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">Fun_name</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">FunDer_name</span></div>
+
+
+<div class="viewcode-block" id="AutoCorrelate.RemoveFuns"><a class="viewcode-back" href="../Autocorr.html#Autocorr.AutoCorrelate.RemoveFuns">[docs]</a>    <span class="k">def</span> <span class="nf">RemoveFuns</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Removes functions in prep for writing object to file.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Fun_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Fun</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">FunDer_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">FunDer</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="n">WriteFuns</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Fun</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">FunDer_name</span><span class="p">)</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">Fun</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">FunDer</span></div>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;Auto_&#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">+</span><span class="s1">&#39;: &#39;</span><span class="o">+</span><span class="n">MakeValAndErr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Avg</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">Std</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;&lt;Auto_&#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="n">MakeValAndErr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Avg</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">Std</span><span class="p">,</span><span class="n">Dec</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;&gt;&#39;</span></div>
+
+
+
+
+
+<div class="viewcode-block" id="BlockedAutoCorr"><a class="viewcode-back" href="../Autocorr.html#Autocorr.BlockedAutoCorr">[docs]</a><span class="k">class</span> <span class="nc">BlockedAutoCorr</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Uses AutoCorrelate class above and repeats it for different blocked amounts until</span>
+<span class="sd">        it hits a tau int threshold</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>  <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="n">Fun</span><span class="o">=</span><span class="s1">&#39;NotDef&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span><span class="n">Sparam</span><span class="o">=</span><span class="n">defSparam</span><span class="p">,</span><span class="n">save_covar</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cfg_list</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Fun</span> <span class="o">=</span> <span class="n">Fun</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Sparam</span> <span class="o">=</span> <span class="n">Sparam</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_covar</span> <span class="o">=</span> <span class="n">save_covar</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">noblock_auto</span> <span class="o">=</span> <span class="n">AutoCorrelate</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span><span class="n">Fun</span><span class="o">=</span><span class="n">Fun</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span><span class="n">Sparam</span><span class="o">=</span><span class="n">Sparam</span><span class="p">,</span><span class="n">save_covar</span><span class="o">=</span><span class="n">save_covar</span><span class="p">,</span><span class="n">WipeData</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">auto_object</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">noblock_auto</span><span class="p">)</span>
+
+
+    <span class="c1">## block_cutoff is a percent of the total length!</span>
+<div class="viewcode-block" id="BlockedAutoCorr.RemoveAuto"><a class="viewcode-back" href="../Autocorr.html#Autocorr.BlockedAutoCorr.RemoveAuto">[docs]</a>    <span class="k">def</span> <span class="nf">RemoveAuto</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">tau_cutoff</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="n">block_cutoff</span><span class="o">=</span> <span class="mi">10</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        computes the nessisary amount needed to block to remove all autocorrelation effects</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1">## TODO use tauerr?</span>
+        <span class="n">n_block</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="c1"># this_cfglist = self.noblock_auto.values</span>
+        <span class="n">this_cfglist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg_list</span>
+        <span class="n">blockc_per</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">block_cutoff</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg_list</span><span class="p">)</span><span class="o">/</span><span class="mi">100</span><span class="p">)</span>
+        <span class="c1"># print(&#39;DEBUG&#39;)</span>
+        <span class="c1"># import matplotlib.pyplot as pl</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">auto_object</span><span class="o">.</span><span class="n">tau</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">auto_object</span><span class="o">.</span><span class="n">tauerr</span> <span class="o">&gt;</span> <span class="n">tau_cutoff</span> <span class="ow">and</span> <span class="n">blockc_per</span> <span class="o">&gt;</span> <span class="n">n_block</span><span class="p">:</span>
+            <span class="n">n_block</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">this_cfglist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">noblock_auto</span><span class="o">.</span><span class="n">BlockCfgs</span><span class="p">(</span><span class="n">n_block</span><span class="p">)</span>
+            <span class="c1"># if n_block//30 == n_block/30:</span>
+            <span class="c1">#     print(n_block)</span>
+            <span class="c1">#     print(this_cfglist.values[:,0])</span>
+            <span class="c1">#     print()</span>
+            <span class="c1">#     pl.plot(this_cfglist.values[:,0])</span>
+            <span class="c1">#     pl.title(str(n_block))</span>
+            <span class="c1">#     pl.savefig(this_dir+&#39;/TestGraphs/testsin&#39;+str(n_block)+&#39;.pdf&#39;)</span>
+            <span class="c1">#     pl.clf()</span>
+            <span class="n">non_dup_cfg</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">this_cfglist</span><span class="o">.</span><span class="n">values</span><span class="p">[::</span><span class="n">n_block</span><span class="p">,:]),</span><span class="n">columns</span><span class="o">=</span><span class="n">this_cfglist</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">auto_object</span> <span class="o">=</span> <span class="n">AutoCorrelate</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span><span class="n">Fun</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Fun</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="n">non_dup_cfg</span><span class="p">,</span>
+                                             <span class="n">Sparam</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Sparam</span><span class="p">,</span><span class="n">save_covar</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">save_covar</span><span class="p">)</span>
+            <span class="c1"># print(tau_cutoff)</span>
+            <span class="c1"># print(MakeValAndErr(self.auto_object.tau,self.auto_object.tauerr))</span>
+            <span class="c1"># print(self.auto_object.tau &gt; tau_cutoff)</span>
+        <span class="c1"># print(MakeValAndErr(self.auto_object.tau-self.auto_object.tauerr,self.auto_object.tauerr))</span>
+        <span class="c1"># print()</span>
+        <span class="k">if</span> <span class="n">n_block</span> <span class="o">&gt;=</span> <span class="n">block_cutoff</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Warning, blocking to reduce autocorrelaiton hit cutoff of n_block percent=&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">block_cutoff</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;%&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;class: &#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;tau_int was &#39;</span><span class="o">+</span><span class="n">MakeValAndErr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auto_object</span><span class="o">.</span><span class="n">tau</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">auto_object</span><span class="o">.</span><span class="n">tauerr</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">this_cfglist</span><span class="p">,</span><span class="n">n_block</span></div>
+
+    <span class="c1">## block_cutoff is a percent of the total length!</span>
+<div class="viewcode-block" id="BlockedAutoCorr.GetBlockedBS"><a class="viewcode-back" href="../Autocorr.html#Autocorr.BlockedAutoCorr.GetBlockedBS">[docs]</a>    <span class="k">def</span> <span class="nf">GetBlockedBS</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">thisnboot</span><span class="o">=</span><span class="n">nboot</span><span class="p">,</span><span class="n">rand_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">tau_cutoff</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span><span class="n">block_cutoff</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">WipeData</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">noblock_comp</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        uses the computed amount of blocking required to create a bootstrapped instance</span>
+<span class="sd">        result</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">this_cfg</span><span class="p">,</span><span class="n">n_block</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">RemoveAuto</span><span class="p">(</span><span class="n">tau_cutoff</span><span class="o">=</span><span class="n">tau_cutoff</span><span class="p">,</span><span class="n">block_cutoff</span><span class="o">=</span><span class="n">block_cutoff</span><span class="p">)</span>
+        <span class="n">this_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;_nblock&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">n_block</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_block</span> <span class="o">=</span> <span class="n">n_block</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blocked_cfglist</span> <span class="o">=</span> <span class="n">this_cfg</span>
+        <span class="k">if</span> <span class="s1">&#39;sin&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;DEBUG&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;plotting blocked distribution&#39;</span><span class="p">)</span>
+            <span class="n">non_dup_cfg</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">this_cfg</span><span class="o">.</span><span class="n">values</span><span class="p">[::</span><span class="n">n_block</span><span class="p">,:],</span><span class="n">columns</span><span class="o">=</span><span class="n">this_cfg</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+            <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">pl</span>
+            <span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">non_dup_cfg</span><span class="o">.</span><span class="n">values</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">pl</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">this_dir</span><span class="o">+</span><span class="s1">&#39;/TestGraphs/testsin_blocked.pdf&#39;</span><span class="p">)</span>
+            <span class="n">pl</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+        <span class="n">out_bs</span> <span class="o">=</span> <span class="n">BootStrap</span><span class="p">(</span><span class="n">thisnboot</span><span class="o">=</span><span class="n">thisnboot</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="n">this_name</span><span class="p">,</span><span class="n">cfgvals</span><span class="o">=</span><span class="n">this_cfg</span><span class="p">,</span><span class="n">thisDelVal</span><span class="o">=</span><span class="n">WipeData</span><span class="p">,</span><span class="n">rand_list</span><span class="o">=</span><span class="n">rand_list</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">WipeData</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">auto_object</span><span class="o">.</span><span class="n">RemoveVals</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">noblock_auto</span><span class="o">.</span><span class="n">RemoveVals</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">noblock_comp</span><span class="p">:</span>
+            <span class="n">out_bs_nb</span> <span class="o">=</span> <span class="n">BootStrap</span><span class="p">(</span><span class="n">thisnboot</span><span class="o">=</span><span class="n">thisnboot</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span><span class="n">cfgvals</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg_list</span><span class="p">,</span><span class="n">thisDelVal</span><span class="o">=</span><span class="n">WipeData</span><span class="p">,</span><span class="n">rand_list</span><span class="o">=</span><span class="n">rand_list</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">out_bs</span><span class="p">,</span><span class="n">out_bs_nb</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">out_bs</span></div></div>
+
+
+<div class="viewcode-block" id="TestBlocking"><a class="viewcode-back" href="../Autocorr.html#Autocorr.TestBlocking">[docs]</a><span class="k">def</span> <span class="nf">TestBlocking</span><span class="p">(</span><span class="n">tau_cutoff</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span><span class="n">block_cutoff</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    testing function for testing the autocorrelation blocking technique</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">thisFun</span><span class="p">(</span><span class="o">*</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">def</span> <span class="nf">thisDer</span><span class="p">(</span><span class="o">*</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">this_size</span> <span class="o">=</span> <span class="mi">10000</span>
+    <span class="n">this_nboot</span> <span class="o">=</span> <span class="mi">1000</span>
+    <span class="n">nperiod</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">this_size</span><span class="p">)</span>
+    <span class="n">values3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="n">this_size</span><span class="p">)</span>
+    <span class="n">values2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">this_size</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">nperiod</span><span class="o">*</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span><span class="o">/</span><span class="n">this_size</span><span class="p">)</span><span class="o">+</span><span class="n">values</span><span class="o">*</span><span class="mi">20</span>
+    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">pl</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">values2</span><span class="p">)</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">this_dir</span><span class="o">+</span><span class="s1">&#39;/TestGraphs/testsin.pdf&#39;</span><span class="p">)</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">val_df</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+    <span class="n">val_df</span><span class="p">[</span><span class="s1">&#39;one&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+    <span class="n">val_df</span><span class="p">[</span><span class="s1">&#39;two&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">values2</span><span class="p">)</span>
+    <span class="n">val_df</span><span class="p">[</span><span class="s1">&#39;three&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">values3</span><span class="p">)</span>
+
+    <span class="n">testdata</span> <span class="o">=</span> <span class="n">BlockedAutoCorr</span><span class="p">(</span><span class="n">Fun</span><span class="o">=</span><span class="p">[</span><span class="n">thisFun</span><span class="p">,</span><span class="n">thisDer</span><span class="p">],</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;test_bootstrap_uniform&#39;</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="n">val_df</span><span class="p">[[</span><span class="s1">&#39;one&#39;</span><span class="p">]])</span>
+    <span class="n">testdata2</span> <span class="o">=</span> <span class="n">BlockedAutoCorr</span><span class="p">(</span><span class="n">Fun</span><span class="o">=</span><span class="p">[</span><span class="n">thisFun</span><span class="p">,</span><span class="n">thisDer</span><span class="p">],</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;test_bootstrap_sin_normal&#39;</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="n">val_df</span><span class="p">[[</span><span class="s1">&#39;two&#39;</span><span class="p">]])</span>
+    <span class="n">testdata3</span> <span class="o">=</span> <span class="n">BlockedAutoCorr</span><span class="p">(</span><span class="n">Fun</span><span class="o">=</span><span class="p">[</span><span class="n">thisFun</span><span class="p">,</span><span class="n">thisDer</span><span class="p">],</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;test_bootstrap_normal&#39;</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="n">val_df</span><span class="p">[[</span><span class="s1">&#39;three&#39;</span><span class="p">]])</span>
+    <span class="n">bootdata</span><span class="p">,</span><span class="n">nbb</span> <span class="o">=</span> <span class="n">testdata</span><span class="o">.</span><span class="n">GetBlockedBS</span><span class="p">(</span><span class="n">thisnboot</span><span class="o">=</span><span class="n">this_nboot</span><span class="p">,</span><span class="n">noblock_comp</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">tau_cutoff</span><span class="o">=</span><span class="n">tau_cutoff</span><span class="p">,</span><span class="n">block_cutoff</span><span class="o">=</span><span class="n">block_cutoff</span><span class="p">)</span>
+    <span class="n">bootdata2</span><span class="p">,</span><span class="n">nbb2</span> <span class="o">=</span> <span class="n">testdata2</span><span class="o">.</span><span class="n">GetBlockedBS</span><span class="p">(</span><span class="n">thisnboot</span><span class="o">=</span><span class="n">this_nboot</span><span class="p">,</span><span class="n">noblock_comp</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">tau_cutoff</span><span class="o">=</span><span class="n">tau_cutoff</span><span class="p">,</span><span class="n">block_cutoff</span><span class="o">=</span><span class="n">block_cutoff</span><span class="p">)</span>
+    <span class="n">bootdata3</span><span class="p">,</span><span class="n">nbb3</span> <span class="o">=</span> <span class="n">testdata3</span><span class="o">.</span><span class="n">GetBlockedBS</span><span class="p">(</span><span class="n">thisnboot</span><span class="o">=</span><span class="n">this_nboot</span><span class="p">,</span><span class="n">noblock_comp</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">tau_cutoff</span><span class="o">=</span><span class="n">tau_cutoff</span><span class="p">,</span><span class="n">block_cutoff</span><span class="o">=</span><span class="n">block_cutoff</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">testdata</span><span class="p">,</span><span class="n">testdata2</span><span class="p">,</span><span class="n">testdata3</span><span class="p">,</span><span class="n">bootdata</span><span class="p">,</span><span class="n">bootdata2</span><span class="p">,</span><span class="n">bootdata3</span><span class="p">,</span><span class="n">nbb</span><span class="p">,</span><span class="n">nbb2</span><span class="p">,</span><span class="n">nbb3</span></div>
+
+<div class="viewcode-block" id="TestAuto"><a class="viewcode-back" href="../Autocorr.html#Autocorr.TestAuto">[docs]</a><span class="k">def</span> <span class="nf">TestAuto</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    testing function for standard autocorrelation analysis</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">thisFun</span><span class="p">(</span><span class="o">*</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">def</span> <span class="nf">thisDer</span><span class="p">(</span><span class="o">*</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">const</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">this_size</span> <span class="o">=</span> <span class="mi">20000</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">this_size</span><span class="p">)</span>
+
+    <span class="n">values2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">this_size</span><span class="p">)</span><span class="o">/</span><span class="n">this_size</span>
+
+    <span class="n">values3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="n">this_size</span><span class="p">)</span>
+    <span class="n">val_df</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+
+    <span class="c1"># tuple_list = []</span>
+    <span class="c1"># for ii in range(100):</span>
+    <span class="c1">#     tuple_list.append((&#39;-1-&#39;,ii))</span>
+    <span class="c1"># for ii in range(400):</span>
+    <span class="c1">#     tuple_list.append((&#39;-2-&#39;,ii))</span>
+    <span class="c1"># for ii in range(1000):</span>
+    <span class="c1">#     tuple_list.append((&#39;-3-&#39;,ii))</span>
+    <span class="c1"># for ii in range(500):</span>
+    <span class="c1">#     tuple_list.append((&#39;-4-&#39;,ii))</span>
+
+    <span class="n">tuple_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">this_size</span><span class="o">//</span><span class="mi">2</span><span class="p">):</span>
+        <span class="n">tuple_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;-1-&#39;</span><span class="p">,</span><span class="n">ii</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">this_size</span><span class="o">//</span><span class="mi">2</span><span class="p">):</span>
+        <span class="n">tuple_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;-2-&#39;</span><span class="p">,</span><span class="n">ii</span><span class="p">))</span>
+    <span class="c1">#</span>
+    <span class="c1"># tuple_list = []</span>
+    <span class="c1"># for ii in range(this_size):</span>
+    <span class="c1">#     tuple_list.append((&#39;-1-&#39;,ii))</span>
+
+    <span class="n">indicies</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">MultiIndex</span><span class="o">.</span><span class="n">from_tuples</span><span class="p">(</span><span class="n">tuple_list</span><span class="p">,</span><span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;stream&#39;</span><span class="p">,</span><span class="s1">&#39;configs&#39;</span><span class="p">])</span>
+    <span class="c1"># indicies = range(this_size)</span>
+    <span class="c1"># val_df = pa.DataFrame()</span>
+    <span class="c1"># val_df[&#39;one&#39;] = pa.Series(values,index=indicies)</span>
+    <span class="c1"># val_df[&#39;two&#39;] = pa.Series(values2,index=indicies)</span>
+    <span class="c1"># val_df[&#39;three&#39;] = pa.Series(values3,index=indicies)</span>
+    <span class="c1"># def RatFun(one,two,three):</span>
+    <span class="c1">#     return const*one/(two*three)</span>
+    <span class="c1">#</span>
+    <span class="c1"># def RatFunDer(one,two,three):</span>
+    <span class="c1">#     return [const/(two*three),-const*one/(three*two**2),-const*one/(two*three**2)]</span>
+
+    <span class="n">val_df</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+    <span class="n">val_df</span><span class="p">[</span><span class="s1">&#39;one&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">values</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="n">indicies</span><span class="p">)</span>
+    <span class="n">val_df</span><span class="p">[</span><span class="s1">&#39;two&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">values2</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="n">indicies</span><span class="p">)</span>
+    <span class="n">val_df</span><span class="p">[</span><span class="s1">&#39;three&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">values3</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="n">indicies</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">RatFun</span><span class="p">(</span><span class="n">one</span><span class="p">,</span><span class="n">two</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">const</span><span class="o">*</span><span class="n">one</span><span class="o">*</span><span class="n">two</span>
+
+    <span class="k">def</span> <span class="nf">RatFunDer</span><span class="p">(</span><span class="n">one</span><span class="p">,</span><span class="n">two</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">const</span><span class="o">*</span><span class="n">two</span><span class="p">,</span><span class="n">const</span><span class="o">*</span><span class="n">one</span><span class="p">]</span>
+
+    <span class="n">testdata</span> <span class="o">=</span> <span class="n">AutoCorrelate</span><span class="p">(</span><span class="n">Fun</span><span class="o">=</span><span class="p">[</span><span class="n">thisFun</span><span class="p">,</span><span class="n">thisDer</span><span class="p">],</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;test_bootstrap_uniform&#39;</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="n">val_df</span><span class="p">[[</span><span class="s1">&#39;one&#39;</span><span class="p">]])</span>
+    <span class="n">testdata2</span> <span class="o">=</span> <span class="n">AutoCorrelate</span><span class="p">(</span><span class="n">Fun</span><span class="o">=</span><span class="p">[</span><span class="n">thisFun</span><span class="p">,</span><span class="n">thisDer</span><span class="p">],</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;test_bootstrap_arange&#39;</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="n">val_df</span><span class="p">[[</span><span class="s1">&#39;two&#39;</span><span class="p">]])</span>
+    <span class="n">testdata3</span> <span class="o">=</span> <span class="n">AutoCorrelate</span><span class="p">(</span><span class="n">Fun</span><span class="o">=</span><span class="p">[</span><span class="n">thisFun</span><span class="p">,</span><span class="n">thisDer</span><span class="p">],</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;test_bootstrap_normal&#39;</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="n">val_df</span><span class="p">[[</span><span class="s1">&#39;three&#39;</span><span class="p">]])</span>
+    <span class="n">testdatarat</span> <span class="o">=</span> <span class="n">AutoCorrelate</span><span class="p">(</span><span class="n">Fun</span><span class="o">=</span><span class="p">[</span><span class="n">RatFun</span><span class="p">,</span><span class="n">RatFunDer</span><span class="p">],</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;test_auto_ratio&#39;</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="n">val_df</span><span class="p">[[</span><span class="s1">&#39;one&#39;</span><span class="p">,</span><span class="s1">&#39;two&#39;</span><span class="p">]])</span>
+
+    <span class="n">this_info</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">Series</span><span class="p">()</span>
+    <span class="n">this_info</span><span class="p">[</span><span class="s1">&#39;save_file&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">this_dir</span><span class="o">+</span><span class="s1">&#39;/TestGraphs/test_Wopt.pdf&#39;</span>
+    <span class="n">this_info</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Test Auto Graph&#39;</span>
+    <span class="c1"># this_info[&#39;xlims&#39;] = [0,10]</span>
+    <span class="c1"># this_info[&#39;ylims&#39;] = [0,15]</span>
+    <span class="kn">import</span> <span class="nn">PlotData</span> <span class="k">as</span> <span class="nn">jpl</span>
+    <span class="n">data_plot</span> <span class="o">=</span> <span class="n">jpl</span><span class="o">.</span><span class="n">Plotting</span><span class="p">(</span><span class="n">plot_info</span><span class="o">=</span><span class="n">this_info</span><span class="p">)</span>
+    <span class="n">data_plot</span> <span class="o">=</span> <span class="n">testdata</span><span class="o">.</span><span class="n">PlotWopt</span><span class="p">(</span><span class="n">data_plot</span><span class="p">)</span>
+    <span class="n">data_plot</span> <span class="o">=</span> <span class="n">testdata2</span><span class="o">.</span><span class="n">PlotWopt</span><span class="p">(</span><span class="n">data_plot</span><span class="p">)</span>
+    <span class="n">data_plot</span> <span class="o">=</span> <span class="n">testdata3</span><span class="o">.</span><span class="n">PlotWopt</span><span class="p">(</span><span class="n">data_plot</span><span class="p">)</span>
+    <span class="n">data_plot</span> <span class="o">=</span> <span class="n">testdatarat</span><span class="o">.</span><span class="n">PlotWopt</span><span class="p">(</span><span class="n">data_plot</span><span class="p">)</span>
+    <span class="c1"># data_plot.LoadPickle(DefWipe=False)</span>
+    <span class="n">data_plot</span><span class="o">.</span><span class="n">PrintData</span><span class="p">()</span>
+    <span class="n">data_plot</span><span class="o">.</span><span class="n">PlotAll</span><span class="p">()</span>
+
+    <span class="n">this_info</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">Series</span><span class="p">()</span>
+    <span class="n">this_info</span><span class="p">[</span><span class="s1">&#39;save_file&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">this_dir</span><span class="o">+</span><span class="s1">&#39;/TestGraphs/test_Auto.pdf&#39;</span>
+    <span class="n">this_info</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Test Auto Graph&#39;</span>
+    <span class="c1"># this_info[&#39;xlims&#39;] = [0,10]</span>
+    <span class="c1"># this_info[&#39;ylims&#39;] = [0,15]</span>
+    <span class="kn">import</span> <span class="nn">PlotData</span> <span class="k">as</span> <span class="nn">jpl</span>
+    <span class="n">data_plot</span> <span class="o">=</span> <span class="n">jpl</span><span class="o">.</span><span class="n">Plotting</span><span class="p">(</span><span class="n">plot_info</span><span class="o">=</span><span class="n">this_info</span><span class="p">)</span>
+    <span class="n">data_plot</span> <span class="o">=</span> <span class="n">testdata</span><span class="o">.</span><span class="n">PlotTauInt</span><span class="p">(</span><span class="n">data_plot</span><span class="p">)</span>
+    <span class="n">data_plot</span> <span class="o">=</span> <span class="n">testdata2</span><span class="o">.</span><span class="n">PlotTauInt</span><span class="p">(</span><span class="n">data_plot</span><span class="p">)</span>
+    <span class="n">data_plot</span> <span class="o">=</span> <span class="n">testdata3</span><span class="o">.</span><span class="n">PlotTauInt</span><span class="p">(</span><span class="n">data_plot</span><span class="p">)</span>
+    <span class="n">data_plot</span> <span class="o">=</span> <span class="n">testdatarat</span><span class="o">.</span><span class="n">PlotTauInt</span><span class="p">(</span><span class="n">data_plot</span><span class="p">)</span>
+    <span class="c1"># data_plot.LoadPickle(DefWipe=False)</span>
+    <span class="n">data_plot</span><span class="o">.</span><span class="n">PrintData</span><span class="p">()</span>
+    <span class="n">data_plot</span><span class="o">.</span><span class="n">PlotAll</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">testdata</span><span class="p">,</span><span class="n">testdata2</span><span class="p">,</span><span class="n">testdata3</span><span class="p">,</span><span class="n">testdatarat</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">testdata1</span><span class="p">,</span><span class="n">testdata2</span><span class="p">,</span><span class="n">testdata3</span><span class="p">,</span><span class="n">testdatarat</span> <span class="o">=</span> <span class="n">TestAuto</span><span class="p">()</span>
+    <span class="c1"># %matplotlib inline</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Result is in testdata1,2,3&#39;</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Jack Dragos
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

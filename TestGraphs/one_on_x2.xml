@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Results>
+    <window_size_x>12.0</window_size_x>
+    <window_size_y>12.275</window_size_y>
+    <Info>
+        <save_file>/home/jackdra/LQCD/Scripts/Python_Analysis/TestGraphs/one_on_x2.pdf</save_file>
+        <title></title>
+        <xlabel></xlabel>
+        <ylabel></ylabel>
+        <leg_loc>best</leg_loc>
+        <leg_ncol>1</leg_ncol>
+        <leg_fontsize>25</leg_fontsize>
+        <leg_alpha>0.7</leg_alpha>
+        <y_plot_scale>None</y_plot_scale>
+        <x_plot_scale>None</x_plot_scale>
+    </Info>
+    <one_on_x2>
+        <type>error_bar</type>
+        <label>$bvst0$</label>
+        <plot_this>True</plot_this>
+        <Median>False</Median>
+        <fmt_class>None</fmt_class>
+        <phys_axies>False</phys_axies>
+        <arrow_text_size>30</arrow_text_size>
+        <arrow_color>black</arrow_color>
+        <arrow_style>fancy</arrow_style>
+        <x_fun>None</x_fun>
+        <color>#000080</color>
+        <symbol>o</symbol>
+        <shift>0</shift>
+        <shift_overlap>0.005</shift_overlap>
+        <supress_legend>False</supress_legend>
+        <hairline>False</hairline>
+        <extrap_fade>1.5</extrap_fade>
+        <hair_alpha>20</hair_alpha>
+        <hair_alpha>1</hair_alpha>
+        <FPName></FPName>
+        <FPUnits></FPUnits>
+        <x_range_min>0</x_range_min>
+        <x_scale>1</x_scale>
+        <x_range_max>-1</x_range_max>
+        <x_increment>1</x_increment>
+        <alpha>0.5</alpha>
+        <histtype>stepfilled</histtype>
+        <suppress_key_index>False</suppress_key_index>
+        <scale>1.0</scale>
+        <plot_err></plot_err>
+        <data>
+            <x_2.5377162290>        5.5600000000        57.0000000000</x_2.5377162290>
+            <x_2.3999592122>        5.4000000000        31.0000000000</x_2.3999592122>
+            <x_2.2590866059>        4.3100000000        45.0000000000</x_2.2590866059>
+            <x_1.3628954894>        7.0000000000        34.0000000000</x_1.3628954894>
+            <x_2.2386627909>        6.2100000000        29.0000000000</x_2.2386627909>
+            <x_4.9885618908>        2.8000000000        32.0000000000</x_4.9885618908>
+            <x_3.2060027740>        2.5100000000        11.0000000000</x_3.2060027740>
+        </data>
+    </one_on_x2>
+</Results>

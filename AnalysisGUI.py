@@ -1,5 +1,10 @@
 #!/usr/bin/env python
 
+'''
+
+Controls the GUI interface for running the codebase with selected parameters.
+
+'''
 
 JobFolder = './JobsFolder/'
 JobNumber = 1
@@ -64,10 +69,10 @@ thisInfo = deepcopy(pa.defInfo)
 thisInfoFlow = deepcopy(pa.defInfoFlow)
 job_params = deepcopy(pa.def_job_params)
 job_params_solve = deepcopy(pa.def_job_params_solve)
-paramfile = './Param_p3.py3p'
-prev_file = './PrevRun_p3.py3p'
-job_paramfile = './JobParam_p3.py3p'
-job_solve_paramfile = './JobParamSolve_p3.py3p'
+paramfile = pa.this_dir+'/Param_p3.py3p'
+prev_file = pa.this_dir+'/PrevRun_p3.py3p'
+job_paramfile = pa.this_dir+'/JobParam_p3.py3p'
+job_solve_paramfile = pa.this_dir+'/JobParamSolve_p3.py3p'
 
 thisInfoList = [thisInfo]
 thisInfoFlowList = [thisInfoFlow]
@@ -126,7 +131,7 @@ def PickleParams(paramdict):
             with open( paramfile, "rb" ) as pfile:
                 currpdict =  pickle.load(pfile)
             currpdict.update(paramdict)
-        except:
+        except Exception as err:
             print('Error reading before pickling ',paramfile,' Ignoring')
             currpdict = paramdict
     else:
@@ -174,12 +179,12 @@ def JobSolvePickleParams(paramdict):
 class CalculationParams( ta.HasTraits ):
     """
 
-    has general parameters for analysis
-
+    Contains general parameters for analysis
 
     """
 
     global thisDefWipe,def_def_checkcfgs,def_Corr_Sets
+    scratch_hotfix = ta.Bool(pa.scratch_hotfix)
     Debug_Mode = ta.Bool(pa.Debug_Mode)
     force_wipe = ta.Bool(thisDefWipe)
     Check_Configurations = ta.Bool(def_checkcfgs)
@@ -214,6 +219,7 @@ class CalculationParams( ta.HasTraits ):
 
     view = tua.View(
         '_',
+        tua.Item('scratch_hotfix'),
         tua.Item('Debug_Mode'),
         tua.Item('force_wipe'),
         tua.Item('Check_Configurations'),
@@ -263,7 +269,7 @@ class CalculationParams( ta.HasTraits ):
 class RunParams( ta.HasTraits ):
     """
 
-
+    Contains parameters for the particular ensemble to be analysed
 
     """
 
@@ -475,7 +481,7 @@ class RunParams( ta.HasTraits ):
 class PlotParams( ta.HasTraits ):
     """
 
-
+    DEPRECIATED
 
     """
     legend_location = ta.Enum(ql.LegLocList)
@@ -558,6 +564,8 @@ class PlotParams( ta.HasTraits ):
 class JobParams( ta.HasTraits ):
     """
 
+    When calling 'Create job' or 'Create separate job', the job will have these parameters
+
     """
     global JobNumber
     def_hour,def_min,def_seconds = list(map(int,job_params['time'].split(':')))
@@ -569,7 +577,10 @@ class JobParams( ta.HasTraits ):
     minutes = ta.Int(def_min)
     seconds = ta.Int(def_seconds)
     memory = ta.Str(job_params['memory'])
-    email = ta.Str(job_params['email'])
+    if 'email' in job_params:
+        email = ta.Str(job_params['email'])
+    else:
+        email = ta.Str('')
     nproc = ta.Int(job_params['nproc'])
     run_ptg = ta.Bool(job_params['RunPTG'])
     queue_type = ta.Str(job_params['quetype'])
@@ -606,7 +617,8 @@ class JobParams( ta.HasTraits ):
         str_minutes = str(self.minutes).zfill(2)
         str_seconds = str(self.seconds).zfill(2)
         this_job_params['time'] = ':'.join([str_hours,str_minutes,str_seconds])
-        this_job_params['email'] = str(self.email)
+        if len(str(self.email)) > 0:
+            this_job_params['email'] = str(self.email)
         this_job_params['nproc'] = int(self.nproc)
         this_job_params['RunPTG'] = bool(self.run_ptg)
         this_job_params['quetype'] = str(self.queue_type)
@@ -621,6 +633,10 @@ class JobParams( ta.HasTraits ):
 class JobParamsSolve( ta.HasTraits ):
     """
 
+    When calling 'Create job' or 'Create separate job', the job will have these parameters
+    when running the 'solve' part of the system of equations.
+
+
     """
     global JobNumber
     def_hour,def_min,def_seconds = list(map(int,job_params_solve['time'].split(':')))
@@ -632,7 +648,10 @@ class JobParamsSolve( ta.HasTraits ):
     minutes = ta.Int(def_min)
     seconds = ta.Int(def_seconds)
     memory = ta.Str(job_params_solve['memory'])
-    email = ta.Str(job_params_solve['email'])
+    if 'email' in job_params_solve:
+        email = ta.Str(job_params_solve['email'])
+    else:
+        email = ta.Str('')
     nproc = ta.Int(job_params_solve['nproc'])
     run_ptg = ta.Bool(job_params_solve['RunPTG'])
     queue_type = ta.Str(job_params_solve['quetype'])
@@ -669,7 +688,8 @@ class JobParamsSolve( ta.HasTraits ):
         str_minutes = str(self.minutes).zfill(2)
         str_seconds = str(self.seconds).zfill(2)
         this_job_params_solve['time'] = ':'.join([str_hours,str_minutes,str_seconds])
-        this_job_params_solve['email'] = str(self.email)
+        if len(str(self.email)) > 0:
+            this_job_params_solve['email'] = str(self.email)
         this_job_params_solve['nproc'] = int(self.nproc)
         this_job_params_solve['RunPTG'] = bool(self.run_ptg)
         this_job_params_solve['quetype'] = str(self.queue_type)
@@ -684,6 +704,7 @@ class JobParamsSolve( ta.HasTraits ):
 class TPCorr( ta.HasTraits ):
     """
 
+    Controler for running the two-point correlation function analysis
 
     """
     reformat_directory = ta.Str(pa.outputdir+'/Reformat2pt/')
@@ -1018,7 +1039,7 @@ class TPCorr( ta.HasTraits ):
 class FlowedOp( ta.HasTraits ):
     """
 
-
+    Controler for running the Flowed operator (Q or W) analysis
 
     """
 
@@ -1136,7 +1157,7 @@ class FlowedOp( ta.HasTraits ):
         #     thisInfoFlowList[info_index]['RandTFitM']= self.randt_fit_max
         #     try:
         #         thisInfoFlowList[info_index]['nrandt'] = [int(self.Rand_Times_Per_GF)]
-        #     except:
+        #     except Exception as err:
         #         thisInfoFlowList[info_index]['nrandt'] = str(self.Rand_Times_Per_GF)
         # else:
             # thisInfoFlowList[info_index]['deltaEps']= pa.Qeps
@@ -1194,6 +1215,9 @@ class FlowedOp( ta.HasTraits ):
 
 class FlowedOpFull( ta.HasTraits ):
     """
+
+    Controler for running the code for analysing the Euclidean time dependnace of
+    the Flowed operators.
 
     """
 
@@ -1468,6 +1492,7 @@ class FlowedOpFull( ta.HasTraits ):
 class RatioFun( ta.HasTraits ):
     """
 
+    Controler for the Ratio function analysis of the three- and two-point correlation functions
 
     """
     reformat_directory = ta.Str(pa.outputdir+'/Reformat3pt/')
@@ -1596,7 +1621,8 @@ class RatioFun( ta.HasTraits ):
                 self.tsum_picked  = thisInfoFlowList[info_index]['tsum_picked'][0]
             else:
                 self.tsum_picked  = thisInfoFlowList[info_index]['tsum_picked']
-            self.tcurr_picked = thisInfoFlowList[info_index]['tcurr_picked'][0]
+            if 'tcurr_picked' in thisInfoFlowList[info_index].keys():
+                self.tcurr_picked = thisInfoFlowList[info_index]['tcurr_picked'][0]
             self.rf_fit_range,self.Rat_tsum_range = thisInfoFlowList[info_index]['FitsRFFull'][0][0:2]
         else:
             self.rf_fit_range = thisInfoFlowList[info_index]['FitsRF'][0]
@@ -1758,6 +1784,8 @@ class RatioFun( ta.HasTraits ):
 class Alpha( ta.HasTraits ):
     """
 
+    Controler for the 'Alpha' analysis which uses two-point correlators and flowed operators
+    (combined).
 
     """
 
@@ -2025,6 +2053,9 @@ class Alpha( ta.HasTraits ):
 class AlphaFull( ta.HasTraits ):
     """
 
+    Controler for the 'Alpha' analysis where the Euclidean time dependance of the
+    flowed operators is symmetically summed around some location relative to the
+    two-point correlator.
 
     """
     alpha_save_mem = ta.Bool(False)
@@ -2436,6 +2467,7 @@ class AlphaFull( ta.HasTraits ):
 class FormFacts( ta.HasTraits ):
     """
 
+    Controler for the full Form Factor analysis.
 
     """
 
@@ -3037,6 +3069,12 @@ class FormFacts( ta.HasTraits ):
 
 
 class DictFlowEditor(ta.HasTraits):
+    '''
+
+    Manual display of all the parameters passed into the analysis (for flowed analysis).
+
+    '''
+
     Object = ta.Instance( object )
     this_index = ta.Int(0)
     def __init__(self, **traits):
@@ -3065,6 +3103,11 @@ class DictFlowEditor(ta.HasTraits):
 
 
 class DictEditor(ta.HasTraits):
+    '''
+
+    Manual display of all the parameters passed into the analysis.
+
+    '''
     Object = ta.Instance( object )
     this_index = ta.Int(0)
     def __init__(self, **traits):
@@ -3095,14 +3138,16 @@ class DictEditor(ta.HasTraits):
 class BeginFrame( ta.HasTraits ):
     """
 
-    starting frame, to select what type of thing you want to do
-    options are:
+    Master frame.
 
-    - Flowed operators
-    - Two Point correlators
-    - CP odd correlators
-    - Ratio Function
-    - Form Factors
+    Internal state of 'run parameters' is stored in thisInfoList and thisInfoFlowList
+
+    Create and Delete parameter sets elements via 'new info' and 'delete info' buttons
+
+    'show info diff' will display all the parameters that vary between all the
+    different parameter sets set up for the analysis.
+
+    'load previous run' will load the previously calculated run again.
 
     """
 

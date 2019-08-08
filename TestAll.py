@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
 from PredefFitFuns import C2OSFAntiper,C2OSFAntiperDer
+from Params import this_dir
 
 temp = 'pie'
-this_file = './TestGraphs/flow_plot_test.py3p'
+this_file = this_dir+'/TestGraphs/flow_plot_test.py3p'
 with open(this_file,'rb') as f:
     with open(this_file,'wb') as g:
         pickle.dump(g,temp)
@@ -17,7 +18,7 @@ plot_FF = Test_Papers_FF()
 
 
 from PlotData import Test_Papers_FF,Test_Paper_Single,Test_Plot,Plotting
-this_plot = Plotting(plot_info = {'save_file':'/home/jackdra/LQCD/Scripts/Python_Analysis/TestGraphs/Paper_FF.pdf'})
+this_plot = Plotting(plot_info = {'save_file':this_dir+'/TestGraphs/Paper_FF.pdf'})
 this_plot.LoadPickle()
 this_plot.
 plot_FF = Test_Plot()
@@ -34,7 +35,7 @@ plot_FF = mpi701_plot()
 import numpy as np
 import pandas as pa
 from collections import OrderedDict
-import pickle as pickle
+import pickle
 # import dill as pickle
 
 
@@ -61,6 +62,13 @@ print(data2.loss_values[-1])
 
 
 import MomParams as mp
+new_df,old_df,calc_df,phys_df = mp.ConvertQsqrd()
+phys_df
+calc_df
+new_df
+new_df-old_df
+calc_df+new_df
+old_df
 from Params import defInfo
 defInfo['kud'] = 1375400
 data = mp.TestMom(defInfo)
@@ -81,6 +89,8 @@ fit_data.Fit_Stats_fmt
 # print com_data['Combine_Fits']['Par2']
 
 import FFSolve as ff
+internal_dir = '/home/jackdra/LQCD/Results/DebugResults/'
+ff.FixQsqrd_All(this_dir)
 
 dataFFP = ff.TestFFSolve(DicvefWipe=False,q2list=[1,4],DS='Proton')
 dataFFN = ff.TestFFSolve(DefWipe=False,q2list=[1,4],DS='Neutron')
@@ -91,7 +101,7 @@ datacomb.FF_Fit_Stats
 dataFFFlow = ff.TestFFFlowSolve(DefWipe=False,q2list=[3])
 this_file = '/home/jackdra/PHD/CHROMA/TestVar/scratch//resultsSCfgs//RC32x64Kud01375400Ks01364000/FormFactors/doub_qmax0_ppmax4//Pickle/GeGm_RFmin3_BestChi.py3p'
 
-this_file = './TestGraphs/testFF.py3p'
+this_file = this_dir+'/TestGraphs/testFF.py3p'
 with open(this_file,'rb') as f:
     test_data = pickle.load(f)
 
@@ -99,7 +109,7 @@ for ikey,ival in test_data.items():
     print()
     print(type(ival), ikey)
     print(ival)
-    with open('./TestGraphs/test.py3p','wb') as f:
+    with open(this_dir+'/TestGraphs/test.py3p','wb') as f:
         pickle.dump(ival,f)
 
 import RatioCorrelators as rat
@@ -166,7 +176,7 @@ pre_folder = '/home/jackdra/LQCD/Results/DebugResults/Configs/'
 post_folder = '/home/jackdra/LQCD/Results/DebugResults/Configs_Nucleon/'
 try:
     os.mkdir(post_folder)
-except:
+except Exception as err:
     pass
 cfg_list = ['RC16x32Kud01382500Ks01371000/G2/Baryon_-12-_CPEven_tsrc0_ism64_jsm64.cfgs.msg',
             'RC20x40Kud01370000Ks01364000/G2/Baryon_-1234-_CPEven_tsrc0_ism64_jsm64.cfgs.msg',
@@ -186,7 +196,7 @@ out_files = [post_folder + icfg for icfg in cfg_list_out]
 for iin,iout in zip(in_files,out_files):
     try:
         os.mkdir(iout.replace('MOMNUMB/Nucleon_CFGNUMB.txt',''))
-    except:
+    except Exception as err:
         pass
     tpc.ReformatC2(iin,iout)
 
@@ -198,11 +208,11 @@ post_folder = '/home/jackdra/LQCD/Results/DebugResults/Configs_Q/'
 post_folder_picktf = '/home/jackdra/LQCD/Results/DebugResults/Configs_Q_picktf/'
 try:
     os.mkdir(post_folder)
-except:
+except Exception as err:
     pass
 try:
     os.mkdir(post_folder_picktf)
-except:
+except Exception as err:
     pass
 cfg_list = ['RC16x32_kud1382500_ks1371000_-12-_TopCharge.cfgs.msg',
             'RC20x40_kud1370000_ks1364000_-1432-_TopCharge.cfgs.msg',
@@ -223,7 +233,7 @@ out_files = [post_folder + icfg for icfg in cfg_list_out]
 # for iin,iout in zip(in_files,out_files):
 #     try:
 #         os.mkdir(iout.replace('Q_CFGNUMB.txt',''))
-#     except:
+#     except Exception as err:
 #         pass
 #     fo.ReformatFO(iin,iout)
 
@@ -260,17 +270,17 @@ print(dataRatFO2.Rat_Stats['alpha_rat_div'].loc['g4','q01-1','t_f6.01',:].apply(
 # data2pt.GetFuns()
 # for ikey,ival in data2pt.__dict__.iteritems():
 #     print ikey,type(ival)
-#     pickle.dump(ival,open('./TestGraphs/testpickle.py3p','wb'))
+#     pickle.dump(ival,open(this_dir+'/TestGraphs/testpickle.py3p','wb'))
 #
 #
 # for ikey,ival in data2pt.NNCPEven.__dict__.iteritems():
 #     print ikey,type(ival)
-#     pickle.dump(ival,open('./TestGraphs/testpickle.py3p','wb'))
+#     pickle.dump(ival,open(this_dir+'/TestGraphs/testpickle.py3p','wb'))
 #
 # data2pt.NNCPEven
 # for ikey,ival in data2pt.NNCPEven.C2_Stats['Auto'].iloc[0].__dict__.iteritems():
 #     print ikey,type(ival)
-#     pickle.dump(ival,open('./TestGraphs/testpickle.tstr(self.C3FOclass.NJN.tsink)p','wb'))
+#     pickle.dump(ival,open(this_dir+'/TestGraphs/testpickle.tstr(self.C3FOclass.NJN.tsink)p','wb'))
 
 
 
@@ -419,9 +429,9 @@ for it in itertools.product(*test_list):
 # data.Op_cfgs
 # for ikey,ival in data.flowFit_Stats['boot'].iloc[0].__dict__.iteritems():
 #     print ikey,type(ival)
-#     pickle.dump(ival,open('./TestGraphs/testpickle.py3p','wb'))
+#     pickle.dump(ival,open(this_dir+'/TestGraphs/testpickle.py3p','wb'))
 #
-# %timeit pickle.load(open('./TestGraphs/testpickle.py3p','rb'))
+# %timeit pickle.load(open(this_dir+'/TestGraphs/testpickle.py3p','rb'))
 #
 # %timeit data.FlowWrite()
 # %timeit data.FlowRead(show_timer=False)
@@ -441,7 +451,7 @@ for it in itertools.product(*test_list):
 # %timeit data.Read_Cfgs(show_timer=False)
 #
 #
-# %timeit pickle.dump(data.Get_Flattened_Cfgs()[0],open('./TestGraphs/testpickle.py3p','wb'))
+# %timeit pickle.dump(data.Get_Flattened_Cfgs()[0],open(this_dir+'/TestGraphs/testpickle.py3p','wb'))
 # %timeit data.Write_Cfgs()
 # %timeit -n 20 data.Read_Cfgs(file_type='read_pickle',show_timer=False)
 #

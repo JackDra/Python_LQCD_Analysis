@@ -73,7 +73,10 @@ ObsListExt = ['Q','W','QQ','QW','WW']
 FOcfglist = ['None']+ObsList
 
 
-LegLocList = ['best','upper right','upper left','lower left','lower right','center right','center left']
+LegLocList = ['best','upper center','lower center',
+              'upper right','upper left',
+              'lower right','lower left',
+              'center right','center left']
 
 DSList = ['Neutron','Proton','Vector','IsoVector','doub','sing','PdivideN','NdivideP','NmultiplyP','PdivideNV2']
 
@@ -82,16 +85,20 @@ ProjList = ['P4','P3']
 BMList = ['Baryon','Meson']
 
 # BMNumbList = ['CPEven','CPOdd','Pion','P4','g5P4','P4g5','g5']
-BarNumbList = ['CPEven','CPOdd','P4','g5P4','P4g5','g5','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17']
-BarNumbListCPOdd = ['CPOdd','g5P4','P4g5','g5','CPEven','P4','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17']
+BarNumbList = ['CPEven','CPOdd','P4','g5P4','P4g5','g5',
+               '1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17']
+BarNumbListCPOdd = ['CPOdd','g5P4','P4g5','g5','CPEven','P4',
+                    '1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17']
 MesNumbList = ['Pion','I','g1','g2','g3','g4','g1g2','g1g3','g1g4','g2g3','g2g4','g3g4','g1g5','g2g5','g3g5','g4g5','g5']
 # BMNumbListOdd = ['CPOdd','g5P4','P4g5','g5','CPEven']
 # BMNumbListOdd = ['CPOdd','g5P4','P4g5','g5']
 
 
-CurrTypes = ['Scalar','Vector','VectorTop','VectorTopBNL','VectorTopBNL_mal','VectorWein','VectorWeinBNL','PsScalar','PsVector','Tensor','GeGm']
+CurrTypes = ['Scalar','Vector','VectorTop','VectorTopBNL','VectorTopBNL_mal',
+             'VectorWein','VectorWeinBNL','PsScalar','PsVector','Tensor','GeGm']
 
-FFTypes = ['F_{1}','F_{2}','F_{3}','F_{3}/2m_{N}','tilde{F}_{2}','tilde{F}_{3}','tilde{F}_{3}/2m_{N}','G_{E}','G_{M}','G_{A}','G_{P}','G_{S}','H_{T}','E_{T}','tilde{H}_{T}']
+FFTypes = ['F_{1}','F_{2}','F_{3}','F_{3}/2m_{N}','tilde{F}_{2}',
+           'tilde{F}_{3}','tilde{F}_{3}/2m_{N}','G_{E}','G_{M}','G_{A}','G_{P}','G_{S}','H_{T}','E_{T}','tilde{H}_{T}']
 
 
 mpi411_ens = {}
@@ -106,6 +113,8 @@ mpi411_ens['Fits'] = [['state1','fitr9-20']]
 mpi411_ens['FitsAlpha'] = ['fitr10-20']
 mpi411_ens['FitsAlphaFull'] = [['fitr10-20','tsumfitr7-15']]
 mpi411_ens['Rat_tsum_range'] = 'tsumfitr6-32'
+mpi411_ens['tflowlist'] = [5.47]
+mpi411_ens['tflowfit'] = ['t_f'+str(itf) for itf in mpi411_ens['tflowlist']]
 mpi411_ens['jsmCoeffs'] = [5.522e-07,-0.0001589143,0.9999999874]
 
 
@@ -142,6 +151,8 @@ L16_ens['Fits'] = [['state1','fitr9-20']]
 L16_ens['FitsAlpha'] = ['fitr5-11']
 L16_ens['FitsAlphaFull'] = [['fitr5-11','tsumfitr10-15']]
 L16_ens['Rat_tsum_range'] = 'tsumfitr3-16'
+L16_ens['tflowlist'] = [3.75]
+L16_ens['tflowfit'] = ['t_f'+str(itf) for itf in mpi411_ens['tflowlist']]
 L16_ens['jsmCoeffs'] = [0.0,0.0,1.0]
 
 L20_ens = {}
@@ -157,6 +168,8 @@ L20_ens['Fits'] = [['state1','fitr12-19']]
 L20_ens['FitsAlpha'] = ['fitr7-17']
 L20_ens['FitsAlphaFull'] = [['fitr7-17','tsumfitr10-20']]
 L20_ens['Rat_tsum_range'] = 'tsumfitr4-20'
+L20_ens['tflowlist'] = [5.14]
+L20_ens['tflowfit'] = ['t_f'+str(itf) for itf in mpi411_ens['tflowlist']]
 L20_ens['jsmCoeffs'] = [0.0,0.0,1.0]
 
 
@@ -176,23 +189,27 @@ L28_ens['Fits'] = [['state1','fitr17-25']]
 L28_ens['FitsAlpha'] = ['fitr14-21']
 L28_ens['FitsAlphaFull'] = [['fitr14-21','tsumfitr10-20']]
 L28_ens['Rat_tsum_range'] = 'tsumfitr10-28'
+L28_ens['tflowlist'] = [9.62]
+L28_ens['tflowfit'] = ['t_f'+str(itf) for itf in mpi411_ens['tflowlist']]
 L28_ens['jsmCoeffs'] = [0.0,0.0,1.0]
 
 qu_L24_ens = {}
-qu_L24_ens['nxyzt'] = [24,48]
+qu_L24_ens['nxyzt'] = [24,24*2]
 qu_L24_ens['a'] = 0.0685
-# qu_L24_ens['kud'] = 0.1356
-# qu_L24_ens['ks'] = 0.1351
-# qu_L24_ens['Csw'] = 1628
 qu_L24_ens['Beta'] = 6.00
-# qu_L24_ens['tsink'] = 18
-# qu_L24_ens['aL'] = qu_L24_ens['a']*qu_L24_ens['nxyzt'][0]
-# qu_L24_ens['Fits'] = [['state1','fitr17-25']]
-# qu_L24_ens['FitsAlpha'] = ['fitr14-21']
-# qu_L24_ens['FitsAlphaFull'] = [['fitr14-21','tsumfitr10-20']]
-# qu_L24_ens['Rat_tsum_range'] = 'tsumfitr10-28'
-# qu_L24_ens['jsmCoeffs'] = [0.0,0.0,1.0]
+qu_L24_ens['kud'] = 0.1001
+qu_L24_ens['ks'] = 0.1001
 
+qu_L28_ens = copy(qu_L24_ens)
+qu_L28_ens['nxyzt'] = [28,28*2]
+qu_L28_ens['a'] = 0.0685
+qu_L28_ens['Beta'] = 6.10
+
+
+qu_L32_ens = copy(qu_L24_ens)
+qu_L32_ens['nxyzt'] = [32,32*2]
+qu_L32_ens['a'] = 0.0685
+qu_L32_ens['Beta'] = 6.20
 
 ens_dict = OrderedDict()
 ens_dict['mpi411'] = mpi411_ens
@@ -206,6 +223,8 @@ ens_dict['L28'] = L28_ens
 ens_dict['L20_no2'] = L20_no2_ens
 ens_dict['L20_no2'] = L20_no2_ens
 ens_dict['qu_L24'] = qu_L24_ens
+ens_dict['qu_L28'] = qu_L28_ens
+ens_dict['qu_L32'] = qu_L32_ens
 
 setup_dict = OrderedDict()
 setup_dict['pion_mass'] = [mpi411_ens,mpi570_ens,mpi701_ens]
@@ -571,12 +590,13 @@ top_susc_1512_06746_plot['type'] = 'error_bar'
 
 
 
-
+import pandas as pa
+from MomParams import hbarc
 FF_1512_00566 = pa.DataFrame()
 FF_1512_00566.name = r'E. Shintani et al, 2015, $N_{f}=2+1$, DWF'
 FF_1512_00566.loc[:,r'$nxyz$'] = pa.Series([24,24,32])
 FF_1512_00566.loc[:,r'$nt$'] = pa.Series([24*2,24*2,32*2])
-FF_1512_00566.loc[:,r'$a[fm]$'] = pa.Series([0.1125,0.1125,0.14375])
+FF_1512_00566.loc[:,r'$a[fm]$'] = pa.Series([0.11055,0.11055,0.14316])
 FF_1512_00566.loc[:,r'$a^{-1}[GeV]$'] = hbarc/FF_1512_00566.loc[:,r'$a[fm]$']
 FF_1512_00566.loc[:,r'$Volume[fm]^3$'] = (FF_1512_00566.loc[:,r'$a[fm]$'] * FF_1512_00566.loc[:,r'$nxyz$'])**3
 
@@ -658,24 +678,41 @@ FF_1510_05823.loc[:,r'$m_{\pi}[MeV]$'] = FF_1510_05823.loc[:,r'$m_{\pi}[GeV]$']*
 
 FF_1510_05823.loc[:,r'$m_{N} [GeV]$'] = pa.Series([1.220,1.220,1.220,1.220,1.220,1.220,1.220])
 FF_1510_05823.loc[:,r'$\Delta m_{N} [GeV]$'] = pa.Series([0.005,0.005,0.005,0.005,0.005,0.005,0.005])
+FF_1510_05823.loc[:,r'$m_{N}$'] = FF_1510_05823.loc[:,r'$m_{N} [GeV]$']/FF_1510_05823.loc[:,r'$a^{-1}[GeV]$']
+FF_1510_05823.loc[:,r'$\Delta m_{N}$'] = FF_1510_05823.loc[:,r'$\Delta m_{N} [GeV]$']/FF_1510_05823.loc[:,r'$a^{-1}[GeV]$']
 
 ## selected using Iwasaki action,
 FF_1510_05823.loc[:,r'$alpha fitr$'] = pa.Series(['fitr9-20','fitr9-20','fitr9-20','fitr9-20','fitr9-20','fitr9-20','fitr9-20'])
 FF_1510_05823.loc[:,r'$alpha$'] = pa.Series([-0.217,-0.217,-0.217,-0.217,-0.217,-0.217,-0.217])
 FF_1510_05823.loc[:,r'$\Delta alpha$'] = pa.Series([0.018,0.018,0.018,0.018,0.018,0.018,0.018])
 
-paper_value = -0.555 / (2*1.220)
-paper_value_err = 0.005/1.220
-paper_value_err += 0.074/0.555
+this_mN = FF_1510_05823[r'$m_{N}$'].iloc[0]
+this_mN_err = FF_1510_05823[r'$\Delta m_{N}$'].iloc[0]
+this_a = FF_1510_05823.loc[:,r'$a[fm]$'].iloc[0]
+this_alpha = FF_1510_05823.loc[:,r'$alpha$'].iloc[0]
+this_alpha_err = FF_1510_05823.loc[:,r'$\Delta alpha$'].iloc[0]
+F3 = -0.555
+F3_err = 0.074
+F3tilde = 0.094
+aF2 = 1.50*this_alpha
+aF2_err = 0.016/1.5
+aF2_err += this_alpha_err/this_alpha
+aF2_err = aF2 * aF2_err
+#BENIFIT OF THE DOUBT...
+F3tilde_err = F3_err
+# F3tilde_err = F3_err + aF2_err
+paper_value = F3 *this_a/ (2*this_mN)
+paper_value_err = this_mN_err/this_mN
+paper_value_err += F3_err/np.abs(F3)
 paper_value_err = paper_value_err * paper_value
 
-paper_value_rot = 0.094 / (2*1.220)
-paper_value_rot_err = paper_value_err
-# paper_value_rot_err = 0.005/1.220
-# paper_value_rot_err += 0.074/0.094
-# paper_value_rot_err = paper_value_rot_err * paper_value_rot
+paper_value_rot = F3tilde *this_a/ (2*this_mN)
+# paper_value_rot_err = paper_value_err
+paper_value_rot_err = this_mN_err/this_mN
+paper_value_rot_err += F3tilde_err/np.abs(F3tilde)
+paper_value_rot_err = paper_value_rot_err * paper_value_rot
 
-
+# paper_value_rot
 ## Just hacked it so that smaller tsink is F_{3} and larger tsink is \tilde{F}_{3}
 FF_1510_05823.loc[:,r'$d_{n}[efm] t_{sink}=0.9876fm$'] = pa.Series([-0.035,-0.036,-0.035,-0.039,-0.046,-0.041,paper_value])
 FF_1510_05823.loc[:,r'$\Delta d_{n}[efm] t_{sink}=0.9876fm$'] = pa.Series([0.009,0.010,0.010,0.010,0.012,0.012,paper_value_err])
@@ -698,8 +735,8 @@ FF_1510_05823.loc[:,r'$\Delta d_{n}[efm] t_{sink}=1.1522fm$ EMPR'] = pa.Series([
 
 # xlab = r'$m_{\pi}[GeV]$'
 # xplot = FF_1510_05823.loc[:,xlab]
-first_key = ['Wilson','Gradient Flow',slice(None)]
-FF_1510_05823_MuIn = FF_1510_05823.set_index([r'Action',r'Q_Smearing',r'$m_{\pi}[MeV]$'])
+first_key = [slice(None),'Wilson','Gradient Flow']
+FF_1510_05823_MuIn = FF_1510_05823.set_index([r'$m_{\pi}[MeV]$',r'Action',r'Q_Smearing'])
 
 
 FF_1510_05823_plot = pa.DataFrame()
@@ -777,11 +814,15 @@ FF_1502_02295.loc[:,r'$\Delta m_{\pi}[MeV]$'] = FF_1502_02295.loc[:,r'$\Delta m_
 FF_1502_02295.loc[:,r'$m_{N} [GeV]$'] = pa.Series([1.246,1.138])
 FF_1502_02295.loc[:,r'$\Delta m_{N} [GeV]$'] = pa.Series([0.007,0.013])
 
-## So dodgy..... esitmated from graph aparently...
+FF_1502_02295.loc[:,r'$m_{N}$'] = FF_1502_02295.loc[:,r'$m_{N} [GeV]$']/FF_1502_02295.loc[:,r'$a^{-1}[GeV]$']
+FF_1502_02295.loc[:,r'$\Delta m_{N}$'] = FF_1502_02295.loc[:,r'$\Delta m_{N} [GeV]$']/FF_1502_02295.loc[:,r'$a^{-1}[GeV]$']
+
+## So dodgy..... esitmated from Figure 5 aparently...
 FF_1502_02295.loc[:,r'$alpha$'] = pa.Series([-0.079,-0.092])
 FF_1502_02295.loc[:,r'$\Delta alpha$'] = pa.Series([0.027,0.014])
 
 ## Taken from P. E. Shanahan et al., Phys. Rev. D89, 074511 (2014).
+## Table VI, -2/3 \kappa^{p,u} + 1/3 * \kappa^{p,d}
 FF_1502_02295.loc[:,r'$F_{2}$'] = pa.Series([-1.491,-1.473])
 FF_1502_02295.loc[:,r'$\Delta F_{2}$'] = pa.Series([0.022,0.037])
 
@@ -793,16 +834,29 @@ FF_1502_02295.loc[:,r'$\tilde{F}_{3}$'] = pa.Series([-0.130,0.020])
 FF_1502_02295.loc[:,r'$\Delta \tilde{F}_{3}$'] = pa.Series([0.048,0.029])
 # FF_1502_02295.loc[:,r'$\Delta \tilde{F}_{3}$'] = FF_1502_02295.loc[:,r'$\Delta F_{3}$']*FF_1502_02295.loc[:,r'$\tilde{F}_{3}$']/FF_1502_02295.loc[:,r'$F_{3}$']
 
-FF_1502_02295.loc[:,r'$d_{n}[efm]$'] = FF_1502_02295.loc[:,r'$F_{3}$']/2*FF_1502_02295.loc[:,r'$m_{N} [GeV]$']
-FF_1502_02295.loc[:,r'$\Delta d_{n}[efm]$'] = abs(FF_1502_02295.loc[:,r'$\Delta F_{3}$']/FF_1502_02295.loc[:,r'$F_{3}$'])
-FF_1502_02295.loc[:,r'$\Delta d_{n}[efm]$'] += abs(FF_1502_02295.loc[:,r'$\Delta m_{N} [GeV]$']/FF_1502_02295.loc[:,r'$m_{N} [GeV]$'])
+this_F3 = FF_1502_02295.loc[:,r'$F_{3}$']
+this_DF3 = FF_1502_02295.loc[:,r'$\Delta F_{3}$']
+this_a = FF_1502_02295.loc[:,r'$a[fm]$']
+this_mN = FF_1502_02295.loc[:,r'$m_{N}$']
+this_DmN = FF_1502_02295.loc[:,r'$\Delta m_{N}$']
+
+this_F3_tilde = FF_1502_02295.loc[:,r'$\tilde{F}_{3}$']
+this_DF3_tilde = FF_1502_02295.loc[:,r'$\Delta \tilde{F}_{3}$']
+
+
+FF_1502_02295.loc[:,r'$d_{n}[efm]$'] = this_F3*this_a/(2*this_mN)
+FF_1502_02295.loc[:,r'$\Delta d_{n}[efm]$'] = abs(this_DF3/this_F3)
+FF_1502_02295.loc[:,r'$\Delta d_{n}[efm]$'] += abs(this_DmN/this_mN)
 FF_1502_02295.loc[:,r'$\Delta d_{n}[efm]$'] = FF_1502_02295.loc[:,r'$\Delta d_{n}[efm]$'] * FF_1502_02295.loc[:,r'$d_{n}[efm]$']
 
-FF_1502_02295.loc[:,r'$\tilde{d}{n}[efm]$'] = FF_1502_02295.loc[:,r'$\tilde{F}_{3}$']/2*FF_1502_02295.loc[:,r'$m_{N} [GeV]$']
-FF_1502_02295.loc[:,r'$\Delta \tilde{d}{n}[efm]$'] = FF_1502_02295.loc[:,r'$\Delta \tilde{F}_{3}$']/FF_1502_02295.loc[:,r'$\tilde{F}_{3}$']
-FF_1502_02295.loc[:,r'$\Delta \tilde{d}{n}[efm]$'] += FF_1502_02295.loc[:,r'$\Delta m_{N} [GeV]$']/FF_1502_02295.loc[:,r'$m_{N} [GeV]$']
+FF_1502_02295.loc[:,r'$\tilde{d}{n}[efm]$'] = this_F3_tilde*this_a/(2*this_mN)
+FF_1502_02295.loc[:,r'$\Delta \tilde{d}{n}[efm]$'] = abs(this_DF3_tilde/this_F3_tilde)
+FF_1502_02295.loc[:,r'$\Delta \tilde{d}{n}[efm]$'] += abs(this_DmN/this_mN)
 FF_1502_02295.loc[:,r'$\Delta \tilde{d}{n}[efm]$'] = FF_1502_02295.loc[:,r'$\Delta \tilde{d}{n}[efm]$'] * FF_1502_02295.loc[:,r'$\tilde{d}{n}[efm]$']
 
+
+# print(FF_1502_02295.loc[:,(r'$d_{n}[efm]$',r'$\Delta d_{n}[efm]$')])
+# print(FF_1502_02295.loc[:,(r'$\tilde{d}{n}[efm]$',r'$\Delta \tilde{d}{n}[efm]$')])
 xlab = r'$m_{\pi}[MeV]$'
 xplot = FF_1502_02295.loc[:,xlab]
 
@@ -903,9 +957,21 @@ FF_0512004.loc[:,r'$m_{N} [GeV]$'] = FF_0512004.loc[:,r'$m_{N}$']*FF_0512004.loc
 FF_0512004.loc[:,r'$\Delta m_{N} [GeV]$'] = FF_0512004.loc[:,r'$\Delta m_{N}$']*FF_0512004.loc[:,r'$a^{-1}[GeV]$']
 #
 # FF_0512004.loc[:,r'$alpha fitr$'] = pa.Series(['fitr5-9',r'$fitr5-9',r'$fitr5-9$'])
-# FF_0512004.loc[:,r'$alpha$'] = pa.Series([-0.370,-0.356,-0.333])
-# FF_0512004.loc[:,r'$\Delta alpha$'] = pa.Series([0.022,0.022,0.128])
+# FF_0512004.loc[:,r'$alpha$'] = pa.Series([-0.070,-0.160])
+# FF_0512004.loc[:,r'$\Delta alpha$'] = pa.Series([0.020,0.020])
+#
+# FF_0512004.loc[:,r'$\tilde{F}_{2}$'] = pa.Series([-1.698,-1.715])
+# FF_0512004.loc[:,r'$\Delta \tilde{F}_{2}$'] = pa.Series([0.068,0.046])
+#
+# FF_0512004.loc[:,r'$\tilde{F}_{3}/2m_{N}$'] = pa.Series([0.49,0.12])
+# FF_0512004.loc[:,r'$\Delta \tilde{F}_{3}/2m_{N}$'] = pa.Series([0.45,0.27])
+#
+# FF_0512004.loc[:,r'$\tilde{F}_{3}$'] = 2*FF_0512004.loc[:,r'$m_{N}$']*FF_0512004.loc[:,r'$\tilde{F}_{3}/2m_{N}$']*FF_0512004.loc[:,r'$a[fm]$']/hbarc
+# FF_0512004.loc[:,r'$\Delta \tilde{F}_{3}$'] = FF_0512004.loc[:,r'$\Delta m_{N}$']/FF_0512004.loc[:,r'$m_{N}$']
+# FF_0512004.loc[:,r'$\Delta \tilde{F}_{3}$'] = FF_0512004.loc[:,r'$\Delta \tilde{F}_{3}$'] + FF_0512004.loc[:,r'$\Delta \tilde{F}_{3}/2m_{N}$']/FF_0512004.loc[:,r'$\tilde{F}_{3}/2m_{N}$']
+# FF_0512004.loc[:,r'$\Delta \tilde{F}_{3}$'] = FF_0512004.loc[:,r'$\Delta \tilde{F}_{3}$'] * FF_0512004.loc[:,r'$\tilde{F}_{3}$']
 
+# FF_0512004.loc[:,r'$\tilde{F}_{3}$']
 ## so bad approximation.... they just took the smallest momentum and said its smaller than that
 FF_0512004.loc[:,r'$d_{p}[efm]$ Eq.41'] = pa.Series([0.0,0.0])
 FF_0512004.loc[:,r'$\Delta d_{p}[efm]$ Eq.41'] = pa.Series([0.20 + 0.04,0.087+0.095])
@@ -965,21 +1031,35 @@ FF_0505022.loc[:,r'$\Delta F_{2}$'] = pa.Series([0.040])
 FF_0505022.loc[:,r'$d_{n}[efm] (q^{2}\approx 0.58GeV^{2})$'] = pa.Series([-0.024])
 FF_0505022.loc[:,r'$\Delta d_{n}[efm]$ (q^{2}\approx 0.58GeV^{2})'] = pa.Series([0.005])
 
+a = FF_0505022.loc[:,r'$a[fm]$']
 dn = FF_0505022.loc[:,r'$d_{n}[efm] (q^{2}\approx 0.58GeV^{2})$']
 d_dn = FF_0505022.loc[:,r'$\Delta d_{n}[efm]$ (q^{2}\approx 0.58GeV^{2})']
+amn = FF_0505022.loc[:,r'$am_{N}$']
+d_amn = FF_0505022.loc[:,r'$\Delta am_{N}$']
 mn = FF_0505022.loc[:,r'$m_{N} [GeV]$']
-d_mn = FF_0505022.loc[:,r'$\Delta alpha$']
+d_mn = FF_0505022.loc[:,r'$\Delta m_{N} [GeV]$']
 alpha = FF_0505022.loc[:,r'$alpha$']
 d_alpha = FF_0505022.loc[:,r'$\Delta alpha$']
 F2 = FF_0505022.loc[:,r'$F_{2}$']
 d_F2 = FF_0505022.loc[:,r'$\Delta F_{2}$']
 
-FF_0505022.loc[:,r'$\tilde{d}_{n}[efm] (q^{2}\approx 0.58GeV^{2})$'] = dn*2*mn/hbarc + 2*alpha*F2
+top = (dn*2*mn/hbarc + 2*alpha*F2)*a
+bot = 2*amn
+d = top/bot
+d_top = a*(d_dn*2*mn/hbarc + dn*2*d_mn/hbarc + 2*d_alpha*F2 + 2*alpha*d_F2)
+d_bot = d_amn
+d_d = d_top/bot -(d_bot*top)/(bot**2)
+FF_0505022.loc[:,r'$\tilde{d}_{n}[efm] (q^{2}\approx 0.58GeV^{2})$'] = d
+# FF_0505022.loc[:,r'$\tilde{d}_{n}[efm] (q^{2}\approx 0.58GeV^{2})$'] = (dn*2*mn/hbarc + 2*alpha*F2)
+# FF_0505022.loc[:,r'$\tilde{d}_{n}[efm] (q^{2}\approx 0.58GeV^{2})$']
+# FF_0505022.loc[:,r'$\tilde{d}_{n}[efm] (q^{2}\approx 0.58GeV^{2})$']
+
+FF_0505022.loc[:,r'$\Delta \tilde{d}_{n}[efm] (q^{2}\approx 0.58GeV^{2})$'] = d_d
 
 # FF_0505022.loc[:,r'$\Delta \tilde{d}_{n}[efm] (q^{2}\approx 0.58GeV^{2})$'] = \
-#     d_dn*2*mn/hbarc + dn*2*d_mn/hbarc + 2*d_alpha*F2 + 2*alpha*d_F2
-FF_0505022.loc[:,r'$\Delta \tilde{d}_{n}[efm] (q^{2}\approx 0.58GeV^{2})$'] = \
-FF_0505022.loc[:,r'$\Delta d_{n}[efm]$ (q^{2}\approx 0.58GeV^{2})'] * FF_0505022.loc[:,r'$\tilde{d}_{n}[efm] (q^{2}\approx 0.58GeV^{2})$']/FF_0505022.loc[:,r'$d_{n}[efm] (q^{2}\approx 0.58GeV^{2})$']
+# FF_0505022.loc[:,r'$\Delta d_{n}[efm]$ (q^{2}\approx 0.58GeV^{2})'] * \
+# FF_0505022.loc[:,r'$\tilde{d}_{n}[efm] (q^{2}\approx 0.58GeV^{2})$']/ \
+# FF_0505022.loc[:,r'$d_{n}[efm] (q^{2}\approx 0.58GeV^{2})$']
 
 
 
@@ -999,6 +1079,7 @@ FF_0505022_plot.at['type',this_lab] = 'error_bar'
 this_lab = FF_0505022.name+r'Neutron $q^{2}\approx 0.58GeV^{2}$ Rotated'
 FF_0505022_plot.loc[:,this_lab] =  null_series
 FF_0505022_plot.at['x_data',this_lab] = xplot
+
 FF_0505022_plot.at['y_data',this_lab] = FF_0505022.loc[:,r'$\tilde{d}_{n}[efm] (q^{2}\approx 0.58GeV^{2})$']
 FF_0505022_plot.at['yerr_data',this_lab] = FF_0505022.loc[:,r'$\Delta \tilde{d}_{n}[efm] (q^{2}\approx 0.58GeV^{2})$']
 FF_0505022_plot.at['label',this_lab] = this_lab

@@ -1,0 +1,545 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>MiscFuns module &mdash; LQCD Analysis Codebase TF Fits documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/my_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="MAH_control module" href="MAH_control.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> LQCD Analysis Codebase
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Python_Analysis</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="AnalysisGUI.html">AnalysisGUI module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Autocorr.html">Autocorr module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BootStrapping.html">BootStrapping module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CreateTable.html">CreateTable module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DSDefines.html">DSDefines module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FFSolve.html">FFSolve module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FileIO.html">FileIO module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FitFunctions.html">FitFunctions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FitFunctions_TF.html">FitFunctions_TF module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FlowOpps.html">FlowOpps module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FormFactors.html">FormFactors module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GammaMatricies.html">GammaMatricies module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MAH_control.html">MAH_control module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">MiscFuns module</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ModPlot.html">ModPlot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModStylePlot.html">ModStylePlot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MomParams.html">MomParams module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MultiWrap.html">MultiWrap module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="NullPlotData.html">NullPlotData module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Params.html">Params module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PlotData.html">PlotData module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PredefFitFuns.html">PredefFitFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="QuantityLists.html">QuantityLists module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RatioCorrelators.html">RatioCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ReadBinaryCfuns.html">ReadBinaryCfuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ReadFO.html">ReadFO module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RunSetCommands.html">RunSetCommands module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFFs.html">SetsOfFFs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFits.html">SetsOfFits module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFlowOps.html">SetsOfFlowOps module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfRatios.html">SetsOfRatios module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfTwoPtCorrs.html">SetsOfTwoPtCorrs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ThreePtCorrelators.html">ThreePtCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TimeStuff.html">TimeStuff module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TwoPtCorrelators.html">TwoPtCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VarMethod.html">VarMethod module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="XmlFormatting.html">XmlFormatting module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xmltodict.html">xmltodict module</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">LQCD Analysis Codebase</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="modules.html">Python_Analysis</a> &raquo;</li>
+        
+      <li>MiscFuns module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/MiscFuns.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-MiscFuns">
+<span id="miscfuns-module"></span><h1>MiscFuns module<a class="headerlink" href="#module-MiscFuns" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="MiscFuns.CheckClass">
+<code class="descclassname">MiscFuns.</code><code class="descname">CheckClass</code><span class="sig-paren">(</span><em>class1</em>, <em>class2</em>, <em>checklist</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#CheckClass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.CheckClass" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.CombineCfgs">
+<code class="descclassname">MiscFuns.</code><code class="descname">CombineCfgs</code><span class="sig-paren">(</span><em>cfga</em>, <em>cfgb</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#CombineCfgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.CombineCfgs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.CombineListCfgs">
+<code class="descclassname">MiscFuns.</code><code class="descname">CombineListCfgs</code><span class="sig-paren">(</span><em>list_cfgs</em>, <em>this_attr</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#CombineListCfgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.CombineListCfgs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.CreateNameAndLL">
+<code class="descclassname">MiscFuns.</code><code class="descname">CreateNameAndLL</code><span class="sig-paren">(</span><em>thisset</em>, <em>thissink</em>, <em>from_index=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#CreateNameAndLL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.CreateNameAndLL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.DEBUGprint">
+<code class="descclassname">MiscFuns.</code><code class="descname">DEBUGprint</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#DEBUGprint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.DEBUGprint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="MiscFuns.DOO">
+<em class="property">class </em><code class="descclassname">MiscFuns.</code><code class="descname">DOO</code><span class="sig-paren">(</span><em>default_factory=None</em>, <em>*a</em>, <em>**kw</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#DOO"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.DOO" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/collections.html#collections.OrderedDict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">collections.OrderedDict</span></code></a></p>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear</span></code>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#MiscFuns.DOO.copy" title="MiscFuns.DOO.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">fromkeys</span></code>(S[,&nbsp;v])</td>
+<td>If not specified, the value defaults to None.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code>(k[,d])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">items</span></code>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">move_to_end</span></code></td>
+<td>Move an existing element to the end (or beginning if last==False).</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">pop</span></code>(k[,d])</td>
+<td>value.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">popitem</span></code>($self,&nbsp;/[,&nbsp;last])</td>
+<td>Remove and return a (key, value) pair from the dictionary.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">setdefault</span></code>(k[,d])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">update</span></code>([E,&nbsp;]**F)</td>
+<td>If E is present and has a .keys() method, then does:  for k in E: D[k] = E[k] If E is present and lacks a .keys() method, then does:  for k, v in E: D[k] = v In either case, this is followed by: for k in F:  D[k] = F[k]</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">values</span></code>()</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="MiscFuns.DOO.copy">
+<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; a shallow copy of od<a class="reference internal" href="_modules/MiscFuns.html#DOO.copy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.DOO.copy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.FixDictArray">
+<code class="descclassname">MiscFuns.</code><code class="descname">FixDictArray</code><span class="sig-paren">(</span><em>thislist</em>, <em>ikey</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#FixDictArray"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.FixDictArray" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.GenSinkFun">
+<code class="descclassname">MiscFuns.</code><code class="descname">GenSinkFun</code><span class="sig-paren">(</span><em>jsmcoeffs</em>, <em>show_timer=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#GenSinkFun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.GenSinkFun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.GetCfgMissmatch">
+<code class="descclassname">MiscFuns.</code><code class="descname">GetCfgMissmatch</code><span class="sig-paren">(</span><em>cfg_list1</em>, <em>cfg_list2</em>, <em>max_len_write=10</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#GetCfgMissmatch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.GetCfgMissmatch" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.GetFileNames">
+<code class="descclassname">MiscFuns.</code><code class="descname">GetFileNames</code><span class="sig-paren">(</span><em>thisdir</em>, <em>strcomp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#GetFileNames"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.GetFileNames" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.GetInfoList">
+<code class="descclassname">MiscFuns.</code><code class="descname">GetInfoList</code><span class="sig-paren">(</span><em>thisInfo</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#GetInfoList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.GetInfoList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.Intersect_DataFrame_2col_xsrc">
+<code class="descclassname">MiscFuns.</code><code class="descname">Intersect_DataFrame_2col_xsrc</code><span class="sig-paren">(</span><em>df_one</em>, <em>df_two</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#Intersect_DataFrame_2col_xsrc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.Intersect_DataFrame_2col_xsrc" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.MIndex_to_numpy">
+<code class="descclassname">MiscFuns.</code><code class="descname">MIndex_to_numpy</code><span class="sig-paren">(</span><em>this_df</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#MIndex_to_numpy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.MIndex_to_numpy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.MakeStreamCfgs">
+<code class="descclassname">MiscFuns.</code><code class="descname">MakeStreamCfgs</code><span class="sig-paren">(</span><em>cfg_df</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#MakeStreamCfgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.MakeStreamCfgs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.MultiSplit">
+<code class="descclassname">MiscFuns.</code><code class="descname">MultiSplit</code><span class="sig-paren">(</span><em>this_str</em>, <em>delim_list</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#MultiSplit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.MultiSplit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.NumbToFileName">
+<code class="descclassname">MiscFuns.</code><code class="descname">NumbToFileName</code><span class="sig-paren">(</span><em>val</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#NumbToFileName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.NumbToFileName" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.ODNested">
+<code class="descclassname">MiscFuns.</code><code class="descname">ODNested</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#ODNested"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.ODNested" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.Pullflag">
+<code class="descclassname">MiscFuns.</code><code class="descname">Pullflag</code><span class="sig-paren">(</span><em>data</em>, <em>atribute</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#Pullflag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.Pullflag" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.ReduceCfgs">
+<code class="descclassname">MiscFuns.</code><code class="descname">ReduceCfgs</code><span class="sig-paren">(</span><em>twopt</em>, <em>threept</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#ReduceCfgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.ReduceCfgs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.ReductList">
+<code class="descclassname">MiscFuns.</code><code class="descname">ReductList</code><span class="sig-paren">(</span><em>this_list</em>, <em>max_len=5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#ReductList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.ReductList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.RemoveAllBoots">
+<code class="descclassname">MiscFuns.</code><code class="descname">RemoveAllBoots</code><span class="sig-paren">(</span><em>boot_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#RemoveAllBoots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.RemoveAllBoots" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.Remove_Empty_Str">
+<code class="descclassname">MiscFuns.</code><code class="descname">Remove_Empty_Str</code><span class="sig-paren">(</span><em>thislist</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#Remove_Empty_Str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.Remove_Empty_Str" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.Series_TO_ODict">
+<code class="descclassname">MiscFuns.</code><code class="descname">Series_TO_ODict</code><span class="sig-paren">(</span><em>this_series</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#Series_TO_ODict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.Series_TO_ODict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.Series_fix_key">
+<code class="descclassname">MiscFuns.</code><code class="descname">Series_fix_key</code><span class="sig-paren">(</span><em>this_series</em>, <em>index</em>, <em>str_rep_from</em>, <em>str_rep_too</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#Series_fix_key"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.Series_fix_key" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.StreamToNumb">
+<code class="descclassname">MiscFuns.</code><code class="descname">StreamToNumb</code><span class="sig-paren">(</span><em>val</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#StreamToNumb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.StreamToNumb" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.VecDelta">
+<code class="descclassname">MiscFuns.</code><code class="descname">VecDelta</code><span class="sig-paren">(</span><em>tvec</em>, <em>val</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#VecDelta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.VecDelta" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.add_std">
+<code class="descclassname">MiscFuns.</code><code class="descname">add_std</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>xbar</em>, <em>ybar</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#add_std"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.add_std" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.convert_to_hex">
+<code class="descclassname">MiscFuns.</code><code class="descname">convert_to_hex</code><span class="sig-paren">(</span><em>rgba_color</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#convert_to_hex"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.convert_to_hex" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.div_std">
+<code class="descclassname">MiscFuns.</code><code class="descname">div_std</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>xbar</em>, <em>ybar</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#div_std"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.div_std" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.flip_fun_2arg">
+<code class="descclassname">MiscFuns.</code><code class="descname">flip_fun_2arg</code><span class="sig-paren">(</span><em>this_fun</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#flip_fun_2arg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.flip_fun_2arg" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.fmt_Qt5_col">
+<code class="descclassname">MiscFuns.</code><code class="descname">fmt_Qt5_col</code><span class="sig-paren">(</span><em>this_class</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#fmt_Qt5_col"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.fmt_Qt5_col" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.fmt_file_type">
+<code class="descclassname">MiscFuns.</code><code class="descname">fmt_file_type</code><span class="sig-paren">(</span><em>this_type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#fmt_file_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.fmt_file_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.get_val">
+<code class="descclassname">MiscFuns.</code><code class="descname">get_val</code><span class="sig-paren">(</span><em>val</em>, <em>Phys=True</em>, <em>this_type=&lt;class 'int'&gt;</em>, <em>suppress_warn=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#get_val"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.get_val" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.get_val_float">
+<code class="descclassname">MiscFuns.</code><code class="descname">get_val_float</code><span class="sig-paren">(</span><em>val</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#get_val_float"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.get_val_float" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.get_val_float_0">
+<code class="descclassname">MiscFuns.</code><code class="descname">get_val_float_0</code><span class="sig-paren">(</span><em>val</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#get_val_float_0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.get_val_float_0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.human_format">
+<code class="descclassname">MiscFuns.</code><code class="descname">human_format</code><span class="sig-paren">(</span><em>num</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#human_format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.human_format" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.intersect">
+<code class="descclassname">MiscFuns.</code><code class="descname">intersect</code><span class="sig-paren">(</span><em>*d</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#intersect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.intersect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.is_number">
+<code class="descclassname">MiscFuns.</code><code class="descname">is_number</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#is_number"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.is_number" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.logNA">
+<code class="descclassname">MiscFuns.</code><code class="descname">logNA</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#logNA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.logNA" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.logNA_list">
+<code class="descclassname">MiscFuns.</code><code class="descname">logNA_list</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#logNA_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.logNA_list" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.map_str">
+<code class="descclassname">MiscFuns.</code><code class="descname">map_str</code><span class="sig-paren">(</span><em>this_list</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#map_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.map_str" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.mindex_iloc_md">
+<code class="descclassname">MiscFuns.</code><code class="descname">mindex_iloc_md</code><span class="sig-paren">(</span><em>df</em>, <em>index_list</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#mindex_iloc_md"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.mindex_iloc_md" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.mkdir_p">
+<code class="descclassname">MiscFuns.</code><code class="descname">mkdir_p</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#mkdir_p"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.mkdir_p" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.mul_std">
+<code class="descclassname">MiscFuns.</code><code class="descname">mul_std</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>xbar</em>, <em>ybar</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#mul_std"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.mul_std" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.multindex_iloc">
+<code class="descclassname">MiscFuns.</code><code class="descname">multindex_iloc</code><span class="sig-paren">(</span><em>df</em>, <em>index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#multindex_iloc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.multindex_iloc" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.pow_std">
+<code class="descclassname">MiscFuns.</code><code class="descname">pow_std</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>xbar</em>, <em>ybar</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#pow_std"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.pow_std" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.rreload">
+<code class="descclassname">MiscFuns.</code><code class="descname">rreload</code><span class="sig-paren">(</span><em>module, paths=[''], mdict={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#rreload"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.rreload" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recursively reload modules.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MiscFuns.sub_std">
+<code class="descclassname">MiscFuns.</code><code class="descname">sub_std</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>xbar</em>, <em>ybar</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MiscFuns.html#sub_std"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MiscFuns.sub_std" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="MAH_control.html" class="btn btn-neutral" title="MAH_control module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Jack Dragos
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

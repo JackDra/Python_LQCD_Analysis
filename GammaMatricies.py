@@ -2,7 +2,7 @@
 import numpy as np
 from copy import deepcopy,copy
 from Params import myeps
-
+import warnings
 
 def GammaTOChroma(Opp):
     if isinstance(Opp,int):
@@ -37,6 +37,10 @@ def GammaTOChroma(Opp):
     else:
         return -1
 
+def AlphaRotCoeffs(C2,C3,alpha):
+    c2a = np.cos(2*alpha)
+    s2a = np.sin(2*alpha)
+    return C2*c2a - C3*s2a,C3*c2a + C2*s2a
 
 
 def ChromaTOGamma(Opp):
@@ -58,6 +62,7 @@ def ChromaTOGamma(Opp):
 
 
 mattype = np.complex
+z_mat = np.zeros((4,4),mattype)
 
 class GammaMat(object):
 
@@ -69,12 +74,14 @@ class GammaMat(object):
     resulting gamma matricies are in np.matrix format
 
     """
-
-    def __init__(self,Rep='Sakurai'):
+    def __init__(self,Rep='Sakurai',space='Euclid'):
 
         self.Rep = Rep
         ## sets up gamma matricies
+        self.space = space
+        self.Euclid = 'euclid' in space.lower()
         self.SetRep(Rep)
+
 
     def SetRep(self,Rep):
         if 'sakura' in Rep or 'Sakurai' in Rep:
@@ -98,41 +105,83 @@ class GammaMat(object):
                                  [ 1j,  0,  0,  0],
                                  [  0,-1j,  0,  0]],mattype)
 
-            self.g5 = np.matrix([[  0,  0, -1,  0],
-                                 [  0,  0,  0, -1],
-                                 [ -1,  0,  0,  0],
-                                 [  0, -1,  0,  0]],mattype)
+            # self.g5 = np.matrix([[  0,  0, -1,  0],
+            #                      [  0,  0,  0, -1],
+            #                      [ -1,  0,  0,  0],
+            #                      [  0, -1,  0,  0]],mattype)
             self.g_mu_Tsign = [+1,-1,+1,-1,+1,+1]
+            # self.sigma_mu_nu = [[z_mat,-1j*self.g0*self.g1,-1j*self.g0*self.g2,-1j*self.g0*self.g3,z_mat],
+            #    [-1j*self.g1*self.g0,z_mat,-1j*self.g1*self.g2,-1j*self.g1*self.g3,-1j*self.g1*self.g4],
+            #    [-1j*self.g2*self.g0,-1j*self.g2*self.g1,z_mat,-1j*self.g2*self.g3,-1j*self.g2*self.g4],
+            #    [-1j*self.g3*self.g0,-1j*self.g3*self.g1,-1j*self.g3*self.g2,z_mat,-1j*self.g3*self.g4],
+            #    [z_mat,-1j*self.g4*self.g1,-1j*self.g4*self.g2,-1j*self.g4*self.g3,z_mat]]
+
         ## TODO, needs change for whole code tho
+        elif 'SZIN' in Rep:
+            ## CHROMA representation
+            warnings.warn('setting gamma rep to SZIN')
+            self.g0 = self.g4 = np.matrix([[  0,  0,  1,  0],
+                                           [  0,  0,  0,  1],
+                                           [  1,  0,  0,  0],
+                                           [  0,  1,  0,  0]],mattype)
+
+            self.g1 = np.matrix([[  0,  0,  0, 1j],
+                                 [  0,  0, 1j,  0],
+                                 [  0,-1j,  0,  0],
+                                 [-1j,  0,  0,  0]],mattype)
+
+
+            self.g2 = np.matrix([[  0,  0,  0, -1],
+                                 [  0,  0,  1,  0],
+                                 [  0,  1,  0,  0],
+                                 [ -1,  0,  0,  0]],mattype)
+
+            self.g3 = np.matrix([[  0,  0, 1j,  0],
+                                 [  0,  0,  0,-1j],
+                                 [-1j,  0,  0,  0],
+                                 [  0, 1j,  0,  0]],mattype)
         # elif 'dirac' in Rep or 'Dirac' in Rep:
         else:
             raise IOError(Rep+' not a recognised representation for gamma matricies')
 
         ## include gamma 5 here?
+        if self.Euclid:
+            self.g5 = self.g1*self.g2*self.g3*self.g4
+        else:
+            if 'SZIN' in Rep:
+                self.g1 = -1j * self.g1
+                self.g2 = 1j * self.g2
+                self.g3 = -1j * self.g3
+                self.g5 = 1j*self.g0*self.g1*self.g2*self.g3
+            else:
+                raise NotImplementedError('chiral Minkowski space not implemented for anything other than SZIN rep')
         self.g_mu = [self.g0,self.g1,self.g2,self.g3,self.g4]
-        ## is this right?
-        self.sigma_mu_nu = [[np.zeros((4,4),mattype),-1j*self.g0*self.g1,-1j*self.g0*self.g2,-1j*self.g0*self.g3,np.zeros((4,4),mattype)],
-                       [-1j*self.g1*self.g0,np.zeros((4,4),mattype),-1j*self.g1*self.g2,-1j*self.g1*self.g3,-1j*self.g1*self.g4],
-                       [-1j*self.g2*self.g0,-1j*self.g2*self.g1,np.zeros((4,4),mattype),-1j*self.g2*self.g3,-1j*self.g2*self.g4],
-                       [-1j*self.g3*self.g0,-1j*self.g3*self.g1,-1j*self.g3*self.g2,np.zeros((4,4),mattype),-1j*self.g3*self.g4],
-                       [np.zeros((4,4),mattype),-1j*self.g4*self.g1,-1j*self.g4*self.g2,-1j*self.g4*self.g3,np.zeros((4,4),mattype)]]
+        self.sigma_mu_nu = []
+        for mu in range(5):
+            self.sigma_mu_nu.append([])
+            for nu in range(5):
+                self.sigma_mu_nu[-1].append(1j*self.comutator(self.g_mu[mu],self.g_mu[nu])/2)
+
         self.sigma_5_nu = [self.g5*self.g0,self.g5*self.g1,self.g5*self.g2,self.g5*self.g3,self.g5*self.g4]
         self.sigma_nu_5 = [self.g0*self.g5,self.g1*self.g5,self.g2*self.g5,self.g3*self.g5,self.g4*self.g5]
 
         self.G_unpol = (np.eye(4,dtype=mattype) + self.g4) / 2.
-        self.G_pol = -1j*self.G_unpol* self.g5 * self.g3
+        self.G_pol = -1j*self.G_unpol* self.g3*self.g5
 
         ## if you like dictionaries
         self.GammaDict = {}
         for ig in range(0,5):
-            for jg in range(0,5):
-                self.GammaDict['sig'+str(ig)+str(jg)] = self.sigma_mu_nu[ig][jg]
             self.GammaDict['g'+str(ig)] = self.g_mu[ig]
-            self.GammaDict['sig5'+str(ig)] = self.sigma_5_nu[ig]
-            self.GammaDict['sig'+str(ig)+'5'] = self.sigma_nu_5[ig]
         self.GammaDict['g5'] = self.g5
         self.GammaDict['P4'] = self.G_unpol
         self.GammaDict['P3'] = self.G_pol
+        for ig in range(0,5):
+            for jg in range(0,5):
+                self.GammaDict['sig'+str(ig)+str(jg)] = self.sigma_mu_nu[ig][jg]
+        for ig in range(0,5):
+            self.GammaDict['sig5'+str(ig)] = self.sigma_5_nu[ig]
+        for ig in range(0,5):
+            self.GammaDict['sig'+str(ig)+'5'] = self.sigma_nu_5[ig]
         self.GammaDict['I'] = np.matrix(np.eye(4,dtype=mattype), copy=False)
         self.GammaDict['neg'] = -self.GammaDict['I']
         self.GammaDict['cmplx'] = 1.0j*self.GammaDict['I']
@@ -146,6 +195,15 @@ class GammaMat(object):
             return output
         else:
             return self.GammaDict[ikey]
+
+    def comutator(self,gi,gj):
+        out_gi,out_gj = gi,gj
+        if isinstance(gi,str):
+            out_gi = self[out_gi]
+        if isinstance(gj,str):
+            out_gj = self[out_gj]
+        return gi*gj - gj*gi
+
 
     def SigMult(self,isig,jsig,thing):
         return -1j*self.GammaMult(isig,self.GammaMult(jsig,thing))
@@ -195,11 +253,14 @@ class GammaMat(object):
     ## default is (energy, px, py ,pz)
     ## can use (px,py,pz,energy) as well if Eindex = 4
     def Slashed(self,FVecObj,Eindex=0):
-        if not isinstance(FVecObj,np.ndarray): raise IOError('Slashed requires numpy array to do element-wise multiplication')
+        if not self.Euclid:
+            raise NotImplementedError('slashed not implemented for non-euclidean yet')
+        if not isinstance(FVecObj,(list,tuple,np.ndarray)):
+            raise IOError('Slashed requires numpy array to do element-wise multiplication')
         if Eindex == 0:
-            return np.sum([ig * FVecObj for ig in self.g_mu[:-1]],0)
+            return np.sum([ig * ivec for ivec,ig in zip(FVecObj,self.g_mu[:-1])],0)
         elif Eindex == 4:
-            return np.sum([ig * FVecObj for ig in self.g_mu[1:]],0)
+            return np.sum([ig * ivec for ivec,ig in zip(FVecObj,self.g_mu[1:])],0)
         else:
             raise IOError('Eindex must be 0 or 4')
 
@@ -215,11 +276,10 @@ class CorrSpinTrace(object):
 
     """
 
-    def __init__(self,Rep='Sakurai'):
-
+    def __init__(self,Rep='Sakurai',space='Euclid'):
         self.Rep = Rep
         ## sets up gamma matricies class for use
-        self.Gammas = GammaMat(Rep=Rep)
+        self.Gammas = GammaMat(Rep=Rep,space=space)
         self.CurrFFs = {'Scalar'   : self.ScalarFF,
                         'Vector'   : self.VectorFF,
                         'GeGm'     : self.GeGmFF,
@@ -247,12 +307,17 @@ class CorrSpinTrace(object):
         if isinstance(thisOpp,str):thisOpp = self.Gammas[Opp]
         if isinstance(thisOpp,tuple) or isinstance(thisOpp,list):thisOpp = self.Gammas[Opp]
         Ep, Epp = -1.0j*pmu[0],-1.0j*ppmu[0]
-        pplusm = (self.Gammas.g4 - (1j/Ep) * (pmu[1]*self.Gammas.g1 + pmu[2]*self.Gammas.g2 + pmu[3]*self.Gammas.g3) + (mass / Ep) * np.eye(4))
-        pprimeplusm = (self.Gammas.g4 - (1j/Epp) * (ppmu[1]*self.Gammas.g1 + ppmu[2]*self.Gammas.g2 + ppmu[3]*self.Gammas.g3) + (mass / Epp )* np.eye(4))
+
+        pplusm = -1.0j*self.Gammas.Slashed(pmu) + mass*np.eye(4)
+        pprimeplusm = -1.0j*self.Gammas.Slashed(ppmu) + mass*np.eye(4)
+        pplusm /= Ep
+        pprimeplusm /= Epp
+        # pplusm = (self.Gammas.g4 - (1j/Ep) * (pmu[1]*self.Gammas.g1 + pmu[2]*self.Gammas.g2 + pmu[3]*self.Gammas.g3) + (mass / Ep) * np.eye(4))
+        # pprimeplusm = (self.Gammas.g4 - (1j/Epp) * (ppmu[1]*self.Gammas.g1 + ppmu[2]*self.Gammas.g2 + ppmu[3]*self.Gammas.g3) + (mass / Epp )* np.eye(4))
         if Rfac:
-            return (pplusm * thisOpp * pprimeplusm)*np.sqrt(Epp*Ep/((Epp+mass)*(Ep+mass))) * 1/4.
+            return (pprimeplusm * thisOpp * pplusm)*np.sqrt(Epp*Ep/((Epp+mass)*(Ep+mass))) * 1/4.
         else:
-            return (pplusm * thisOpp * pprimeplusm) * 1/4.
+            return (pprimeplusm * thisOpp * pplusm) * 1/4.
 
 
 
@@ -261,18 +326,20 @@ class CorrSpinTrace(object):
         thisOpp = Opp
         if isinstance(thisOpp,str):thisOpp = self.Gammas[Opp]
         if isinstance(thisOpp,tuple) or isinstance(thisOpp,list):thisOpp = self.Gammas[Opp]
-        p,pp = pmu,ppmu
-        m = mass
-        Ep, Epp = -1.0j*p[0],-1.0j*pp[0]
-        pplusm = (self.Gammas.g4 - (1j/Ep) * (p[1]*self.Gammas.g1 + p[2]*self.Gammas.g2 + p[3]*self.Gammas.g3) + (m / Ep) * np.eye(4))
-        pprimeplusm = (self.Gammas.g4 - (1j/Epp) * (pp[1]*self.Gammas.g1 + pp[2]*self.Gammas.g2 + pp[3]*self.Gammas.g3) + (m / Epp )* np.eye(4))
-        g5facp = (2.0*alpha*m/Ep)*self.Gammas.g5
-        g5facpprime = (2.0*alpha*m/Epp)*self.Gammas.g5
+        Ep, Epp = -1.0j*pmu[0],-1.0j*ppmu[0]
+        pplusm = -1.0j*self.Gammas.Slashed(pmu) + mass*np.eye(4)
+        pprimeplusm = -1.0j*self.Gammas.Slashed(ppmu) + mass*np.eye(4)
+        pplusm /= Ep
+        pprimeplusm /= Epp
+        # pplusm = (self.Gammas.g4 - (1j/Ep) * (pmu[1]*self.Gammas.g1 + pmu[2]*self.Gammas.g2 + pmu[3]*self.Gammas.g3) + (mass / Ep) * np.eye(4))
+        # pprimeplusm = (self.Gammas.g4 - (1j/Epp) * (ppmu[1]*self.Gammas.g1 + ppmu[2]*self.Gammas.g2 + ppmu[3]*self.Gammas.g3) + (mass / Epp )* np.eye(4))
+        g5facp = (2.0*alpha*mass/Ep)*self.Gammas.g5
+        g5facpprime = (2.0*alpha*mass/Epp)*self.Gammas.g5
         if Rfac:
-            return ((pplusm * thisOpp * g5facpprime)*np.sqrt(Epp*Ep/((Epp+m)*(Ep+m))) * 1/4.,
-                    (g5facp * thisOpp * pprimeplusm)*np.sqrt(Epp*Ep/((Epp+m)*(Ep+m))) * 1/4.)
+            return ((pprimeplusm * thisOpp * g5facp)*np.sqrt(Epp*Ep/((Epp+mass)*(Ep+mass))) * 1/4.,
+                    (g5facpprime * thisOpp * pplusm)*np.sqrt(Epp*Ep/((Epp+mass)*(Ep+mass))) * 1/4.)
         else:
-            return ((pplusm * thisOpp * g5facpprime) * 1/4., (g5facp * thisOpp * pprimeplusm) * 1/4.)
+            return ((pprimeplusm * thisOpp * g5facp) * 1/4., (g5facpprime * thisOpp * pplusm) * 1/4.)
 
 
 
@@ -326,7 +393,12 @@ class CorrSpinTrace(object):
 
     def ScalarFF(self,opp,thisqvec,thisppvec,thismass,Rfac=True,alpha=1.0):
         thisp,thisq,thispp = self.Create4Mom(thisqvec,thisppvec,thismass)
-        term1 = self.TracedFFun(opp,thisp,thispp,thismass,Rfac=Rfac)
+        thisopp,iscmplx,isneg = self.FormatOpp(opp)
+        term1 = self.TracedFFun(thisopp,thisp,thispp,thismass,Rfac=Rfac)
+        if iscmplx:
+            term1 = 1j*term1
+        if isneg:
+            term1 = -term1
         rcheck,ccheck = abs(term1.real)<myeps,abs(term1.imag)<myeps
         return [term1],not rcheck, not ccheck
 
@@ -334,18 +406,19 @@ class CorrSpinTrace(object):
         thisp,thisq,thispp = self.Create4Mom(thisqvec,thisppvec,thismass)
         thisopp,iscmplx,isneg = self.FormatOpp(opp)
         # print 'calculating form factor coeffs for ' ,thisopp
-        term1 = self.TracedFFun(opp,thisp,thispp,thismass,Rfac=Rfac)
+        term1 = self.TracedFFun(thisopp,thisp,thispp,thismass,Rfac=Rfac)
         term2 = 0.0j
         for i in [1,2,3,4]:
             if str(i) not in thisopp[-1]:
-                if iscmplx:
-                    # print 'calculating form factor coeffs for ' ,thisopp[:-1]+('g'+str(i),),'xq'
-                    term2 += self.TracedFFun(thisopp+('g'+str(i)),thisp,thispp,thismass,Rfac=Rfac)*thisq[i]
-                else:
-                    ## sigma_mu_nu * q_mu = -i * g_mu * g_nu * q_nu
-                    # print 'calculating form factor coeffs for ' ,thisopp+('g'+str(i),'cmplx','neg'),'xq'
-                    term2 += self.TracedFFun(thisopp+('g'+str(i),'cmplx','neg'),thisp,thispp,thismass,Rfac=Rfac)*thisq[i]
+                sig_term = (thisopp[0],'sig'+str(thisopp[-1][-1])+str(i),)
+                term2 += self.TracedFFun(sig_term,thisp,thispp,thismass,Rfac=Rfac)*thisq[i]
         term2 = term2/(2.0*thismass)
+        if iscmplx:
+            term2 = 1j*term2
+            term1 = 1j*term1
+        if isneg:
+            term2 = -term2
+            term1 = -term1
         rcheck,ccheck = abs(term1.real)<myeps and abs(term2.real)<myeps,abs(term1.imag)<myeps and abs(term2.imag)<myeps
         if PadF3:
             return [term1,term2,0.0],not rcheck, not ccheck
@@ -354,7 +427,8 @@ class CorrSpinTrace(object):
 
 
     def GeGmFF(self,opp,thisqvec,thisppvec,thismass,Rfac=True,PadF3=False,alpha=1.0):
-        termlist,rcheck,ccheck = self.VectorFF(opp,thisqvec,thisppvec,thismass,Rfac=Rfac,PadF3=PadF3,alpha=alpha)
+        termlist,rcheck,ccheck = self.VectorFF(opp,thisqvec,thisppvec,
+                                               thismass,Rfac=Rfac,PadF3=PadF3,alpha=alpha)
         thisp,thisq,thispp = self.Create4Mom(thisqvec,thisppvec,thismass)
         term1,term2 = termlist[:2]
         ## QM = Q^2/4m^2
@@ -366,10 +440,10 @@ class CorrSpinTrace(object):
 
         ## Ratio = term1 * F1 + term2 * F2
         ## Ratio = [( QM*term1 +term2) Gm + (term1-term2) Ge]/(QM+1)
-        QM = sum(np.array(thisq)**2)/(4*thismass**2)
+        QM = sum(np.array(thisq[:-1])**2)/(4*thismass**2)
         QMP1 = QM + 1.
         GeGmterm1 = (term1-term2)/QMP1
-        if abs(term2.real) < myeps:
+        if abs(term2.real) < myeps and abs(term2.imag) < myeps:
             GeGmterm2 = term2
         else:
             # if opp == ('P4','g4'):
@@ -400,47 +474,51 @@ class CorrSpinTrace(object):
         else:
             return thisProj,thisopp,iscmplx,isneg
 
-    def VectorFFTop(self,opp,thisqvec,thisppvec,thismass,Rfac=True,alpha=1.0):
+    def VectorFFTop(self,opp,thisqvec,thisppvec,thismass,Rfac=True,alpha=1.0,alpha_rot=True):
         thisp,thisq,thispp = self.Create4Mom(thisqvec,thisppvec,thismass)
-        if 'Top' in opp or 'Wein' in opp:
-            thisopp,iscmplx,isneg = self.FormatOpp(opp)
-            term1 = self.TracedFFunTop(opp,thisp,thispp,thismass,alpha,Rfac=Rfac)
-            term2 = 0.0j
-            for i in [1,2,3,4]:
-                if str(i) not in thisopp[-1]:
-                    if iscmplx:
-                        # print 'calculating form factor coeffs for ' ,thisopp[:-1]+('g'+str(i),),'xq'
-                        term2 += self.TracedFFunTop(thisopp+('g'+str(i),),thisp,thispp,thismass,alpha,Rfac=Rfac)*thisq[i]
-                    else:
-                        ## sigma_mu_nu * q_mu = -i * g_mu * g_nu * q_nu
-                        # print 'calculating form factor coeffs for ' ,thisopp+('g'+str(i),'cmplx','neg'),'xq'
-                        term2 += self.TracedFFunTop(thisopp+('g'+str(i),'cmplx','neg'),thisp,thispp,thismass,alpha,Rfac=Rfac)*thisq[i]
-            term2 = term2/(2.0*thismass)
-            term3 = 0.0j
-            for i in [1,2,3,4]:
-                if str(i) not in thisopp[-1]:
-                    if iscmplx:
-                        ## sigma_mu_nu * q_mu = -i * g_mu * g_nu * q_nu
-                        term3 += self.TracedFFun(thisopp+('g'+str(i),'g5'),thisp,thispp,thismass,Rfac=Rfac)*thisq[i]
-                    else:
-                        term3 += self.TracedFFun(thisopp+('g'+str(i),'g5','cmplx','neg'),thisp,thispp,thismass,Rfac=Rfac)*thisq[i]
-            term3 = term3/(2.0*thismass)
-            rcheck,ccheck = (abs(term1.real)<myeps and abs(term2.real)<myeps and abs(term3.real)<myeps,
-                             abs(term1.imag)<myeps and abs(term2.imag)<myeps  and abs(term3.imag)<myeps)
-            return [term1,term2,term3],not rcheck, not ccheck
-        else:
+        if not ('Top' in opp or 'Wein' in opp):
             return self.VectorFF(opp,thisqvec,thisppvec,thismass,Rfac=Rfac,PadF3=True)
+        thisopp,iscmplx,isneg = self.FormatOpp(opp)
+        term1 = self.TracedFFunTop(thisopp,thisp,thispp,thismass,alpha,Rfac=Rfac)
+        term2,term3 = 0.0j,0.0j
+        for i in [1,2,3,4]:
+            if str(i) not in thisopp[-1]:
+                sig_term = (thisopp[0],'sig'+str(thisopp[-1][-1])+str(i),)
+                term2 += self.TracedFFunTop(sig_term,thisp,thispp,thismass,alpha,Rfac=Rfac)*thisq[i]
+                term3 += self.TracedFFun(sig_term+('g5',),thisp,thispp,thismass,Rfac=Rfac)*thisq[i]
+        term2 = term2/(2.0*thismass)
+        term3 = term3/(2.0*thismass)
+        if iscmplx:
+            term1 = 1j*term1
+            term2 = 1j*term2
+            term3 = 1j*term3
+        if isneg:
+            term1 = -term1
+            term2 = -term2
+            term3 = -term3
+        if alpha_rot: term2,term3 = AlphaRotCoeffs(term2,term3,alpha)
+        rcheck,ccheck = (abs(term1.real)<myeps and abs(term2.real)<myeps and abs(term3.real)<myeps,
+                         abs(term1.imag)<myeps and abs(term2.imag)<myeps  and abs(term3.imag)<myeps)
+        return [term1,term2,term3],not rcheck, not ccheck
+
 
     def PsVectorFF(self,opp,thisqvec,thisppvec,thismass,Rfac=True,alpha=1.0):
         thisp,thisq,thispp = self.Create4Mom(thisqvec,thisppvec,thismass)
-        term1 = self.TracedFFun(opp,thisp,thispp,thismass,Rfac=Rfac)
-        oppNoG = list(copy(opp))
+        thisopp,iscmplx,isneg = self.FormatOpp(opp)
+        term1 = self.TracedFFun(thisopp,thisp,thispp,thismass,Rfac=Rfac)
+        oppNoG = list(copy(thisopp))
         oppNoG.remove('g5')
         for iopp in oppNoG:
             if 'g' in iopp:
                 index1 = int(iopp[-1])
                 break
         term2 = (1.0j*self.TracedFFun(oppNoG,thisp,thispp,thismass,Rfac=Rfac)*thisq[index1])/(2.0*thismass)
+        if iscmplx:
+            term1 = 1j*term1
+            term2 = 1j*term2
+        if isneg:
+            term1 = -term1
+            term2 = -term2
         rcheck,ccheck = abs(term1.real)<myeps and abs(term2.real)<myeps,abs(term1.imag)<myeps and abs(term2.imag)<myeps
         return [term1,term2],not rcheck, not ccheck
 
@@ -449,53 +527,96 @@ class CorrSpinTrace(object):
         thisp,thisq,thispp = self.Create4Mom(thisqvec,thisppvec,thismass)
         ## P = pp + p = 2*pp -q
         thisP = [ip+ipp for ip,ipp in zip(thisp,thispp)]
-
         Proj,gammalist,iscmplx,isneg = self.FormatOpp(opp,combProjGamma=False)
-        coeff = 1.0
-        if iscmplx: coeff = 1.0j
-        if isneg: coeff = -coeff
         index1,index2 = int(gammalist[0][-1]),int(gammalist[1][-1])
-        ## sigma_mu_nu * q_mu = -i * g_mu * g_nu * q_nu
-        ## term1 = i sigma_mu_nu H_T(Q^2)
-        ## i and -i cancel when sub in sigma_mu_nu
-        ## TODO, not sure of the sign of this!!!!
-        ## most papers are in Minkowski space me thinks
-        term1 = coeff*self.TracedFFun(Proj+gammalist,thisp,thispp,thismass,Rfac=Rfac)
+        sigma = 'sig'+str(index1)+str(index2)
+        ## most papers are in Minkowski, so you need to convert to Euclidiean (see notes)
+        ## https://arxiv.org/pdf/1107.4584v1.pdf
+        # term1^M = i sigma_mu_nu H_T
+        # term1^E = i sigma_mu_nu H_T
+        term1 = 1.0j*self.TracedFFun(Proj+(sigma,),thisp,thispp,thismass,Rfac=Rfac)
 
-        # print Proj,gammalist
-        # print ''
-        # print 'term1'
-        # print self.TracedFFun(Proj+gammalist,thisp,thispp,thismass,Rfac=Rfac)
-        # print ''
-
-
-        ## term2 = (gamma_mu q_nu - gamma_nu * q_mu ) /2m * E_T(Q^2)
-        ## TODO: not sure of the sign of this!!
-        ## most papers are in Minkowski space me thinks
-        term2 = 1.0j*coeff*(self.TracedFFun(Proj+(gammalist[0],),thisp,thispp,thismass,Rfac=Rfac)*thisq[index2] -
+        ## term2^M =    (gamma_mu q_nu - gamma_nu q_mu)/2m E_T
+        ## term2^E = -i (gamma_mu q_nu - gamma_nu q_mu)/2m E_T
+        term2 = 1.0j*(self.TracedFFun(Proj+(gammalist[0],),thisp,thispp,thismass,Rfac=Rfac)*thisq[index2] -
                  self.TracedFFun(Proj+(gammalist[1],),thisp,thispp,thismass,Rfac=Rfac)*thisq[index1] )/(2.0*thismass)
-        # print ''
-        # print 'term2'
-        # print self.TracedFFun(Proj+(gammalist[0],),thisp,thispp,thismass,Rfac=Rfac), thisq[index2]
-        # print self.TracedFFun(Proj+(gammalist[0],),thisp,thispp,thismass,Rfac=Rfac)*thisq[index2]
-        # print self.TracedFFun(Proj+(gammalist[1],),thisp,thispp,thismass,Rfac=Rfac) , thisq[index1]
-        # print self.TracedFFun(Proj+(gammalist[1],),thisp,thispp,thismass,Rfac=Rfac)*thisq[index1]
-        # print ''
-
-        ## term3 = (P_mu q_nu - P_nu q_nu)/2m^2 tilde{H}_1
-        term3 = coeff*self.TracedFFun(Proj+('I',),thisp,thispp,thismass,Rfac=Rfac)*(thisP[index1]*thisq[index2] -
+        ## term3^M = + (P_mu q_nu - P_nu q_mu)/2m tilde(H)_T
+        ## term3^E = - (P_mu q_nu - P_nu q_mu)/2m tilde(H)_T
+        term3 = -1.0*self.TracedFFun(Proj+('I',),thisp,thispp,thismass,Rfac=Rfac)*(thisP[index1]*thisq[index2] -
                                    thisP[index2]*thisq[index1] )/(2.0*thismass**2)
-        # print 'term3'
-        # print self.TracedFFun(Proj+('I',),thisp,thispp,thismass,Rfac=Rfac)
-        # print thisP[index1]*thisq[index2]
-        # print thisP[index2]*thisq[index1]
-        # print (thisP[index1]*thisq[index2] - thisP[index2]*thisq[index1] )
-        # print ''
-        ##Discrepancy? i think
+        if iscmplx:
+            term1 = 1j*term1
+            term2 = 1j*term2
+            term3 = 1j*term3
+        if isneg:
+            term1 = -term1
+            term2 = -term2
+            term3 = -term3
         rcheck,ccheck = (abs(term1.real)<myeps and abs(term2.real)<myeps and abs(term3.real)<myeps,
                          abs(term1.imag)<myeps and abs(term2.imag)<myeps and abs(term3.imag)<myeps)
         return [term1,term2,term3], not rcheck,not ccheck
 
+def TestSystem():
+    import MomParams as mp
+    import numpy as np
+    from QuantityLists import mpi570_ens
+    mpi570_ens['outdir'] = './test_mpi570'
+    mpi570_ens['nxyzt'] = [mpi570_ens['nxyzt'][0],mpi570_ens['nxyzt'][0],mpi570_ens['nxyzt'][0],mpi570_ens['nxyzt'][1]]
+    mom_data = mp.LatticeParameters(Info=mpi570_ens)
+    # this_cs = CorrSpinTrace()
+    this_cs = CorrSpinTrace('SZIN')
+    # this_cs = CorrSpinTrace('SZIN',space='Euclid')
+    ## from file /mnt/scratch/dragosja/data/resultsFixedG2/RC32x64Kud01372700Ks01364000/FormFactors/Proton_qmax0_ppmax4/VectorTopBNL_t_f5.47_Rtsumfitr7-32_Afitr10-20_RFmin3_RChi50-100.xml
+
+    ## from file /mnt/scratch/dragosja/data/resultsFixedG2/RC32x64Kud01372700Ks01364000/FormFactors/Neutron_qmax0_ppmax4/VectorTopBNL_t_f6.01_Rtsumfitr7-32_Afitr10-20_RFmin3_RChi50-100.xml
+    alpha = 0.18980091089963902
+    a_mN =  0.6506026909719103
+
+    Ep = this_cs.CreateEs(mom_data.TOpvec('-100',actual=True),a_mN)
+    # a = mom_data.latspace
+    gamma_mom_list = [
+    'P3_g1_q0-10',
+    'P3_g3_Top_cmplx_q-100',
+    'P3_g3_Top_cmplx_q00-1',
+    'P3_g4_Top_q00-1',
+    'P4_g1_cmplx_q-100',
+    'P4_g4_q-100'
+    ]
+
+        # imom_mu = this_cs.CreateEs(imom,a_mN)
+    A_comp = []
+    cmplx_list = []
+    for igamma_mom in gamma_mom_list:
+        ig_split = igamma_mom.split('_')
+        igamma = ig_split[:-1]
+        if 'cmplx' in igamma:
+            del igamma[list(igamma).index('cmplx')]
+        # imom = mom_data.TOpvec(ig_split[-1][1:],actual=True)
+        imom = mom_data.TOpvec(ig_split[-1][1:],actual=True)
+        # imom_mu = this_cs.CreateEs(imom,a_mN)
+        # print(imom_mu)
+        this_A,rcheck,ccheck = this_cs.VectorFFTop( igamma,imom,
+                                                    [0,0,0],a_mN,alpha=alpha,
+                                                    alpha_rot=True)
+        # print igamma, imom
+        if rcheck:
+            this_A = [ia.real for ia in this_A]
+            cmplx_list.append(' ')
+        elif ccheck:
+            this_A = [ia.imag for ia in this_A]
+            cmplx_list.append('i')
+        A_comp.append(this_A)
+    print(' A computed')
+    for icmplx,iA_comp in zip(cmplx_list,A_comp):
+        print(icmplx,iA_comp)
+    return this_cs
+
 if __name__ == '__main__':
-    gdata = GammaMat()
-    print(gdata)
+    data = TestSystem()
+    print('data is in data')
+    g_sz = GammaMat('SZIN')
+    g_sz['g5']
+    g_sz['P3']
+    1j*g_sz.comutator(g_sz['g1'],g_sz['g2'])/2
+    g_sz['sig12']
+    -1j*(g_sz['g1','g2']+g_sz['g3','g5'])/2

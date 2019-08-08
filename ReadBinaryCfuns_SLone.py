@@ -646,7 +646,7 @@ if __name__ == "__main__":
 #         tmpdata = array('d')
 #         try:
 #             tmpdata.read(f,GBSize*nmom*nt*2)
-#         except:
+#         except Exception as err:
 #             print file
 #         tmpdata.byteswap()
 #         for igamma,thisgamma in enumerate(thisGammaList):

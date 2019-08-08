@@ -26,6 +26,8 @@ def UpdateFileList(plot_info,rc_params,file_list,window_size=None):
         if not os.path.isfile(this_plot.PickleFile):
             print('FNF:', this_plot.PickleFile)
             pass
+        else:
+            print('Updating:',this_plot.PickleFile)
         if window_size is not None:
             this_plot.LoadPickle(DefWipe=False,ForceWindowSize=window_size)
         else:
@@ -34,6 +36,7 @@ def UpdateFileList(plot_info,rc_params,file_list,window_size=None):
         this_plot.UpdateInfo(plot_info)
         pl.rcParams.update(rc_params)
         this_plot.PlotAll()
+        this_plot.close_fig()
 
 
 
@@ -85,6 +88,10 @@ class PlotAtributes( ta.HasTraits ):
     y_zero_line = ta.Bool(False)
     Apply = ta.Button()
     Reset_Axies = ta.Button()
+    Flip_X_Axis = ta.Button()
+    Flip_Y_Axis = ta.Button()
+    Flip_Axies = ta.Button()
+
 
     tick_size = ta.Int(jpl.def_tick_size)
     xTick_min = ta.Float(0)
@@ -153,6 +160,9 @@ class PlotAtributes( ta.HasTraits ):
         tua.Item('y_axis_max'),
         tua.Item('Apply', show_label=False),
         tua.Item('Reset_Axies', show_label=False),
+        tua.Item('Flip_X_Axis', show_label=False),
+        tua.Item('Flip_Y_Axis', show_label=False),
+        tua.Item('Flip_Axies', show_label=False),
         label='Main'
         ),tua.Group(
         tua.Item('tick_size'),
@@ -164,6 +174,9 @@ class PlotAtributes( ta.HasTraits ):
         tua.Item('yTick_inc'),
         tua.Item('Apply', show_label=False),
         tua.Item('Reset_Axies', show_label=False),
+        tua.Item('Flip_X_Axis', show_label=False),
+        tua.Item('Flip_Y_Axis', show_label=False),
+        tua.Item('Flip_Axies', show_label=False),
         label='Ticks'
         ),tua.Group(
         tua.Item('Do_window_size'),
@@ -195,6 +208,9 @@ class PlotAtributes( ta.HasTraits ):
         tua.Item('Do_yTick'),
         tua.Item('Apply', show_label=False),
         tua.Item('Reset_Axies', show_label=False),
+        tua.Item('Flip_X_Axis', show_label=False),
+        tua.Item('Flip_Y_Axis', show_label=False),
+        tua.Item('Flip_Axies', show_label=False),
         label='Selection'
         ),
         buttons=['OK'],
@@ -210,6 +226,45 @@ class PlotAtributes( ta.HasTraits ):
             self.Do_y_axis_max=False
             self.Do_y_axis_min=False
 
+    def _Flip_Axis_fired(self):
+        global files_selected
+        for ifile in files_selected.file_list:
+            this_plot = jpl.Plotting(plot_info = {'save_file':ifile})
+            if not os.path.isfile(this_plot.PickleFile):
+                print('FNF:', this_plot.PickleFile)
+                pass
+            this_plot.LoadPickle(DefWipe=False)
+            this_plot.Flip_Axies()
+            this_plot.PlotAll()
+            this_plot.close_fig()
+
+    def _Flip_X_Axis_fired(self):
+        global files_selected
+        for ifile in files_selected.file_list:
+            this_plot = jpl.Plotting(plot_info = {'save_file':ifile})
+            if not os.path.isfile(this_plot.PickleFile):
+                print('FNF:', this_plot.PickleFile)
+                pass
+            this_plot.LoadPickle(DefWipe=False)
+            this_plot.Flip_X_Axis()
+            this_plot.PlotAll()
+            this_plot.close_fig()
+
+    def _Flip_Y_Axis_fired(self):
+        global files_selected
+        for ifile in files_selected.file_list:
+            this_plot = jpl.Plotting(plot_info = {'save_file':ifile})
+            if not os.path.isfile(this_plot.PickleFile):
+                print('FNF:', this_plot.PickleFile)
+                pass
+            else:
+                print('Fixing:', this_plot.PickleFile)
+            this_plot.LoadPickle(DefWipe=False)
+            this_plot.Flip_Y_Axis()
+            this_plot.close_fig()
+        print('Flip Y axis Complete')
+        print()
+        del this_plot
 
     def _Reset_Axies_fired(self):
         self.x_axis_min = 'None'
@@ -310,7 +365,8 @@ class PlotAtributes( ta.HasTraits ):
         # data_plot.PrintData()
         global files_selected
         if self.Do_window_size:
-            UpdateFileList(plot_info,this_rc,files_selected.file_list,window_size=[self.window_size_x,self.window_size_y])
+            UpdateFileList(plot_info,this_rc,files_selected.file_list,
+                           window_size=[self.window_size_x,self.window_size_y])
         else:
             UpdateFileList(plot_info,this_rc,files_selected.file_list)
 
@@ -321,9 +377,10 @@ class FileFrame( ta.HasTraits ):
     """
     Frame for file selecting
     """
-
-    file_name = ta.File('./',filter=['*.pdf'])
-    file_directory = ta.Directory('./')
+    def_file = '/home/jackdra/LQCD/Scripts/EDM_paper/graphs/FF/FullFFFit/Neutron_ContFit_a.pdf'
+    def_folder = '/home/jackdra/LQCD/Scripts/EDM_paper/graphs/FF/FullFFFit/'
+    file_directory = ta.Directory(def_folder)
+    file_name = ta.File(def_file,filter=['*.pdf'])
 
     Add_File = ta.Button()
     Add_Folder = ta.Button()

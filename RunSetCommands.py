@@ -160,7 +160,7 @@ def WriteCSH(job_type,pickle_file,job_params,n_job,Next_Job=None):
 
         outlist.append(r'echo "Submitting next job '+Next_Job+' "')
         outlist.append(r'if(`where qsub` == "") then')
-        outlist.append(r'   '+Next_Job)
+        outlist.append(r'  sbatch '+Next_Job)
         outlist.append(r'else')
         outlist.append(r'   qsub '+Next_Job)
         outlist.append(r'endif')

@@ -6,14 +6,16 @@
 # import PlotData as jpl
 
 # from BootStrapping import BootStrap
+import dill
+# import pickle
 import numpy as np
 from copy import deepcopy,copy
 from MiscFuns import ODNested,mkdir_p,CreateNameAndLL,op_dict
 from MiscFuns import flip_fun_2arg,GetInfoList,GenSinkFun,ReduceCfgs
 import MomParams as mp
-from Params import defFitDict,defmom2list,outputdir,scratchdir,Debug_Mode,Wipe_All_Fits
-from Params import defFitAlpha,defMcore,nchi_threshold,nchi_fit_threshold,myeps
-from MultiWrap import DoMulticore
+from Params import defFitDict,defmom2list,outputdir,scratchdir,Debug_Mode,Wipe_All_Fits,this_dir
+from Params import defFitAlpha,defMcore,nchi_threshold,nchi_fit_threshold,myeps,defInfoFlow
+# from MultiWrap import DoMulticore
 # from Params import plot_the_ff
 # import multiprocessing
 # import glob,sys
@@ -33,13 +35,13 @@ import FitFunctions as ff
 from collections import OrderedDict
 from XmlFormatting import QsqrdToFormat,unxmlfitr,tflowTOLeg,AvgStdToFormat,KeyForamtting
 import os
-import dill as pickle
 import pandas as pa
 # from FileIO import WriteXml,WritePickle,ReadPickleWrap,BackupFile,WriteFuns,ReadFuns
-from FileIO import WriteXml,WritePickle,ReadPickleWrap,BackupFile
+from FileIO import WriteXml,WritePickle,ReadPickleWrap,BackupFile,Construct_File_Object,py2_encoding
 from GammaMatricies import CorrSpinTrace
 from DSDefines import DSfundict
 from TimeStuff import Timer
+import pickle as pik
 import itertools
 
 ## title for ratio comparison
@@ -73,6 +75,30 @@ class FFEquation(object):
 
 
     """
+
+    def Construct_FF_File(this_file):
+        output = Construct_File_Object(this_file,FFEquation)
+        if os.path.isfile(this_file+'.FFstats'):
+            if this_file[-2:] == '.p':
+                with open(this_file+'.FFstats','rb') as f:
+                    output.FF_Stats = pik.load(f,encoding=py2_encoding)
+            else:
+                output.FF_Stats = pa.read_pickle(this_file+'.FFstats')
+        else:
+            print('Warning: FNF for FF_Stats:')
+            print(this_file+'.FFFitstats')
+        if os.path.isfile(this_file+'.FFFitstats'):
+            if this_file[-2:] == '.p':
+                with open(this_file+'.FFFitstats','rb') as f:
+                    output.FF_Fit_Stats = pik.load(f,encoding=py2_encoding)
+            else:
+                output.FF_Fit_Stats = pa.read_pickle(this_file+'.FFFitstats')
+        else:
+            print('Warning: FNF for FF_Fit_Stats:')
+            print(this_file+'.FFFitstats')
+        return output
+
+
 
     parentlist = []
 
@@ -178,7 +204,7 @@ class FFEquation(object):
             if os.path.isfile(cfglist):
                 print('found previous cfglist, skipping search')
                 with open(cfglist,'rb') as f:
-                    self.cfglist = pickle.load(f)
+                    self.cfglist = dill.load(f)
             else:
                 print('previous config file not found at')
                 print(cfglist)
@@ -193,7 +219,7 @@ class FFEquation(object):
             if os.path.isfile(cfglist2pt):
                 print('found previous cfglist2pt, skipping search')
                 with open(cfglist2pt,'rb') as f:
-                    self.cfglist2pt = pickle.load(f)
+                    self.cfglist2pt = dill.load(f)
             else:
                 print('previous config2pt file not found at ')
                 print(cfglist2pt)
@@ -359,8 +385,8 @@ class FFEquation(object):
         if isinstance(self.cfg_fromfile,str):
             try:
                 with open(self.cfg_fromfile,'wb') as f:
-                    pickle.dump( self.cfglist , f )
-            except:
+                    dill.dump( self.cfglist , f )
+            except Exception as err:
                 raise IOError('Error pickling ' + self.cfg_fromfile)
 
 
@@ -423,8 +449,8 @@ class FFEquation(object):
                     if isinstance(self.cfg_fromfile_2pt,str):
                         try:
                             with open(self.cfg_fromfile_2pt,'wb') as f:
-                                pickle.dump( self.cfglist2pt , f )
-                        except:
+                                dill.dump( self.cfglist2pt , f )
+                        except Exception as err:
                             raise IOError('Error pickling ' + self.cfg_fromfile_2pt)
 
                 # print self.C2FOforAlpha.NNQAvg
@@ -450,8 +476,8 @@ class FFEquation(object):
                 if isinstance(self.cfg_fromfile_2pt,str):
                     try:
                         with open(self.cfg_fromfile_2pt,'wb') as f:
-                            pickle.dump( self.cfglist2pt , f )
-                    except:
+                            dill.dump( self.cfglist2pt , f )
+                    except Exception as err:
                         raise IOError('Error pickling ' + self.cfg_fromfile_2pt)
             self.GetAlphaFit(self.fitAlphain)
         else:
@@ -491,7 +517,7 @@ class FFEquation(object):
                 this_col = 'alpha_rat_div'
                 this_fun = op.truediv
         if isinstance(self.RfitIndicies,bool) and self.RfitIndicies is not False:
-            if this_col is not 'boot':
+            if this_col != 'boot':
                 raise NotImplementedError('will do later')
             self.RatioFits,self.RatioFitsFlow = self.Ratios.GetFitsFromIndex(
                                                     self.RfitIndicies,self.RfitIndicies_flow,
@@ -520,7 +546,7 @@ class FFEquation(object):
                                                 ralpha_info=(self.C2FOforAlpha,this_fun,this_col),
                                                 nchi_threshold=self.nchi_threshold)
         else:
-            if this_col is not 'boot':
+            if this_col != 'boot':
                 raise NotImplementedError('will do later')
             self.RatioFits,self.RatioFitsFlow = self.Ratios.GetBestFits(self.RF_fit_min,self.RF_fit_max,
                                                             min_fitr=self.RF_fit_range_minimum,
@@ -708,12 +734,13 @@ class FFEquation(object):
         ## Q^2 = -q^2 = -q^mu q_mu
         if Phys:
             ## TODO? use thisMassboot instead? but then the yaxis will have error too!
-            pmu,qmu,ppmu = CorrSpinTrace().Create4Mom(iq*self.qparams.qunit,ipp*self.qparams.qunit,self.thisMassAvg)
+            pmu,qmu,ppmu = CorrSpinTrace().Create4Mom(iq*self.qparams.qunitPhys,
+                                                      ipp*self.qparams.qunitPhys,
+                                                      self.thisMassAvg*self.qparams.hbarcdivlat)
         else:
-            pmu,qmu,ppmu = CorrSpinTrace().Create4Mom(iq,ipp,self.thisMassAvg)
-        ## meh, dont like negative Qsqrds
-        return np.abs(-np.sum(np.array(qmu)**2))
-        # return -np.sum(np.array(qmu)**2)
+            pmu,qmu,ppmu = CorrSpinTrace().Create4Mom(iq*self.qparams.qunit,ipp*self.qparams.qunit,self.thisMassAvg)
+        return np.sum(np.array(qmu[:4])**2)
+        # return -np.sum(np.array(qmu[:4])**2)
 
     def MakeQsqrdList(self):
         thisqvec = self.qparams.momlist
@@ -802,17 +829,17 @@ class FFEquation(object):
             print('Total number of fits is ', total_fits,' giving total number of system of equations = ',  len(this_list))
             if len(this_list) > 1000:
                 for iinc in range(len(this_list)//1000+2):
-                    this_dir = self.SystemDir+'/Chi_block_'+str(iinc)+'/'
+                    internal_dir = self.SystemDir+'/Chi_block_'+str(iinc)+'/'
                     mkdir_p(this_dir)
             else:
-                this_dir = self.SystemDir+'/Chi_block_0/'
+                internal_dir = self.SystemDir+'/Chi_block_0/'
                 mkdir_p(this_dir)
             # print len(list(itertools.product(*ydata))),' different fit range combinations found for ',iQkey
             # if show_timer: thistimer = Timer(   linklist=range(len(list(itertools.product(*ydata)))),
             #                                     name='Solving Form Factors for '+iQkey)
             this_file = self.SystemDir+iQkey+'_info.dat'
             with open(this_file,'wb') as f:
-                pickle.dump([OnlyGe,itflow,len(this_list)],f)
+                dill.dump([OnlyGe,itflow,len(this_list)],f)
             if itflow not in list(self.chi_Qsqrd.keys()):
                 self.chi_Qsqrd[itflow] = {}
             self.chi_Qsqrd[itflow][iQkey] = len(this_list)
@@ -822,37 +849,37 @@ class FFEquation(object):
             for icy,iylist in enumerate(itertools.product(*ydata)):
                 thisfit = ff.Fitting(Funs=[thisfun,thisnpar],data=[xdata,np.array(iylist)],name=self.name+'_Chi'+str(icy),paramlist=thisparlab)
                 mul_of_1000 = icy//1000
-                this_dir = self.SystemDir+'/Chi_block_'+str(mul_of_1000)+'/'
+                internal_dir = self.SystemDir+'/Chi_block_'+str(mul_of_1000)+'/'
                 this_file = this_dir+iQkey+'_Chi'+str(icy)+'.dat'
                 with open(this_file,'wb') as f:
-                    pickle.dump(thisfit,f)
+                    dill.dump(thisfit,f)
                 if show_timer: thistimer.Lap()
 
         this_file = self.SystemDir+'_Instance.dat'
         with open(this_file,'wb') as f:
-            pickle.dump(self.__dict__,f)
+            dill.dump(self.__dict__,f)
 
 
     def LoadSystemResultsFO(self,show_timer=True):
         this_qfile = self.SystemDir+'_info.dat'
         with open(this_qfile,'rb') as f:
-            self.QsqrdKeyList,self.Qsqrdlist = pickle.load(f)
+            self.QsqrdKeyList,self.Qsqrdlist = dill.load(f)
         ffboot,ffAvg,ffStd,ilist = [],[],[],[]
         for iQkey,iQsqrd in zip(self.QsqrdKeyList,self.Qsqrdlist):
             this_file = self.SystemDir+iQkey+'_info.dat'
             with open(this_file,'rb') as f:
-                OnlyGe,itflow,ydata_len = pickle.load(f)
+                OnlyGe,itflow,ydata_len = dill.load(f)
 
             if show_timer: thistimer = Timer(   linklist=list(range(ydata_len)),
                                                 name='Loading Form Factors for '+iQkey)
             for icy in range(ydata_len):
                 mul_of_1000 = icy//1000
-                this_dir = self.SystemDir+'/Chi_block_'+str(mul_of_1000)+'/'
+                internal_dir = self.SystemDir+'/Chi_block_'+str(mul_of_1000)+'/'
                 this_file = this_dir+iQkey+'_Chi'+str(icy)+'.res'
 
                 if os.path.isfile(this_file):
                     with open(this_file,'rb') as f:
-                        thisfit = pickle.load(f)
+                        thisfit = dill.load(f)
                 else:
                     print('WARNING: FNF: ',this_file)
                 # else:
@@ -946,7 +973,7 @@ class FFEquation(object):
         self.MakeQsqrdList()
         this_qfile = self.SystemDir+'_info.dat'
         with open(this_qfile,'wb') as f:
-            pickle.dump([self.QsqrdKeyList,self.Qsqrdlist],f)
+            dill.dump([self.QsqrdKeyList,self.Qsqrdlist],f)
 
 
         if self.doflow:
@@ -1034,35 +1061,35 @@ class FFEquation(object):
             # print len(list(itertools.product(*ydata))),' different fit range combinations found for ',iQkey
             this_file = self.SystemDir+iQkey+'_info.dat'
             with open(this_file,'wb') as f:
-                pickle.dump([OnlyGe,len(this_list)],f)
+                dill.dump([OnlyGe,len(this_list)],f)
             self.chi_Qsqrd[iQkey] = len(this_list)
             if len(this_list) > 1000:
                 for iinc in range(len(this_list)//1000+2):
-                    this_dir = self.SystemDir+'/Chi_block_'+str(iinc)+'/'
+                    internal_dir = self.SystemDir+'/Chi_block_'+str(iinc)+'/'
                     mkdir_p(this_dir)
             else:
-                this_dir = self.SystemDir+'/Chi_block_0/'
+                internal_dir = self.SystemDir+'/Chi_block_0/'
                 mkdir_p(this_dir)
 
             if show_timer: thistimer = Timer(   linklist=list(range(len(this_list))),
                                                 name='Setting up Form Factors for '+iQkey)
             for icy,iylist in enumerate(itertools.product(*ydata)):
                 mul_of_1000 = icy//1000
-                this_dir = self.SystemDir+'/Chi_block_'+str(mul_of_1000)+'/'
+                internal_dir = self.SystemDir+'/Chi_block_'+str(mul_of_1000)+'/'
                 this_file = this_dir+iQkey+'_Chi'+str(icy)+'.dat'
                 if not os.path.isfile(this_file):
                     thisfit = ff.Fitting(Funs=[thisfun,thisnpar],data=[np.array(xdata),np.array(iylist)],name=self.name+'_Chi'+str(icy),paramlist=thisparlab)
                     with open(this_file,'wb') as f:
-                        pickle.dump(thisfit,f)
+                        dill.dump(thisfit,f)
                 if show_timer: thistimer.Lap()
         this_file = self.SystemDir+'_Instance.dat'
         with open(this_file,'wb') as f:
-            pickle.dump(self.__dict__,f)
+            dill.dump(self.__dict__,f)
 
 
     def SolveSystem(self,Mcore = defMcore,show_timer=True):
         # self.MakeQsqrdList()
-        def this_fun(this_in):
+        def this_fun(this_file,ichi):
             ## this part requires pathos version of multiprocessing,
             ## but this downgrades python to 3.6
             # this_job_number = multiprocessing.Process()._identity[0]
@@ -1073,11 +1100,14 @@ class FFEquation(object):
             #     sys.stdout.write(str(res_len*100/dat_len)+ '% done \r')
             #     sys.stdout.flush()
             try:
+                print('Reading:',this_file.split('/')[-1])
                 with open(this_file,'rb') as f:
-                    thisfit = pickle.load(f)
+                    thisfit = dill.load(f)
                 thisfit.FitBoots()
+                print('Writing: ',this_file.replace('.dat','.res').split('/')[-1])
                 with open(this_file.replace('.dat','.res'),'wb') as f:
-                    thisfit = pickle.dump(thisfit,f)
+                    thisfit = dill.dump(thisfit,f)
+                print('     complete')
             except EOFError:
                 print('EOFError',this_file)
 
@@ -1085,23 +1115,25 @@ class FFEquation(object):
         if not os.path.isfile(this_qfile):
             raise EnvironmentError('FNF: '+this_qfile+'\n Has FFSetup been completed?')
         with open(this_qfile,'rb') as f:
-            this_QsqrdKeyList,this_Qsqrdlist = pickle.load(f)
+            this_QsqrdKeyList,this_Qsqrdlist = dill.load(f)
         for iQkey,iQsqrd in zip(this_QsqrdKeyList,this_Qsqrdlist):
             this_file = self.SystemDir+iQkey+'_info.dat'
             if not os.path.isfile(this_file):
                 print('FNF:',this_file)
                 continue
             with open(this_file,'rb') as f:
-                temp = pickle.load(f)
+                temp = dill.load(f)
             file_list = []
             for icy in range(temp[-1]):
                 mul_of_1000 = icy//1000
-                this_dir = self.SystemDir+'/Chi_block_'+str(mul_of_1000)+'/'
+                internal_dir = self.SystemDir+'/Chi_block_'+str(mul_of_1000)+'/'
                 this_file = this_dir+iQkey+'_Chi'+str(icy)+'.dat'
                 if os.path.isfile(this_file) and not os.path.isfile(this_file.replace('.dat','.res')):
                     file_list.append((this_file,str(icy)))
             print('Solving', len(file_list), 'equations for ' , iQkey)
-            DoMulticore(this_fun,file_list)
+            for ifile,ichi in file_list:
+                this_fun(ifile,ichi)
+            # DoMulticore(this_fun,file_list)
             print()
 
     def DelSystemResults(self,show_timer=True):
@@ -1111,19 +1143,19 @@ class FFEquation(object):
         this_qfile = self.SystemDir+'_info.dat'
         if os.path.isfile(this_qfile):
             with open(this_qfile,'rb') as f:
-                this_QsqrdKeyList,this_Qsqrdlist = pickle.load(f)
+                this_QsqrdKeyList,this_Qsqrdlist = dill.load(f)
 
             for iQkey,iQsqrd in zip(this_QsqrdKeyList,this_Qsqrdlist):
                 this_dat_file = self.SystemDir+iQkey+'_info.dat'
                 if os.path.isfile(this_dat_file):
                     with open(this_dat_file,'rb') as f:
-                        temp = pickle.load(f)
+                        temp = dill.load(f)
                     if show_timer: thistimer = Timer(   linklist=list(range(temp[-1])),
                                                         name='Deleting Form Factors for '+iQkey)
 
                     for icy in range(temp[-1]):
                         mul_of_1000 = icy//1000
-                        this_dir = self.SystemDir+'/Chi_block_'+str(mul_of_1000)+'/'
+                        internal_dir = self.SystemDir+'/Chi_block_'+str(mul_of_1000)+'/'
                         this_file = this_dir+iQkey+'_Chi'+str(icy)+'.dat'
                         if os.path.isfile(this_file):
                             os.remove(this_file)
@@ -1141,7 +1173,7 @@ class FFEquation(object):
         if not os.path.isfile(this_file):
             raise EnvironmentError('FNF: '+this_file + '\n as FFSetup and FFSolve been completed?')
         with open(this_file,'rb') as f:
-            self.__dict__.update(pickle.load(f))
+            self.__dict__.update(dill.load(f))
         if self.doflow:
             self.LoadSystemResultsFO(show_timer=show_timer)
             return
@@ -1153,19 +1185,19 @@ class FFEquation(object):
             this_file = self.SystemDir+iQkey+'_info.dat'
             if not os.path.isfile(this_file): continue
             with open(this_file,'rb') as f:
-                OnlyGe,ydata_len = pickle.load(f)
+                OnlyGe,ydata_len = dill.load(f)
             if show_timer: thistimer = Timer(   linklist=list(range(ydata_len)),
                                                 name='Loading Form Factors for '+iQkey)
 
             for icy in range(ydata_len):
                 mul_of_1000 = icy//1000
-                this_dir = self.SystemDir+'/Chi_block_'+str(mul_of_1000)+'/'
+                internal_dir = self.SystemDir+'/Chi_block_'+str(mul_of_1000)+'/'
                 this_file = this_dir+iQkey+'_Chi'+str(icy)+'.res'
 
                 if os.path.isfile(this_file):
                     try:
                         with open(this_file,'rb') as f:
-                            thisfit = pickle.load(f)
+                            thisfit = dill.load(f)
                     except Exception as err:
                         print()
                         print(err)
@@ -1322,12 +1354,13 @@ class FFEquation(object):
             #     ('p000',self.fitAlpha) not in self.C2FOforAlpha.NNQFull_Fit_Stats['boot'].swaplevel(1,2):
             print('Fitting NNQFull for Alpha', self.fitAlpha)
             fitr_list = self.fitAlpha.split('_')
-            self.C2FOforAlpha.FitAlpha(fit_range=fitr_list[0],thistflowlist = self.tflows,tsum_ranges=fitr_list[1])
+            self.C2FOforAlpha.FitAlpha(fit_range=fitr_list[0],thistflowlist = self.tflows,
+                                       tsum_ranges=fitr_list[1],show_timer=True)
         else:
             # if  'boot' not in self.C2FOforAlpha.NNQ_Fit_Stats or \
             #     ('p000',self.fitAlpha) not in self.C2FOforAlpha.NNQ_Fit_Stats['boot'].swaplevel(1,2):
             print('Fitting NNQ for Alpha', self.fitAlpha)
-            self.C2FOforAlpha.FitAlpha(self.fitAlpha,thistflowlist =self.tflows)
+            self.C2FOforAlpha.FitAlpha(self.fitAlpha,thistflowlist =self.tflows,show_timer=True)
 
     def SetCustomName(self,name= '',LegLab = '' ):
         if name == '':
@@ -1411,11 +1444,11 @@ class FFEquation(object):
             # thisalpha = self.C2FOforAlpha.NNQFull_Fit_Stats.loc[('p000',self.tflows[0],self.fitAlpha),'boot']
             fit_split = self.fitAlpha.split('_')
             fit_split[1] = fit_split[1].replace('tsumfitr','fittwor')
-            thisalpha = list(self.thisFF.alpha.values())[0].values()[0]
+            thisalpha = list(list(self.thisFF.alpha.values())[0].values())[0]
             # thisalpha = self.C2FOforAlpha.NNQFull_Fit_Stats.loc[('p000',self.tflows[0]),'boot']\
             #                                                 [fit_split[0],fit_split[1]].iloc[0]
         else:
-            thisalpha = list(self.thisFF.alpha.values())[0].values()[0]
+            thisalpha = list(list(self.thisFF.alpha.values())[0].values())[0]
             # thisalpha = self.C2FOforAlpha.NNQ_Fit_Stats.loc[('p000',self.tflows[0]),'boot'][self.fitAlpha].iloc[0]
         ## ends up being a bootstrapped quantitiy
 
@@ -1667,7 +1700,7 @@ class FFEquation(object):
                                 # while not isinstance(thisRat,ff.Fitting):
                                 #     try:
                                 #         thisRat = thisRat[thisRat.keys()[0]]
-                                #     except:
+                                #     except Exception as err:
                                 #         print thisRat
                                 #         raise EnvironmentError('Error occured when trying to get ratio function for equations out')
                                 # print Ratout.keys(),FFkey
@@ -1744,7 +1777,7 @@ class FFEquation(object):
                 else:
                     preEq = self.GetEquationsOut(self.thisFF.outDict['Equations'],self.RatioFits,self.RatioFitsFlow)
         # except Exception as err:
-        except:
+        except Exception as err:
             # print err
             if hasattr(self,'outDict') and isinstance(self.outDict,(dict,OrderedDict)):
                 if 'Equations' in list(self.outDict.keys()):
@@ -1806,11 +1839,14 @@ class FFEquation(object):
             self.FF_Stats_name = self.PickleFile+'.FFstats'
             if os.path.isfile(self.FF_Stats_name):
                 os.rename(self.FF_Stats_name,self.FF_Stats_name+'.bak')
+            self.FF_Stats['boot'].apply(lambda x : x.RemoveFuns())
             self.FF_Stats.to_pickle(self.FF_Stats_name)
         if hasattr(self,'FF_Fit_Stats'):
             self.FF_Fit_Stats_name = self.PickleFile+'.FFFitstats'
             if os.path.isfile(self.FF_Fit_Stats_name):
                 os.rename(self.FF_Fit_Stats_name,self.FF_Fit_Stats_name+'.bak')
+            if 'boot' in self.FF_Fit_Stats:
+                self.FF_Fit_Stats['boot'].apply(lambda x : x.RemoveFuns())
             self.FF_Fit_Stats.to_pickle(self.FF_Fit_Stats_name)
         out_dict = deepcopy(self.__dict__)
         if 'FF_Stats' in list(out_dict.keys()):
@@ -1819,6 +1855,9 @@ class FFEquation(object):
             del out_dict['FF_Fit_Stats']
         WritePickle(self.PickleFile,out_dict)
         self.GetFuns()
+        self.FF_Stats['boot'].apply(lambda x : x.GetFuns())
+        if 'boot' in self.FF_Fit_Stats:
+            self.FF_Fit_Stats['boot'].apply(lambda x : x.GetFuns())
 
         WriteXml(self.HumanFile,{'Results':self.outDict})
         self.DelSystemResults()
@@ -2315,7 +2354,7 @@ class FFEquation(object):
         hold_series['xdatarange'] = xlims
         hold_series['scale'] = None
         hold_series['ShowPar'] = 'Par2'
-        hold_series['fmt_class'] = KeyForamtting(self.ppparams)
+        # hold_series['fmt_class'] = KeyForamtting(self.ppparams)
         plot_class.AppendData(hold_series)
         return plot_class
 
@@ -2628,7 +2667,7 @@ def TestFFSolve(DefWipe=False,q2list=[1,4],DS='Proton'):
     defInfo['DoubSing'] = DS
 
     this_info = pa.Series()
-    this_info['save_file'] = './TestGraphs/testFF.pdf'
+    this_info['save_file'] = this_dir+'/TestGraphs/testFF.pdf'
     this_info['title'] = 'Test Form Factor'
 
     data = FFEquation('GeGm',Info=defInfo,q2list=q2list)
@@ -2637,8 +2676,8 @@ def TestFFSolve(DefWipe=False,q2list=[1,4],DS='Proton'):
     data.LoadPickle(DefWipe=DefWipe)
     import PlotData as jpl
     data_plot = jpl.Plotting(plot_info=this_info)
-    data_plot = data.Plot(data_plot,'G_{E}',thiscol='Blue',thisshift=0.0,thissym='o')
     data_plot = data.FitPlot(data_plot,'G_{E}')
+    data_plot = data.Plot(data_plot,'G_{E}',thiscol='Blue',thisshift=0.0,thissym='o')
     data_plot.PrintData()
     data_plot.PlotAll()
     return data
@@ -2653,7 +2692,7 @@ def TestFFFlowSolve(DefWipe=False,q2list=[1,4]):
     defInfoFlow['tflowlist'] = np.array(['t_f6.01'])
     defInfoFlow['tflowfit'] = defInfoFlow['tflowlist']
     this_info = pa.Series()
-    this_info['save_file'] = './TestGraphs/testFF.pdf'
+    this_info['save_file'] = this_dir+'/TestGraphs/testFF.pdf'
     this_info['title'] = 'Test Form Factor'
     data = FFEquation('VectorTop',Info=defInfoFlow,q2list=q2list)
     data.SetupPickle(DefWipe=DefWipe)
@@ -2667,5 +2706,25 @@ def TestFFFlowSolve(DefWipe=False,q2list=[1,4]):
     data_plot.PlotAll()
     return data
 
+def FixQsqrdsPy2(this_file):
+    print('FixQsqrdPy2 THIS FUNCTION DOES NOT WORK')
+    data = FFEquation('Vector',Info=defInfoFlow)
+    read_data = ReadPickleWrap(this_file,py2_read=True)
+    data.__dict__.update(read_data)
+    data.MakeQsqrdList()
+    WritePickle(this_file,data.__dict__,protocol=2)
+    if os.path.isfile(this_file+'.FFFitstats'):
+        os.rename(this_file+'.FFFitstats',this_file+'.FFFitstats.bak')
+
+def FixQsqrd_All(base_dir):
+    print('FixQsqrd_All THIS FUNCTION DOES NOT WORK')
+    for subdir,dirs,files in os.walk(os.path.abspath(base_dir)):
+        for ifile in files:
+            abs_file = os.path.join(subdir, ifile)
+            if ifile[-2:] == '.p' and '/FormFactors/' in abs_file:
+                FixQsqrdsPy2(abs_file)
+
+
 if __name__ == '__main__':
     dataFF = TestFFSolve()
+    print('Data is in dataFF')

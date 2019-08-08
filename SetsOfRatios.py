@@ -18,6 +18,7 @@ from TwoPtCorrelators import TwoPointCorr
 from MultiWrap import DoMulticore
 from TimeStuff import Timer
 from copy import copy
+from FileIO import Construct_Empty
 import PlotData as jpl
 import operator as op
 
@@ -75,6 +76,29 @@ class SetOfRat(object):
 
 
     """
+
+    def Construct_Rat_Set(this_file_list,fo_list='Def'):
+        if fo_list == 'Def':
+            fo_list = ['' for i in this_file_list]
+        set_list = []
+        for ifull,ifile in zip(full_list,this_file_list):
+            if 'FO' in ifull:
+                if 'Full' in ifull:
+                    set_list.append(RatioFOFullCorr.Construct_RatFOFull_File(ifile))
+                else:
+                    set_list.append(RatioFOCorr.Construct_RatFO_File(ifile))
+            else:
+                set_list.append(RatioCorr.Construct_Rat_File(ifile))
+        out_class = Construct_Empty(SetOfRat)
+        out_class.cfglist = {}
+        out_class.InfoDict = []
+        out_class.Plotdir = graphdir+'/Rat/'
+        out_class.name = 'Set1'
+        out_class.SetRat = {}
+        for iset in set_list:
+            out_class.SetRat[iset.name] = iset
+        return out_class
+
     instances = []
 
     parentlist = []
@@ -816,7 +840,7 @@ class SetOfRat(object):
     #                 result.name = '+'.join([self.name,NumbToFileName(Rat2)])
     #                 for iset,igamma,ip,it,iRat in self.items():
     #                     result[(iset,igamma,ip,it)] = iRat + Rat2
-    #             except:
+    #             except Exception as err:
     #                 raise EnvironmentError('Invalid value to combine with BootStrap class')
     #         return result
 
@@ -839,7 +863,7 @@ class SetOfRat(object):
     #                 for iset,igamma,ip,it,iRat in self.items():
     #                     result.name = '-'.join([self.name,NumbToFileName(Rat2)])
     #                     result[(iset,igamma,ip,it)] = iRat - Rat2
-    #             except:
+    #             except Exception as err:
     #                 raise EnvironmentError('Invalid value to combine with BootStrap class')
     #         return result
 
@@ -863,7 +887,7 @@ class SetOfRat(object):
     #                 for iset,igamma,ip,it,iRat in self.items():
     #                     result.name = 'x'.join([self.name,NumbToFileName(Rat2)])
     #                     result[(iset,igamma,ip,it)] = iRat * Rat2
-    #             except:
+    #             except Exception as err:
     #                 raise EnvironmentError('Invalid value to combine with BootStrap class')
     #         return result
 
@@ -879,7 +903,7 @@ class SetOfRat(object):
     #                 if iset in Rat2.SetRat.keys():
     #                     try:
     #                         result[(iset,igamma,ip,it)] = iRat / Rat2[(iset,igamma,ip,it)]
-    #                     except:
+    #                     except Exception as err:
     #                         if any([ibs == 0 for ibs in Rat2[(iset,igamma,ip,it)].bootvals]):
     #                             raise ZeroDivisionError('Dividing by zero found in bootstrap division for '+Rat2.name + ' '+Rat2[(iset,igamma,ip,it)].name)
     #         elif isinstance(Rat2,TwoPointCorr):
@@ -887,7 +911,7 @@ class SetOfRat(object):
     #                 result.name = 'div'.join([self.name,Rat2.name])
     #                 try:
     #                     result[(iset,igamma,ip,it)] = iRat / Rat2[(igamma,ip,it)]
-    #                 except:
+    #                 except Exception as err:
     #                     if any([ibs == 0 for ibs in Rat2[(igamma,ip,it)].bootvals]):
     #                         raise ZeroDivisionError('Dividing by zero found in bootstrap division for '+Rat2.name + ' '+Rat2[(igamma,ip,it)].name)
     #         else:
@@ -897,7 +921,7 @@ class SetOfRat(object):
     #                 for iset,igamma,ip,it,iRat in self.items():
     #                     result.name = 'div'.join([self.name,NumbToFileName(Rat2)])
     #                     result[(iset,igamma,ip,it)] = iRat / Rat2
-    #             except:
+    #             except Exception as err:
     #                 raise EnvironmentError('Invalid value to combine with BootStrap class')
     #         return result
 
@@ -921,7 +945,7 @@ class SetOfRat(object):
     #                 for iset,igamma,ip,it,iRat in self.items():
     #                     result.name = 'pow'.join([self.name,NumbToFileName(Rat2)])
     #                     result[(iset,igamma,ip,it)] = iRat ** Rat2
-    #             except:
+    #             except Exception as err:
     #                 raise EnvironmentError('Invalid value to combine with BootStrap class')
     #         return result
 
@@ -945,7 +969,7 @@ class SetOfRat(object):
     #             result.name = '+'.join([NumbToFileName(Rat2),self.name])
     #             for iset,igamma,ip,it,iRat in self.items():
     #                 result[(iset,igamma,ip,it)] = Rat2 + iRat
-    #         except:
+    #         except Exception as err:
     #             raise EnvironmentError('Invalid value to combine with BootStrap class')
     #     return result
 
@@ -966,7 +990,7 @@ class SetOfRat(object):
     #             result.name = '-'.join([NumbToFileName(Rat2),self.name])
     #             for iset,igamma,ip,it,iRat in self.items():
     #                 result[(iset,igamma,ip,it)] = Rat2 - iRat
-    #         except:
+    #         except Exception as err:
     #             raise EnvironmentError('Invalid value to combine with BootStrap class')
     #     return result
 
@@ -986,7 +1010,7 @@ class SetOfRat(object):
     #             result.name = 'x'.join([NumbToFileName(Rat2),self.name])
     #             for iset,igamma,ip,it,iRat in self.items():
     #                 result[(iset,igamma,ip,it)] = Rat2 * iRat
-    #         except:
+    #         except Exception as err:
     #             raise EnvironmentError('Invalid value to combine with BootStrap class')
     #     return result
 
@@ -999,7 +1023,7 @@ class SetOfRat(object):
     #             if iset in Rat2.SetRat.keys():
     #                 try:
     #                     result[(iset,igamma,ip,it)] = Rat2[(iset,igamma,ip,it)] / iRat
-    #                 except:
+    #                 except Exception as err:
     #                     if any([ibs == 0 for ibs in iRat.bootvals]):
     #                         raise ZeroDivisionError('Dividing by zero found in bootstrap division for '+self.name + ' '+iRat.name)
     #     elif isinstance(Rat2,TwoPointCorr):
@@ -1007,7 +1031,7 @@ class SetOfRat(object):
     #         for (iset,igamma,ip,it,iRat) in self.items():
     #             try:
     #                 result[(iset,igamma,ip,it)] = Rat2[(igamma,ip,it)] / iRat
-    #             except:
+    #             except Exception as err:
     #                 if any([ibs == 0 for ibs in iRat.bootvals]):
     #                     raise ZeroDivisionError('Dividing by zero found in bootstrap division for '+Rat2.name + ' '+Rat2[(igamma,ip,it)].name)
     #     else:
@@ -1015,7 +1039,7 @@ class SetOfRat(object):
     #         try:
     #             for iset,igamma,ip,it,iRat in self.items():
     #                 result[(iset,igamma,ip,it)] = Rat2 / iRat
-    #         except:
+    #         except Exception as err:
     #             raise EnvironmentError('Invalid value to combine with BootStrap class')
     #     return result
 
@@ -1036,6 +1060,6 @@ class SetOfRat(object):
     #             result.name = 'pow'.join([NumbToFileName(Rat2),self.name])
     #             for iset,igamma,ip,it,iRat in self.items():
     #                 result[(iset,igamma,ip,it)] = Rat2 ** iRat
-    #         except:
+    #         except Exception as err:
     #             raise EnvironmentError('Invalid value to combine with BootStrap class')
     #     return result

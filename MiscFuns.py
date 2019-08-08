@@ -199,7 +199,7 @@ def get_val(val,Phys=True,this_type=int,suppress_warn=False):
     # if len(new_str) > 0:
     #     try:
     #         return int(new_str)
-    #     except:
+    #     except Exception as err:
     #         return float(new_str)
     # else:
     #     return 0

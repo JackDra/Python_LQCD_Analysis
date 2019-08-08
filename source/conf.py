@@ -49,6 +49,7 @@ extensions = [
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
+    'numpydoc'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -85,11 +86,12 @@ pygments_style = None
 # a list of builtin themes.
 #
 # html_theme = 'alabaster'
-html_theme = "agogo"
+html_theme = 'sphinx_rtd_theme'
+# html_theme = "agogo"
 
-html_theme_options = {
-    "documentwidth": "100",
-}
+# html_theme_options = {
+#     "documentwidth": "100",
+# }
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
@@ -100,6 +102,12 @@ html_theme_options = {
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+
+html_context = {
+    'css_files': [
+        '_static/my_theme.css',  # override wide tables in RTD theme
+        ],
+     }
 
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.
@@ -188,6 +196,8 @@ epub_exclude_files = ['search.html']
 
 
 # -- Extension configuration -------------------------------------------------
+
+# extensions = ['sphinx.ext.autodoc','numpydoc']
 
 # -- Options for intersphinx extension ---------------------------------------
 

@@ -8,8 +8,8 @@
 ##
 
 from Params import nboot,defSparam,datadir,outputdir,flow_new_format,Wipe_All_Fits
-from FileIO import ReadFuns,WriteFuns,ReadWithMeta,WriteWithMeta
-from Params import chitcoeff,defxlimOp,TflowToPhys,Qeps,cfg_file_type,cfgfmtdir
+from FileIO import ReadFuns,WriteFuns,ReadWithMeta,WriteWithMeta,Construct_File_Object
+from Params import chitcoeff,defxlimOp,TflowToPhys,Qeps,cfg_file_type,cfgfmtdir,this_dir
 import MomParams as mp
 from BootStrapping import BootStrap
 from MiscFuns import ODNested,mkdir_p,CheckClass,Series_TO_ODict
@@ -25,6 +25,7 @@ from copy import deepcopy
 from Autocorr import AutoCorrelate
 from PredefFitFuns import Chi_Prop_Fit_2exp,LinearFitFun
 from NullPlotData import null_series
+from ReadFO import FlowReadTopCharge,FlowReadTopCharge_New,ReadTsInFlowOp
 # from PredefFitFuns import RandTFitFun
 # import cPickle as pickle
 # import dill as pickle
@@ -168,6 +169,8 @@ class FlowOp(object):
     """ Op(tf) uses bootstrap class
         tf = flow time
     """
+    def Construct_FO_File(this_file):
+        return Construct_File_Object(this_file,FlowOp)
 
     ## Info is a dictionary containing information for the correlator:
     ## see comments below to see what is required.
@@ -182,8 +185,9 @@ class FlowOp(object):
                     'RatioCorrelators.RatioCorr',
                     'RatioCorrelators.RatioFOCorr','RatioCorrelators.RatioFOFullCorr']
 
-    def __init__(self, thisnboot=nboot, cfglist={},Info={}, thissym='Not Set',thiscol='Not Set',thisshift=0.0,name='',LLname='',
-                man_load_cfgs=False):
+    def __init__(self, thisnboot=nboot, cfglist={},Info={},
+                 thissym='Not Set',thiscol='Not Set',thisshift=0.0,
+                 name='',LLname='',man_load_cfgs=False):
         def GetFolderFileOp(thistype):
             if self.FlowNewForm:
                 if  'TopCharge' in thistype  :
@@ -363,6 +367,7 @@ class FlowOp(object):
         self.flowInfo = Info
         self.flowfiledir = datadir+thisfolder+'/'+self.dim_label+'_'+kappafolder+'-*-/PerGF/'
         self.FlowSetCustomName(name,LLname)
+        self.man_load_cfgs = man_load_cfgs
         if not man_load_cfgs:
             self.LoadCfgs(cfglist,name,LLname)
 
@@ -390,7 +395,6 @@ class FlowOp(object):
                 self.flowdir_list[istream] = thisdir
             else:
                 self.flowdir_list[istream] = thisdir.replace(self.dim_label+'_','')
-
 
 
 
@@ -1117,62 +1121,6 @@ class FlowOp(object):
         if self.is_comb:
             return
 
-        def FlowReadTopCharge(thisfile):
-            if os.path.isfile(thisfile):
-                readfile = thisfile
-            elif os.path.isfile(thisfile.replace('ng00','ng')):
-                readfile = thisfile.replace('ng00','ng')
-            else:
-                print('Warning, file not found',thisfile)
-                return [],[]
-
-            with open(readfile,'r') as ifile:
-                tflowlist,topchargelist = [],[]
-                for iline,line in enumerate(ifile):
-                    val = list(map(np.float64,line.split()))
-                    if len(val) == 3:
-                        tflow,topcharge,cmplxdump = val
-                    elif len(val) == 2:
-                        tflow,topcharge = val
-                    else:
-                        raise IOError('error with file: \n'+readfile+'\n on line: '+str(iline+1))
-                    if tflowstr(tflow) in self.tflowlist:
-                        tflowlist.append(np.float(tflow))
-                        topchargelist.append(topcharge)
-            return tflowlist,topchargelist
-
-
-        def FlowReadTopCharge_New(thisfile):
-            if os.path.isfile(thisfile):
-                readfile = thisfile
-            elif os.path.isfile(thisfile.replace('ng00','ng')):
-                readfile = thisfile.replace('ng00','ng')
-            else:
-                print('Warning, file not found',thisfile)
-                return [],[]
-            with open(readfile,'r') as ifile:
-                tflowlist,topchargelist = [],[]
-                flow_line = True
-                for iline,line in enumerate(ifile):
-                    if flow_line and len(line.strip()) != 0:
-
-                        val = list(map(np.float64,line.split()))
-                        if len(val) == 3:
-                            tflow,topcharge,cmplxdump = val
-                        elif len(val) == 2:
-                            tflow,topcharge = val
-                        else:
-                            raise IOError('error with file: \n'+readfile+'\n on line: '+str(iline+1))
-                        ## this is fix for 10.0 problem
-                        if tflowstr(tflow) in self.tflowlist:
-                            tflowlist.append(np.float(tflow))
-                            topchargelist.append(topcharge)
-                        flow_line = False
-                    elif len(line.strip()) == 0:
-                        flow_line = True
-            tflowlist,topchargelist = zip(*[[y,x] for y,x in sorted(zip(tflowlist,topchargelist))])
-            return list(tflowlist),list(topchargelist)
-
         ## making interpolator number more human readable
         # if len(self.flowname.split('_')) > 3:
         #     raise IOError('Do not read after combining correlators, please recreate the correlator')
@@ -1187,9 +1135,9 @@ class FlowOp(object):
             for ifile in self.Op_cfgs['file_names'].values:
                 # ifile = self.flowdir_list[istream]+icfg.join(self.flowfilename)
                 if self.FlowNewForm:
-                    tflow,topcharge = FlowReadTopCharge_New(ifile)
+                    tflow,topcharge = FlowReadTopCharge_New(ifile,tf_list=self.tflowlist)
                 else:
-                    tflow,topcharge = FlowReadTopCharge(ifile)
+                    tflow,topcharge = FlowReadTopCharge(ifile,tf_list=self.tflowlist)
                 for itflow in self.tflowfloat:
                     if itflow not in tflow:
                         print()
@@ -1213,15 +1161,17 @@ class FlowOp(object):
                 if show_timer: thistimer.Lap(ifile)
             self.Op_cfgs.loc[:,'Op'] = pa.Series(thisdata,index=self.Op_cfgs.index)
         else:
-            if show_timer: thistimer = Timer(linklist=self.Op_cfgs['configs'].values,name='Read '+self.flowname)
-            if len(self.Op_cfgs['configs'].values) == 0:
-                raise IOError('No values found for ' +self.Observ)
             thisdata = []
             if self.Read_Cfgs(file_type=cfg_file_type,show_timer=show_timer,CheckCfgs=CheckCfgs):
                 return
             else:
                 if 'configs' not in self.Op_cfgs:
+                    for istream in self.stream_list:
+                        print(self.flowdir_list[istream]+'/'+self.flowfilepref+'_*')
                     raise EnvironmentError('No config files found anywhere.')
+            if show_timer: thistimer = Timer(linklist=self.Op_cfgs['configs'].values,name='Read '+self.flowname)
+            if len(self.Op_cfgs['configs'].values) == 0:
+                raise IOError('No values found for ' +self.Observ)
             for (istream,iccfg),icfg in self.Op_cfgs['configs'].items():
                 ifile = self.flowdir_list[istream]+icfg.join(self.flowfilename)
                 if self.FlowNewForm:
@@ -1882,7 +1832,7 @@ class FlowOp(object):
             # checkdict['flowPickleFile'] = self.flowPickleFile.replace('.bak','')
             # checkdict['flowExcelFile'] = self.flowExcelFile.replace('.bak','')
             # checkdict['flowHumanFile'] = self.flowHumanFile.replace('.bak','')
-            if CheckClass(self.__dict__,loadeddict,thischeck):
+            if CheckClass(self.__dict__,loadeddict,thischeck) or self.man_load_cfgs:
                 self.read_cfgs_from_file = True
                 self.__dict__.update(loadeddict)
                 if Wipe_All_Fits or not isinstance(self.flowFit_Stats,sff.SetOfFitFuns):
@@ -2025,7 +1975,7 @@ class FlowOp(object):
                 try:
                     for it,iOp in self.Flowitems():
                         result[it] = iOp + Op2
-                except:
+                except Exception as err:
                     print(type(Op2))
                     raise EnvironmentError('Invalid value to combine with FlowOp class')
             result.is_comb = True
@@ -2046,7 +1996,7 @@ class FlowOp(object):
                 try:
                     for it,iOp in self.Flowitems():
                         result[it] = iOp - Op2
-                except:
+                except Exception as err:
                     print(type(Op2))
                     raise EnvironmentError('Invalid value to combine with FlowOp class')
             result.is_comb = True
@@ -2067,7 +2017,7 @@ class FlowOp(object):
                 try:
                     for it,iOp in self.Flowitems():
                         result[it] = iOp * Op2
-                except:
+                except Exception as err:
                     print(type(Op2))
                     raise EnvironmentError('Invalid value to combine with FlowOp class')
             result.is_comb = True
@@ -2085,7 +2035,7 @@ class FlowOp(object):
                 for (it,iOp) in self.Flowitems():
                     try:
                         result[it] = iOp / Op2[it]
-                    except:
+                    except Exception as err:
                         if any([ibs == 0 for ibs in Op2[it].bootvals]):
                             raise ZeroDivisionError('Dividing by zero found in bootstrap division for '+Op2.flowname + ' '+Op2[it].flowname)
 
@@ -2095,7 +2045,7 @@ class FlowOp(object):
                 try:
                     for it,iOp in self.Flowitems():
                         result[it] = iOp / Op2
-                except:
+                except Exception as err:
                     print(type(Op2))
                     raise EnvironmentError('Invalid value to combine with FlowOp class')
             result.is_comb = True
@@ -2116,7 +2066,7 @@ class FlowOp(object):
             else:
                 try:
                     result.Op_Stats.loc[:,'boot'] = pa.Series(self.Op_Stats['boot'] ** Op2,index=self.tflowlist)
-                except:
+                except Exception as err:
                     print(type(Op2))
                     raise EnvironmentError('Invalid value to combine with FlowOp class')
 
@@ -2139,7 +2089,7 @@ class FlowOp(object):
             try:
                 for it,iOp in self.Flowitems():
                     result[it] = Op2 + iOp
-            except:
+            except Exception as err:
                 print(type(Op2))
                 raise EnvironmentError('Invalid value to combine with FlowOp class')
         result.is_comb = True
@@ -2157,7 +2107,7 @@ class FlowOp(object):
             try:
                 for it,iOp in self.Flowitems():
                     result[it] =  Op2 - iOp
-            except:
+            except Exception as err:
                 print(type(Op2))
                 raise EnvironmentError('Invalid value to combine with FlowOp class')
         result.is_comb = True
@@ -2174,7 +2124,7 @@ class FlowOp(object):
         else:
             try:
                 result.Op_Stats.loc[:,'boot'] = pa.Series(self.Op_Stats['boot'] * Op2,index=self.tflowlist)
-            except:
+            except Exception as err:
                 print(type(Op2))
                 raise EnvironmentError('Invalid value to combine with FlowOp class')
         result.is_comb = True
@@ -2189,7 +2139,7 @@ class FlowOp(object):
             for (it,iOp) in self.Flowitems():
                 try:
                     result[it] = Op2[it] / iOp
-                except:
+                except Exception as err:
                     if any([ibs == 0 for ibs in iOp.bootvals]):
                         raise ZeroDivisionError('Dividing by zero found in bootstrap division for '+self.flowname + ' '+iOp.flowname)
 
@@ -2197,7 +2147,7 @@ class FlowOp(object):
             for it,iOp in self.Flowitems():
                 try:
                     result[it] = Op2 / iOp
-                except:
+                except Exception as err:
                     if iOp == 0:
                         raise ZeroDivisionError('Dividing by zero found in bootstrap division')
                     else:
@@ -2219,7 +2169,7 @@ class FlowOp(object):
             try:
                 for it,iOp in self.Flowitems():
                     result[it] = Op2 ** iOp
-            except:
+            except Exception as err:
                 print(type(Op2))
                 raise EnvironmentError('Invalid value to combine with FlowOp class')
         result.is_comb = True
@@ -2287,6 +2237,8 @@ class FlowOpFullSquared(object):
         tf = flow time
         t = time slice
     """
+    def Construct_FOFull_File(this_file):
+        return Construct_File_Object(this_file,FlowOpFullSquared)
 
     ## Info is a dictionary containing information for the correlator:
     ## see comments below to see what is required.
@@ -2548,6 +2500,7 @@ class FlowOpFullSquared(object):
 
         self.Create_Streams_Dirs()
         self.flowInfo = Info
+        self.man_load_cfgs = man_load_cfgs
 
         self.FlowSetCustomName(name,LLname)
         if not man_load_cfgs:
@@ -2971,28 +2924,14 @@ class FlowOpFullSquared(object):
         # ## self.Op = [ it , icfg , itflow ]
         # self.CreateOpCorr(show_timer=show_timer)
         ## self.Op = [ itflow , it , icfg  ]
-        print('read raw cofgs complete:')
-        print(str(self.Op_cfgs))
+        # print('read raw cofgs complete:')
+        # print(str(self.Op_cfgs))
         if 'random_time_list' not in self.Op_cfgs :
             self.MakeRandomTimeList()
         self.Write_Cfgs(file_type=cfg_file_type,show_timer=show_timer,CheckCfgs=CheckCfgs)
 
 
     def FlowRead(self,show_timer=True,cfg_file_type= 'PreDef',CheckCfgs=True):
-        def ReadTsInFlowOp(thisfile):
-            if os.path.isfile(thisfile):
-                with open(thisfile,'r') as ifile:
-                    tlist,topchargelist = [],[]
-                    for line in ifile:
-                        hold = list(map(np.float64,line.split()))
-                        if len(hold) < 3: continue
-                        tval,topcharge,cmplxdump = hold
-                        tlist.append(tval)
-                        topchargelist.append(topcharge)
-                return tlist,topchargelist,False
-            else:
-                print('Warning, file not found',thisfile)
-                return [],[],True
 
 
         ## making interpolator number more human readable
@@ -3046,7 +2985,7 @@ class FlowOpFullSquared(object):
 
     def CreateOpCorrDummy(self):
         for tflow in self.tflowlist:
-            for it_range in range(self.nranget):
+            for it_range in range(int(self.nranget)):
                 for itsum in self.tsum_list:
                     yield tflow,it_range,itsum
 
@@ -3065,7 +3004,7 @@ class FlowOpFullSquared(object):
         Oplen = self.latparams.nt
         for ictflow,tflow in enumerate(self.tflowlist):
             flowdata = self.Op_cfgs['Op'].apply(lambda x: x[ictflow])
-            for it_range in range(self.nranget):
+            for it_range in range(int(self.nranget)):
 
                 # degenerate_props = (it_range == 0 or it_range == self.latparams.nt/2.)
                 # for itsum in self.tsum_list:
@@ -3119,7 +3058,7 @@ class FlowOpFullSquared(object):
         Oplen = self.latparams.nt
         for ictflow,tflow in enumerate(self.tflowlist):
             flowdata = self.Op_cfgs['Op'].apply(lambda x: x[ictflow])
-            for it_range in range(self.nranget):
+            for it_range in range(int(self.nranget)):
                 # degenerate_props = (it_range == 0 or it_range == self.latparams.nt/2.)
                 for itsum in self.tsum_list:
                     strit_range = tstr(it_range).replace('t','tr')
@@ -3178,7 +3117,7 @@ class FlowOpFullSquared(object):
         Oplen = self.latparams.nt
         for ictflow,tflow in enumerate(self.tflowlist):
             flowdata = self.Op_cfgs['Op'].apply(lambda x: x[ictflow])
-            for it_range in range(self.nranget):
+            for it_range in range(int(self.nranget)):
                 for itsum in self.tsum_list:
                     its = untstr(itsum)
                     strit_range = tstr(it_range).replace('t','tr')
@@ -3458,7 +3397,7 @@ class FlowOpFullSquared(object):
         self.Op_avg_Stats.loc[:,'boot'] = pa.Series(lOp,index=indicies)
         self.Op_avg_Stats.loc[:,'Avg'] = pa.Series(lOpAvg,index=indicies)
         self.Op_avg_Stats.loc[:,'Std'] = pa.Series(lOpStd,index=indicies)
-        if show_timer: thistimer = Timer(linklist=[list(range(len(self.tflowlist))),list(range(self.nranget)),list(range(len(self.tsum_list)))],name='Creating Op2boot_toavg '+self.flowname)
+        if show_timer: thistimer = Timer(linklist=[list(range(len(self.tflowlist))),list(range(int(self.nranget))),list(range(len(self.tsum_list)))],name='Creating Op2boot_toavg '+self.flowname)
 
         if 'boot' in self.Op2_Stats:
             lOp2,lOp2Avg,lOp2Std = [],[],[]
@@ -4734,7 +4673,7 @@ class FlowOpFullSquared(object):
     #             try:
     #                 for it,iOp in self.Flowitems():
     #                     result[it] = iOp + Op2
-    #             except:
+    #             except Exception as err:
     #                 print type(Op2)
     #                 raise EnvironmentError('Invalid value to combine with FlowOp class')
     #         return result
@@ -4753,7 +4692,7 @@ class FlowOpFullSquared(object):
     #             try:
     #                 for it,iOp in self.Flowitems():
     #                     result[it] = iOp - Op2
-    #             except:
+    #             except Exception as err:
     #                 print type(Op2)
     #                 raise EnvironmentError('Invalid value to combine with FlowOp class')
     #         return result
@@ -4772,7 +4711,7 @@ class FlowOpFullSquared(object):
     #             try:
     #                 for it,iOp in self.Flowitems():
     #                     result[it] = iOp * Op2
-    #             except:
+    #             except Exception as err:
     #                 print type(Op2)
     #                 raise EnvironmentError('Invalid value to combine with FlowOp class')
     #         return result
@@ -4788,7 +4727,7 @@ class FlowOpFullSquared(object):
     #             for (it,iOp) in self.Flowitems():
     #                 try:
     #                     result[it] = iOp / Op2[it]
-    #                 except:
+    #                 except Exception as err:
     #                     if any([ibs == 0 for ibs in Op2[it].bootvals]):
     #                         raise ZeroDivisionError('Dividing by zero found in bootstrap division for '+Op2.flowname + ' '+Op2[it].flowname)
 
@@ -4798,7 +4737,7 @@ class FlowOpFullSquared(object):
     #             try:
     #                 for it,iOp in self.Flowitems():
     #                     result[it] = iOp / Op2
-    #             except:
+    #             except Exception as err:
     #                 print type(Op2)
     #                 raise EnvironmentError('Invalid value to combine with FlowOp class')
     #         return result
@@ -4818,7 +4757,7 @@ class FlowOpFullSquared(object):
     #             try:
     #                 for it,iOp in self.Flowitems():
     #                     result[it] = iOp ** Op2
-    #             except:
+    #             except Exception as err:
     #                 print type(Op2)
     #                 raise EnvironmentError('Invalid value to combine with FlowOp class')
     #         return result
@@ -4838,7 +4777,7 @@ class FlowOpFullSquared(object):
     #         try:
     #             for it,iOp in self.Flowitems():
     #                 result[it] = Op2 + iOp
-    #         except:
+    #         except Exception as err:
     #             print type(Op2)
     #             raise EnvironmentError('Invalid value to combine with FlowOp class')
     #     return result
@@ -4854,7 +4793,7 @@ class FlowOpFullSquared(object):
     #         try:
     #             for it,iOp in self.Flowitems():
     #                 result[it] =  Op2 - iOp
-    #         except:
+    #         except Exception as err:
     #             print type(Op2)
     #             raise EnvironmentError('Invalid value to combine with FlowOp class')
     #     return result
@@ -4870,7 +4809,7 @@ class FlowOpFullSquared(object):
     #         try:
     #             for it,iOp in self.Flowitems():
     #                 result[it] = Op2 * iOp
-    #         except:
+    #         except Exception as err:
     #             print type(Op2)
     #             raise EnvironmentError('Invalid value to combine with FlowOp class')
     #     return result
@@ -4883,7 +4822,7 @@ class FlowOpFullSquared(object):
     #         for (it,iOp) in self.Flowitems():
     #             try:
     #                 result[it] = Op2[it] / iOp
-    #             except:
+    #             except Exception as err:
     #                 if any([ibs == 0 for ibs in iOp.bootvals]):
     #                     raise ZeroDivisionError('Dividing by zero found in bootstrap division for '+self.flowname + ' '+iOp.flowname)
 
@@ -4891,7 +4830,7 @@ class FlowOpFullSquared(object):
     #         for it,iOp in self.Flowitems():
     #             try:
     #                 result[it] = Op2 / iOp
-    #             except:
+    #             except Exception as err:
     #                 if iOp == 0:
     #                     raise ZeroDivisionError('Dividing by zero found in bootstrap division')
     #                 else:
@@ -4911,7 +4850,7 @@ class FlowOpFullSquared(object):
     #         try:
     #             for it,iOp in self.Flowitems():
     #                 result[it] = Op2 ** iOp
-    #         except:
+    #         except Exception as err:
     #             print type(Op2)
     #             raise EnvironmentError('Invalid value to combine with FlowOp class')
     #     return result
@@ -4965,7 +4904,7 @@ def TestFO(DefWipe=False):
     data.FlowLoadPickle(DefWipe=DefWipe)
     data.FlowWrite()
     this_info = pa.Series()
-    this_info['save_file'] = './TestGraphs/flow_plot_test.pdf'
+    this_info['save_file'] = this_dir+'/TestGraphs/flow_plot_test.pdf'
     this_info['title'] = 'Test FlowOps'
     import PlotData as jpl
     data_plot = jpl.Plotting(plot_info=this_info)
@@ -5017,7 +4956,7 @@ def TestFOFull(DefWipe=False):
     dataFull.FlowLoadPickle(DefWipe=DefWipe)
     # dataFull.ExpFitTime(thistflow='t_f6.01',funDebug=True)
     this_info = pa.Series()
-    this_info['save_file'] = './TestGraphs/flowfull_plot_test.pdf'
+    this_info['save_file'] = this_dir+'/TestGraphs/flowfull_plot_test.pdf'
     this_info['title'] = 'Test FlowOpsFull'
     import PlotData as jpl
     data_plot = jpl.Plotting(plot_info=this_info)
@@ -5036,3 +4975,4 @@ if __name__ == '__main__':
     # %matplotlib inline
     data,datacomb = TestFO()
     dataFull = TestFOFull()
+    print('data is in data,datacomb,dataFull')

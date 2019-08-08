@@ -1,0 +1,387 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>FileIO module &mdash; LQCD Analysis Codebase TF Fits documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/my_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="FitFunctions module" href="FitFunctions.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> LQCD Analysis Codebase
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Python_Analysis</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="AnalysisGUI.html">AnalysisGUI module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Autocorr.html">Autocorr module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BootStrapping.html">BootStrapping module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CreateTable.html">CreateTable module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DSDefines.html">DSDefines module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FFSolve.html">FFSolve module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">FileIO module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FitFunctions.html">FitFunctions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FitFunctions_TF.html">FitFunctions_TF module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FlowOpps.html">FlowOpps module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FormFactors.html">FormFactors module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GammaMatricies.html">GammaMatricies module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MAH_control.html">MAH_control module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MiscFuns.html">MiscFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModPlot.html">ModPlot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModStylePlot.html">ModStylePlot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MomParams.html">MomParams module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MultiWrap.html">MultiWrap module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="NullPlotData.html">NullPlotData module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Params.html">Params module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PlotData.html">PlotData module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PredefFitFuns.html">PredefFitFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="QuantityLists.html">QuantityLists module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RatioCorrelators.html">RatioCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ReadBinaryCfuns.html">ReadBinaryCfuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ReadFO.html">ReadFO module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RunSetCommands.html">RunSetCommands module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFFs.html">SetsOfFFs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFits.html">SetsOfFits module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFlowOps.html">SetsOfFlowOps module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfRatios.html">SetsOfRatios module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfTwoPtCorrs.html">SetsOfTwoPtCorrs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ThreePtCorrelators.html">ThreePtCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TimeStuff.html">TimeStuff module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TwoPtCorrelators.html">TwoPtCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VarMethod.html">VarMethod module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="XmlFormatting.html">XmlFormatting module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xmltodict.html">xmltodict module</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">LQCD Analysis Codebase</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="modules.html">Python_Analysis</a> &raquo;</li>
+        
+      <li>FileIO module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/FileIO.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-FileIO">
+<span id="fileio-module"></span><h1>FileIO module<a class="headerlink" href="#module-FileIO" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="FileIO.BackupFile">
+<code class="descclassname">FileIO.</code><code class="descname">BackupFile</code><span class="sig-paren">(</span><em>*thisfilelist</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FileIO.html#BackupFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FileIO.BackupFile" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="FileIO.CheckFTDAS">
+<code class="descclassname">FileIO.</code><code class="descname">CheckFTDAS</code><span class="sig-paren">(</span><em>dictin</em>, <em>prev_key='first'</em>, <em>this_err=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FileIO.html#CheckFTDAS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FileIO.CheckFTDAS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="FileIO.Construct_Empty">
+<code class="descclassname">FileIO.</code><code class="descname">Construct_Empty</code><span class="sig-paren">(</span><em>this_class</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FileIO.html#Construct_Empty"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FileIO.Construct_Empty" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="FileIO.Construct_File_Object">
+<code class="descclassname">FileIO.</code><code class="descname">Construct_File_Object</code><span class="sig-paren">(</span><em>this_file</em>, <em>this_class</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FileIO.html#Construct_File_Object"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FileIO.Construct_File_Object" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="FileIO.Empty">
+<em class="property">class </em><code class="descclassname">FileIO.</code><code class="descname">Empty</code><a class="reference internal" href="_modules/FileIO.html#Empty"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FileIO.Empty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="FileIO.FormatXml">
+<code class="descclassname">FileIO.</code><code class="descname">FormatXml</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FileIO.html#FormatXml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FileIO.FormatXml" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="FileIO.ReadDillWrap">
+<code class="descclassname">FileIO.</code><code class="descname">ReadDillWrap</code><span class="sig-paren">(</span><em>thisfile</em>, <em>this_err=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FileIO.html#ReadDillWrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FileIO.ReadDillWrap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="FileIO.ReadFuns">
+<code class="descclassname">FileIO.</code><code class="descname">ReadFuns</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FileIO.html#ReadFuns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FileIO.ReadFuns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="FileIO.ReadFuns_NoLock">
+<code class="descclassname">FileIO.</code><code class="descname">ReadFuns_NoLock</code><span class="sig-paren">(</span><em>*fun_names</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FileIO.html#ReadFuns_NoLock"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FileIO.ReadFuns_NoLock" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="FileIO.ReadPicklePy2">
+<code class="descclassname">FileIO.</code><code class="descname">ReadPicklePy2</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FileIO.html#ReadPicklePy2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FileIO.ReadPicklePy2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="FileIO.ReadPickleWrap">
+<code class="descclassname">FileIO.</code><code class="descname">ReadPickleWrap</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FileIO.html#ReadPickleWrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FileIO.ReadPickleWrap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="FileIO.ReadPickleWrap_NoLock">
+<code class="descclassname">FileIO.</code><code class="descname">ReadPickleWrap_NoLock</code><span class="sig-paren">(</span><em>thisfile</em>, <em>this_err=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FileIO.html#ReadPickleWrap_NoLock"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FileIO.ReadPickleWrap_NoLock" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="FileIO.ReadWithMeta">
+<code class="descclassname">FileIO.</code><code class="descname">ReadWithMeta</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FileIO.html#ReadWithMeta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FileIO.ReadWithMeta" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="FileIO.ReadWithMetaPy2">
+<code class="descclassname">FileIO.</code><code class="descname">ReadWithMetaPy2</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FileIO.html#ReadWithMetaPy2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FileIO.ReadWithMetaPy2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="FileIO.ReadXml">
+<code class="descclassname">FileIO.</code><code class="descname">ReadXml</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FileIO.html#ReadXml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FileIO.ReadXml" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="FileIO.RecFTDAS">
+<code class="descclassname">FileIO.</code><code class="descname">RecFTDAS</code><span class="sig-paren">(</span><em>dictin</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FileIO.html#RecFTDAS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FileIO.RecFTDAS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="FileIO.ScratchHotixes">
+<code class="descclassname">FileIO.</code><code class="descname">ScratchHotixes</code><span class="sig-paren">(</span><em>this_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FileIO.html#ScratchHotixes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FileIO.ScratchHotixes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="FileIO.TestForFunction">
+<code class="descclassname">FileIO.</code><code class="descname">TestForFunction</code><span class="sig-paren">(</span><em>dictin</em>, <em>this_string=[]</em>, <em>temp_file='/home/jackdra/LQCD/Results/DebugResults/scratch//debug_file.test'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FileIO.html#TestForFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FileIO.TestForFunction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="FileIO.WriteDill">
+<code class="descclassname">FileIO.</code><code class="descname">WriteDill</code><span class="sig-paren">(</span><em>thisfile</em>, <em>outputdict</em>, <em>this_err=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FileIO.html#WriteDill"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FileIO.WriteDill" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="FileIO.WriteExcel">
+<code class="descclassname">FileIO.</code><code class="descname">WriteExcel</code><span class="sig-paren">(</span><em>thisfile</em>, <em>df_list</em>, <em>flowcfglist=None</em>, <em>cfglist=None</em>, <em>params=None</em>, <em>Bak=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FileIO.html#WriteExcel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FileIO.WriteExcel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="FileIO.WriteFun_NoLock">
+<code class="descclassname">FileIO.</code><code class="descname">WriteFun_NoLock</code><span class="sig-paren">(</span><em>this_fun</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FileIO.html#WriteFun_NoLock"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FileIO.WriteFun_NoLock" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="FileIO.WriteFuns">
+<code class="descclassname">FileIO.</code><code class="descname">WriteFuns</code><span class="sig-paren">(</span><em>*these_funs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FileIO.html#WriteFuns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FileIO.WriteFuns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="FileIO.WritePickle">
+<code class="descclassname">FileIO.</code><code class="descname">WritePickle</code><span class="sig-paren">(</span><em>thisfile</em>, <em>outputdict</em>, <em>Bak=True</em>, <em>protocol=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FileIO.html#WritePickle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FileIO.WritePickle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="FileIO.WritePickle_NoLock">
+<code class="descclassname">FileIO.</code><code class="descname">WritePickle_NoLock</code><span class="sig-paren">(</span><em>thisfile</em>, <em>outputdict</em>, <em>this_err=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FileIO.html#WritePickle_NoLock"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FileIO.WritePickle_NoLock" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="FileIO.WriteWithMeta">
+<code class="descclassname">FileIO.</code><code class="descname">WriteWithMeta</code><span class="sig-paren">(</span><em>df_data</em>, <em>meta_data</em>, <em>this_file</em>, <em>file_type='msgpack'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FileIO.html#WriteWithMeta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FileIO.WriteWithMeta" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="FileIO.WriteXml">
+<code class="descclassname">FileIO.</code><code class="descname">WriteXml</code><span class="sig-paren">(</span><em>thisfile</em>, <em>outputdict</em>, <em>Bak=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FileIO.html#WriteXml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FileIO.WriteXml" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="FileIO.retry">
+<code class="descclassname">FileIO.</code><code class="descname">retry</code><span class="sig-paren">(</span><em>delays=(0</em>, <em>1)</em>, <em>exception=&lt;class 'Exception'&gt;</em>, <em>report=&lt;function &lt;lambda&gt;&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FileIO.html#retry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FileIO.retry" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="FitFunctions.html" class="btn btn-neutral float-right" title="FitFunctions module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Jack Dragos
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

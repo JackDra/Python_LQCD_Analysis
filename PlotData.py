@@ -1,21 +1,21 @@
 #!/usr/bin/env python
 
-
 # import matplotlib
 # matplotlib.use('Agg') # Must be before importing matplotlib.pyplot or pylab!
 import matplotlib.pyplot as pl
 import numpy as np
-from Params import plot_style,fillalpha
+from Params import plot_style,this_dir
+from NullPlotData import fillalpha
 import pandas as pa
 from BootStrapping import BootStrap
 from collections import OrderedDict
 import SetsOfFits as sff
 from MiscFuns import Series_TO_ODict,ODNested,get_val_float_0,fmt_Qt5_col,mkdir_p,DEBUGprint
 from XmlFormatting import AvgStdToFormat,minfmt,maxfmt,MakeValAndErr,MakeVal
-from FileIO import WriteXml,WritePickle,ReadPickleWrap
-from copy import copy
+from FileIO import WriteXml,WritePickle,ReadPickleWrap,Construct_File_Object
+from copy import deepcopy,copy
 from XmlFormatting import LegendFmt
-# from NullPlotData import null_series
+from NullPlotData import null_series
 
 Py2Read = False
 
@@ -24,6 +24,27 @@ import os
 # import seaborn as sns
 #
 # sns.set_style("darkgrid",{'legend.frameon':True,'errorbar.capsize':5})
+
+def CheckNothing(this_dict,this_key,check_false=True,null_type=None):
+    if this_key not in this_dict.keys():
+        is_nothing = this_dict[this_key] is None
+        if check_false:
+            is_nothing = is_nothing and this_dict[this_key] is False
+        is_nothing = is_nothing and np.isnan(this_dict[this_key])
+        if is_nothing:
+            return null_type
+        else:
+            return this_dict[this_key]
+    else:
+        return this_dict[this_key]
+
+
+
+def fmt_data_str(idata):
+    if hasattr(idata,'name'):
+        return idata.name
+    else:
+        return idata
 
 def tuple_wrap(val):
     if isinstance(val,(list,np.ndarray)):
@@ -146,7 +167,7 @@ if Py2Read:
                 if not isinstance(ikey_sel,ikey):
                     try:
                         this_key_select[ic] = ikey(this_key_select[ic])
-                    except:
+                    except Exception as err:
                         if 'b\'' in str(list(this_data.index)[0][ic]) and add_b:
                             this_key_select[ic] = ikey('b\''+this_key_select[ic].replace('b\'','').replace('\'','')+'\'','ascii')
                         else:
@@ -167,6 +188,9 @@ class Plotting(object):
     Class to organise and duplicate the plotting.
 
     """
+    def Construct_Plot_File(this_file):
+        return Construct_File_Object(this_file,Plotting)
+
 
 
     def __init__(self, plot_data = pa.DataFrame(), plot_info = pa.Series()):
@@ -278,6 +302,65 @@ class Plotting(object):
     def SetAspectRatio(self,ratio='auto'):
         self.plot_plane.set_aspect(ratio)
 
+    def Flip_Axies(self):
+        self.Flip_X_Axis()
+        self.Flip_Y_Axis()
+
+    def Flip_X_Axis(self):
+        raise NotImplementedError('X_axis flip needs more carefull consideration since it is multidimensional')
+        # for ikey,idata in self.plot_data.items():
+        #     if 'fit_class' in idata.keys() and hasattr(idata['fit_class'],'Flip_X_Axis'):
+        #         idata['fit_class'].Flip_X_Axis()
+        #         if 'otherXvals' in idata and isinstance(idata['otherXvals'],(list,tuple,np.ndarray)):
+        #             idata['otherXvals'] = type(idata['otherXvals'])([-ix for ix in idata['otherXvals']])
+        #         if 'xdatarange' not in idata and not isinstance(idata['xdatarange'],str):
+        #             hold_xrange = [0,0]
+        #             if idata['xdatarange'][-1] == 'ToDataMax':
+        #                 hold_xrange[0] = 'FromDataMin'
+        #             else:
+        #                 hold_xrange[0] = -idata['xdatarange'][-1]
+        #             if idata['xdatarange'][0] == 'FromDataMin':
+        #                 hold_xrange[-1] = 'ToDataMax'
+        #             else:
+        #                 hold_xrange[-1] = -idata['xdatarange'][0]
+        #             idata['xdatarange'] = hold_xrange
+        #     else:
+        #         if 'x_data_median' in idata and idata['x_data_median'] is not None:
+        #             idata['x_data_median'] = -idata['x_data_median']
+        #             if hasattr(idata['x_data_median'],'Stats'):
+        #                 idata['x_data_median'].Stats()
+        #         if 'x_data' in idata and idata['x_data'] is not None:
+        #             idata['x_data'] = -idata['x_data']
+        #             if hasattr(idata['x_data'],'Stats'):
+        #                 idata['x_data'].Stats()
+        # for icx, ix in self.plot_info['xlims']:
+        #     if ix is not None and ix is not False:
+        #         self.plot_info['xlims'][icx] = -ix
+        # hold = copy(self.plot_info['xlims'][1])
+        # self.plot_info['xlims'][1] = self.plot_info['xlims'][0]
+        # self.plot_info['xlims'][0] = hold
+
+
+    def Flip_Y_Axis(self):
+        for ikey,idata in self.plot_data.items():
+            if 'arrow' in idata['type']:
+                idata['y_data'] = [-iy for iy in idata['y_data']]
+        if 'ylims' in self.plot_info:
+            for icy, iy in enumerate(self.plot_info['ylims']):
+                if iy is not None and not isinstance(iy,bool):
+                    self.plot_info['ylims'][icy] = -iy
+            hold = copy(self.plot_info['ylims'][1])
+            self.plot_info['ylims'][1] = self.plot_info['ylims'][0]
+            self.plot_info['ylims'][0] = hold
+        for ikey,idata in self.plot_data.items():
+            this_logic = 'scale' not in idata
+            this_logic = this_logic and idata['scale'] is not None
+            this_logic = this_logic and not isinstance(idata['scale'],bool)
+            if this_logic:
+                self.plot_data[ikey]['scale'] = -1
+            else:
+                self.plot_data[ikey]['scale'] = -self.plot_data[ikey]['scale']
+        self.PlotAll()
 
     def ImportData(self,plot_data):
         if isinstance(plot_data,pa.DataFrame):
@@ -359,95 +442,43 @@ class Plotting(object):
         self.AddNulls()
 
     def AddNulls(self):
-        self.plot_data = self.plot_data.fillna(False)
-        for icol,col_data in self.plot_data.items():
-            if 'plot_this' not in col_data:
-                self.plot_data[icol]['plot_this'] = True
-            if 'type' not in col_data or col_data['type'] is False:
-                if 'yerr_data' in col_data:
-                    self.plot_data[icol]['type'] = 'error_bar'
+        self.plot_data.fillna(False)
+        out_plot_data = pa.DataFrame()
+        for icol in self.plot_data.columns:
+            out_plot_data[icol] = copy(null_series)
+            out_plot_data[icol].update(self.plot_data[icol])
+            if CheckNothing(out_plot_data[icol],'plot_this',null_type='Not_In') == 'Not_In':
+                if CheckNothing(out_plot_data[icol],'yerr_data',null_type=None) is None:
+                    out_plot_data[icol]['type'] = 'plot'
                 else:
-                    self.plot_data[icol]['type'] = 'plot'
-            if '_vary' in col_data['type'] and 'key_select' not in list(col_data.keys()):
-                if 'y_data' in list(col_data.keys()) and isinstance( col_data['y_data'],pa.Series):
-                    self.plot_data[icol]['key_select'] = list(self.plot_data[icol]['y_data'].keys())[0]
-                elif 'boot_data' in list(col_data.keys()) and isinstance( col_data['boot_data'],pa.Series):
-                    self.plot_data[icol]['key_select'] = list(self.plot_data[icol]['boot_data'].keys())[0]
-                elif 'fit_class' in list(col_data.keys()) and isinstance( col_data['fit_class'],pa.Series):
-                    self.plot_data[icol]['key_select'] = list(self.plot_data[icol]['fit_class'].keys())[0]
-                elif 'x_data' in list(col_data.keys()) and isinstance( col_data['x_data'],pa.Series):
-                    self.plot_data[icol]['key_select'] = list(self.plot_data[icol]['x_data'].keys())[0]
-                if 'fit' in col_data['type']:
-                    if isinstance(self.plot_data[icol]['key_select'],(list,tuple,np.ndarray)):
-                        self.plot_data[icol]['key_select'] = tuple(self.plot_data[icol]['key_select'])
+                    out_plot_data[icol]['type'] = 'error_bar'
+            if '_vary' in out_plot_data[icol]['type'] and 'key_select' not in list(out_plot_data[icol].keys()):
+                if 'y_data' in list(out_plot_data[icol].keys()) and isinstance( out_plot_data[icol]['y_data'],pa.Series):
+                    out_plot_data[icol]['key_select'] = list(out_plot_data[icol]['y_data'].keys())[0]
+                elif 'boot_data' in list(out_plot_data[icol].keys()) and isinstance( out_plot_data[icol]['boot_data'],pa.Series):
+                    out_plot_data[icol]['key_select'] = list(out_plot_data[icol]['boot_data'].keys())[0]
+                elif 'fit_class' in list(out_plot_data[icol].keys()) and isinstance( out_plot_data[icol]['fit_class'],pa.Series):
+                    out_plot_data[icol]['key_select'] = list(out_plot_data[icol]['fit_class'].keys())[0]
+                elif 'x_data' in list(out_plot_data[icol].keys()) and isinstance( out_plot_data[icol]['x_data'],pa.Series):
+                    out_plot_data[icol]['key_select'] = list(out_plot_data[icol]['x_data'].keys())[0]
+                if 'fit' in out_plot_data[icol]['type']:
+                    if isinstance(out_plot_data[icol]['key_select'],(list,tuple,np.ndarray)):
+                        out_plot_data[icol]['key_select'] = tuple(out_plot_data[icol]['key_select'])
                     else:
-                        self.plot_data[icol]['key_select'] = self.plot_data[icol]['key_select']
+                        out_plot_data[icol]['key_select'] = out_plot_data[icol]['key_select']
                 else:
-                    if isinstance(self.plot_data[icol]['key_select'],(list,tuple,np.ndarray)):
-                        self.plot_data[icol]['key_select'] = (slice(None),)+tuple(self.plot_data[icol]['key_select'][1:])
+                    if isinstance(out_plot_data[icol]['key_select'],(list,tuple,np.ndarray)):
+                        out_plot_data[icol]['key_select'] = (slice(None),)+tuple(out_plot_data[icol]['key_select'][1:])
                     else:
-                        self.plot_data[icol]['key_select'] = slice(None)
-            if 'Median' not in col_data:
-                self.plot_data[icol]['Median'] = False
-            if 'fmt_class' not in col_data:
-                self.plot_data[icol]['fmt_class'] = None
-            if 'phys_axies' not in col_data:
-                self.plot_data[icol]['phys_axies'] = False
-            if 'arrow_text_size' not in col_data:
-                self.plot_data[icol]['arrow_text_size'] = 30
-            if 'arrow_color' not in col_data:
-                self.plot_data[icol]['arrow_color'] = 'black'
-            if 'arrow_style' not in col_data:
-                self.plot_data[icol]['arrow_style'] = 'fancy'
-            if 'x_fun' not in col_data:
-                self.plot_data[icol]['x_fun'] = None
-            if 'label' not in col_data or col_data['label'] is False:
-                self.plot_data[icol]['label'] = None
-            if 'color' not in col_data or col_data['color'] is False:
-                self.plot_data[icol]['color'] = None
-            if 'symbol' not in col_data or col_data['symbol'] is False:
-                self.plot_data[icol]['symbol'] = 'o'
-            if 'shift' not in col_data or col_data['shift'] is False:
-                self.plot_data[icol]['shift'] = None
-            if 'shift_overlap' not in col_data or col_data['shift_overlap'] is False:
-                self.plot_data[icol]['shift_overlap'] = 0.005
-            if 'supress_legend' not in col_data:
-                self.plot_data[icol]['supress_legend'] = False
-            if 'hairline' not in col_data:
-                self.plot_data[icol]['hairline'] = False
-            if 'extrap_fade' not in col_data or col_data['extrap_fade'] == 0:
-                self.plot_data[icol]['extrap_fade'] = 1.5
-            if 'hair_alpha' not in col_data:
-                self.plot_data[icol]['hair_alpha'] = (20,1)
-            if 'FPName' not in col_data:
-                self.plot_data[icol]['FPName'] = ''
-            if 'FPUnits' not in col_data:
-                self.plot_data[icol]['FPUnits'] = ''
-            if 'x_range_min' not in col_data:
-                self.plot_data[icol]['x_range_min'] = 0
-            if 'x_scale' not in col_data:
-                self.plot_data[icol]['x_scale'] = 1
-            if 'x_range_max' not in col_data:
-                self.plot_data[icol]['x_range_max'] = -1
-            if 'x_increment' not in col_data:
-                self.plot_data[icol]['x_increment'] = 1
-            if 'alpha' not in col_data or col_data['alpha'] is False:
-                self.plot_data[icol]['alpha'] = fillalpha
-            if 'histtype' not in col_data or col_data['histtype'] is False:
-                self.plot_data[icol]['histtype'] = 'stepfilled'
-            if 'suppress_key_index' not in col_data or not isinstance(col_data['suppress_key_index'],bool):
-                self.plot_data[icol]['suppress_key_index'] = False
-            if 'scale' not in col_data or col_data['scale'] is False:
-                self.plot_data[icol]['scale'] = 1.0
-            if 'plot_err' not in col_data or not isinstance(col_data['plot_err'],str):
-                self.plot_data[icol]['plot_err'] = ''
+                        out_plot_data[icol]['key_select'] = slice(None)
+        self.plot_data = out_plot_data
         if 'xlims' in self.plot_info:
             for icx,ix in enumerate(self.plot_info['xlims']):
-                if ix is False:
+                if isinstance(ix,bool):
                     self.plot_info['xlims'][icx] = None
         if 'ylims' in self.plot_info:
             for icy,iy in enumerate(self.plot_info['ylims']):
-                if iy is False:
+                if isinstance(iy,bool):
                     self.plot_info['ylims'][icy] = None
             # if 'fit' in col_data['type']:
             #     if 'fit_class' not in col_data or \
@@ -473,12 +504,28 @@ class Plotting(object):
     #             if iy is None:
     #                 self.plot_info['ylims'][icy] = False
 
+    def __str__(self):
+        output_list = []
+        output_list.append('INFO:')
+        output_list.append(self.plot_info.to_string())
+        output_list.append('')
+        output_list.append('DATA:')
+        for ikey,idata in self.plot_data.items():
+            output_list.append('    '+ikey)
+            output_list.append(idata.apply(fmt_data_str).to_string())
+        return '\n'.join(output_list)
+
     def PrintData(self):
-        print('INFO:')
-        print(self.plot_info)
-        print()
-        print('DATA:')
-        print(self.plot_data)
+        print(str(self))
+        # print('INFO:')
+        # print(self.plot_info)
+        # print()
+        # print('DATA:')
+        # for ikey,idata in self.plot_data.items():
+        #     print('    ',ikey)
+        #     print(idata.apply(fmt_data_str))
+
+
 
     def FormatSetsOfFits(self):
         for icol,col_data in self.plot_data.items():
@@ -488,7 +535,7 @@ class Plotting(object):
                 elif isinstance( col_data['fit_class'],sff.SetOfFitFuns):
                     pass
                     # col_data['fit_class'] = col_data['fit_class'].Fit_Stats_fmt['Fit']
-                elif len(col_data['fit_class']) > 0 and isinstance( col_data['fit_class'].iloc[0],sff.SetOfFitFuns):
+                elif isinstance(col_data['fit_class'],(list,tuple,np.ndarray)) and len(col_data['fit_class']) > 0 and isinstance(col_data['fit_class'].iloc[0],sff.SetOfFitFuns):
                     col_data['fit_class'] = sff.PullSOFSeries(col_data['fit_class'])
         return True
     # def ScaleY(self,this_plot_data):
@@ -512,17 +559,15 @@ class Plotting(object):
         # if 'x_increment' not in this_plot_data.keys():
         #     this_plot_data['x_increment'] = 1
         x_max = this_plot_data['x_range_max']
-        if x_max == -1:
-            x_max = None
         x_min = this_plot_data['x_range_min']
         x_inc = this_plot_data['x_increment']
-        if x_max is False:
+        if x_max is None or isinstance(x_max,bool):
             x_max = -1
-        if x_min is False:
+        if x_min is None or isinstance(x_min,bool):
             x_min = 0
         # elif x_max <= x_min:
         #     x_max = x_min + 1
-        if x_inc is False:
+        if x_inc is None or isinstance(x_inc,bool):
             x_inc = 1
         elif x_inc == 0:
             x_inc = 1
@@ -533,6 +578,10 @@ class Plotting(object):
             else:
                 this_scale = 1
             if isinstance(idata,(list,tuple,np.ndarray)):
+                if x_max < 0:
+                    x_max = x_max%len(idata) + 1
+                if x_min < 0:
+                    x_min = x_min%len(idata) + 1
                 data_out.append(np.array(idata)[x_min:x_max:x_inc]*this_scale)
             elif idata is not None:
                 data_out.append(idata*this_scale)
@@ -559,9 +608,9 @@ class Plotting(object):
                 this_ydata = this_plot_data['y_data']
             if 'yerr_data_up' in this_plot_data and 'yerr_data_down' in this_plot_data:
                 yerr_bool = this_plot_data['yerr_data_up'] is not None and \
-                            this_plot_data['yerr_data_up'] is not False
+                            not isinstance(this_plot_data['yerr_data_up'],bool)
                 yerr_bool = yerr_bool and this_plot_data['yerr_data_down'] is not None and \
-                            this_plot_data['yerr_data_down'] is not False
+                            not isinstance(this_plot_data['yerr_data_down'],bool)
                 if yerr_bool:
                     tupley_err = True
                     this_yerrdata = pa.Series(list(zip(this_plot_data['yerr_data_up'],this_plot_data['yerr_data_down'])),index=this_plot_data['yerr_data_up'].index)
@@ -576,15 +625,15 @@ class Plotting(object):
                 this_xdata = this_plot_data['x_data']
             if 'xerr_data_up' in this_plot_data and 'xerr_data_down' in this_plot_data:
                 xerr_bool = this_plot_data['xerr_data_up'] is not None and \
-                            this_plot_data['xerr_data_up'] is not False
+                            not isinstance(this_plot_data['xerr_data_up'],bool)
                 xerr_bool = xerr_bool and this_plot_data['xerr_data_down'] is not None and \
-                            this_plot_data['xerr_data_down'] is not False
+                            not isinstance(this_plot_data['xerr_data_down'],bool)
                 if xerr_bool:
                     tuplex_err = True
                     this_xerrdata = pa.Series(list(zip(this_plot_data['xerr_data_up'],this_plot_data['xerr_data_down'])),index=this_plot_data['xerr_data_up'].index)
             elif 'xerr_data' in this_plot_data:
                 this_xerrdata = this_plot_data['xerr_data']
-                xerr_bool = this_xerrdata is not None and this_xerrdata is not False
+                xerr_bool = this_xerrdata is not None and not isinstance(this_xerrdata,bool)
             else:
                 xerr_bool = False
 
@@ -597,7 +646,7 @@ class Plotting(object):
                 this_xdata = this_plot_data['x_data']
             if 'xerr_data' in this_plot_data:
                 this_xerrdata = this_plot_data['xerr_data']
-                xerr_bool = this_xerrdata is not None and this_xerrdata is not False
+                xerr_bool = this_xerrdata is not None and not isinstance(this_xerrdata,bool)
             else:
                 xerr_bool = False
         if 'fit_class' in this_plot_data:
@@ -615,8 +664,8 @@ class Plotting(object):
             this_boot = False
 
 
-        if this_plot_data['fmt_class'] is not False and this_plot_data['fmt_class'] is not None:
-            if 'key_select' in this_plot_data and this_plot_data['key_select'] is not False:
+        if not isinstance(this_plot_data['fmt_class'],bool) and this_plot_data['fmt_class'] is not None:
+            if 'key_select' in this_plot_data and not isinstance(this_plot_data['key_select'],bool):
                 if no_key_formatting:
                     this_key_select = tuple_wrap(this_plot_data['key_select'])
                 else:
@@ -635,7 +684,7 @@ class Plotting(object):
             if this_yerrdata is not None:
                 this_yerrdata = this_plot_data['fmt_class'].FormatSeriesKeys(this_yerrdata,this_plot_data['phys_axies'])
         else:
-            if 'key_select' in this_plot_data and this_plot_data['key_select'] is not False:
+            if 'key_select' in this_plot_data and not isinstance(this_plot_data['key_select'],bool):
                 this_key_select = tuple_wrap(this_plot_data['key_select'])
             else:
                 this_key_select = 'First'
@@ -703,7 +752,7 @@ class Plotting(object):
                     this_leg = med_leg+str(LegendFmt(this_plot_data['label']+' '+this_leg))
                 else:
                     this_leg = med_leg+str(LegendFmt(this_plot_data['label']))
-                if this_plot_data['x_fun'] is not None and this_plot_data['x_fun'] is not False:
+                if this_plot_data['x_fun'] is not None and not isinstance(this_plot_data['x_fun'],bool):
                     this_xdata = [this_plot_data['x_fun'](ix) for ix in this_xdata]
                 try:
                     np.array(this_xdata)+float(this_plot_data['shift'])
@@ -714,9 +763,11 @@ class Plotting(object):
                     for ix in this_xdata:
                         out_str += '    '+str(ix) + '\n'
                     raise Exception(out_str +str(err))
-                if this_plot_data['scale'] is not False and this_plot_data['scale'] is not None:
+                if not isinstance(this_plot_data['scale'],bool) and this_plot_data['scale'] is not None:
                     this_yerrdata = np.array(this_yerrdata)*this_plot_data['scale']
                     this_ydata = np.array(this_ydata)*this_plot_data['scale']
+                if not isinstance(this_plot_data['y_shift'],bool) and this_plot_data['y_shift'] is not None:
+                    this_ydata = np.array(this_ydata)+this_plot_data['y_shift']
                 if this_plot_data['supress_legend']: this_leg = None
                 this_boot,this_ydata,this_xdata,this_xerrdata,this_yerrdata = self.XRange_Chop(this_plot_data,[2,3],this_boot,this_ydata,this_xdata,this_xerrdata,this_yerrdata)
                 this_xdata = Shift_Duplicates(this_xdata,this_shiftper=float(this_plot_data['shift_overlap']))
@@ -737,11 +788,11 @@ class Plotting(object):
         if 'arrow' in this_plot_data['type']:
             location = (this_xdata[0],this_ydata[0])
             text_loc = (this_xdata[1],this_ydata[1])
-            if this_plot_data['arrow_color'] == False:
-                this_plot_data['arrow_color'] = 'black'
-            if this_plot_data['arrow_style'] == False:
-                this_plot_data['arrow_style'] = 'fancy'
-            if this_plot_data['arrow_text_size'] == False:
+            if isinstance(this_plot_data['arrow_color'],bool):
+                this_plot_data['arrow_color'] = 'darkblue'
+            if isinstance(this_plot_data['arrow_style'],bool):
+                this_plot_data['arrow_style'] = 'simple'
+            if isinstance(this_plot_data['arrow_text_size'],bool):
                 this_plot_data['arrow_text_size'] = 30
             if this_plot_data['supress_legend']:
                 self.plot_plane.annotate('', xy=location, xytext=text_loc,
@@ -749,6 +800,76 @@ class Plotting(object):
             else:
                 self.plot_plane.annotate(LegendFmt(this_plot_data['label']), xy=location, xytext=text_loc,
                     arrowprops={'arrowstyle': this_plot_data['arrow_style'],'color':this_plot_data['arrow_color']}, va='center',size=this_plot_data['arrow_text_size'])
+        elif 'vertical_comp' in this_plot_data['type']:
+            # if len(this_xdata) == 0: return -1
+            #TODO implement median for xdata too
+
+            this_leg = ''
+            if tuplex_err:
+                this_xerrdata = np.array([list(ival) for ival in this_xerrdata.values]).swapaxes(0,1)
+            if not this_plot_data['suppress_key_index']:
+                this_leg = med_leg+str(LegendFmt(this_plot_data['label']+' '+this_leg))
+            else:
+                this_leg = med_leg+str(LegendFmt(this_plot_data['label']))
+            if this_plot_data['x_fun'] is not None and not isinstance(this_plot_data['x_fun'],bool):
+                this_xdata = [this_plot_data['x_fun'](ix) for ix in this_xdata]
+            if this_plot_data['supress_legend']: this_leg = None
+            # this_boot,this_ydata,this_xdata,this_xerrdata,this_yerrdata = self.XRange_Chop(this_plot_data,[3,4],this_boot,this_ydata,this_xdata,this_xerrdata,this_yerrdata)
+            if len(this_xdata) == 0: return -1
+            this_xdata = np.array(list(map(float,this_xdata)))
+            this_xerrdata = np.array(list(map(float,this_xerrdata)))
+            this_y = np.arange(len(this_xdata))
+            this_xdata,this_xerrdata,this_y = self.XRange_Chop(this_plot_data,[0,1],this_xdata,this_xerrdata,this_y)
+            if 'mirror_vert' in self.plot_info and self.plot_info['mirror_vert']:
+                this_xdata = this_xdata[::-1]
+                this_xerrdata = this_xerrdata[::-1]
+            if 'flip_vert' in self.plot_info and self.plot_info['flip_vert']:
+                self.plot_plane.errorbar(   this_y+10*float(this_plot_data['shift']),
+                                            np.array(this_xdata),
+                                            yerr=this_xerrdata,
+                                            label=this_leg,
+                                            fmt=this_plot_data['symbol'],
+                                            color=this_plot_data['color'])
+            else:
+                self.plot_plane.errorbar(   np.array(this_xdata),
+                                            this_y+10*float(this_plot_data['shift']),
+                                            xerr=this_xerrdata,
+                                            label=this_leg,
+                                            fmt=this_plot_data['symbol'],
+                                            color=this_plot_data['color'])
+            if 'do_band' in this_plot_data and isinstance(this_plot_data['do_band'],int) \
+            and not isinstance(this_plot_data['do_band'],bool):
+                this_index = min(max(-len(this_xdata),this_plot_data['do_band']),len(this_xdata)-1)
+                band_x = this_xdata[this_index]
+                band_xerr = this_xerrdata[this_index]
+                band_xup = band_x+band_xerr
+                band_xdown = band_x-band_xerr
+                if 'show_band_eval' not in this_plot_data: this_plot_data['show_band_eval'] = False
+                if this_plot_data['show_band_eval'] and not this_plot_data['supress_legend']:
+                    band_leg = r'$'+MakeValAndErr(band_x,band_xerr,latex=True,Dec=2)+r'$'
+                    if 'FPName' in this_plot_data and isinstance(this_plot_data['FPName'],str):
+                        band_leg = this_plot_data['FPName'] + str(band_leg)
+                    if 'FPUnits' in this_plot_data and isinstance(this_plot_data['FPUnits'],str):
+                        band_leg = band_leg + this_plot_data['FPUnits']
+                else:
+                    band_leg = None
+                if 'flip_vert' in self.plot_info and self.plot_info['flip_vert']:
+                    self.plot_plane.axhline(    band_x,
+                                                label=band_leg,
+                                                color=this_plot_data['color'])
+                    self.plot_plane.axhspan(    band_xup,
+                                                band_xdown,
+                                                alpha=this_plot_data['alpha'],
+                                                color=this_plot_data['color'])
+                else:
+                    self.plot_plane.axvline(    band_x,
+                                                label=band_leg,
+                                                color=this_plot_data['color'])
+                    self.plot_plane.axvspan(    band_xup,
+                                                band_xdown,
+                                                alpha=this_plot_data['alpha'],
+                                                color=this_plot_data['color'])
+
         elif 'error_bar' in this_plot_data['type']:
             # if len(this_xdata) == 0: return -1
             #TODO implement median for xdata too
@@ -824,11 +945,13 @@ class Plotting(object):
                     this_leg = med_leg+str(LegendFmt(this_plot_data['label']+' '+this_leg))
                 else:
                     this_leg = med_leg+str(LegendFmt(this_plot_data['label']))
-                if this_plot_data['x_fun'] is not None and this_plot_data['x_fun'] is not False:
+                if this_plot_data['x_fun'] is not None and not isinstance(this_plot_data['x_fun'],bool):
                     this_xdata = [this_plot_data['x_fun'](ix) for ix in this_xdata]
-                if this_plot_data['scale'] is not False and this_plot_data['scale'] is not None:
+                if not isinstance(this_plot_data['scale'],bool) and this_plot_data['scale'] is not None:
                     this_yerrdata = np.array(this_yerrdata)*this_plot_data['scale']
                     this_ydata = np.array(this_ydata)*this_plot_data['scale']
+                if not isinstance(this_plot_data['y_shift'],bool) and this_plot_data['y_shift'] is not None:
+                    this_ydata = np.array(this_ydata)+this_plot_data['y_shift']
                 if this_plot_data['supress_legend']: this_leg = None
                 this_boot,this_ydata,this_xdata,this_xerrdata,this_yerrdata = self.XRange_Chop(this_plot_data,[2,3],this_boot,this_ydata,this_xdata,this_xerrdata,this_yerrdata)
                 if len(this_xdata) == 0: return -1
@@ -880,11 +1003,13 @@ class Plotting(object):
                     for ix in this_xdata:
                         out_str += '    '+str(ix) + '\n'
                     raise Exception(out_str +str(err))
-                if this_plot_data['x_fun'] is not None and this_plot_data['x_fun'] is not False:
+                if this_plot_data['x_fun'] is not None and not isinstance(this_plot_data['x_fun'],bool):
                     this_xdata = [this_plot_data['x_fun'](ix) for ix in this_xdata]
-                if this_plot_data['scale'] is not False and this_plot_data['scale'] is not None:
+                if not isinstance(this_plot_data['scale'],bool) and this_plot_data['scale'] is not None:
                     this_yerrdata = np.array(this_yerrdata)*this_plot_data['scale']
                     this_ydata = np.array(this_ydata)*this_plot_data['scale']
+                if not isinstance(this_plot_data['y_shift'],bool) and this_plot_data['y_shift'] is not None:
+                    this_ydata = np.array(this_ydata)+this_plot_data['y_shift']
                 if this_plot_data['supress_legend']: this_leg = None
                 this_boot,this_ydata,this_xdata,this_xerrdata,this_yerrdata = self.XRange_Chop(this_plot_data,[2,3],this_boot,this_ydata,this_xdata,this_xerrdata,this_yerrdata)
                 if 'abs' in this_plot_data['plot_err'].lower():
@@ -944,8 +1069,10 @@ class Plotting(object):
                 this_leg = med_leg+str(LegendFmt(this_plot_data['label']+' '+this_leg))
             else:
                 this_leg = med_leg+str(LegendFmt(this_plot_data['label']))
-            if this_plot_data['scale'] is not False and this_plot_data['scale'] is not None:
+            if not isinstance(this_plot_data['scale'],bool) and this_plot_data['scale'] is not None:
                 this_ydata = np.array(this_ydata)*this_plot_data['scale']
+            if not isinstance(this_plot_data['y_shift'],bool) and this_plot_data['y_shift'] is not None:
+                this_ydata = np.array(this_ydata)+this_plot_data['y_shift']
             if this_plot_data['supress_legend']: this_leg = None
             this_boot,this_ydata,this_xdata,this_xerrdata,this_yerrdata = self.XRange_Chop(this_plot_data,[2,3],this_boot,this_ydata,this_xdata,this_xerrdata,this_yerrdata)
             self.plot_plane.plot(   np.array(this_xdata)+float(this_plot_data['shift']),
@@ -990,8 +1117,10 @@ class Plotting(object):
                     this_leg = med_leg+str(LegendFmt(this_plot_data['label']+' '+this_leg))
                 else:
                     this_leg = med_leg+str(LegendFmt(this_plot_data['label']))
-                if this_plot_data['scale'] is not False and this_plot_data['scale'] is not None:
+                if not isinstance(this_plot_data['scale'],bool) and this_plot_data['scale'] is not None:
                     this_boot = np.array(this_boot)*this_plot_data['scale']
+                if not isinstance(this_plot_data['y_shift'],bool) and this_plot_data['y_shift'] is not None:
+                    this_boot = np.array(this_boot)+this_plot_data['y_shift']
                 if this_plot_data['supress_legend']: this_leg = None
                 this_boot,this_ydata,this_xdata,this_xerrdata,this_yerrdata = self.XRange_Chop(this_plot_data,[2,3],this_boot,this_ydata,this_xdata,this_xerrdata,this_yerrdata)
                 self.plot_plane = this_boot.BootHistogram(self.plot_plane,
@@ -1020,10 +1149,12 @@ class Plotting(object):
                     this_leg = med_leg+str(LegendFmt(this_plot_data['label']+' '+this_leg))
                 else:
                     this_leg = med_leg+str(LegendFmt(this_plot_data['label']))
-                if this_plot_data['x_fun'] is not None and this_plot_data['x_fun'] is not False:
+                if this_plot_data['x_fun'] is not None and not isinstance(this_plot_data['x_fun'],bool):
                     this_xdata = [this_plot_data['x_fun'](ix) for ix in this_xdata]
-                if this_plot_data['scale'] is not False and this_plot_data['scale'] is not None:
+                if not isinstance(this_plot_data['scale'],bool) and this_plot_data['scale'] is not None:
                     this_xdata = np.array(this_xdata)*this_plot_data['scale']
+                if not isinstance(this_plot_data['y_shift'],bool) and this_plot_data['y_shift'] is not None:
+                    this_xdata = np.array(this_xdata)+this_plot_data['y_shift']
                 if this_plot_data['supress_legend']: this_leg = None
                 this_boot,this_ydata,this_xdata,this_xerrdata,this_yerrdata = self.XRange_Chop(this_plot_data,[2,3],this_boot,this_ydata,this_xdata,this_xerrdata,this_yerrdata)
                 self.plot_plane.hist(   np.hstack(this_xdata),
@@ -1061,10 +1192,12 @@ class Plotting(object):
                 this_leg = med_leg+str(LegendFmt(this_plot_data['label']+' '+this_leg))
             else:
                 this_leg = med_leg+str(LegendFmt(this_plot_data['label']))
-            if this_plot_data['x_fun'] is not None and this_plot_data['x_fun'] is not False:
+            if this_plot_data['x_fun'] is not None and not isinstance(this_plot_data['x_fun'],bool):
                 this_xdata = [this_plot_data['x_fun'](ix) for ix in this_xdata]
-            if this_plot_data['scale'] is not False and this_plot_data['scale'] is not None:
+            if not isinstance(this_plot_data['scale'],bool) and this_plot_data['scale'] is not None:
                 this_ydata = np.array(this_ydata)*this_plot_data['scale']
+            if not isinstance(this_plot_data['y_shift'],bool) and this_plot_data['y_shift'] is not None:
+                this_ydata = np.array(this_ydata)+this_plot_data['y_shift']
             if this_plot_data['supress_legend']: this_leg = None
             this_boot,this_ydata,this_xdata,this_xerrdata,this_yerrdata = self.XRange_Chop(this_plot_data,[2,3],this_boot,this_ydata,this_xdata,this_xerrdata,this_yerrdata)
             self.plot_plane.scatter(   np.array(this_xdata)+float(this_plot_data['shift']),
@@ -1113,8 +1246,10 @@ class Plotting(object):
                 this_leg = med_leg+str(LegendFmt(this_plot_data['label']+' '+this_leg))
             else:
                 this_leg = med_leg+str(LegendFmt(this_plot_data['label']))
-            if this_plot_data['scale'] is not False and this_plot_data['scale'] is not None:
+            if not isinstance(this_plot_data['scale'],bool) and this_plot_data['scale'] is not None:
                 this_xdata = np.array(this_xdata)*this_plot_data['scale']
+            if not isinstance(this_plot_data['y_shift'],bool) and this_plot_data['y_shift'] is not None:
+                this_xdata = np.array(this_xdata)+this_plot_data['y_shift']
             if this_plot_data['supress_legend']: this_leg = None
             this_xdata = self.XRange_Chop(this_plot_data,[0],this_xdata)
             self.plot_plane.axvline(    np.array(this_xdata)+float(this_plot_data['shift']),
@@ -1132,9 +1267,12 @@ class Plotting(object):
                     up,down = mid+err[0],mid-err[1]
                 else:
                     up,down = mid+err,mid-err
-                if this_plot_data['scale'] is not False and this_plot_data['scale'] is not None:
+                if not isinstance(this_plot_data['scale'],bool) and this_plot_data['scale'] is not None:
                     down = np.array(down)*this_plot_data['scale']
                     up = np.array(up)*this_plot_data['scale']
+                if not isinstance(this_plot_data['y_shift'],bool) and this_plot_data['y_shift'] is not None:
+                    down = np.array(down)+this_plot_data['y_shift']
+                    up = np.array(up)+this_plot_data['y_shift']
                 up,down = self.XRange_Chop(this_plot_data,[0,1],up,down)
                 self.plot_plane.axvspan(    down+float(this_plot_data['shift']),
                                             up+float(this_plot_data['shift']),
@@ -1169,7 +1307,7 @@ class Plotting(object):
                     if is_vary:
                         try:
                             err = this_yerrdata[this_key_select]
-                        except:
+                        except Exception as err:
                             err = this_yerrdata[this_key_select[0]]
                     elif isinstance(this_yerrdata,(list,tuple,np.ndarray)):
                         err = this_yerrdata[0]
@@ -1186,8 +1324,10 @@ class Plotting(object):
                 this_leg = med_leg+str(LegendFmt(this_plot_data['label']+' '+this_leg))
             else:
                 this_leg = med_leg+str(LegendFmt(this_plot_data['label']))
-            if this_plot_data['scale'] is not False and this_plot_data['scale'] is not None:
+            if not isinstance(this_plot_data['scale'],bool) and this_plot_data['scale'] is not None:
                 this_ydata = np.array(this_ydata)*this_plot_data['scale']
+            if not isinstance(this_plot_data['y_shift'],bool) and this_plot_data['y_shift'] is not None:
+                this_ydata = np.array(this_ydata)+this_plot_data['y_shift']
             if this_plot_data['supress_legend']: this_leg = None
             # this_ydata = self.XRange_Chop(this_plot_data,this_ydata)
             self.plot_plane.axhline(    this_ydata,
@@ -1197,7 +1337,7 @@ class Plotting(object):
                 if is_vary:
                     try:
                         err = this_yerrdata[this_key_select]
-                    except:
+                    except Exception as err:
                         err = this_yerrdata[this_key_select[0]]
                 elif isinstance(this_yerrdata,(list,tuple,np.ndarray)):
                     err = this_yerrdata[0]
@@ -1209,9 +1349,12 @@ class Plotting(object):
                     up,down = this_ydata[0]+err,this_ydata[0]-err
                 else:
                     up,down = this_ydata+err,this_ydata-err
-                if this_plot_data['scale'] is not False and this_plot_data['scale'] is not None:
+                if not isinstance(this_plot_data['scale'],bool) and this_plot_data['scale'] is not None:
                     down = np.array(down)*this_plot_data['scale']
                     up = np.array(up)*this_plot_data['scale']
+                if not isinstance(this_plot_data['y_shift'],bool) and this_plot_data['y_shift'] is not None:
+                    down = np.array(down)+this_plot_data['y_shift']
+                    up = np.array(up)+this_plot_data['y_shift']
                 # up,down = self.XRange_Chop(this_plot_data,up,down)
                 self.plot_plane.axhspan(    down,
                                             up,
@@ -1232,10 +1375,10 @@ class Plotting(object):
 
                 try:
                     this_fit = this_fit[this_key_select]
-                except:
+                except Exception as err:
                     this_key_select,this_fit = Fix_Se_Keys(this_key_select,this_fit)
                     this_fit = this_fit[this_key_select]
-            if this_plot_data['fmt_class'] is not False and this_plot_data['fmt_class'] is not None:
+            if not isinstance(this_plot_data['fmt_class'],bool) and this_plot_data['fmt_class'] is not None:
                 def this_scale(val):
                     return this_plot_data['fmt_class'].FmtTime(val,this_plot_data['phys_axies'])
             else:
@@ -1291,7 +1434,7 @@ class Plotting(object):
                         print('Fit varied was not passed with anything to vary, skipping plot')
                         return output_dict
                     this_fit = this_fit.iloc[0]
-            if this_plot_data['fmt_class'] is not False and this_plot_data['fmt_class'] is not None:
+            if not isinstance(this_plot_data['fmt_class'],bool) and this_plot_data['fmt_class'] is not None:
                 def this_scale(val):
                     return this_plot_data['fmt_class'].FmtTime(val,this_plot_data['phys_axies'])
             else:
@@ -1315,8 +1458,8 @@ class Plotting(object):
             else:
                 this_fit.hairline_dropoff = this_plot_data['hair_alpha']
                 this_fit.hairline_alpha = 1.0
-            this_fit.FPName = this_plot_data['FPName']
-            this_fit.FPUnits = this_plot_data['FPUnits']
+            this_fit.FPName = str(this_plot_data['FPName'])
+            this_fit.FPUnits = str(this_plot_data['FPUnits'])
             self.plot_plane = this_fit.PlotFunction(
                                 otherXvals=this_plot_data['otherXvals'],
                                 xaxis=this_plot_data['xaxis'],
@@ -1328,6 +1471,7 @@ class Plotting(object):
                                 ShowPar=this_plot_data['ShowPar'],
                                 ShowEval=this_plot_data['ShowEval'],
                                 y_scale=this_plot_data['scale'],
+                                y_shift=this_plot_data['y_shift'],
                                 x_scale=this_plot_data['x_scale'],
                                 suppress_key=this_plot_data['suppress_key_index'],
                                 x_fun=this_plot_data['x_fun'],
@@ -1381,8 +1525,8 @@ class Plotting(object):
         self.plot_plane.cla()
         self.PlotElement(this_pd,no_key_formatting=True)
         self.Configure_Plane()
-        this_dir = '/'.join(self.plot_info['save_file'].split('/')[:-1])
-        mkdir_p(this_dir)
+        internal_dir = '/'.join(self.plot_info['save_file'].split('/')[:-1])
+        mkdir_p(internal_dir)
         self.plot_info['save_file'] = self.plot_info['save_file'].replace('.pdf','')+'.pdf'
         self.figure.savefig(self.plot_info['save_file'])
         self.WriteData()
@@ -1393,8 +1537,9 @@ class Plotting(object):
             return -1
 
     def Configure_Plane(self):
-        self.plot_plane.legend( loc=self.plot_info['leg_loc'],ncol=self.plot_info['leg_ncol'],
-                                fontsize=self.plot_info['leg_fontsize'],framealpha=self.plot_info['leg_alpha'])
+        if self.plot_info['leg_fontsize'] > 0:
+            self.plot_plane.legend( loc=self.plot_info['leg_loc'],ncol=self.plot_info['leg_ncol'],
+                                    fontsize=self.plot_info['leg_fontsize'],framealpha=self.plot_info['leg_alpha'])
         if 'title' in self.plot_info:
             if 'title_dict' in self.plot_info:
                 try:
@@ -1406,7 +1551,7 @@ class Plotting(object):
                         self.plot_plane.set_title(  self.plot_info['title'],
                                                     fontdict=self.plot_info['title_dict']
                                                     ,pad=tpad)
-                except:
+                except Exception as err:
                     self.plot_plane.set_title(  self.plot_info['title'],
                                                 fontdict=self.plot_info['title_dict'])
 
@@ -1414,7 +1559,7 @@ class Plotting(object):
                 if 'title_pad' in self.plot_info:
                     try:
                         self.plot_plane.set_title(self.plot_info['title'],pad=self.plot_info['title_pad'])
-                    except:
+                    except Exception as err:
                         self.plot_plane.set_title(self.plot_info['title'])
                 else:
                     self.plot_plane.set_title(self.plot_info['title'],{'fontsize':tsize})
@@ -1447,10 +1592,46 @@ class Plotting(object):
                 self.plot_info['ylims'][1] = self.plot_plane.get_ylim()[1]
             self.plot_plane.set_ylim(self.plot_info['ylims'])
 
-        if 'do_xTicks' in self.plot_info and self.plot_info['do_xTicks']:
-            self.plot_plane.set_xticks(np.arange(self.plot_info['xTick_min'],self.plot_info['xTick_max'],step=self.plot_info['xTick_inc']))
-        if 'do_yTicks' in self.plot_info and self.plot_info['do_yTicks']:
-            self.plot_plane.set_yticks(np.arange(self.plot_info['yTick_min'],self.plot_info['yTick_max'],step=self.plot_info['yTick_inc']))
+        do_x = 'do_xTicks' in self.plot_info and self.plot_info['do_xTicks']
+        do_y = 'do_yTicks' in self.plot_info and self.plot_info['do_yTicks']
+        do_custom = ('custom_yTicks' in self.plot_info and
+                      isinstance(self.plot_info['custom_yTicks'],(list,tuple,np.ndarray)))
+        if 'custom_yTicks' in self.plot_info:
+            this_tick_labs = self.plot_info['custom_yTicks']
+        else:
+            this_tick_labs = []
+        if do_custom:
+            if 'mirror_vert' in self.plot_info and self.plot_info['mirror_vert']:
+                this_tick_labs = this_tick_labs[::-1]
+            if 'flip_vert' in self.plot_info and self.plot_info['flip_vert']:
+                do_x = True
+            else:
+                do_y = True
+
+        if do_x:
+            if do_custom:
+                self.plot_plane.set_xticks(range(len(this_tick_labs)))
+                if 'xlabel_dict' in self.plot_info and 'fontsize' in self.plot_info['xlabel_dict']:
+                    self.plot_plane.set_xticklabels(this_tick_labs,
+                                                    fontsize=self.plot_info['xlabel_dict']['fontsize'])
+                else:
+                    self.plot_plane.set_xticklabels(this_tick_labs)
+            else:
+                self.plot_plane.set_xticks(np.arange(self.plot_info['xTick_min'],
+                                                     self.plot_info['xTick_max'],
+                                                     step=self.plot_info['xTick_inc']))
+        if do_y:
+            if do_custom:
+                self.plot_plane.set_yticks(range(len(this_tick_labs)))
+                if 'ylabel_dict' in self.plot_info and 'fontsize' in self.plot_info['ylabel_dict']:
+                    self.plot_plane.set_yticklabels(this_tick_labs,
+                                                    fontsize=self.plot_info['ylabel_dict']['fontsize'])
+                else:
+                    self.plot_plane.set_yticklabels(this_tick_labs)
+            else:
+                self.plot_plane.set_yticks(np.arange(   self.plot_info['yTick_min'],
+                                                        self.plot_info['yTick_max'],
+                                                        step=self.plot_info['yTick_inc']))
 
 
 
@@ -1459,7 +1640,7 @@ class Plotting(object):
         self.plot_plane.cla()
         errlist = []
         for icplot,(ikey,iplot) in enumerate(self.plot_data.items()):
-            if iplot['color'] is None:
+            if iplot['color'] is None or isinstance(iplot['color'],bool):
                 try:
                     holdcol = next(self.colcyc)
                 except StopIteration:
@@ -1472,7 +1653,7 @@ class Plotting(object):
                 self.plot_data[ikey]['color'] = fmt_Qt5_col(iplot['color'])
                 holdcol = self.plot_data[ikey]['color']
 
-            if iplot['symbol'] is None:
+            if iplot['symbol'] is None or isinstance(iplot['symbol'],bool):
                 try:
                     holdsym = next(self.symcyc)
                 except StopIteration:
@@ -1484,7 +1665,7 @@ class Plotting(object):
             else:
                 holdsym = iplot['symbol']
 
-            if iplot['shift'] is None:
+            if iplot['shift'] is None or isinstance(iplot['shift'],bool):
                 try:
                     holdshift = next(self.shiftcyc)
                 except StopIteration:
@@ -1496,15 +1677,15 @@ class Plotting(object):
             else:
                 holdshift = iplot['shift']
 
-            if iplot['label'] is None:
+            if iplot['label'] is None  or isinstance(iplot['label'],bool):
                 iplot['label'] = ikey
-            this_out = self.PlotElement(iplot)
+            this_out = self.PlotElement(deepcopy(iplot))
             if not isinstance(this_out,int):
                 this_out = 1
             errlist.append(this_out)
         if all(np.array(errlist) == -1):
             print('Nothing to plot')
-            return
+            # return
         self.Configure_Plane()
         if 'x_zero_line' in self.plot_info and self.plot_info['x_zero_line']:
             if 'x_zero_line_val' in self.plot_info:
@@ -1518,8 +1699,8 @@ class Plotting(object):
                 self.PlotLine('y',0)
         # pl.xlim(*defxlim)
         if 'save_file' in self.plot_info:
-            this_dir = '/'.join(self.plot_info['save_file'].split('/')[:-1])
-            mkdir_p(this_dir)
+            internal_dir = '/'.join(self.plot_info['save_file'].split('/')[:-1])
+            mkdir_p(internal_dir)
             self.plot_info['save_file'] = self.plot_info['save_file'].replace('.pdf','')+'.pdf'
             self.figure.savefig(self.plot_info['save_file'])
             self.WriteData()
@@ -1549,6 +1730,9 @@ class Plotting(object):
     #     return [np.min(data),np.max(data)]
     #     # return self.plot_plane.get_ylim()
 
+    def close_fig(self):
+        pl.close(self.figure)
+
     def WriteData(self):
         outDict = ODNested()
         if hasattr(self,'window_size'):
@@ -1572,14 +1756,19 @@ class Plotting(object):
                             outDict[key_str][dict_key] = 'None'
                         else:
                             outDict[key_str][dict_key] = idata
-            if 'plot' in iplot_data['type'] or 'error_bar' in iplot_data['type'] or 'scatter' in  iplot_data['type'] or 'error_band' in iplot_data['type'] :
+            if ('plot' in iplot_data['type'] or 'error_bar' in iplot_data['type'] or
+                'scatter' in  iplot_data['type'] or 'error_band' in iplot_data['type'] or
+                'vertical_comp' in iplot_data['type']):
                 if 'plot' in iplot_data['type']:
                     yerr_test,xerr_test = False,False
                 else:
-                    yerr_test = 'yerr_data' in iplot_data and iplot_data['yerr_data'] is not None and \
-                        iplot_data['yerr_data'] is not False
+                    if 'vertical_comp' not in iplot_data['type']:
+                        yerr_test = 'yerr_data' in iplot_data and iplot_data['yerr_data'] is not None and \
+                            not isinstance(iplot_data['yerr_data'],bool)
+                    else:
+                        yerr_test = False
                     xerr_test = 'xerr_data' in iplot_data and iplot_data['xerr_data'] is not None and \
-                        iplot_data['xerr_data'] is not False
+                        not isinstance(iplot_data['xerr_data'],bool)
                 if is_vary:
                     for ic,ikey in enumerate(iplot_data['key_select']):
                         if isinstance(ikey,str):
@@ -1589,10 +1778,6 @@ class Plotting(object):
                     elif isinstance(iplot_data['x_data'],str) and iplot_data['x_data'] == 'from_keys':
                         # iindex = list(iplot_data['key_select']).index(slice(None))
                         this_key_select = Un_Fix_Key_Select(tuple_wrap(iplot_data['key_select']))
-                        # print('DEBUG')
-                        # print(this_key_select)
-                        # print(iplot_data['y_data'])
-                        # print(iplot_data['y_data'].loc[this_key_select])
                         this_xdata = list(iplot_data['y_data'].loc[this_key_select].index)
                         if isinstance(this_xdata[0],(list,tuple,np.ndarray)) and len(this_xdata[0]) > 1:
                             slice_loc = tuple_wrap(iplot_data['key_select']).index(slice(None))
@@ -1633,6 +1818,8 @@ class Plotting(object):
                     this_ydata = np.array(this_ydata)*iplot_data['scale']
                     if yerr_test:
                         this_yerrdata = np.array(this_yerrdata)*iplot_data['scale']
+                if iplot_data['y_shift'] != 0:
+                    this_ydata = np.array(this_ydata)+iplot_data['y_shift']
                 if yerr_test:
                     if xerr_test:
                         for ix,ixerr,iy,iyerr in zip(   this_xdata,this_xerrdata,
@@ -1646,10 +1833,16 @@ class Plotting(object):
                             else: frmtflag = 'e'
                             outDict[key_str]['data'][('x_{0:5.10'+frmtflag+'}').format(ix).replace('+','')] = AvgStdToFormat(iy,iyerr)
                 else:
-                    for ix,iy in zip(this_xdata,this_ydata):
-                        if minfmt < abs(ix) < maxfmt: frmtflag = 'f'
-                        else: frmtflag = 'e'
-                        outDict[key_str]['data'][('x_{0:5.10'+frmtflag+'}').format(ix).replace('+','')] = '{0:10.20e}'.format(iy)
+                    if 'vertical_comp' in iplot_data['type']:
+                        for ixerr,ix,iy in zip(this_xerrdata,this_xdata,this_ydata):
+                            if minfmt < abs(ix) < maxfmt: frmtflag = 'f'
+                            else: frmtflag = 'e'
+                            outDict[key_str]['data'][iy] = '{0:10.20e} {0:10.20e}'.format(ix,ixerr)
+                    else:
+                        for ix,iy in zip(this_xdata,this_ydata):
+                            if minfmt < abs(ix) < maxfmt: frmtflag = 'f'
+                            else: frmtflag = 'e'
+                            outDict[key_str]['data'][('x_{0:5.10'+frmtflag+'}').format(ix).replace('+','')] = '{0:10.20e}'.format(iy)
             elif 'vline' in iplot_data['type']:
                 if isinstance(iplot_data['x_data'],pa.Series) and is_vary:
                     plotval = iplot_data['x_data'].loc[tuple_wrap(iplot_data['key_select'])]
@@ -1671,6 +1864,8 @@ class Plotting(object):
                     plotval = iplot_data['y_data']
                 if iplot_data['scale'] != 1:
                     plotval = type(plotval)(np.array(plotval)*iplot_data['scale'])
+                if iplot_data['y_shift'] != 0:
+                    plotval = type(plotval)(np.array(plotval)+iplot_data['y_shift'])
                 outDict[key_str]['hline_val'] = '{0:10.20e}'.format(plotval)
             elif 'fit' in iplot_data['type']:
                 if 'fit_class' in iplot_data:
@@ -1702,9 +1897,15 @@ class Plotting(object):
                     outDict[key_str]['chi^{2}_{pdf}'] = AvgStdToFormat(this_plot.fit_data['Chi2DoF'].iloc[0].Avg,this_plot.fit_data.iloc[0]['Chi2DoF'].Std)
         WriteXml(self.HumanFile,{'Results':outDict},Bak=False)
         self.RemoveFuns()
-        pickle_out = copy(self.__dict__)
-        del pickle_out['figure']
-        del pickle_out['plot_plane']
+        pickle_out = {}
+        for ikey,ival in self.__dict__.items():
+            if ikey != 'figure' and ikey != 'plot_plane':
+                if 'plot_data' in ikey:
+                    pickle_out[ikey] = pa.DataFrame()
+                    for jkey,jdata in ival.items():
+                        pickle_out[ikey][jkey] = deepcopy(jdata)
+                else:
+                    pickle_out[ikey] = deepcopy(ival)
         pickle_out['colcyc'] = list(pickle_out['colcyc'])
         pickle_out['symcyc'] = list(pickle_out['symcyc'])
         pickle_out['shiftcyc'] = list(pickle_out['shiftcyc'])
@@ -1723,13 +1924,14 @@ class Plotting(object):
             readdict['HumanFile'] = self.HumanFile
         if 'PickleFile' in list(self.plot_info.keys()):
             readdict['PickleFile'] = self.PickleFile
+        if 'plot_data' in list(readdict.keys()) and not isinstance(readdict['plot_data'],pa.DataFrame):
+            readdict['plot_data'] = pa.DataFrame(readdict['plot_data'])
         return readdict
 
-    def LoadPickle(self,DefWipe=True,ForceWindowSize=False):
+    def LoadPickle(self,DefWipe=True,ForceWindowSize=False,force_py2=False):
         # print 'filename ' , self.PickleFile
-
-        if os.path.isfile(self.PickleFile) and not DefWipe:
-            # print 'Loading Pickle for ' , self.name
+        if os.path.isfile(self.PickleFile) and not DefWipe and not force_py2:
+            # print('Loading Pickle for ' , self.PickleFile)
             loadeddict = ReadPickleWrap(self.PickleFile)
             loadeddict = self.FixRead(loadeddict)
             self.__dict__.update(loadeddict)
@@ -1739,7 +1941,8 @@ class Plotting(object):
             else:
                 self.MakePlane()
             self.AddNulls()
-        elif os.path.isfile(self.PickleFile.replace('.py3p','.p')):
+        elif os.path.isfile(self.PickleFile.replace('.py3p','.p')) and not DefWipe:
+            # print('Loading Pickle for ' , self.PickleFile.replace('.py3p','.p'))
             loadeddict = ReadPickleWrap(self.PickleFile.replace('.py3p','.p'))
             loadeddict = self.FixRead(loadeddict)
             self.__dict__.update(loadeddict)
@@ -1750,11 +1953,12 @@ class Plotting(object):
             else:
                 self.MakePlane()
             self.AddNulls()
-        elif not os.path.isfile(self.PickleFile):
+        elif not os.path.isfile(self.PickleFile) and os.path.isfile(self.PickleFile.replace('.py3p','.p')):
             print('Plot FNF:',self.PickleFile)
+            print('or py2 plot FNF:',self.PickleFile.replace('.py3p','.p'))
 
     def MakePlane(self,window_size = [12.,12.275],overwrite=False):
-        if overwrite or not hasattr(self,'window_size'):
+        if overwrite or not hasattr(self,'window_size') or not isinstance(self.window_size,(list,tuple,np.ndarray)):
             self.window_size = window_size
         self.figure = pl.figure(figsize=self.window_size)
         self.plot_plane = self.figure.add_subplot(111)
@@ -1774,8 +1978,8 @@ class Plotting(object):
 def Test_Papers_FF():
     import QuantityLists as ql
     this_info = pa.Series()
-    mkdir_p('/home/jackdra/LQCD/Scripts/Python_Analysis/TestGraphs/')
-    this_info['save_file'] = '/home/jackdra/LQCD/Scripts/Python_Analysis/TestGraphs/Paper_FF.pdf'
+    mkdir_p(this_dir+'/TestGraphs/')
+    this_info['save_file'] = this_dir+'/TestGraphs/Paper_FF.pdf'
     this_info['title'] = r'Neutron EDM Chiral Plot (Not $\alpha$ Rotated)'
     this_info['xlabel'] = r'$m_{\pi}[MeV]$'
     this_info['ylabel'] = r'$d_{n}[efm]$'
@@ -1830,8 +2034,8 @@ def Test_Papers_FF():
 def Test_Paper_Single():
     import QuantityLists as ql
     this_info = pa.Series()
-    mkdir_p('/home/jackdra/LQCD/Scripts/Python_Analysis/TestGraphs')
-    this_info['save_file'] = '/home/jackdra/LQCD/Scripts/Python_Analysis/TestGraphs/Paper_FF_Single.pdf'
+    mkdir_p(this_dir+'/TestGraphs')
+    this_info['save_file'] = this_dir+'/TestGraphs/Paper_FF_Single.pdf'
     this_info['title'] = r'Neutron EDM Chiral Plot (Not $\alpha$ Rotated)'
     this_info['xlabel'] = r'$m_{\pi}[MeV]$'
     this_info['ylabel'] = r'$d_{n}[efm]$'
@@ -1886,7 +2090,7 @@ def Test_Plot():
 
 
     this_info = pa.Series()
-    this_info['save_file'] = '/home/jackdra/LQCD/Scripts/Python_Analysis/TestGraphs/plotting_test.pdf'
+    this_info['save_file'] = this_dir+'/TestGraphs/plotting_test.pdf'
     this_info['title'] = 'Test Graph'
     this_info['xlabel'] = 'Test x'
     this_info['ylabel'] = 'Test y'
@@ -1899,7 +2103,7 @@ def Test_Plot():
     return data_plot
 
 def mpi701_plot():
-    load_file = '/home/jackdra/LQCD/Scripts/Python_Analysis/TestGraphs/mpi701.csv'
+    load_file = this_dir+'/TestGraphs/mpi701.csv'
     data = pa.read_csv(load_file)
     xdata = data.iloc[:,0]
     ydata = data['Q']
@@ -1915,7 +2119,7 @@ def mpi701_plot():
     hold_series['label'] = r'$m_{\pi}=701 MeV$'
     this_data['mpi701'] = hold_series
 
-    load_file = '/home/jackdra/LQCD/Scripts/Python_Analysis/TestGraphs/mpi701_updown.csv'
+    load_file = this_dir+'/TestGraphs/mpi701_updown.csv'
     data = pa.read_csv(load_file)
     xdata = data['Q2']
     yup,ydown = data['yup'],data['ydown']
@@ -1944,9 +2148,9 @@ def mpi701_plot():
     return data_plot
 
 def Plot_E_Jangho():
-    L16_jangho_file = '/home/jackdra/LQCD/Scripts/Python_Analysis/Configs/t2_energy_16X32.dat'
-    L20_jangho_file = '/home/jackdra/LQCD/Scripts/Python_Analysis/Configs/t2_energy_20X40.dat'
-    L28_jangho_file = '/home/jackdra/LQCD/Scripts/Python_Analysis/Configs/t2_energy_28X56.dat'
+    L16_jangho_file = './Configs/t2_energy_16X32.dat'
+    L20_jangho_file = './Configs/t2_energy_20X40.dat'
+    L28_jangho_file = './Configs/t2_energy_28X56.dat'
     L16_data = pa.read_csv(L16_jangho_file,delimiter=' ')
     L20_data = pa.read_csv(L20_jangho_file,delimiter=' ')
     L28_data = pa.read_csv(L28_jangho_file,delimiter=' ')
@@ -1983,7 +2187,7 @@ def Plot_E_Jangho():
 
 
     this_info = pa.Series()
-    this_info['save_file'] = '/home/jackdra/LQCD/Scripts/Python_Analysis/TestGraphs/Jangho_E.pdf'
+    this_info['save_file'] = this_dir+'/TestGraphs/Jangho_E.pdf'
     this_info['title'] = r'Jangho E plot'
     this_info['xlabel'] = r'$\sqrt{8t} fm$'
     this_info['ylabel'] = r'$t^2 E(t)$'
@@ -2006,7 +2210,7 @@ def Plot_one_on_x():
     this_data['one_on_x'] = hold_series
 
     this_info = pa.Series()
-    this_info['save_file'] = '/home/jackdra/LQCD/Scripts/Python_Analysis/TestGraphs/one_on_x.pdf'
+    this_info['save_file'] = this_dir+'/TestGraphs/one_on_x.pdf'
     this_info['title'] = r''
     this_info['xlabel'] = r''
     this_info['ylabel'] = r''
@@ -2029,7 +2233,7 @@ def Plot_one_on_x2():
     this_data['one_on_x2'] = hold_series
 
     this_info = pa.Series()
-    this_info['save_file'] = '/home/jackdra/LQCD/Scripts/Python_Analysis/TestGraphs/one_on_x2.pdf'
+    this_info['save_file'] = this_dir+'/TestGraphs/one_on_x2.pdf'
     this_info['title'] = r''
     this_info['xlabel'] = r''
     this_info['ylabel'] = r''
@@ -2040,6 +2244,7 @@ def Plot_one_on_x2():
     data_plot.ShowFigure()
     data_plot.PrintData()
     return data_plot
+
 
 def Plot_data():
     this_data = pa.DataFrame()
@@ -2080,7 +2285,7 @@ def Plot_data():
     this_data['bvst'] = hold_series
 
     this_info = pa.Series()
-    this_info['save_file'] = '/home/jackdra/LQCD/Scripts/Python_Analysis/TestGraphs/testbvst0.pdf'
+    this_info['save_file'] = this_dir+'/TestGraphs/testbvst0.pdf'
     this_info['title'] = r''
     this_info['xlabel'] = r''
     this_info['ylabel'] = r''
@@ -2093,10 +2298,189 @@ def Plot_data():
     return data_plot
 
 
-if __name__ == '__main__':
-    # Test_Plot()
+def Test_Vertical():
+    xdata = [1,2,3]
+    xdata_err = [0.1,0.05,0.2]
+    ydata = ['first','second','third']
 
-    data_plot = Test_Papers_FF()
+    this_data = pa.DataFrame()
+    hold_series = pa.Series()
+    hold_series['type'] = 'vertical_comp'
+    hold_series['x_data'] = xdata
+    hold_series['y_data'] = ydata
+    hold_series['xerr_data'] = xdata_err
+    hold_series['do_band'] = len(ydata)-1
+    hold_series['label'] = 'test data 1'
+    this_data['test_1'] = hold_series
+
+    xdata = [1.1,2.3,2.9]
+    xdata_err = [0.01,0.5,0.6]
+    ydata = ['first','second','third']
+
+    hold_series = pa.Series()
+    hold_series['type'] = 'vertical_comp'
+    hold_series['x_data'] = xdata
+    hold_series['y_data'] = ydata
+    hold_series['xerr_data'] = xdata_err
+    hold_series['label'] = 'test data 2'
+    hold_series['do_band'] = len(ydata)-1
+    this_data['test_2'] = hold_series
+
+    this_info = pa.Series()
+    this_info['save_file'] = this_dir+'/TestGraphs/plotting_vertical_test.pdf'
+    this_info['title'] = 'Test Graph'
+    this_info['xlabel'] = 'Test x'
+    this_info['do_yTicks'] = True
+    this_info['custom_yTicks'] = ydata
+    this_info['flip_vert'] = True
+    # this_info['xlims'] = [0,10]
+    # this_info['ylims'] = [0,15]
+    data_plot = Plotting(plot_data=this_data,plot_info=this_info)
+    data_plot.PlotAll()
+    data_plot.ShowFigure()
+    data_plot.PrintData()
+    return data_plot
+
+def PlotVerticalFF():
+    proton_data =  [[0.0010079328  ,       0.0034758078],
+                    [0.0044561429  ,       0.0039538850],
+                    [0.0077703240  ,       0.0053808199],
+                    [0.0047786811  ,       0.0019648625],
+                    [0.0012232888  ,       0.0014899462],
+                    [0.0033306877  ,       0.0011865317],
+                    [0.0015,               0.0012      ]]
+    proton_data = np.swapaxes(np.array(proton_data),0,1)
+    proton_reg_data =  [[0.0097469286,         0.0101082906],
+                        [0.0244738562,         0.0086827601],
+                        [0.0158147934,         0.0065204519],
+                        [0.0046260510,         0.0030003191],
+                        [0.0110612221,         0.0027490774],
+                        [0.0104692136,         0.0021217705],
+                        [float('NaN'),          float('NaN')]]
+    proton_reg_data = np.swapaxes(np.array(proton_reg_data),0,1)
+    neutron_data = [[-0.0027427186,        -0.0020366178],
+                    [-0.0090425286,        -0.0026530306],
+                    [-0.0045497951,        -0.0026048519],
+                    [-0.0048066811,        -0.0013261060],
+                    [-0.0039329034,        -0.0009744109],
+                    [-0.0044391948,        -0.0010265582],
+                    [-0.0012,               0.00071     ]]
+    neutron_data = np.swapaxes(np.array(neutron_data),0,1)
+    neutron_reg_data = [[-0.0008634479,        -0.0047161559],
+                        [-0.0059997293,        -0.0052951803],
+                        [-0.0034944067,        -0.0066306628],
+                        [-0.0043127663,        -0.0020129885],
+                        [-0.0063366154,        -0.0020263376],
+                        [-0.0023034675,        -0.0013321665],
+                        [-0.0010,          0.0014]]
+    neutron_reg_data = np.swapaxes(np.array(neutron_reg_data),0,1)
+    ens_list = [r'$M_1$',r'$M_2$',r'$M_3$',r'$A_1$',r'$A_2$',r'$A_3$','Phys.']
+    this_data = pa.DataFrame()
+    hold_series = pa.Series()
+    hold_series['type'] = 'vertical_comp'
+    hold_series['x_data'] = neutron_data[0]
+    hold_series['y_data'] = ens_list
+    hold_series['xerr_data'] = neutron_data[1]
+    hold_series['label'] = r'$d_{n}$ Improved'
+    hold_series['do_band'] = len(neutron_data)-1
+    this_data[r'$d_{n}$ Improved'] = hold_series
+
+    hold_series = pa.Series()
+    hold_series['type'] = 'vertical_comp'
+    hold_series['x_data'] = neutron_reg_data[0]
+    hold_series['y_data'] = ens_list
+    hold_series['xerr_data'] = neutron_reg_data[1]
+    hold_series['label'] = r'$d_{n}$ Standard'
+    hold_series['do_band'] = len(neutron_reg_data)-1
+    this_data[r'$d_{n}$ Standard'] = hold_series
+
+    hold_series = pa.Series()
+    hold_series['type'] = 'vertical_comp'
+    hold_series['x_data'] = proton_data[0]
+    hold_series['y_data'] = ens_list
+    hold_series['xerr_data'] = proton_data[1]
+    hold_series['label'] = r'$d_{p}$ Improved'
+    hold_series['do_band'] = len(proton_data)-1
+    this_data[r'$d_{p}$ Improved'] = hold_series
+    hold_series = pa.Series()
+
+    hold_series['type'] = 'vertical_comp'
+    hold_series['x_data'] = proton_reg_data[0]
+    hold_series['y_data'] = ens_list
+    hold_series['xerr_data'] = proton_reg_data[1]
+    hold_series['label'] = r'$d_{p}$ Standard'
+    hold_series['do_band'] = len(proton_reg_data)-1
+    this_data[r'$d_{p}$ Standard'] = hold_series
+
+
+    this_info = pa.Series()
+    this_info['save_file'] = this_dir+'/TestGraphs/EDM_vert_comp.pdf'
+    this_info['title'] = ''
+    this_info['xlabel'] = '$d_{p/n}$'
+    this_info['do_yTicks'] = True
+    this_info['custom_yTicks'] = ens_list
+    # this_info['xlims'] = [0,10]
+    # this_info['ylims'] = [0,15]
+    data_plot = Plotting(plot_data=this_data,plot_info=this_info)
+    data_plot.PlotAll()
+    data_plot.ShowFigure()
+    data_plot.PrintData()
+
+    return data_plot
+
+
+def Proton_reg_plot():
+    this_info = pa.Series()
+    this_info['save_file'] = this_dir+'/TestGraphs/dp_old.pdf'
+    this_info['title'] = ''
+    # this_info['xlims'] = [0,10]
+    # this_info['ylims'] = [0,15]
+
+    proton_reg_data =  [[0.0097469286,         0.0101082906],
+                        [0.0244738562,         0.0086827601],
+                        [0.0158147934,         0.0065204519],
+                        [0.0046260510,         0.0030003191],
+                        [0.0110612221,         0.0027490774],
+                        [0.0104692136,         0.0021217705]]
+    proton_reg_data = np.swapaxes(np.array(proton_reg_data),0,1)
+    proton_data =  [[0.0010079328  ,       0.0034758078],
+                    [0.0044561429  ,       0.0039538850],
+                    [0.0077703240  ,       0.0053808199],
+                    [0.0047786811  ,       0.0019648625],
+                    [0.0012232888  ,       0.0014899462],
+                    [0.0033306877  ,       0.0011865317],
+                    [0.0015,               0.0012      ]]
+    proton_data = np.swapaxes(np.array(proton_data),0,1)
+    mpi_list = [ 409.666, 567.614, 699.020, 710.017, 676.309, 660.353, 137.54]
+    this_data = pa.DataFrame()
+    hold_series = pa.Series()
+    hold_series['type'] = 'error_bar'
+    hold_series['x_data'] = mpi_list[:-1]
+    hold_series['y_data'] = proton_reg_data[0]
+    hold_series['yerr_data'] = proton_reg_data[1]
+    hold_series['label'] = r'$d_{p}$ Standard'
+    this_data[r'$d_{p}$ Standard'] = hold_series
+    hold_series = pa.Series()
+    hold_series['type'] = 'error_bar'
+    hold_series['x_data'] = mpi_list
+    hold_series['y_data'] = proton_data[0]
+    hold_series['yerr_data'] = proton_data[1]
+    hold_series['label'] = r'$d_{p}$ Improved'
+    this_data[r'$d_{p}$ Improved'] = hold_series
+    data_plot = Plotting(plot_data=this_data,plot_info=this_info)
+    data_plot.PlotAll()
+    data_plot.ShowFigure()
+    data_plot.PrintData()
+
+
+if __name__ == '__main__':
+    Test_Plot()
+    # PlotVerticalFF()
+    # data_plot = Test_Papers_FF()
+    # data_plot = Test_Vertical()
+    # data_plot = PlotVerticalFF()
+
+
 
     # # %matplotlib inline
     # import sys

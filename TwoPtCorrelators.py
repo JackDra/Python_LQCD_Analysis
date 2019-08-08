@@ -8,8 +8,8 @@
 ##
 
 
-from Params import nboot,defxlimAlpha,defxlimOp,datadir,cfgfmtdir,Debug_Mode
-from FileIO import ReadFuns,WriteFuns
+from Params import nboot,defxlimAlpha,defxlimOp,datadir,cfgfmtdir,Debug_Mode,this_dir
+from FileIO import ReadFuns,WriteFuns,Construct_File_Object
 from Params import cfundir,defxlim,outputdir,TflowToPhys,Qeps,cfg_file_type,defSparam,Wipe_All_Fits
 from MiscFuns import ODNested,mkdir_p,CheckClass,GetInfoList,RemoveAllBoots,fmt_file_type
 from MiscFuns import Series_fix_key,CombineCfgs
@@ -91,6 +91,9 @@ class TwoPointCorr(object):
         p =  momentum
         t = time
     """
+    def Construct_2pt_File(this_file):
+        return Construct_File_Object(this_file,TwoPointCorr)
+
 
     ## Info is a dictionary containing information for the correlator:
     ## see comments below to see what is required.
@@ -208,7 +211,7 @@ class TwoPointCorr(object):
         if 'Interp' in list(Info.keys()):
             try:
                 self.ProjStr = 'P'+str(int(Info['Interp']))
-            except:
+            except Exception as err:
                 self.ProjStr = Info['Interp']
             self.Interp = GetInterpFlag(Info['Interp'])
         else:
@@ -457,7 +460,7 @@ class TwoPointCorr(object):
         self.CheckCol(thiscol)
         self.CheckSym(thissym)
         self.thisshiftscale = 'Not Set'
-        if xlims is 'All':
+        if xlims == 'All':
             xlims = range(self.nt+1)
         thisshift = self.GetShift(xlims,thisshift)
         if len(momlist) == 0:
@@ -1114,7 +1117,7 @@ class TwoPointCorr(object):
                 from pynverse import inversefunc
                 overwrite_effm = not self.MessEffMass
                 self.MesEffMass = True
-            except:
+            except Exception as err:
                 warn('pynverse needs to be install to analytically solve the effective mass \
                      function for Mesons, using incorrect effective mass funciton. Run pip install \
                      pynverse to get it')
@@ -1314,7 +1317,7 @@ class TwoPointCorr(object):
                 break
         if isin:
             def Chop_fun(val):
-                return np.array(val)[index].tolist()
+                return np.array(val)[tuple(index)].tolist()
             this_df.loc[:,'C2'] = this_df.loc[:,'C2'].apply(Chop_fun)
         return this_df,isin
 
@@ -1633,6 +1636,8 @@ class NNQCorr(object):
         t  = time
         tf = tflow
     """
+    def Construct_NNQ_File(this_file):
+        return Construct_File_Object(this_file,NNQCorr)
 
     ## Info is a dictionary containing information for the correlator:
     ## see comments below to see what is required.
@@ -2217,7 +2222,8 @@ class NNQCorr(object):
 
     def FitAlpha(   self,fit_range='PreDef',iGuess='PreDef',
                     EstDir=False,thistflowlist = 'PreDef',WipeFit=True,show_timer=False):
-        if self.Fun == 'None': raise IOError('Please define funciton using .SetFunction(Fun,npar) for fitting before calling .FitAlpha()')
+        if self.Fun == 'None':
+            raise IOError('Please define funciton using .SetFunction(Fun,npar) for fitting before calling .FitAlpha()')
         if 'PreDef' == fit_range:
             self.fit_range = self.PredefFits
         else:
@@ -2226,9 +2232,12 @@ class NNQCorr(object):
             print('Fit ranges for setsoffits implementation now only takes 1 fit range to scan with.')
             print('selecting first: ',self.fit_range[0])
             self.fit_range = self.fit_range[0]
+        else:
+            print('Fitting Alpha scanned in ',str(self.fit_range))
         if iGuess != 'PreDef': self.AlphaiGuess = iGuess
         if thistflowlist == 'PreDef':
-            if self.tflowfit == 'Not Set': raise IOError('tflowfit not set, please set by using .SetTflowFit()')
+            if self.tflowfit == 'Not Set':
+                raise IOError('tflowfit not set, please set by using .SetTflowFit()')
         else:
             if thistflowlist == 'All':
                 self.tflowfit = self.tflowlist
@@ -2236,7 +2245,11 @@ class NNQCorr(object):
                 self.tflowfit = thistflowlist
         lFit,ilist = [],[]
         for ip_key,pdata in self.NNQ_Stats['Alphaboot'].groupby(level=('momentum','flow_time')):
-            if ip_key[1] not in self.tflowfit: continue
+            if ip_key[1] not in self.tflowfit:
+                print(ip_key[1], 'not in flow list, skipping')
+                # print('DEBUG',self.tflowlist)
+                continue
+            ## checks and sets for if data is already present.
             if ip_key in self.NNQ_Fit_Stats.index:
                 this_sof = self.NNQ_Fit_Stats.loc[ip_key,'boot']
                 if isinstance(this_sof,pa.Series):
@@ -2271,6 +2284,8 @@ class NNQCorr(object):
             if this_test:
                 ilist.append(ip_key)
                 lFit.append(this_fit)
+            else:
+                print('Alpha fit for ', ip_key,' failed to setup')
         if len(ilist) > 0:
             indicies = pa.MultiIndex.from_tuples(ilist,names=self.NNQ_Fit_col_names)
             if 'boot' in self.NNQ_Fit_Stats.columns:
@@ -2286,6 +2301,9 @@ class NNQCorr(object):
                 return val
             self.NNQ_Fit_Stats.loc[:,'boot'] = self.NNQ_Fit_Stats['boot'].apply(DoFit)
             self.Write()
+        else:
+            print(str(self))
+            print('Alpha found nothing to fit!')
 
 
     def Get_Extrapolation(self,keep_keys=slice(None),fmted=True):
@@ -3256,14 +3274,14 @@ class NNQCorr(object):
         else:
             try:
                 result.NNQ_Stats.loc[:,'boot'] = this_fun(self.NNQ_Stats.loc[:,'boot'], NNQ2)
-            except:
+            except Exception as err:
                 print(type(NNQ2), NNQ2)
                 print(self.NNQ_Stats)
                 raise EnvironmentError('Invalid value to combine with NNQCorr class')
             if 'Alphaboot' in self.NNQ_Stats:
                 try:
                     result.NNQ_Stats.loc[:,'Alphaboot'] = this_fun(self.NNQ_Stats.loc[:,'Alphaboot'], NNQ2)
-                except:
+                except Exception as err:
                     print(type(NNQ2), NNQ2)
                     print(self.NNQ_Stats)
                     raise EnvironmentError('Invalid value to combine with NNQCorr class')
@@ -3350,6 +3368,8 @@ class NNQFullCorr(object):
         t  = time
         tf = tflow
     """
+    def Construct_NNQFull_File(this_file):
+        return Construct_File_Object(this_file,NNQCorr)
 
     ## Info is a dictionary containing information for the correlator:
     ## see comments below to see what is required.
@@ -3881,7 +3901,7 @@ class NNQFullCorr(object):
                     if '_sym' in self.tr_sum_type and '_src_sink' not in self.tr_sum_type:
                         tflow_rolled[0] = tflow_rolled[0]/2.
                         if self.nt//2 == self.nt/2:
-                            tflow_rolled[self.nt//2-1] = tflow_rolled[self.nt//2-1]/2.
+                            tflow_rolled[int(self.nt//2-1)] = tflow_rolled[int(self.nt//2-1)]/2.
                     out_list.append(np.cumsum(tflow_rolled))
                 elif '_mult' in self.tr_sum_type:
                     out_list.append(tflow_rolled*self.nt)
@@ -7608,7 +7628,7 @@ class FlowedTwoPtCorr(object):
             else:
                 try:
                     result.C2_Stats = self.C2_Stats + C22
-                except:
+                except Exception as err:
                     print(type(C22))
                     raise EnvironmentError('Invalid value to combine with TwoPointCorr class')
             return result
@@ -7627,7 +7647,7 @@ class FlowedTwoPtCorr(object):
             else:
                 try:
                     result.C2_Stats = self.C2_Stats - C22
-                except:
+                except Exception as err:
                     print(type(C22))
                     raise EnvironmentError('Invalid value to combine with TwoPointCorr class')
             return result
@@ -7646,7 +7666,7 @@ class FlowedTwoPtCorr(object):
             else:
                 try:
                     result.C2_Stats = self.C2_Stats * C22
-                except:
+                except Exception as err:
                     print(type(C22))
                     raise EnvironmentError('Invalid value to combine with TwoPointCorr class')
             return result
@@ -7665,7 +7685,7 @@ class FlowedTwoPtCorr(object):
             else:
                 try:
                     result.C2_Stats = self.C2_Stats / C22
-                except:
+                except Exception as err:
                     print(type(C22))
                     print(C22)
                     raise EnvironmentError('Invalid value to combine with TwoPointCorr class')
@@ -7686,7 +7706,7 @@ class FlowedTwoPtCorr(object):
             else:
                 try:
                     result.C2_Stats = self.C2_Stats ** C22
-                except:
+                except Exception as err:
                     print(type(C22))
                     print(C22)
                     raise EnvironmentError('Invalid value to combine with TwoPointCorr class')
@@ -7706,7 +7726,7 @@ class FlowedTwoPtCorr(object):
         # result.UpdateName('+',C22,self)
         try:
             result.C2_Stats =  C22 + self.C2_Stats
-        except:
+        except Exception as err:
             print(type(C22))
             print(C22)
             raise EnvironmentError('Invalid value to combine with TwoPointCorr class')
@@ -7722,7 +7742,7 @@ class FlowedTwoPtCorr(object):
         # result.UpdateName('+',C22,self)
         try:
             result.C2_Stats =  C22 - self.C2_Stats
-        except:
+        except Exception as err:
             print(type(C22))
             print(C22)
             raise EnvironmentError('Invalid value to combine with TwoPointCorr class')
@@ -7738,7 +7758,7 @@ class FlowedTwoPtCorr(object):
         # result.UpdateName('+',C22,self)
         try:
             result.C2_Stats =  C22 * self.C2_Stats
-        except:
+        except Exception as err:
             print(type(C22))
             print(C22)
             raise EnvironmentError('Invalid value to combine with TwoPointCorr class')
@@ -7754,7 +7774,7 @@ class FlowedTwoPtCorr(object):
         # result.UpdateName('+',C22,self)
         try:
             result.C2_Stats =  C22 / self.C2_Stats
-        except:
+        except Exception as err:
             print(type(C22))
             print(C22)
             raise EnvironmentError('Invalid value to combine with TwoPointCorr class')
@@ -7771,7 +7791,7 @@ class FlowedTwoPtCorr(object):
         # result.UpdateName('+',C22,self)
         try:
             result.C2_Stats =  C22 ** self.C2_Stats
-        except:
+        except Exception as err:
             print(type(C22))
             print(C22)
             raise EnvironmentError('Invalid value to combine with TwoPointCorr class')
@@ -7827,7 +7847,7 @@ def TestTPCorr(DefWipe=False):
     data.LoadPickle(DefWipe=DefWipe)
 
     this_info = pa.Series()
-    this_info['save_file'] = './TestGraphs/TestFit2.pdf'
+    this_info['save_file'] = this_dir+'/TestGraphs/TestFit2.pdf'
     this_info['title'] = 'Test Two Point Corr'
     import PlotData as jpl
     data_plot = jpl.Plotting(plot_info=this_info)
@@ -7836,26 +7856,31 @@ def TestTPCorr(DefWipe=False):
     data_plot = data.EffMassFitPlot(data_plot,2,'fitr5-20',momlist=['p000'])
     data_plot.PrintData()
     data_plot.PlotAll()
+    data.Write()
     return data
 
 def TestNNQCorr(DefWipe=False):
     this_info = pa.Series()
-    this_info['save_file'] = './TestGraphs/TestNNQ.pdf'
+    this_info['save_file'] = this_dir+'/TestGraphs/TestNNQ.pdf'
     this_info['title'] = 'Test Alpha'
     from Params import defInfoFlow
     dataflow = NNQCorr(Info=defInfoFlow)
     dataflow.LoadPickle(DefWipe=DefWipe)
     import PlotData as jpl
     data_plot = jpl.Plotting(plot_info=this_info)
-    data_plot = dataflow.AlphaPlot(data_plot,xlims=[2,10],thiscol='Blue',momlist=['p000'],thissym='o',thisshift=0.0,thistflowlist = ['t_f6.01'])
-    data_plot = dataflow.AlphaFitPlot(data_plot,'fitr8-10',momlist=['p000'],thistflowlist = ['t_f6.01'])
+    data_plot = dataflow.AlphaPlot(data_plot,xlims=[2,10],
+                                   thiscol='Blue',momlist=['p000'],
+                                   thissym='o',thisshift=0.0,thistflowlist = ['t_f6.01'])
+    data_plot = dataflow.AlphaFitPlot(data_plot,'fitr8-15',
+                                      momlist=['p000'],thistflowlist = ['t_f6.01'])
     data_plot.PrintData()
     data_plot.PlotAll()
+    dataflow.Write()
     return dataflow
 
 def TestNNQFullCorr(DefWipe=False):
     this_info = pa.Series()
-    this_info['save_file'] = './TestGraphs/TestNNQFull.pdf'
+    this_info['save_file'] = this_dir+'/TestGraphs/TestNNQFull.pdf'
     this_info['title'] = 'Test Alpha Full'
     from Params import defInfoFlow
     defInfoFlow['pmom'] = ['0 0 0']
@@ -7872,9 +7897,10 @@ def TestNNQFullCorr(DefWipe=False):
     data_plot = jpl.Plotting(plot_info=this_info)
     data_plot = dataflow.AlphaPlot( data_plot,xlims=[0,20],thiscol='Blue',tsum_list=['ts10'],
                                     momlist=['p000'],thissym='o',thisshift=0.0,thistflowlist = ['t_f6.01'])
-    data_plot = dataflow.AlphaFitPlot(data_plot,['fitr8-10','tsumfitr0-10'],momlist=['p000'],thistflowlist = ['t_f6.01'])
+    data_plot = dataflow.AlphaFitPlot(data_plot,['fitr8-15','tsumfitr0-10'],momlist=['p000'],thistflowlist = ['t_f6.01'])
     data_plot.PrintData()
     data_plot.PlotAll()
+    dataflow.Write()
     # dataflow.Fit_All_Tau([['ts1','ts10']])
     return dataflow
 
@@ -7889,7 +7915,7 @@ def ReformatC2(this_file,out_filename):
         mom_file = out_filename.replace('MOMNUMB','p_'+meta[0][imom].replace(' ','_'))
         try:
             os.mkdir(mom_file.replace('Nucleon_CFGNUMB.txt',''))
-        except:
+        except Exception as err:
             pass
         for ic,idata in enumerate(momdata):
             np.savetxt(mom_file.replace('CFGNUMB',str(ic).zfill(4)),idata)
@@ -7901,7 +7927,7 @@ def TestFlowCorr(DefWipe=False):
     defInfoFlow['tflowlist'] = np.arange(0,10,0.4)
     defInfoFlow['Adjoint_Flow'] = False
     this_info = pa.Series()
-    this_info['save_file'] = './TestGraphs/TestFlowMes.pdf'
+    this_info['save_file'] = this_dir+'/TestGraphs/TestFlowMes.pdf'
     this_info['title'] = 'Test Flowed Fermions'
     this_info['x_label'] = 'source_sink_separation (lattice units)'
     this_info['y_label'] = 'effective mass'
@@ -7924,7 +7950,7 @@ def TestFlowCorr(DefWipe=False):
 
 
     this_info = pa.Series()
-    this_info['save_file'] = './TestGraphs/TestFlowRatMes.pdf'
+    this_info['save_file'] = this_dir+'/TestGraphs/TestFlowRatMes.pdf'
     this_info['title'] = 'Ratio of flowed to non-flowed correlators'
     this_info['x_label'] = 'source_sink_separation (lattice units)'
     this_info['y_label'] = 'Ratio'
@@ -7943,7 +7969,7 @@ def TestFlowCorr(DefWipe=False):
     data_plot.PlotAll()
 
     this_info = pa.Series()
-    this_info['save_file'] = './TestGraphs/AllFlowRatMes.pdf'
+    this_info['save_file'] = this_dir+'/TestGraphs/AllFlowRatMes.pdf'
     this_info['title'] = 'Ratio of flowed to non-flowed correlators'
     this_info['x_label'] = 'flow time $\sqrt{8t_f}[fm]'
     this_info['y_label'] = 'Ratio'
@@ -7956,9 +7982,41 @@ def TestFlowCorr(DefWipe=False):
     data_plot.PlotAll()
     return data
 
+def ReadBootFile(this_file):
+    from FileIO import ReadXml
+    data = ReadXml(this_file)
+    out_data = []
+    for imom,mom_data in data['Results'].items():
+        for it,t_data in mom_data.items():
+            out_data.append(t_data)
+    return np.array(out_data).reshape(len(data['Results'].keys()),-1),list(data['Results'].keys())
+
+def AvgBootData(this_path):
+    data = []
+    for ifile in glob.glob(this_path+'/*'):
+        this_data,mom_list = ReadBootFile(ifile)
+        data.append(this_data)
+    return np.mean(np.array(data),axis=0),np.std(np.array(data),axis=0),mom_list
+
+def AvgBootDir(this_path):
+    for ifile in glob.glob(this_path+'/*'):
+        if os.path.isdir(ifile):
+            print('Formatting:' ,ifile)
+            out_file_Avg = ifile+'_Avg.txt'
+            out_file_Err = ifile+'_Err.txt'
+            this_data,this_data_err,mom_list = AvgBootData(ifile)
+            for imom,mom_data,mom_data_err in zip(mom_list,this_data,this_data_err):
+                np.savetxt(out_file_Avg.replace('.txt','_'+imom+'.txt'),mom_data)
+                np.savetxt(out_file_Err.replace('.txt','_'+imom+'.txt'),mom_data_err)
+
+def TestLoadFile(this_file):
+    return TwoPointCorr.Construct_2pt_File(this_file)
 
 if __name__ == '__main__':
     tpdata = TestTPCorr()
     nnqdata = TestNNQCorr()
-    nnqfull = TestNNQFullCorr()
-    flowdata = TestFlowCorr()
+    # nnqfull = TestNNQFullCorr()
+    # flowdata = TestFlowCorr()
+    # this_file = '/home/jackdra/LQCD/Results/DebugResults/RC32x64Kud01375400Ks01364000/G2/Pickle/MassForFF.py3p'
+    # test_object = TestLoadFile(this_file)
+    print('Testing 2ptcorr complete, see tpdata and nnqdata variables')

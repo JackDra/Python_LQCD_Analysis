@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
 from copy import copy
-from Params import defPrec,defMaxIter,fillalpha,TflowToPhys
+from Params import defPrec,defMaxIter,TflowToPhys,this_dir
+from NullPlotData import fillalpha
 from FileIO import ReadFuns,WriteFuns
 from MiscFuns import Pullflag,ODNested
 from scipy.optimize import leastsq
@@ -9,6 +10,7 @@ from BootStrapping import BootStrap
 from XmlFormatting import AvgStdToFormat,MakeValAndErr,LegendFmt
 from PredefFitFuns import LinearFitFun,SchiffFFDer,C2OSFAntiper
 from Params import normed_histograms
+from Params import myeps
 
 # import matplotlib
 # matplotlib.use('Agg') # Must be before importing matplotlib.pyplot or pylab!
@@ -20,10 +22,10 @@ from PredefFitFuns import DPfitfunOneParDer,ParmDivXDer,ChitFitFunDer,ParmDivXPD
 from PredefFitFuns import c3PFDer,c3PFDer2,c3PFDer3,c3PFDer_skip1,c3PFDer2_skip1,c3PFDer3_skip1
 from PredefFitFuns import c3EFFDer,c3EFFDer2,c3EFFDer_nosqrt,c3EFFDer2_nosqrt,c3EFFDer3_nosqrt
 from PredefFitFuns import DPfitfun2Der,DPfitfunDer,OORNFFDer,SquaredFFDer,SquaredFFDer_x0
-from PredefFitFuns import Chi_Prop_Der,Chi_Prop_Der_2exp,LinFFDer_2D,LogFFDer,LogFFDer_x0,c3FFDer,c3FFDer_nosqrt
+from PredefFitFuns import Chi_Prop_Der,Chi_Prop_Der_2exp,LinFFDer_2D,LogFFDer,LogFFDer_x0,c3FFDer,c3FFDer_log,c3FFDer_nosqrt_log,c3FFDer_nosqrt
 from PredefFitFuns import Alpha_Prop_Der,Alpha_Prop_Der_2exp,RF_Prop_Der,Alpha_Prop_Der_plin,c3FFDer_NoA
 from PredefFitFuns import SqPlLogFFDer,SqPlLogFFDer_x0,c3ContFFDer
-from PredefFitFuns import ContFFDer,ContFFDer_x0,ContPlLogFFDer,ContPlLogFFDer_x0
+from PredefFitFuns import ContFFDer,ContFFDer_x0,ContPlLogFFDer,ContPlLogFFDer_x0,ContPlLogFFDer_x0_dN
 from PredefFitFuns import ContFFDer_mix,ContFFDer_x0_mix,ContPlLogFFDer_mix,ContPlLogFFDer_x0_mix
 from MomParams import LatticeParameters
 
@@ -33,6 +35,8 @@ import operator as op
 from MiscFuns import flip_fun_2arg
 from warnings import warn
 err_thresh = 0.00001
+
+
 """
 
 This class has methods for doing least squares fitting on regular and bootstrapped (see BootStrap.py) quantities.
@@ -398,15 +402,15 @@ class Fitting(object):
         # print('MaxIter' , self.MaxIter)
         # print('Prec' , self.Prec)
         # print()
-        if len(thisydata) < self.parlen:
+        DoF = len(thisydata) - self.parlen
+        if DoF < 0:
             return float('NaN'),float('NaN'),float('NaN')
 
         x,covar, infodict, mesg, ier = leastsq(self.ChiFun,self.iGuess,args=data, Dfun=self.ChiDer, maxfev=self.MaxIter , xtol=self.Prec, full_output=1)
-        DoF = len(thisydata) - len(thisxdata)
         if DoF == 0:
-            chisqpdf = float('NaN')
+            chisqpdf = float(0)
         else:
-            chisqpdf=sum(infodict["fvec"]*infodict["fvec"])/float(DoF)
+            chisqpdf=sum(infodict["fvec"]*infodict["fvec"])/DoF
         # if ier != 1:
         #     print x,covar
         #     raise ValueError, "Optimal parameters not found: " + mesg
@@ -495,8 +499,10 @@ class Fitting(object):
                     tempPar[-1].append(ip)
                 tempCovar.append(tempboot[1])
 
-        self.fit_data.loc[:,'Chi2DoF'] = pa.Series(BootStrap(thisnboot,bootvals=tempChi2),index=self.paramlist)
-        self.fit_data.loc[:,'Chi2DoFStd'] = pa.Series(self.fit_data.Chi2DoF[0].Std,index=self.paramlist)
+        tempChi2 = [BootStrap(thisnboot,bootvals=tempChi2) for _ in self.paramlist]
+        self.fit_data.loc[:,'Chi2DoF'] = pa.Series(tempChi2,index=self.paramlist)
+        tempChi2_Std = [ival.Std for ival in tempChi2]
+        self.fit_data.loc[:,'Chi2DoFStd'] = pa.Series(tempChi2_Std,index=self.paramlist)
 
         if CovarError:
             thisPar,thisParStd = [],[]
@@ -532,6 +538,8 @@ class Fitting(object):
         outboot = self.Fun(vals,np.array(self.fit_data['Params'].values))
         if hasattr(self,'scale_y') and self.scale_y != 1.0:
             outboot = outboot * self.scale_y
+        if hasattr(self,'shift_y') and self.shift_y != 0.0:
+            outboot = outboot + self.shift_y
         outboot.Stats()
         # self.RemoveFuns()
         return outboot
@@ -562,15 +570,16 @@ class Fitting(object):
 
     def PlotHairlineFun(self,otherXvals=[],xaxis=0,xdatarange='Data',thislineres=100,
                         color=None,shift=0.0,flowphys=False,ShowPar='None',ShowEval=None,
-                        x_scale=1.0,y_scale=1.0,plot_plane=None,suppress_key=False,
+                        x_scale=1.0,y_scale=1.0,y_shift=1.0,plot_plane=None,suppress_key=False,
                         x_fun=None,supress_legend=False,extrap_fade=1.5):
         self.GetFuns()
-        if y_scale != 1.0:
+        if isinstance(y_scale,(float,int)):
             self.scale_y = y_scale
+        if isinstance(y_shift,(float,int)):
+            self.shift_y = y_shift
         self.scale_x = x_scale
         if self.scale_x == 0:
             self.scale_x = 1
-
         if self.xdata.shape[0] == 1:
             thisxlist = self.xdata[0]
         else:
@@ -582,7 +591,7 @@ class Fitting(object):
                 first_Xvals = copy(np.swapaxes(self.xdata,0,1)[0])
                 first_Xvals = np.delete(first_Xvals,xaxis)
                 return self.PlotHairlineFun(otherXvals=first_Xvals,xaxis=xaxis,xdatarange=xdatarange,
-                        thislineres=thislineres,x_fun=x_fun,x_scale=x_scale,y_scale=y_scale,
+                        thislineres=thislineres,x_fun=x_fun,x_scale=x_scale,y_scale=y_scale,y_shift=y_shift,
                         color=color,shift=shift,flowphys=flowphys,ShowPar=ShowPar,ShowEval=ShowEval,
                         plot_plane=plot_plane,suppress_key=suppress_key,extrap_fade=extrap_fade)
             otherXvals = list(map(float,otherXvals))
@@ -776,15 +785,18 @@ class Fitting(object):
     ## todo color and shift iterators?
     # def PlotFunction(self,otherXvals,xaxis=0,xdatarange='Data',thislineres=lineres):
     def PlotFunction(   self,otherXvals=[],xaxis=0,xdatarange='Data',thislineres=100,
-                        color=None,shift=0.0,flowphys=False,ShowPar='None',ShowEval=None,
-                        x_scale=1.0,y_scale=1.0,plot_plane=None,suppress_key=False,x_fun=None,supress_legend=False,hairline=False,extrap_fade=1.5):
+                        color=None,shift=0.0,y_shift=1.0,flowphys=False,ShowPar='None',ShowEval=None,
+                        x_scale=1.0,y_scale=1.0,plot_plane=None,suppress_key=False,x_fun=None,supress_legend=False,
+                        hairline=False,extrap_fade=1.5):
         if hairline:
             return self.PlotHairlineFun(otherXvals=otherXvals,xaxis=xaxis,xdatarange=xdatarange,thislineres=thislineres,
                         color=color,shift=shift,flowphys=flowphys,ShowPar=ShowPar,ShowEval=ShowEval,
-                        y_scale=y_scale,x_scale=x_scale,plot_plane=plot_plane,suppress_key=suppress_key,x_fun=x_fun,supress_legend=supress_legend,extrap_fade=extrap_fade)
+                        y_scale=y_scale,y_shift=y_shift,x_scale=x_scale,plot_plane=plot_plane,suppress_key=suppress_key,x_fun=x_fun,supress_legend=supress_legend,extrap_fade=extrap_fade)
         self.GetFuns()
-        if y_scale != 1.0:
+        if isinstance(y_scale,(float,int)):
             self.scale_y = y_scale
+        if isinstance(y_shift,(float,int)):
+            self.shift_y = y_shift
         self.scale_x = x_scale
         if self.scale_x == 0:
             self.scale_x = 1
@@ -803,7 +815,7 @@ class Fitting(object):
                                         shift=shift,flowphys=flowphys,ShowPar=ShowPar,
                                         ShowEval=ShowEval,plot_plane=plot_plane,
                                         suppress_key=suppress_key,x_scale=x_scale,
-                                        y_scale=y_scale,supress_legend=supress_legend,
+                                        y_scale=y_scale,y_shift=y_shift,supress_legend=supress_legend,
                                         hairline=hairline,extrap_fade=extrap_fade)
             otherXvals = list(map(float,otherXvals))
             thisxlist = []
@@ -864,6 +876,9 @@ class Fitting(object):
             thislab = ''
         else:
             thislab = self.name + ' '
+        extrap_line = '--'
+        if extrap_fade == 1:
+            extrap_line = '-'
         if ShowPar in self.fit_data.index:
             thisunits = ''
             if ShowPar in self.paramunits.index:
@@ -877,10 +892,13 @@ class Fitting(object):
             else:
                 if ShowPar in self.paramunits.index:
                     thisunits = self.paramunits[ShowPar]
-
-            thislab += ''.join([this_SP,'=',MakeValAndErr(self.fit_data.Params[ShowPar].Avg,
-                                                          self.fit_data.Params[ShowPar].Std,
-                                                          Dec=2,latex=True),thisunits])
+            Avg_p,Std_p = self.fit_data.Params[ShowPar].Avg,self.fit_data.Params[ShowPar].Std
+            if hasattr(self,'scale_y') and self.scale_y != 1.0:
+                Avg_p = self.scale_y*Avg_p
+                Std_p = abs(self.scale_y)*Std_p
+            if hasattr(self,'shift_y') and self.shift_y != 0.0:
+                Avg_p = self.shift_y+Avg_p
+            thislab += ''.join([this_SP,'=',MakeValAndErr(Avg_p,Std_p,Dec=2,latex=True),thisunits])
 
             # print 'REMOVE THIS AFTER'
             # scale_param = self.fit_data.Params[ShowPar]*scale
@@ -933,18 +951,18 @@ class Fitting(object):
                     plot_plane.errorbar( ShowEval[xaxis],[self.Eval_Fun_Avg(*ShowEval)],[self.Eval_Fun_Std(*ShowEval)],label=thislab,color=color,fmt='x',markersize='10')
                 plot_plane.plot(    np.array(xplot)+shift,yplotAvg,color=color,linestyle=self.linestyle)
                 if len(pre_extrap) > 0:
-                    plot_plane.plot(    np.array(pre_extrap)+shift,yplotAvg_pre,color=color,linestyle='--')
+                    plot_plane.plot(    np.array(pre_extrap)+shift,yplotAvg_pre,color=color,linestyle=extrap_line)
                 if len(post_extrap) > 0:
-                    plot_plane.plot(    np.array(post_extrap)+shift,yplotAvg_post,color=color,linestyle='--')
+                    plot_plane.plot(    np.array(post_extrap)+shift,yplotAvg_post,color=color,linestyle=extrap_line)
             else:
                 plot_plane.plot(    np.array(xplot)+shift,yplotAvg,
                                 label=thislab,color=color,linestyle=self.linestyle)
                 if len(pre_extrap) > 0:
                     plot_plane.plot(    np.array(pre_extrap)+shift,yplotAvg_pre,
-                                    color=color,linestyle='--')
+                                    color=color,linestyle=extrap_line)
                 if len(post_extrap) > 0:
                     plot_plane.plot(    np.array(post_extrap)+shift,yplotAvg_post,
-                                    color=color,linestyle='--')
+                                    color=color,linestyle=extrap_line)
             plot_plane.fill_between(np.array(xplot)+shift,yplotUp,yplotDown,alpha=fillalpha,edgecolor='none',color=color)
             if len(pre_extrap) > 0:
                 plot_plane.fill_between(np.array(pre_extrap)+shift,yplotUp_pre,yplotDown_pre,alpha=fillalpha/extrap_fade,edgecolor='none',color=color)
@@ -952,6 +970,20 @@ class Fitting(object):
                 plot_plane.fill_between(np.array(post_extrap)+shift,yplotUp_post,yplotDown_post,alpha=fillalpha/extrap_fade,edgecolor='none',color=color)
             # self.RemoveFuns()
             return plot_plane
+
+    # def Flip_Y_Axis(self):
+    #     ## Not entirly correct, but it will do for the fit fucntions of polynomial form.
+    #     def this_fun(ival):
+    #         ival = -ival
+    #         if hasattr(ival,'Stats'):
+    #             ival.Stats()
+    #         return ival
+    #     if 'Params' in self.fit_data.columns:
+    #         self.fit_data.iloc[:,'Params'] = self.fit_data.iloc[:,'Params'].apply(this_fun)
+    #     else:
+    #         warn('flipping y axis before performing fit does nothing.')
+    #     if 'ParamsAvg' in self.fit_data.columns:
+    #         self.fit_data.iloc[:,'ParamsAvg'] = -self.fit_data.iloc[:,'ParamsAvg']
 
     ## 1d plots require a dimension to plot over for x axis
     ## todo color and shift iterators?
@@ -1031,14 +1063,25 @@ class Fitting(object):
             plot_plane.fill_between(xplot+shift,yplotUp,yplotDown,alpha=fillalpha,edgecolor='none',color=color)
             return plot_plane
 
-    def GetOutputDict(self,show_maxiter=False,show_prec=False):
+    def GetOutputDict(self,show_maxiter=False,show_prec=False,Qfact='False'):
         outDict = ODNested()
         if 'Params' not in self.fit_data:
             return {}
+        has_Qfact = Qfact != 'False' and Qfact > myeps
         for thispar,idata in self.fit_data['Params'].items():
             # if 'tilde' in thispar: thispar = thispar.replace('tilde',r'tilde')
             # if 'frac' in thispar: thispar = thispar.replace('frac',r'frac')
             outDict[thispar] = AvgStdToFormat(idata.Avg,idata.Std)
+        if has_Qfact:
+            par_list = [r'$G_{E}$',r'$G_{M}$']
+            prev_coeffs = self.fit_data['Params'].values
+            new_coeffs = deepcopy(prev_coeffs)
+            new_coeffs[0] = prev_coeffs[0] - Qfact*prev_coeffs[1]
+            new_coeffs[1] = prev_coeffs[0] + prev_coeffs[1]
+            new_coeffs[0].Stats()
+            new_coeffs[1].Stats()
+            for ipar,parval in zip(par_list,new_coeffs):
+                outDict[ipar] = AvgStdToFormat(parval.Avg,parval.Std)
         if hasattr(self.fit_data,'Chi2DoF'):
             outDict['Chi^2_pdf'] = AvgStdToFormat(self.fit_data.Chi2DoF[0].Avg,self.fit_data.Chi2DoF[0].Std)
         self.GetFuns()
@@ -1127,6 +1170,8 @@ class Fitting(object):
             return [1,1,1,1]
         elif self.Fun.__name__ == 'ContPlLogFitFun_x0':
             return [1,1,1]
+        elif self.Fun.__name__ == 'ContPlLogFitFun_x0_dN':
+            return [1,1,1]
         elif self.Fun.__name__ == 'ContFitFun_mix':
             return [1,1,1,1]
         elif self.Fun.__name__ == 'ContFitFun_x0_mix':
@@ -1188,6 +1233,10 @@ class Fitting(object):
             return [-1,-1,-1]
         elif self.Fun.__name__ == 'c3FitFun':
             return [1,1,1]
+        elif self.Fun.__name__ == 'c3FitFun_log':
+            return [1,1,1,1]
+        elif self.Fun.__name__ == 'c3FitFun_nosqrt_log':
+            return [1,1,1,1]
         elif self.Fun.__name__ == 'c3FitFun_nosqrt':
             return [-1,-1,-1]
         # elif self.Fun.__name__ == 'c3FitFun_V2':
@@ -1251,6 +1300,8 @@ class Fitting(object):
             return ContPlLogFFDer
         elif self.Fun.__name__ == 'ContPlLogFitFun_x0':
             return ContPlLogFFDer_x0
+        elif self.Fun.__name__ == 'ContPlLogFitFun_x0_dN':
+            return ContPlLogFFDer_x0_dN
         elif self.Fun.__name__ == 'ContFitFun_mix':
             return ContFFDer_mix
         elif self.Fun.__name__ == 'ContFitFun_x0_mix':
@@ -1308,6 +1359,12 @@ class Fitting(object):
         elif self.Fun.__name__ == 'c3FitFun':
             # return 'Estimate'
             return c3FFDer
+        elif self.Fun.__name__ == 'c3FitFun_log':
+            # return 'Estimate'
+            return c3FFDer_log
+        elif self.Fun.__name__ == 'c3FitFun_nosqrt_log':
+            # return 'Estimate'
+            return c3FFDer_nosqrt_log
         elif self.Fun.__name__ == 'c3FitFun_nosqrt':
             # return 'Estimate'
             return c3FFDer_nosqrt
@@ -1381,6 +1438,8 @@ class Fitting(object):
         elif self.Fun.__name__ == 'ContFitFun_x0':
             return 'Def'
         elif self.Fun.__name__ == 'ContPlLogFitFun':
+            return 'Def'
+        elif self.Fun.__name__ == 'ContPlLogFitFun_x0_dN':
             return 'Def'
         elif self.Fun.__name__ == 'ContPlLogFitFun_x0':
             return 'Def'
@@ -1458,6 +1517,10 @@ class Fitting(object):
             return ['b','c']
         elif self.Fun.__name__ == 'c3FitFun':
             return ['a','b','c']
+        elif self.Fun.__name__ == 'c3FitFun_log':
+            return ['a','b','c','d']
+        elif self.Fun.__name__ == 'c3FitFun_nosqrt_log':
+            return ['a','b','c','d']
         elif self.Fun.__name__ == 'c3FitFun_nosqrt':
             return ['a','b','c']
         # elif self.Fun.__name__ == 'c3FitFun_V2':
@@ -1725,7 +1788,7 @@ def TestComb():
 
 
     this_info = pa.Series()
-    this_info['save_file'] = './TestGraphs/TestFitPlot.pdf'
+    this_info['save_file'] = this_dir+'/TestGraphs/TestFitPlotComb.pdf'
     this_info['title'] = 'Test Fitting'
     this_info['xlabel'] = 'Test x'
     this_info['ylabel'] = 'Test y'
@@ -1785,7 +1848,7 @@ def TestFit(low=-5,high=5,npoints=10,nboot=200):
 
 
     this_info = pa.Series()
-    this_info['save_file'] = './TestGraphs/TestFitPlot.pdf'
+    this_info['save_file'] = this_dir+'/TestGraphs/TestFitPlot.pdf'
     this_info['title'] = 'Test Fitting'
     this_info['xlabel'] = 'Test x'
     this_info['ylabel'] = 'Test y'
@@ -1801,7 +1864,7 @@ def TestFit(low=-5,high=5,npoints=10,nboot=200):
 
     # testfit.PlotFunction()
     # pl.legend()
-    # pl.savefig('./TestGraphs/TestFuns.pdf')
+    # pl.savefig(this_dir+'/TestGraphs/TestFuns.pdf')
 
     #
     return testfit
@@ -1816,4 +1879,12 @@ if __name__ == '__main__':
     print('Writing all Functions that have been predefined')
     WriteAllFuns()
     # data = TestFit()
+    import PredefFitFuns as deff
+    import inspect
+
+    all_functions = inspect.getmembers(deff, inspect.isfunction)
+    for ifun_name,ifun in all_functions:
+        WriteFuns(ifun)
+    fit_data1,fit_data2,fit_data_comb = TestComb()
+    print('data is in fit_data1,fit_data2,fit_data_comb')
 ##Class with Fitting to group all Functions.

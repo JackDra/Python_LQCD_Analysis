@@ -20,6 +20,7 @@ from XmlFormatting import tflowTOLeg
 from PredefFitFuns import F3ChiralLimFun,SquaredFitFun,LinearFitFun,LinearFF_2D,F3LatSpaceFun,SchiffFitFun
 import FitFunctions as ff
 from MomParams import physcial_pion_mass
+from FileIO import Construct_Empty
 
 from FFSolve import FFEquation
 
@@ -45,7 +46,12 @@ shiftset = [0]
 for ish in np.arange(1,shiftmax+1): shiftset += [-ish*shiftper,ish*shiftper]
 del ish, shiftmax,shiftper
 
-
+def RemoveFlowKey(this_key):
+    out_key = []
+    for ikey in this_key:
+        if 't_f' not in ikey:
+            out_key.append(ikey)
+    return out_key
 
 class SetOfFF(object):
     """
@@ -63,6 +69,19 @@ class SetOfFF(object):
 
 
     """
+
+    def Construct_FF_Set(this_file_list):
+        set_list = [FFEquation.Construct_FF_File(ifile) for ifile in this_file_list]
+        out_class = Construct_Empty(SetOfFF)
+        out_class.cfglist = {}
+        out_class.cfglist2pt = {}
+        out_class.InfoDict = []
+        out_class.Plotdir = graphdir+'/FF/'
+        out_class.name = 'Set1'
+        out_class.SetFF = pa.DataFrame()
+        out_class.SetFF.loc[:,'FF_class'] = pa.Series(set_list,index=[ilist.namein for ilist in set_list])
+        return out_class
+
     instances = []
 
     parentlist = []
@@ -646,9 +665,10 @@ class SetOfFF(object):
             if thisres.index.names[0] is not None:
                 this_names = thisres.index.names
             for ireskey,iresval in thisres.items():
+                this_key = (iset.ppparams.GetPionMassLab(MeV=True),)+RemoveFlowKey(ireskey)## in MeV
                 ploty.append(iresval.Avg)
                 plotyerr.append(iresval.Std)
-                plotx.append((iset.ppparams.GetPionMassLab(MeV=True),)+ireskey) ## in MeV
+                plotx.append(this_key)
         if len(plotx) > 0 and this_names is not None :
             this_key = [slice(None)] + list(plotx[0][1:])
             indicies = pa.MultiIndex.from_tuples(plotx,names=['$m_{pi}$']+this_names)
@@ -731,9 +751,10 @@ class SetOfFF(object):
             if thisres.index.names[0] is not None:
                 this_names = thisres.index.names
             for ireskey,iresval in thisres.items():
+                this_key = (iset.ppparams.GetLatSpaceLab(),)+RemoveFlowKey(ireskey)## in MeV
                 ploty.append(iresval.Avg)
                 plotyerr.append(iresval.Std)
-                plotx.append((iset.ppparams.GetLatSpaceLab(),)+ireskey) ## in MeV
+                plotx.append(this_key) ## in MeV
         if len(plotx) > 0 and this_names is not None :
             this_key = [slice(None)] + list(plotx[0][1:])
             indicies = pa.MultiIndex.from_tuples(plotx,names=['$a$']+this_names)
@@ -817,9 +838,10 @@ class SetOfFF(object):
             if thisres.index.names[0] is not None:
                 this_names = thisres.index.names
             for ireskey,iresval in thisres.items():
+                this_key = (iset.ppparams.GetBoxSizeLab(),)+RemoveFlowKey(ireskey)## in MeV
                 ploty.append(iresval.Avg)
                 plotyerr.append(iresval.Std)
-                plotx.append((iset.ppparams.GetBoxSizeLab(),)+ireskey) ## in MeV
+                plotx.append(this_key)
         if len(plotx) > 0 and this_names is not None :
             this_key = [slice(None)] + list(plotx[0][1:])
             indicies = pa.MultiIndex.from_tuples(plotx,names=['$La$']+this_names)
@@ -1118,3 +1140,16 @@ class SetOfFF(object):
                 this_df.loc[:,ikey+'_mpi'] = int(iset.ppparams.GetPionMass(MeV=True))
         this_df.loc[:,'Fit'] = this_df.apply(this_fit,axis=1)
         return this_df['Fit'].dropna()
+
+
+
+
+def TestSetFF(this_file_list):
+    return SetOfFF.Construct_FF_Set(this_file_list)
+
+
+if __name__ == '__main__':
+    this_file_list = []
+    this_file_list.append('/home/jackdra/LQCD/Results/temp/VectorTop_t_f7.47_Rtsumfitr4-32_Afitr10-20_RFmin3_RChi50-100.p')
+    this_data = TestSetFF(this_file_list)
+    this_data.SetFF['FF_class'].values[0].FF

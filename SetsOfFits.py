@@ -2,6 +2,7 @@
 
 import numpy as np
 
+from Params import this_dir
 from MiscFuns import ODNested
 
 from BootStrapping import BootStrap,CombineBS
@@ -16,8 +17,9 @@ from TimeStuff import Timer
 from XmlFormatting import unxmlfitr_int,MakeValAndErr
 from copy import deepcopy
 from NullPlotData import null_series
+from warnings import warn
 
-
+MaxFitCutoff = 200
 
 ## keepkeys is for keeping track of "fit funtions, fit ranges etc..."
 def PullSOFSeries_Wpar(this_series,keep_keys=slice(None),fmted=True):
@@ -292,6 +294,10 @@ class SetOfFitFuns(object):
         # print self.ydata
         # print pa.Series(fit_types)
         # print
+        if MaxFitCutoff > 0 and MaxFitCutoff < len(fit_types):
+            fit_types = fit_types[::(len(fit_types)//MaxFitCutoff)+1]
+            warn('Max number of fits was hit for import fits, cutting to '+str(len(fit_types))+' fits')
+
         for ifit in fit_types:
             # print 'DEBUG'
             # print ifit['fit_min_1']
@@ -887,7 +893,12 @@ class SetOfFitFuns(object):
                 cut_data.loc[:,'fit_min'] = cut_data['fit_min'].apply(pull_x)
                 cut_data.loc[:,'fit_max'] = cut_data['fit_max'].apply(pull_x)
             else:
-                raise NotImplementedError('acutal x values for 2d plotting not implemented yet.')
+                for ifit,ix in enumerate(self.xdata_split):
+                    pull_x = lambda x : f'{ix[int(x)]:.4f}'
+                    cut_data.loc[:,'fit_min_'+str(ifit+1)] = cut_data['fit_min_'+str(ifit+1)].apply(pull_x)
+                    cut_data.loc[:,'fit_max_'+str(ifit+1)] = cut_data['fit_max_'+str(ifit+1)].apply(pull_x)
+                # warn('acutal x values for 2d plotting not implemented yet, not using actual x')
+                # raise NotImplementedError('acutal x values for 2d plotting not implemented yet.')
         this_index = list(cut_data.columns)
         del this_index[this_index.index('data')]
         # del this_index[this_index.index('Function')]
@@ -983,6 +994,18 @@ class SetOfFitFuns(object):
     #         self.DoFits()
     #         self.PullAllParam()
 
+    # def Flip_X_Axis(self):
+    #     if self.Fit_Stats is not None and 'Fit' in self.Fit_Stats.columns:
+    #         self.Fit_Stats.loc[:,'Fit'] = self.Fit_Stats.loc[:,'Fit'].apply(lambda x : x.Flip_X_Axis())
+    #     if self.Fit_Stats_fmt is not None and 'Fit' in self.Fit_Stats_fmt.columns:
+    #         self.Fit_Stats_fmt.loc[:,'Fit'] = self.Fit_Stats_fmt.loc[:,'Fit'].apply(lambda x : x.Flip_X_Axis())
+    #
+    # def Flip_Y_Axis(self):
+    #     if self.Fit_Stats is not None and 'Fit' in self.Fit_Stats.columns:
+    #         self.Fit_Stats.loc[:,'Fit'] = self.Fit_Stats.loc[:,'Fit'].apply(lambda x : x.Flip_Y_Axis())
+    #     if self.Fit_Stats_fmt is not None and 'Fit' in self.Fit_Stats_fmt.columns:
+    #         self.Fit_Stats_fmt.loc[:,'Fit'] = self.Fit_Stats_fmt.loc[:,'Fit'].apply(lambda x : x.Flip_Y_Axis())
+
     def GetFuns(self):
         if self.Fit_Stats is not None and 'Fit' in self.Fit_Stats.columns:
             self.Fit_Stats.loc[:,'Fit'].apply(lambda x : x.GetFuns())
@@ -1068,7 +1091,11 @@ class SetOfFitFuns(object):
         par_list = ['len_val','fit_min_val','len','fit_max_val']
         par_list += [icol for icol in self.Fit_Stats_fmt.columns if 'par_' in icol and ('_Avg' in icol or '_Std' in icol)]
         par_list += ['Chi2pdfAvg','Chi2pdfStd']
+        par_list_fmt = ['length','min','n points','max']
+        par_list_fmt += [icol.replace('par_','') for icol in self.Fit_Stats_fmt.columns if 'par_' in icol and ('_Avg' in icol or '_Std' in icol)]
+        par_list_fmt += [r'\chi^{2}_{PDF}_Avg',r'\chi^{2}_{PDF}_Std']
         fmt_fit = self.Fit_Stats_fmt.reset_index()[par_list]
+        fmt_fit = fmt_fit.rename(dict(zip(par_list,par_list_fmt)),axis='columns')
         valerr_fit = pa.DataFrame()
         for icol in fmt_fit.columns:
             if 'Avg' in icol:
@@ -1649,7 +1676,7 @@ def TestSetOfFits():
 
 
     this_info = pa.Series()
-    this_info['save_file'] = './TestGraphs/TestFitChiPlot.pdf'
+    this_info['save_file'] = this_dir+'/TestGraphs/TestFitChiPlot.pdf'
     this_info['title'] = 'Test Fitting'
     this_info['xlabel'] = 'Test x'
     this_info['ylabel'] = 'Test y'
@@ -1742,7 +1769,7 @@ def TestSetOfFits_2D():
 
 
     this_info = pa.Series()
-    this_info['save_file'] = './TestGraphs/TestFitChiPlot_2D.pdf'
+    this_info['save_file'] = this_dir+'/TestGraphs/TestFitChiPlot_2D.pdf'
     this_info['title'] = 'Test Fitting 2D'
     this_info['xlabel'] = 'Test x[0]'
     this_info['ylabel'] = 'Test y'
@@ -1759,7 +1786,7 @@ def TestSetOfFits_2D():
 
     # testfit.PlotFunction()
     # pl.legend()
-    # pl.savefig('./TestGraphs/TestFuns.pdf')
+    # pl.savefig(this_dir+'/TestGraphs/TestFuns.pdf')
 
     #
 
@@ -1767,3 +1794,4 @@ def TestSetOfFits_2D():
 if __name__ == '__main__':
     testdata,testfit = TestSetOfFits()
     testdata_2D,testfit_2D = TestSetOfFits_2D()
+    print('data is in testdata,testfit and testdata_2D, testfit_2D')

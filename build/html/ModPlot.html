@@ -1,0 +1,782 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ModPlot module &mdash; LQCD Analysis Codebase TF Fits documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/my_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> LQCD Analysis Codebase
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Python_Analysis</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="AnalysisGUI.html">AnalysisGUI module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Autocorr.html">Autocorr module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BootStrapping.html">BootStrapping module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CreateTable.html">CreateTable module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DSDefines.html">DSDefines module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FFSolve.html">FFSolve module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FileIO.html">FileIO module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FitFunctions.html">FitFunctions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FitFunctions_TF.html">FitFunctions_TF module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FlowOpps.html">FlowOpps module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FormFactors.html">FormFactors module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GammaMatricies.html">GammaMatricies module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MAH_control.html">MAH_control module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MiscFuns.html">MiscFuns module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">ModPlot module</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ModStylePlot.html">ModStylePlot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MomParams.html">MomParams module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MultiWrap.html">MultiWrap module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="NullPlotData.html">NullPlotData module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Params.html">Params module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PlotData.html">PlotData module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PredefFitFuns.html">PredefFitFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="QuantityLists.html">QuantityLists module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RatioCorrelators.html">RatioCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ReadBinaryCfuns.html">ReadBinaryCfuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ReadFO.html">ReadFO module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RunSetCommands.html">RunSetCommands module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFFs.html">SetsOfFFs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFits.html">SetsOfFits module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFlowOps.html">SetsOfFlowOps module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfRatios.html">SetsOfRatios module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfTwoPtCorrs.html">SetsOfTwoPtCorrs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ThreePtCorrelators.html">ThreePtCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TimeStuff.html">TimeStuff module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TwoPtCorrelators.html">TwoPtCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VarMethod.html">VarMethod module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="XmlFormatting.html">XmlFormatting module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xmltodict.html">xmltodict module</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">LQCD Analysis Codebase</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="modules.html">Python_Analysis</a> &raquo;</li>
+        
+      <li>ModPlot module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/ModPlot.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-ModPlot">
+<span id="modplot-module"></span><h1>ModPlot module<a class="headerlink" href="#module-ModPlot" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="ModPlot.BeginFrame">
+<em class="property">class </em><code class="descclassname">ModPlot.</code><code class="descname">BeginFrame</code><a class="reference internal" href="_modules/ModPlot.html#BeginFrame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ModPlot.BeginFrame" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">traits.has_traits.HasTraits</span></code></p>
+<p>starting frame, to select what type of thing you want to do
+options are:</p>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_class_trait</span></code>(name,&nbsp;*trait)</td>
+<td>Adds a named trait attribute to this class.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_trait</span></code>(name,&nbsp;*trait)</td>
+<td>Adds a trait attribute to this object.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_trait_category</span></code>(category)</td>
+<td>Adds a trait category to a class.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">all_trait_names</span></code>()</td>
+<td>Returns the list of all trait names, including implicitly defined traits.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">base_trait</span></code>(name)</td>
+<td>Returns the base trait definition for a trait attribute.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">class_default_traits_view</span></code>()</td>
+<td>Returns the name of the default traits view for the class.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">class_editable_traits</span></code>()</td>
+<td>Returns an alphabetically sorted list of the names of non-event trait attributes associated with the current class.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">class_trait_names</span></code>(**metadata)</td>
+<td>Returns a list of the names of all trait attributes whose definitions match the set of <em>metadata</em> criteria specified.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">class_trait_view_elements</span></code>()</td>
+<td>Returns the ViewElements object associated with the class.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">class_traits</span></code>(**metadata)</td>
+<td>Returns a dictionary containing the definitions of all of the trait attributes of the class that match the set of <em>metadata</em> criteria.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">class_visible_traits</span></code>()</td>
+<td>Returns an alphabetically sorted list of the names of non-event trait attributes associated with the current class, that should be GUI visible</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">clone_traits</span></code>([traits,&nbsp;memo,&nbsp;copy])</td>
+<td>Clones a new object from this one, optionally copying only a specified set of traits.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">configure_traits</span></code>([filename,&nbsp;view,&nbsp;kind,&nbsp;…])</td>
+<td>Creates and displays a dialog box for editing values of trait attributes, as if it were a complete, self-contained GUI application.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy_traits</span></code>(other[,&nbsp;traits,&nbsp;memo,&nbsp;copy])</td>
+<td>Copies another object’s trait attributes into this one.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">copyable_trait_names</span></code>(**metadata)</td>
+<td>Returns the list of trait names to copy or clone by default.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">default_traits_view</span></code>()</td>
+<td>Returns the name of the default traits view for the object’s class.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">edit_traits</span></code>([view,&nbsp;parent,&nbsp;kind,&nbsp;context,&nbsp;…])</td>
+<td>Displays a user interface window for editing trait attribute values.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">editable_traits</span></code>()</td>
+<td>Returns an alphabetically sorted list of the names of non-event trait attributes associated with the current object.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code>(*names,&nbsp;**metadata)</td>
+<td>Shortcut for getting object trait attributes.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_traits_interface</span></code>(*interfaces)</td>
+<td>Returns whether the object implements a specified traits interface.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">on_trait_change</span></code>(handler[,&nbsp;name,&nbsp;remove,&nbsp;…])</td>
+<td>Causes the object to invoke a handler whenever a trait attribute matching a specified pattern is modified, or removes the association.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">on_trait_event</span></code>(handler[,&nbsp;name,&nbsp;remove,&nbsp;…])</td>
+<td>Causes the object to invoke a handler whenever a trait attribute matching a specified pattern is modified, or removes the association.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">print_traits</span></code>([show_help])</td>
+<td>Prints the values of all explicitly-defined, non-event trait attributes on the current object, in an easily readable format.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_trait</span></code>(name)</td>
+<td>Removes a trait attribute from this object.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset_traits</span></code>([traits])</td>
+<td>Resets some or all of an object’s trait attributes to their default values.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">set</span></code>([trait_change_notify])</td>
+<td>Shortcut for setting object trait attributes.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_trait_dispatch_handler</span></code>(name,&nbsp;klass[,&nbsp;…])</td>
+<td>Sets a trait notification dispatch handler.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">sync_trait</span></code>(trait_name,&nbsp;object[,&nbsp;alias,&nbsp;…])</td>
+<td>Synchronizes the value of a trait attribute on this object with a trait attribute on another object.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">trait</span></code>(name[,&nbsp;force,&nbsp;copy])</td>
+<td>Returns the trait definition for the <em>name</em> trait attribute.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">trait_context</span></code>()</td>
+<td>Returns the default context to use for editing or configuring traits.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">trait_get</span></code>(*names,&nbsp;**metadata)</td>
+<td>Shortcut for getting object trait attributes.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">trait_items_event</span></code>(event_trait,name,items_event)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">trait_monitor</span></code>(handler[,&nbsp;remove])</td>
+<td>Adds or removes the specified <em>handler</em> from the list of active monitors.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">trait_names</span></code>(**metadata)</td>
+<td>Returns a list of the names of all trait attributes whose definitions match the set of <em>metadata</em> criteria specified.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">trait_property_changed</span></code>(…)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">trait_set</span></code>([trait_change_notify])</td>
+<td>Shortcut for setting object trait attributes.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">trait_setq</span></code>(**traits)</td>
+<td>Shortcut for setting object trait attributes.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">trait_subclasses</span></code>([all])</td>
+<td>Returns a list of the immediate (or all) subclasses of this class.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">trait_view</span></code>([name,&nbsp;view_element])</td>
+<td>Gets or sets a ViewElement associated with an object’s class.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">trait_view_elements</span></code>()</td>
+<td>Returns the ViewElements object associated with the object’s class.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">trait_views</span></code>([klass])</td>
+<td>Returns a list of the names of all view elements associated with the current object’s class.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">traits</span></code>(**metadata)</td>
+<td>Returns a dictionary containing the definitions of all of the trait attributes of this object that match the set of <em>metadata</em> criteria.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">traits_init</span></code>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">traits_inited</span></code>([True])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_trait</span></code>(name,&nbsp;value)</td>
+<td>Validates whether a value is legal for a trait.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">visible_traits</span></code>()</td>
+<td>Returns an alphabetically sorted list of the names of non-event trait attributes associated with the current object, that should be GUI visible</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="71%" />
+<col width="29%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><strong>add_trait_listener</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>class_trait_view</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>remove_trait_listener</strong></td>
+<td>&#160;</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="ModPlot.DataFrame">
+<em class="property">class </em><code class="descclassname">ModPlot.</code><code class="descname">DataFrame</code><a class="reference internal" href="_modules/ModPlot.html#DataFrame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ModPlot.DataFrame" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">traits.has_traits.HasTraits</span></code></p>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_class_trait</span></code>(name,&nbsp;*trait)</td>
+<td>Adds a named trait attribute to this class.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_trait</span></code>(name,&nbsp;*trait)</td>
+<td>Adds a trait attribute to this object.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_trait_category</span></code>(category)</td>
+<td>Adds a trait category to a class.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">all_trait_names</span></code>()</td>
+<td>Returns the list of all trait names, including implicitly defined traits.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">base_trait</span></code>(name)</td>
+<td>Returns the base trait definition for a trait attribute.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">class_default_traits_view</span></code>()</td>
+<td>Returns the name of the default traits view for the class.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">class_editable_traits</span></code>()</td>
+<td>Returns an alphabetically sorted list of the names of non-event trait attributes associated with the current class.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">class_trait_names</span></code>(**metadata)</td>
+<td>Returns a list of the names of all trait attributes whose definitions match the set of <em>metadata</em> criteria specified.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">class_trait_view_elements</span></code>()</td>
+<td>Returns the ViewElements object associated with the class.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">class_traits</span></code>(**metadata)</td>
+<td>Returns a dictionary containing the definitions of all of the trait attributes of the class that match the set of <em>metadata</em> criteria.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">class_visible_traits</span></code>()</td>
+<td>Returns an alphabetically sorted list of the names of non-event trait attributes associated with the current class, that should be GUI visible</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">clone_traits</span></code>([traits,&nbsp;memo,&nbsp;copy])</td>
+<td>Clones a new object from this one, optionally copying only a specified set of traits.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">configure_traits</span></code>([filename,&nbsp;view,&nbsp;kind,&nbsp;…])</td>
+<td>Creates and displays a dialog box for editing values of trait attributes, as if it were a complete, self-contained GUI application.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy_traits</span></code>(other[,&nbsp;traits,&nbsp;memo,&nbsp;copy])</td>
+<td>Copies another object’s trait attributes into this one.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">copyable_trait_names</span></code>(**metadata)</td>
+<td>Returns the list of trait names to copy or clone by default.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">default_traits_view</span></code>()</td>
+<td>Returns the name of the default traits view for the object’s class.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">edit_traits</span></code>([view,&nbsp;parent,&nbsp;kind,&nbsp;context,&nbsp;…])</td>
+<td>Displays a user interface window for editing trait attribute values.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">editable_traits</span></code>()</td>
+<td>Returns an alphabetically sorted list of the names of non-event trait attributes associated with the current object.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code>(*names,&nbsp;**metadata)</td>
+<td>Shortcut for getting object trait attributes.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_traits_interface</span></code>(*interfaces)</td>
+<td>Returns whether the object implements a specified traits interface.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">on_trait_change</span></code>(handler[,&nbsp;name,&nbsp;remove,&nbsp;…])</td>
+<td>Causes the object to invoke a handler whenever a trait attribute matching a specified pattern is modified, or removes the association.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">on_trait_event</span></code>(handler[,&nbsp;name,&nbsp;remove,&nbsp;…])</td>
+<td>Causes the object to invoke a handler whenever a trait attribute matching a specified pattern is modified, or removes the association.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">print_traits</span></code>([show_help])</td>
+<td>Prints the values of all explicitly-defined, non-event trait attributes on the current object, in an easily readable format.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_trait</span></code>(name)</td>
+<td>Removes a trait attribute from this object.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset_traits</span></code>([traits])</td>
+<td>Resets some or all of an object’s trait attributes to their default values.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">set</span></code>([trait_change_notify])</td>
+<td>Shortcut for setting object trait attributes.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_trait_dispatch_handler</span></code>(name,&nbsp;klass[,&nbsp;…])</td>
+<td>Sets a trait notification dispatch handler.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">sync_trait</span></code>(trait_name,&nbsp;object[,&nbsp;alias,&nbsp;…])</td>
+<td>Synchronizes the value of a trait attribute on this object with a trait attribute on another object.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">trait</span></code>(name[,&nbsp;force,&nbsp;copy])</td>
+<td>Returns the trait definition for the <em>name</em> trait attribute.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">trait_context</span></code>()</td>
+<td>Returns the default context to use for editing or configuring traits.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">trait_get</span></code>(*names,&nbsp;**metadata)</td>
+<td>Shortcut for getting object trait attributes.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">trait_items_event</span></code>(event_trait,name,items_event)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">trait_monitor</span></code>(handler[,&nbsp;remove])</td>
+<td>Adds or removes the specified <em>handler</em> from the list of active monitors.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">trait_names</span></code>(**metadata)</td>
+<td>Returns a list of the names of all trait attributes whose definitions match the set of <em>metadata</em> criteria specified.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">trait_property_changed</span></code>(…)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">trait_set</span></code>([trait_change_notify])</td>
+<td>Shortcut for setting object trait attributes.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">trait_setq</span></code>(**traits)</td>
+<td>Shortcut for setting object trait attributes.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">trait_subclasses</span></code>([all])</td>
+<td>Returns a list of the immediate (or all) subclasses of this class.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">trait_view</span></code>([name,&nbsp;view_element])</td>
+<td>Gets or sets a ViewElement associated with an object’s class.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">trait_view_elements</span></code>()</td>
+<td>Returns the ViewElements object associated with the object’s class.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">trait_views</span></code>([klass])</td>
+<td>Returns a list of the names of all view elements associated with the current object’s class.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">traits</span></code>(**metadata)</td>
+<td>Returns a dictionary containing the definitions of all of the trait attributes of this object that match the set of <em>metadata</em> criteria.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">traits_init</span></code>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">traits_inited</span></code>([True])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_trait</span></code>(name,&nbsp;value)</td>
+<td>Validates whether a value is legal for a trait.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">visible_traits</span></code>()</td>
+<td>Returns an alphabetically sorted list of the names of non-event trait attributes associated with the current object, that should be GUI visible</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="71%" />
+<col width="29%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><strong>add_trait_listener</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>class_trait_view</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>remove_trait_listener</strong></td>
+<td>&#160;</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="ModPlot.DataFrame.vary_len">
+<code class="descname">vary_len</code><em class="property"> = 0</em><a class="headerlink" href="#ModPlot.DataFrame.vary_len" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ModPlot.InfoFrame">
+<em class="property">class </em><code class="descclassname">ModPlot.</code><code class="descname">InfoFrame</code><a class="reference internal" href="_modules/ModPlot.html#InfoFrame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ModPlot.InfoFrame" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">traits.has_traits.HasTraits</span></code></p>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_class_trait</span></code>(name,&nbsp;*trait)</td>
+<td>Adds a named trait attribute to this class.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_trait</span></code>(name,&nbsp;*trait)</td>
+<td>Adds a trait attribute to this object.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_trait_category</span></code>(category)</td>
+<td>Adds a trait category to a class.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">all_trait_names</span></code>()</td>
+<td>Returns the list of all trait names, including implicitly defined traits.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">base_trait</span></code>(name)</td>
+<td>Returns the base trait definition for a trait attribute.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">class_default_traits_view</span></code>()</td>
+<td>Returns the name of the default traits view for the class.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">class_editable_traits</span></code>()</td>
+<td>Returns an alphabetically sorted list of the names of non-event trait attributes associated with the current class.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">class_trait_names</span></code>(**metadata)</td>
+<td>Returns a list of the names of all trait attributes whose definitions match the set of <em>metadata</em> criteria specified.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">class_trait_view_elements</span></code>()</td>
+<td>Returns the ViewElements object associated with the class.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">class_traits</span></code>(**metadata)</td>
+<td>Returns a dictionary containing the definitions of all of the trait attributes of the class that match the set of <em>metadata</em> criteria.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">class_visible_traits</span></code>()</td>
+<td>Returns an alphabetically sorted list of the names of non-event trait attributes associated with the current class, that should be GUI visible</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">clone_traits</span></code>([traits,&nbsp;memo,&nbsp;copy])</td>
+<td>Clones a new object from this one, optionally copying only a specified set of traits.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">configure_traits</span></code>([filename,&nbsp;view,&nbsp;kind,&nbsp;…])</td>
+<td>Creates and displays a dialog box for editing values of trait attributes, as if it were a complete, self-contained GUI application.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy_traits</span></code>(other[,&nbsp;traits,&nbsp;memo,&nbsp;copy])</td>
+<td>Copies another object’s trait attributes into this one.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">copyable_trait_names</span></code>(**metadata)</td>
+<td>Returns the list of trait names to copy or clone by default.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">default_traits_view</span></code>()</td>
+<td>Returns the name of the default traits view for the object’s class.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">edit_traits</span></code>([view,&nbsp;parent,&nbsp;kind,&nbsp;context,&nbsp;…])</td>
+<td>Displays a user interface window for editing trait attribute values.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">editable_traits</span></code>()</td>
+<td>Returns an alphabetically sorted list of the names of non-event trait attributes associated with the current object.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code>(*names,&nbsp;**metadata)</td>
+<td>Shortcut for getting object trait attributes.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_traits_interface</span></code>(*interfaces)</td>
+<td>Returns whether the object implements a specified traits interface.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">on_trait_change</span></code>(handler[,&nbsp;name,&nbsp;remove,&nbsp;…])</td>
+<td>Causes the object to invoke a handler whenever a trait attribute matching a specified pattern is modified, or removes the association.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">on_trait_event</span></code>(handler[,&nbsp;name,&nbsp;remove,&nbsp;…])</td>
+<td>Causes the object to invoke a handler whenever a trait attribute matching a specified pattern is modified, or removes the association.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">print_traits</span></code>([show_help])</td>
+<td>Prints the values of all explicitly-defined, non-event trait attributes on the current object, in an easily readable format.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_trait</span></code>(name)</td>
+<td>Removes a trait attribute from this object.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset_traits</span></code>([traits])</td>
+<td>Resets some or all of an object’s trait attributes to their default values.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">set</span></code>([trait_change_notify])</td>
+<td>Shortcut for setting object trait attributes.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_trait_dispatch_handler</span></code>(name,&nbsp;klass[,&nbsp;…])</td>
+<td>Sets a trait notification dispatch handler.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">sync_trait</span></code>(trait_name,&nbsp;object[,&nbsp;alias,&nbsp;…])</td>
+<td>Synchronizes the value of a trait attribute on this object with a trait attribute on another object.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">trait</span></code>(name[,&nbsp;force,&nbsp;copy])</td>
+<td>Returns the trait definition for the <em>name</em> trait attribute.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">trait_context</span></code>()</td>
+<td>Returns the default context to use for editing or configuring traits.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">trait_get</span></code>(*names,&nbsp;**metadata)</td>
+<td>Shortcut for getting object trait attributes.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">trait_items_event</span></code>(event_trait,name,items_event)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">trait_monitor</span></code>(handler[,&nbsp;remove])</td>
+<td>Adds or removes the specified <em>handler</em> from the list of active monitors.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">trait_names</span></code>(**metadata)</td>
+<td>Returns a list of the names of all trait attributes whose definitions match the set of <em>metadata</em> criteria specified.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">trait_property_changed</span></code>(…)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">trait_set</span></code>([trait_change_notify])</td>
+<td>Shortcut for setting object trait attributes.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">trait_setq</span></code>(**traits)</td>
+<td>Shortcut for setting object trait attributes.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">trait_subclasses</span></code>([all])</td>
+<td>Returns a list of the immediate (or all) subclasses of this class.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">trait_view</span></code>([name,&nbsp;view_element])</td>
+<td>Gets or sets a ViewElement associated with an object’s class.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">trait_view_elements</span></code>()</td>
+<td>Returns the ViewElements object associated with the object’s class.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">trait_views</span></code>([klass])</td>
+<td>Returns a list of the names of all view elements associated with the current object’s class.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">traits</span></code>(**metadata)</td>
+<td>Returns a dictionary containing the definitions of all of the trait attributes of this object that match the set of <em>metadata</em> criteria.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">traits_init</span></code>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">traits_inited</span></code>([True])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_trait</span></code>(name,&nbsp;value)</td>
+<td>Validates whether a value is legal for a trait.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">visible_traits</span></code>()</td>
+<td>Returns an alphabetically sorted list of the names of non-event trait attributes associated with the current object, that should be GUI visible</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="71%" />
+<col width="29%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><strong>add_trait_listener</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>class_trait_view</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>remove_trait_listener</strong></td>
+<td>&#160;</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ModPlot.Load_Prev_File">
+<code class="descclassname">ModPlot.</code><code class="descname">Load_Prev_File</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ModPlot.html#Load_Prev_File"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ModPlot.Load_Prev_File" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ModPlot.Save_Prev_File">
+<code class="descclassname">ModPlot.</code><code class="descname">Save_Prev_File</code><span class="sig-paren">(</span><em>file_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ModPlot.html#Save_Prev_File"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ModPlot.Save_Prev_File" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ModPlot.check_index_and_None">
+<code class="descclassname">ModPlot.</code><code class="descname">check_index_and_None</code><span class="sig-paren">(</span><em>this_data</em>, <em>this_index</em>, <em>this_key</em>, <em>def_val=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ModPlot.html#check_index_and_None"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ModPlot.check_index_and_None" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ModPlot.fmt_Range">
+<code class="descclassname">ModPlot.</code><code class="descname">fmt_Range</code><span class="sig-paren">(</span><em>this_list</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ModPlot.html#fmt_Range"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ModPlot.fmt_Range" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Jack Dragos
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -4,7 +4,7 @@ import pandas as pa
 import tensorflow as tf
 import numpy as np
 from BootStrapping import BootStrap,FlattenBootstrapDF
-from Params import nboot
+from Params import nboot,this_dir
 
 class Fitting_TF(object):
 
@@ -135,7 +135,7 @@ def TestFit_TF(low=-5,high=5,npoints=10,nboot=200):
     #
     #
     # this_info = pa.Series()
-    # this_info['save_file'] = './TestGraphs/TestFitPlot.pdf'
+    # this_info['save_file'] = this_dir+'/TestGraphs/TestFitPlot.pdf'
     # this_info['title'] = 'Test Fitting'
     # this_info['xlabel'] = 'Test x'
     # this_info['ylabel'] = 'Test y'
@@ -151,7 +151,10 @@ def TestFit_TF(low=-5,high=5,npoints=10,nboot=200):
 
     # testfit.PlotFunction()
     # pl.legend()
-    # pl.savefig('./TestGraphs/TestFuns.pdf')
+    # pl.savefig(this_dir+'/TestGraphs/TestFuns.pdf')
 
     #
     return testfit
+
+if __name__ == '__main__':
+    fit_data = TestFit_TF()

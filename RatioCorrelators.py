@@ -6,7 +6,7 @@
 # matplotlib.use('Agg') # Must be before importing matplotlib.pyplot or pylab!
 # import matplotlib.pyplot as pl
 ##
-from Params import nboot,outputdir,Debug_Mode,Wipe_All_Fits
+from Params import nboot,outputdir,Debug_Mode,Wipe_All_Fits,this_dir
 from FileIO import ReadFuns,WriteFuns
 # from PredefFitFuns import ConstantFitFun,RF_Prop_Fit
 from PredefFitFuns import ConstantFitFun
@@ -22,7 +22,7 @@ from XmlFormatting import untstr,tstr,unxmlfitr,AvgStdToFormat,AvgFormat
 from XmlFormatting import rm_tsumfitr,unxmlfitr_int,KeyForamtting
 # from XmlFormatting import rm_tsumfitr,tflowTOLeg,tsumTOLeg,tsinkTOLeg
 from FileIO import WriteXml,WritePickle,ReadPickleWrap
-from FileIO import WriteExcel
+from FileIO import WriteExcel,Construct_File_Object
 from copy import deepcopy
 # import cPickle as pickle
 # import dill as pickle
@@ -56,10 +56,6 @@ creates class using:
 .LoadPickle()
 Does everything basically.
 
-
-WARNING: only 1 stream is implemented now. only pass in config lists or have directories
-         with 1 steam (-a- for example)
-
 """
 
 ## function to center the x-axis around zero
@@ -85,6 +81,8 @@ class RatioCorr(object):
 
 
     """
+    def Construct_Rat_File(this_file):
+        return Construct_File_Object(this_file,RatioCorr)
 
 
     ## TODO: create variational flag and interface with this function.
@@ -92,7 +90,8 @@ class RatioCorr(object):
     ## array of all classes that inherit this class. Append this when adding new classes please!
     parentlist = ['SetOfCorrs.SetsOfRatios','RatioCorrelators.RatioFOCorr','RatioCorrelators.RatioFOFullCorr']
 
-    def __init__(self, thisnboot=nboot, cfglist={}, Info={},name='',filename='',thissym='Not Set',thiscol='Not Set',thisshift=0.0,man_load_cfgs=False):
+    def __init__(self, thisnboot=nboot, cfglist={}, Info={},name='',
+                 filename='',thissym='Not Set',thiscol='Not Set',thisshift=0.0,man_load_cfgs=False):
 
 
         self.current = 0
@@ -721,8 +720,9 @@ class RatioCorr(object):
                 self.ReadAndWrite(WipeData=WipeData,DefWipe=DefWipe)
             # self.Write()
         else:
-            print()
-            print('pickle file not found: \n', self.PickleFile)
+            if not os.path.isfile(self.PickleFile):
+                print()
+                print('pickle file not found: \n', self.PickleFile)
             self.ReadAndWrite(WipeData=WipeData,DefWipe=DefWipe)
     ## Routines for Plotting ###############################################
 
@@ -1168,13 +1168,16 @@ class RatioFOCorr(object):
 
     """
 
+    def Construct_RatFO_File(this_file):
+        return Construct_File_Object(this_file,RatioFOCorr)
 
     ## TODO: create variational flag and interface with this function.
 
     ## array of all classes that inherit this class. Append this when adding new classes please!
     parentlist = ['SetOfCorrs.SetsOfRatios','RatioCorrelators.RatioFOFullCorr']
 
-    def __init__(self, thisnboot=nboot, cfglist={}, Info={},name='',filename='',thissym='Not Set',thiscol='Not Set',thisshift=0.0
+    def __init__(self, thisnboot=nboot, cfglist={}, Info={},name='',
+                 filename='',thissym='Not Set',thiscol='Not Set',thisshift=0.0
                  ,man_load_cfgs=False):
 
 
@@ -1949,8 +1952,9 @@ class RatioFOCorr(object):
                 self.ReadAndWrite(WipeData=WipeData,DefWipe=DefWipe)
             # self.Write()
         else:
-            print()
-            print('pickle file not found: \n', self.PickleFile)
+            if not os.path.isfile(self.PickleFile):
+                print()
+                print('pickle file not found: \n', self.PickleFile)
             self.ReadAndWrite(WipeData=WipeData,DefWipe=DefWipe)
 
     ## Routines for Plotting ###############################################
@@ -2456,6 +2460,8 @@ class RatioFOFullCorr(object):
 
 
     """
+    def Construct_RatFOFull_File(this_file):
+        return Construct_File_Object(this_file,RatioFOFullCorr)
 
 
     ## TODO: create variational flag and interface with this function.
@@ -2463,7 +2469,8 @@ class RatioFOFullCorr(object):
     ## array of all classes that inherit this class. Append this when adding new classes please!
     parentlist = ['SetOfCorrs.SetsOfRatios']
 
-    def __init__(self, thisnboot=nboot, cfglist={}, Info={},name='',filename='',thissym='Not Set',thiscol='Not Set',thisshift=0.0
+    def __init__(self, thisnboot=nboot, cfglist={}, Info={},name='',
+                 filename='',thissym='Not Set',thiscol='Not Set',thisshift=0.0
                  ,man_load_cfgs=False):
 
 
@@ -2708,8 +2715,8 @@ class RatioFOFullCorr(object):
     def Read(self,WipeData=True,DefWipe=False):
         if isinstance(self.C2class,str):
             self.C2Set.LoadPickle(DefWipe=DefWipe,CheckCfgs=True,NoFit=True)
-        else:
-            print('WARNING: C2class (combined from C2Set) is already present, yet we are trying to read')
+        # else:
+        #     print('WARNING: C2class (combined from C2Set) is already present, yet we are trying to read')
         self.C3FOclass.LoadPickle(WipeData=WipeData,DefWipe=DefWipe,CheckCfgs=True,CheckMom=True)
 
     def CreateC2Sink(self):
@@ -3139,8 +3146,9 @@ class RatioFOFullCorr(object):
                 self.ReadAndWrite(WipeData=WipeData,DefWipe=DefWipe)
             # self.Write()
         else:
-            print()
-            print('pickle file not found: \n', self.PickleFile)
+            if not os.path.isfile(self.PickleFile):
+                print()
+                print('pickle file not found: \n', self.PickleFile)
             self.ReadAndWrite(WipeData=WipeData,DefWipe=DefWipe)
 
     ## Routines for Plotting ###############################################
@@ -3794,7 +3802,7 @@ def TestRat(DefWipe=False):
     defInfo['qmom'] = ['0 0 0']
     defInfo['Projector'] = 'P4'
     this_info = pa.Series()
-    this_info['save_file'] = './TestGraphs/testRat.pdf'
+    this_info['save_file'] = this_dir+'/TestGraphs/testRat.pdf'
     this_info['title'] = 'Test Ratio'
     data = RatioCorr(Info=defInfo)
     data.LoadPickle(DefWipe=DefWipe)
@@ -3813,7 +3821,7 @@ def TestRat2(DefWipe=False):
     defInfo['qmom'] = ['0 0 0']
     defInfo['Projector'] = 'P3'
     this_info = pa.Series()
-    this_info['save_file'] = './TestGraphs/testRat2.pdf'
+    this_info['save_file'] = this_dir+'/TestGraphs/testRat2.pdf'
     this_info['title'] = 'Test Ratio2'
     data = RatioCorr(Info=defInfo)
     data.LoadPickle(DefWipe=DefWipe)
@@ -3831,7 +3839,7 @@ def TestRatFO(DefWipe=False):
     defInfoFlow['qmom'] = ['0 0 1']
     defInfoFlow['Projector'] = 'P3'
     this_info = pa.Series()
-    this_info['save_file'] = './TestGraphs/testRatFO.pdf'
+    this_info['save_file'] = this_dir+'/TestGraphs/testRatFO.pdf'
     this_info['title'] = 'Test Ratio FO'
     dataflow = RatioFOCorr(Info=defInfoFlow)
     dataflow.LoadPickle(DefWipe=DefWipe)
@@ -3852,7 +3860,7 @@ def TestRatFO2(DefWipe=False):
     defInfoFlow['tflowlist'] = np.array(['t_f4.01','t_f5.01','t_f6.01'])
     defInfoFlow['tflowfit'] = defInfoFlow['tflowlist']
     this_info = pa.Series()
-    this_info['save_file'] = './TestGraphs/testRatFO2.pdf'
+    this_info['save_file'] = this_dir+'/TestGraphs/testRatFO2.pdf'
     this_info['title'] = 'Test Ratio FO2'
     dataflow = RatioFOCorr(Info=defInfoFlow)
     dataflow.LoadPickle(DefWipe=DefWipe)
@@ -3867,7 +3875,7 @@ def TestRatFO2(DefWipe=False):
 def TestRatFOFull(DefWipe=False):
     from Params import defInfoFlow
     this_info = pa.Series()
-    this_info['save_file'] = './TestGraphs/testRatFOFull.pdf'
+    this_info['save_file'] = this_dir+'/TestGraphs/testRatFOFull.pdf'
     this_info['title'] = 'Test Ratio FOFull'
     defInfoFlow['DoubSing'] = 'Neutron'
     defInfoFlow['gammas'] = ['g4']
@@ -3888,7 +3896,7 @@ def TestRatFOFull(DefWipe=False):
     data_plot.PlotAll()
 
     # this_info = pa.Series()
-    # this_info['save_file'] = './TestGraphs/testRatFOTsum.pdf'
+    # this_info['save_file'] = this_dir+'/TestGraphs/testRatFOTsum.pdf'
     # this_info['title'] = 'Test Ratio FOFull Tsum'
     # defInfoFlow['DoubSing'] = 'Proton'
     # defInfoFlow['gammas'] = ['g4']
@@ -3912,7 +3920,9 @@ def TestRatFOFull(DefWipe=False):
     # data_plot.PlotAll()
     return dataflow
 
+
 if __name__ == '__main__':
-    dataRatFOFull = TestRatFOFull()
+    # dataRatFOFull = TestRatFOFull()
     dataRatFO = TestRatFO()
     dataRat = TestRat()
+    print('Ratio function test complete, see variables dataRat and dataRatFO')

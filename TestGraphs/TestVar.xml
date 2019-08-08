@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Results>
+    <window_size_x>12.0</window_size_x>
+    <window_size_y>12.275</window_size_y>
+    <Info>
+        <save_file>/home/jackdra/LQCD/Scripts/Python_Analysis/TestGraphs/TestVar.pdf</save_file>
+        <leg_loc>best</leg_loc>
+        <leg_ncol>1</leg_ncol>
+        <leg_fontsize>25</leg_fontsize>
+        <leg_alpha>0.7</leg_alpha>
+        <title>TestData</title>
+        <title_dict>
+            <fontsize>40</fontsize>
+        </title_dict>
+        <title_pad>20</title_pad>
+        <ylabel></ylabel>
+        <ylabel_dict>
+            <fontsize>60</fontsize>
+        </ylabel_dict>
+        <xlabel></xlabel>
+        <xlabel_dict>
+            <fontsize>60</fontsize>
+        </xlabel_dict>
+        <x_zero_line>False</x_zero_line>
+        <x_zero_line_val>0</x_zero_line_val>
+        <y_zero_line>False</y_zero_line>
+        <y_zero_line_val>0</y_zero_line_val>
+        <xlims>-5.0</xlims>
+        <xlims>35.0</xlims>
+        <ylims>-8.0</ylims>
+        <ylims>6.0</ylims>
+        <x_plot_scale>None</x_plot_scale>
+        <y_plot_scale>None</y_plot_scale>
+    </Info>
+    <>
+        <x_fun>False</x_fun>
+        <type>error_bar_vary</type>
+        <fit_class>False</fit_class>
+        <label></label>
+        <symbol>o</symbol>
+        <color>0.0</color>
+        <color>0.0</color>
+        <color>0.5019607843137255</color>
+        <color>1.0</color>
+        <shift>0.0</shift>
+        <shift_overlap>0.005</shift_overlap>
+        <xdatarange>Data</xdatarange>
+        <scale>1.0</scale>
+        <Phys>False</Phys>
+        <ShowPar>False</ShowPar>
+        <ShowEval>False</ShowEval>
+        <Median>False</Median>
+        <suppress_key_index>False</suppress_key_index>
+        <fmt_class>False</fmt_class>
+        <supres_legend>False</supres_legend>
+        <x_scale>1.0</x_scale>
+        <x_range_min>0</x_range_min>
+        <x_range_max>-1</x_range_max>
+        <x_increment>1</x_increment>
+        <hairline>False</hairline>
+        <extrap_fade>1.5</extrap_fade>
+        <hair_alpha>0.0</hair_alpha>
+        <hair_alpha>1.0</hair_alpha>
+        <phys_axies>False</phys_axies>
+        <FPName></FPName>
+        <FPUnits></FPUnits>
+        <plot_err>No</plot_err>
+        <arrow_text_size>30</arrow_text_size>
+        <arrow_color>black</arrow_color>
+        <arrow_style>fancy</arrow_style>
+        <plot_this>True</plot_this>
+        <supress_legend>False</supress_legend>
+        <xaxis>0</xaxis>
+        <alpha>0.5</alpha>
+        <histtype>stepfilled</histtype>
+        <key_select_0>0</key_select_0>
+        <key_select_1>0</key_select_1>
+        <data>
+            <x_0.0000000000e00>        0.2609075502         0.0156880408</x_0.0000000000e00>
+            <x_1.0000000000>        0.2403685383         0.0115684461</x_1.0000000000>
+            <x_2.0000000000>        0.2294801083         0.0091487602</x_2.0000000000>
+            <x_3.0000000000>        0.2226456357         0.0074486509</x_3.0000000000>
+            <x_4.0000000000>        0.2178700307         0.0061383506</x_4.0000000000>
+            <x_5.0000000000>        0.2143211640         0.0050836155</x_5.0000000000>
+            <x_6.0000000000>        0.2115858676         0.0042172252</x_6.0000000000>
+            <x_7.0000000000>        0.2094284214         0.0034988136</x_7.0000000000>
+            <x_8.0000000000>        0.2077008162         0.0029006975</x_8.0000000000>
+            <x_9.0000000000>        0.2063035929         0.0024021491</x_9.0000000000>
+            <x_10.0000000000>        0.2051663104         0.0019867578</x_10.0000000000>
+            <x_11.0000000000>        0.2042369121         0.0016410789</x_11.0000000000>
+            <x_12.0000000000>        0.2034756033         0.0013538804</x_12.0000000000>
+            <x_13.0000000000>        0.2028511751         0.0011156874</x_13.0000000000>
+            <x_14.0000000000>        0.2023387006         0.0009184789</x_14.0000000000>
+            <x_15.0000000000>        0.2019180232         0.0007554659</x_15.0000000000>
+            <x_16.0000000000>        0.2015727147         0.0006209149</x_16.0000000000>
+            <x_17.0000000000>        0.2012893220         0.0005099987</x_17.0000000000>
+            <x_18.0000000000>        0.2010567989         0.0004186672</x_18.0000000000>
+            <x_19.0000000000>        0.2008660638         0.0003435338</x_19.0000000000>
+            <x_20.0000000000>        0.2007096468         0.0002817756</x_20.0000000000>
+            <x_21.0000000000>        0.2005814038         0.0002310460</x_21.0000000000>
+            <x_22.0000000000>        0.2004762827         0.0001893992</x_22.0000000000>
+            <x_23.0000000000>        0.2003901308         0.0001552253</x_23.0000000000>
+            <x_24.0000000000>        0.2003195367         0.0001271944</x_24.0000000000>
+            <x_25.0000000000>        0.2002616989         0.0001042097</x_25.0000000000>
+            <x_26.0000000000>        0.2002143180         0.0000853680</x_26.0000000000>
+            <x_27.0000000000>        0.2001755073         0.0000699259</x_27.0000000000>
+            <x_28.0000000000>        0.2001437192         0.0000572723</x_28.0000000000>
+            <x_29.0000000000>        0.2001176848         0.0000469052</x_29.0000000000>
+            <x_30.0000000000>        0.2000963639         0.0000384126</x_30.0000000000>
+            <x_31.0000000000>       -6.4488696420         0.0784210815</x_31.0000000000>
+        </data>
+    </>
+    <_VarMeth>
+        <x_fun>False</x_fun>
+        <type>error_bar_vary</type>
+        <fit_class>False</fit_class>
+        <label> VarMeth</label>
+        <symbol>o</symbol>
+        <color>0.7529411764705882</color>
+        <color>0.0</color>
+        <color>0.0</color>
+        <color>1.0</color>
+        <shift>0.0</shift>
+        <shift_overlap>0.005</shift_overlap>
+        <xdatarange>Data</xdatarange>
+        <scale>1.0</scale>
+        <Phys>False</Phys>
+        <ShowPar>False</ShowPar>
+        <ShowEval>False</ShowEval>
+        <Median>False</Median>
+        <suppress_key_index>False</suppress_key_index>
+        <fmt_class>False</fmt_class>
+        <supres_legend>False</supres_legend>
+        <x_scale>1.0</x_scale>
+        <x_range_min>0</x_range_min>
+        <x_range_max>-1</x_range_max>
+        <x_increment>1</x_increment>
+        <hairline>False</hairline>
+        <extrap_fade>1.5</extrap_fade>
+        <hair_alpha>0.0</hair_alpha>
+        <hair_alpha>1.0</hair_alpha>
+        <phys_axies>False</phys_axies>
+        <FPName></FPName>
+        <FPUnits></FPUnits>
+        <plot_err>No</plot_err>
+        <arrow_text_size>30</arrow_text_size>
+        <arrow_color>black</arrow_color>
+        <arrow_style>fancy</arrow_style>
+        <plot_this>True</plot_this>
+        <supress_legend>False</supress_legend>
+        <xaxis>0</xaxis>
+        <alpha>0.5</alpha>
+        <histtype>stepfilled</histtype>
+        <key_select_0>0</key_select_0>
+        <data>
+            <x_0.0000000000e00>        0.2000000000         0.3914299531</x_0.0000000000e00>
+            <x_1.0000000000>        0.2000000000         0.0000000000</x_1.0000000000>
+            <x_2.0000000000>        0.2000000000         0.0000000000</x_2.0000000000>
+            <x_3.0000000000>        0.2000000000         0.0000000000</x_3.0000000000>
+            <x_4.0000000000>        0.2000000000         0.0000000000</x_4.0000000000>
+            <x_5.0000000000>        0.2000000000         0.0000000000</x_5.0000000000>
+            <x_6.0000000000>        0.2000000000         0.0000000000</x_6.0000000000>
+            <x_7.0000000000>        0.2000000000         0.0000000000</x_7.0000000000>
+            <x_8.0000000000>        0.2000000000         0.0000000000</x_8.0000000000>
+            <x_9.0000000000>        0.2000000000         0.0000000000</x_9.0000000000>
+            <x_10.0000000000>        0.2000000000         0.0000000000</x_10.0000000000>
+            <x_11.0000000000>        0.2000000000         0.0000000000</x_11.0000000000>
+            <x_12.0000000000>        0.2000000000         0.0000000000</x_12.0000000000>
+            <x_13.0000000000>        0.2000000000         0.0000000000</x_13.0000000000>
+            <x_14.0000000000>        0.2000000000         0.0000000000</x_14.0000000000>
+            <x_15.0000000000>        0.2000000000         0.0000000000</x_15.0000000000>
+            <x_16.0000000000>        0.2000000000         0.0000000000</x_16.0000000000>
+            <x_17.0000000000>        0.2000000000         0.0000000000</x_17.0000000000>
+            <x_18.0000000000>        0.2000000000         0.0000000000</x_18.0000000000>
+            <x_19.0000000000>        0.2000000000         0.0000000000</x_19.0000000000>
+            <x_20.0000000000>        0.2000000000         0.0000000000</x_20.0000000000>
+            <x_21.0000000000>        0.2000000000         0.0000000000</x_21.0000000000>
+            <x_22.0000000000>        0.2000000000         0.0000000000</x_22.0000000000>
+            <x_23.0000000000>        0.2000000000         0.0000000000</x_23.0000000000>
+            <x_24.0000000000>        0.2000000000         0.0000000000</x_24.0000000000>
+            <x_25.0000000000>        0.2000000000         0.0000000000</x_25.0000000000>
+            <x_26.0000000000>        0.2000000000         0.0000000000</x_26.0000000000>
+            <x_27.0000000000>        0.2000000000         0.0000000000</x_27.0000000000>
+            <x_28.0000000000>        0.2000000000         0.0000000000</x_28.0000000000>
+            <x_29.0000000000>        0.2000000000         0.0000000000</x_29.0000000000>
+            <x_30.0000000000>        0.2000000000         0.0000000000</x_30.0000000000>
+            <x_31.0000000000>       -6.2000000000         0.3914299531</x_31.0000000000>
+        </data>
+    </_VarMeth>
+    <_Prony>
+        <x_fun>False</x_fun>
+        <type>error_bar_vary</type>
+        <fit_class>False</fit_class>
+        <label> Prony</label>
+        <symbol>o</symbol>
+        <color>0.0</color>
+        <color>0.7529411764705882</color>
+        <color>0.0</color>
+        <color>1.0</color>
+        <shift>0.0</shift>
+        <shift_overlap>0.005</shift_overlap>
+        <xdatarange>Data</xdatarange>
+        <scale>1.0</scale>
+        <Phys>False</Phys>
+        <ShowPar>False</ShowPar>
+        <ShowEval>False</ShowEval>
+        <Median>False</Median>
+        <suppress_key_index>False</suppress_key_index>
+        <fmt_class>False</fmt_class>
+        <supres_legend>False</supres_legend>
+        <x_scale>1.0</x_scale>
+        <x_range_min>0</x_range_min>
+        <x_range_max>-1</x_range_max>
+        <x_increment>1</x_increment>
+        <hairline>False</hairline>
+        <extrap_fade>1.5</extrap_fade>
+        <hair_alpha>0.0</hair_alpha>
+        <hair_alpha>1.0</hair_alpha>
+        <phys_axies>False</phys_axies>
+        <FPName></FPName>
+        <FPUnits></FPUnits>
+        <plot_err>No</plot_err>
+        <arrow_text_size>30</arrow_text_size>
+        <arrow_color>black</arrow_color>
+        <arrow_style>fancy</arrow_style>
+        <plot_this>True</plot_this>
+        <supress_legend>False</supress_legend>
+        <xaxis>0</xaxis>
+        <alpha>0.5</alpha>
+        <histtype>stepfilled</histtype>
+        <key_select_0>3</key_select_0>
+        <data>
+            <x_0.0000000000e00>        1.3886008435         0.0412516732</x_0.0000000000e00>
+            <x_1.0000000000>        1.1855652779         0.0579172362</x_1.0000000000>
+            <x_2.0000000000>        0.9201755602         0.0570824139</x_2.0000000000>
+            <x_3.0000000000>        0.6794926768         0.0426544291</x_3.0000000000>
+            <x_4.0000000000>        0.5169856660         0.0323943553</x_4.0000000000>
+            <x_5.0000000000>        0.4199440258         0.0276968285</x_5.0000000000>
+            <x_6.0000000000>        0.3605455335         0.0245249744</x_6.0000000000>
+            <x_7.0000000000>        0.3215064303         0.0218731827</x_7.0000000000>
+            <x_8.0000000000>        0.2943585981         0.0195676181</x_8.0000000000>
+            <x_9.0000000000>        0.2747599814         0.0174902878</x_9.0000000000>
+            <x_10.0000000000>        0.2601877164         0.0155665909</x_10.0000000000>
+            <x_11.0000000000>        0.2490515747         0.0137672337</x_11.0000000000>
+            <x_12.0000000000>        0.2403216584         0.0120883851</x_12.0000000000>
+            <x_13.0000000000>        0.2333274767         0.0105355802</x_13.0000000000>
+            <x_14.0000000000>        0.2276293880         0.0091154169</x_14.0000000000>
+            <x_15.0000000000>        0.2229333575         0.0078320499</x_15.0000000000>
+            <x_16.0000000000>        0.2190358176         0.0066860037</x_16.0000000000>
+            <x_17.0000000000>        0.2157893117         0.0056740962</x_17.0000000000>
+            <x_18.0000000000>        0.2130817992         0.0047899330</x_18.0000000000>
+            <x_19.0000000000>        0.2108244913         0.0040246783</x_19.0000000000>
+            <x_20.0000000000>        0.2089447749         0.0033679036</x_20.0000000000>
+            <x_21.0000000000>        0.2073820554         0.0028083835</x_21.0000000000>
+            <x_22.0000000000>        0.2060852143         0.0023347587</x_22.0000000000>
+            <x_23.0000000000>        0.2050109406         0.0019360373</x_23.0000000000>
+            <x_24.0000000000>        0.2041225304         0.0016019363</x_24.0000000000>
+            <x_25.0000000000>        0.2033889429         0.0013230838</x_25.0000000000>
+            <x_26.0000000000>        0.2027840097         0.0010911126</x_26.0000000000>
+            <x_27.0000000000>        0.2022857487         0.0008986741</x_27.0000000000>
+            <x_28.0000000000>        0.2018757590         0.0007393985</x_28.0000000000>
+            <x_29.0000000000>        0.2015386882         0.0006078228</x_29.0000000000>
+            <x_30.0000000000>        0.2012617650         0.0004993016</x_30.0000000000>
+            <x_31.0000000000>      -10.8987976139         0.3292927244</x_31.0000000000>
+        </data>
+    </_Prony>
+</Results>

@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-
-# IMPORT THIS FIRST, put in base import file
 import numpy as np
 import pandas as pa
 import warnings
@@ -9,31 +7,7 @@ from XmlFormatting import MakeValAndErr
 from MiscFuns import human_format,logNA
 from Params import nboot,normed_histograms,percentile
 from Params import Debug_Mode
-# import matplotlib
-# matplotlib.use('Agg')  # Must be before importing matplotlib.pyplot or pylab!
 
-"""
-How to use:
-
-BootStrap(nboot)
-creates class with nbootstraps
-
-
-.ImportData(data)
-Imports data into bootstrap
-
-.MakeBS()
-Creates bootstrapped data
-
-.Stats()
-Creates .Avg and .Std
-
-.BootHistogram()
-Creates histogram (only plot command, do label and savefig after).
-
-
-One thing to note, Casting to differnet type will perminatly cast the bootstrap to that type (even if passed into function and combined wiht other bs).
-"""
 
 def BlockCfgs(cfg_list,n_block):
     if not isinstance(cfg_list,np.ndarray):
@@ -106,8 +80,13 @@ startseed = 1234
 
 
 class BootStrap(object):
-    """ Class that a single boostrapped quantity Xi for i cfgvals
-        And Constructs boostrapped cfgvals Xb for b bootstraped values
+    """
+    Class that a single boostrapped quantity
+        Xi for i cfgvals
+    And Constructs boostrapped cfgvals
+        Xb for b bootstraped values
+
+    Most Arithmetic operations have been overloaded
 
     """
 
@@ -148,8 +127,10 @@ class BootStrap(object):
                 self.MakeBS(DelVal=thisDelVal)
 
     def DivByLast(self):
-        ## hack function for if you append the bootstrap samples with
-        ## the tree level result
+        '''
+        hack function for if you append the bootstrap samples with
+        the tree level result
+        '''
         this_bootvals = self.bootvals[:-1]/self.bootvals[-1]
         if not hasattr(self,'n_block'):
             self.n_block = 1
@@ -165,7 +146,22 @@ class BootStrap(object):
     def GetCfgVals(self):
         return self.cfgvals.values
 
+    def GetAvg(self):
+        self.Stats()
+        return self.Avg
+
+    def GetStd(self):
+        self.Stats()
+        return self.Std
+
+    def GetAvgStd(self):
+        self.Stats()
+        return self.Avg,self.Std
+
     def CheckBoot(self):
+        '''
+        check function to see if the class has performed the bootstrapping
+        '''
         if self.bootvals.size == 0:
             raise EnvironmentError(self.name + ' has does not contain boostrapped values')
         if float('NaN') in self.bootvals:
@@ -173,6 +169,9 @@ class BootStrap(object):
 
 
     def CheckBoot_Blocked(self):
+        '''
+        check function to see if the class has performed the bootstrapping. Blocked version
+        '''
         if hasattr(self,'n_block') and self.n_block > 1:
             if len(self.blocked_bootvals) == 0:
                 raise EnvironmentError(self.name + ' has does not contain blocked boostrapped values')
@@ -181,10 +180,16 @@ class BootStrap(object):
                     warnings.warn('Bootstrap has NaN present, ignorning NaNs')
 
     def CheckCfgVals(self):
+        '''
+        check function to see if the class still contains the configuration values for bootstrapping.
+        '''
         if self.cfgvals.size == 0:
             raise EnvironmentError(self.name + ' has does not contain configuration values')
 
     def CheckCfgVals_Blocked(self):
+        '''
+        check function to see if the class still contains the configuration values for bootstrapping. Blocked version
+        '''
         if hasattr(self,'n_block') and self.n_block > 1:
             if len(self.blocked_cfgvals) == 0:
                 raise EnvironmentError(self.name + ' has does not contain blocked configuration values')
@@ -197,7 +202,13 @@ class BootStrap(object):
 
 
     def Stats(self):
-        # print self.bootvals
+        '''
+        computes all the important statistical quantities
+        of the bootstrap samples.
+
+        You usually call this at the end of your arithmetic
+        manipulation.
+        '''
         self.CheckBoot()
         self.Avg = self.bootvals.mean()
         self.Std = self.bootvals.std()
@@ -212,6 +223,9 @@ class BootStrap(object):
         return self
 
     def RemoveVals(self):
+        '''
+        removes the configuration values from memory to free space
+        '''
         self.cfgvals = pa.Series(name='cfgvals')
         # self.cfgvals = None
         self.nval = 0.0
@@ -219,12 +233,18 @@ class BootStrap(object):
             self.blocked_cfgvals = {}
 
     def RemoveBoots(self):
+        '''
+        removes the bootstrapped values from memory to free space
+        '''
         self.bootvals = pa.Series(name='bootvals')
         if hasattr(self,'n_block') and self.n_block > 1:
             self.blocked_bootvals = {}
         # self.bootvals = None
 
     def BlockCfgs(self):
+        '''
+        performs a blocking on the configurations
+        '''
         if hasattr(self,'n_block') and self.n_block > 1:
             self.blocked_cfgvals['block1'] = self.cfgvals
             for iblock in range(2,self.n_block+1):
@@ -234,6 +254,7 @@ class BootStrap(object):
                 self.blocked_cfgvals['block'+str(iblock)] = self.blocked_cfgvals['block'+str(iblock)]/iblock
 
     def ImportData(self,cfgvals):
+        ''' imports the configuration values '''
         if isinstance(cfgvals,pa.Series):
             self.cfgvals = cfgvals
         else:
@@ -244,6 +265,16 @@ class BootStrap(object):
 
 
     def ImportBS_Blocked(self,inputboot,this_block):
+        """This function does something.
+
+        :param name: The name to use.
+        :type name: str.
+        :param state: Current state to be in.
+        :type state: bool.
+        :returns:  int -- the return code.
+        :raises: AttributeError, KeyError
+
+        """
         if isinstance(this_block,(int,float)):
             this_block = 'block'+str(int(this_block))
         if isinstance(inputboot,pa.Series):
@@ -565,7 +596,7 @@ class BootStrap(object):
                             result.blocked_cfgvals[ikey] = iself + bs2
                         for ikey,iself in self.blocked_bootvals.items():
                             result.blocked_bootvals[ikey] = iself + bs2
-                except:
+                except Exception as err:
                     print(type(bs2))
                     raise EnvironmentError('Invalid value to combine with BootStrap class')
             return result
@@ -597,7 +628,7 @@ class BootStrap(object):
                             result.blocked_cfgvals[ikey] = iself - bs2
                         for ikey,iself in self.blocked_bootvals.items():
                             result.blocked_bootvals[ikey] = iself - bs2
-                except:
+                except Exception as err:
                     print(type(bs2))
                     raise EnvironmentError('Invalid value to combine with BootStrap class')
             return result
@@ -629,7 +660,7 @@ class BootStrap(object):
                             result.blocked_cfgvals[ikey] = iself * bs2
                         for ikey,iself in self.blocked_bootvals.items():
                             result.blocked_bootvals[ikey] = iself * bs2
-                except:
+                except Exception as err:
                     print(type(bs2))
                     raise EnvironmentError('Invalid value to combine with BootStrap class')
             return result
@@ -722,7 +753,7 @@ class BootStrap(object):
                         result.blocked_cfgvals[ikey] = bs2 + iself
                     for ikey,iself in self.blocked_bootvals.items():
                         result.blocked_bootvals[ikey] = bs2 + iself
-            except:
+            except Exception as err:
                 print(type(bs2))
                 raise EnvironmentError('Invalid value to combine with BootStrap class')
         return result
@@ -743,7 +774,7 @@ class BootStrap(object):
                         result.blocked_cfgvals[ikey] = bs2 - iself
                     for ikey,iself in self.blocked_bootvals.items():
                         result.blocked_bootvals[ikey] = bs2 - iself
-            except:
+            except Exception as err:
                 print(type(bs2))
                 raise EnvironmentError('Invalid value to combine with BootStrap class')
         return result
@@ -764,7 +795,7 @@ class BootStrap(object):
                         result.blocked_cfgvals[ikey] = bs2 * iself
                     for ikey,iself in self.blocked_bootvals.items():
                         result.blocked_bootvals[ikey] = bs2 * iself
-            except:
+            except Exception as err:
                 print(type(bs2))
                 raise EnvironmentError('Invalid value to combine with BootStrap class')
         return result
@@ -812,7 +843,7 @@ class BootStrap(object):
                         result.blocked_cfgvals[ikey] = bs2 ** iself
                     for ikey,iself in self.blocked_bootvals.items():
                         result.blocked_bootvals[ikey] = bs2 ** iself
-            except:
+            except Exception as err:
                 print(type(bs2))
                 raise EnvironmentError('Invalid value to combine with BootStrap class')
         return result

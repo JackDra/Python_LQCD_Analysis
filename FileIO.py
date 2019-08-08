@@ -6,20 +6,57 @@ from collections import OrderedDict
 from MiscFuns import is_number,fmt_file_type
 from xmltodict import unparse,parse
 from XmlFormatting import FormatToDictAvgStdChi,FormatToDictAvgStd
-import pickle as pickle
+import pickle
 # import dill as pickle
 # import pickle as dill
 import dill
 import os,shutil
 import pandas as pa
-from Params import write_excel,ShowXmlWrite,functiondir
+from Params import write_excel,ShowXmlWrite,functiondir,scratch_hotfix
 from Params import All_Classes_Names,ShowRead,cfg_file_type,Debug_Mode,test_file
 import warnings
 import fcntl
+import itertools
+import time
+
+
+
+
+
+
+
+def retry(delays=(0, 1),
+          exception=Exception,
+          report=lambda *args: None):
+    def wrapper(function):
+        def wrapped(*args, **kwargs):
+            problems = []
+            for delay in itertools.chain(delays, [ None ]):
+                try:
+                    return function(*args, **kwargs)
+                except exception as problem:
+                    problems.append(problem)
+                    if delay is None:
+                        report("retryable failed definitely:", problems)
+                        raise
+                    else:
+                        report("retryable failed:", problem,
+                            "-- delaying for %ds" % delay)
+                        time.sleep(delay)
+        return wrapped
+    return wrapper
+
 
 py2_encoding = 'latin1'
 
+def ScratchHotixes(this_file):
+    if scratch_hotfix:
+        return this_file.replace('/mnt/research/lqcd/CfunAnalysis/','/mnt/scratch/dragosja/data/')
+    else:
+        return this_file
+
 def WriteWithMeta(df_data,meta_data,this_file,file_type=cfg_file_type):
+    this_file = ScratchHotixes(this_file)
     if 'None' in cfg_file_type:
         # print
         # print 'forced code to not write cfgs'
@@ -49,7 +86,9 @@ def WriteWithMeta(df_data,meta_data,this_file,file_type=cfg_file_type):
             except Exception as err2:
                 raise IOError('\n' + '\n'.join([str(err),str(err2),'Error writing file',this_file]))
 
+@retry()
 def ReadWithMetaPy2(this_file,file_type=cfg_file_type):
+    this_file = ScratchHotixes(this_file)
     if 'None' in cfg_file_type:
         # print
         # print 'forced code to not read cfgs'
@@ -66,23 +105,24 @@ def ReadWithMetaPy2(this_file,file_type=cfg_file_type):
         # meta_data = getattr(pa,file_type)(this_file+'.meta')
         # df_data = getattr(pa,file_type)(this_file)
     else:
-        try:
-            with open(this_file,'rb') as f:
-                fcntl.flock(f, fcntl.LOCK_EX)
-                meta_data = pickle.load(f,encoding=py2_encoding)
-                df_data = getattr(pa,file_type)(f)
-                fcntl.flock(f, fcntl.LOCK_UN)
-        except Exception as err:
-            try:
-                with open(this_file,'rb') as f:
-                    meta_data = pickle.load(f,encoding=py2_encoding)
-                    df_data = getattr(pa,file_type)(f)
-            except Exception as err2:
-                raise IOError('\n' + '\n'.join([str(err),str(err2),'Error loading file',this_file]))
+        # try:
+        with open(this_file,'rb') as f:
+            # fcntl.flock(f, fcntl.LOCK_EX)
+            meta_data = pickle.load(f,encoding=py2_encoding)
+            df_data = getattr(pa,file_type)(f)
+            # fcntl.flock(f, fcntl.LOCK_UN)
+        # except Exception as err:
+        #     try:
+        #         with open(this_file,'rb') as f:
+        #             meta_data = pickle.load(f,encoding=py2_encoding)
+        #             df_data = getattr(pa,file_type)(f)
+        #     except Exception as err2:
+        #         raise IOError('\n' + '\n'.join([str(err),str(err2),'Error loading file',this_file]))
     return meta_data,df_data
 
-
+@retry()
 def ReadWithMeta(this_file,file_type=cfg_file_type):
+    this_file = ScratchHotixes(this_file)
     if 'None' in cfg_file_type:
         # print
         # print 'forced code to not read cfgs'
@@ -99,26 +139,27 @@ def ReadWithMeta(this_file,file_type=cfg_file_type):
         # meta_data = getattr(pa,file_type)(this_file+'.meta')
         # df_data = getattr(pa,file_type)(this_file)
     else:
-        try:
-            with open(this_file,'rb') as f:
-                fcntl.flock(f, fcntl.LOCK_EX)
-                meta_data = pickle.load(f)
-                df_data = getattr(pa,file_type)(f)
-                fcntl.flock(f, fcntl.LOCK_UN)
-        except Exception as err:
-            try:
-                with open(this_file,'rb') as f:
-                    meta_data = pickle.load(f)
-                    df_data = getattr(pa,file_type)(f)
-            except Exception as err2:
-                warnings.warn('Error attempting to read pickle file, attempting to use encoding'+py2_encoding)
-                ReadWithMetaPy2(this_file,file_type=file_type)
+        # try:
+        with open(this_file,'rb') as f:
+            # fcntl.flock(f, fcntl.LOCK_EX)
+            meta_data = pickle.load(f)
+            df_data = getattr(pa,file_type)(f)
+            # fcntl.flock(f, fcntl.LOCK_UN)
+        # except Exception as err:
+        #     try:
+        #         with open(this_file,'rb') as f:
+        #             meta_data = pickle.load(f)
+        #             df_data = getattr(pa,file_type)(f)
+        #     except Exception as err2:
+        #         warnings.warn('Error attempting to read pickle file, attempting to use encoding'+py2_encoding)
+        #         ReadWithMetaPy2(this_file,file_type=file_type)
     return meta_data,df_data
 
 
 ## CURRENLTY LOCKING DOES NOT WORK WITH MULTICORE....
 
 def WriteExcel(thisfile,df_list,flowcfglist=None,cfglist=None,params=None,Bak=True):
+    thisfile = ScratchHotixes(thisfile)
     if Bak: BackupFile(thisfile)
     if write_excel:
         with pa.ExcelWriter(thisfile) as writer:
@@ -149,6 +190,7 @@ def WriteExcel(thisfile,df_list,flowcfglist=None,cfglist=None,params=None,Bak=Tr
 
 
 def WriteXml(thisfile,outputdict,Bak=True):
+    thisfile = ScratchHotixes(thisfile)
     if Bak: BackupFile(thisfile)
     if ShowXmlWrite and 'Parameters' not in thisfile: print('Writing to ', thisfile)
     try:
@@ -165,7 +207,7 @@ def WriteXml(thisfile,outputdict,Bak=True):
         #     print
         try:
             f.close()
-        except:
+        except Exception as err:
             pass
         try:
             f = open(thisfile,'w')
@@ -235,6 +277,7 @@ def WriteFuns(*these_funs):
 #             fun_list.append('FNF: '+fun_file)
 #     return fun_list
 
+
 def ReadFuns_NoLock(*fun_names):
     fun_list = []
     for ifun in fun_names:
@@ -252,7 +295,7 @@ def ReadFuns_NoLock(*fun_names):
             fun_list.append('FNF: '+fun_file)
     return fun_list
 
-
+@retry()
 def ReadFuns(*fun_names):
     fun_list = []
     for ifun in fun_names:
@@ -260,12 +303,12 @@ def ReadFuns(*fun_names):
         if os.path.isfile(fun_file):
             try:
                 with open(fun_file,'rb') as f:
-                    fcntl.flock(f, fcntl.LOCK_EX)
+                    # fcntl.flock(f, fcntl.LOCK_EX)
                     fun_list.append(dill.load(f))
-                    fcntl.flock(f, fcntl.LOCK_UN)
-            except Exception:
-                fun_list.append(ReadFuns_NoLock(ifun)[0])
-                # raise IOError(str(err)+'\nFailed loading pickled file: \n'+fun_file)
+                    # fcntl.flock(f, fcntl.LOCK_UN)
+            except Exception as err:
+                # fun_list.append(ReadFuns_NoLock(ifun)[0])
+                raise IOError(str(err)+'\nFailed loading pickled file: \n'+fun_file)
         else:
             print('FNF: '+fun_file)
             fun_list.append('FNF: '+fun_file)
@@ -273,6 +316,7 @@ def ReadFuns(*fun_names):
 
 
 def WriteDill(thisfile,outputdict,this_err=''):
+    thisfile = ScratchHotixes(thisfile)
     try:
         with open(thisfile,'wb') as f:
             dill.dump(outputdict,f)
@@ -323,6 +367,7 @@ def TestForFunction(dictin,this_string=[],temp_file=test_file):
         #     print '   '*itab , str(istr)
 
 def WritePickle_NoLock(thisfile,outputdict,this_err=''):
+    thisfile = ScratchHotixes(thisfile)
     try:
         with open(thisfile,'wb') as f:
             pickle.dump(outputdict,f)
@@ -337,12 +382,13 @@ def WritePickle_NoLock(thisfile,outputdict,this_err=''):
         WriteDill(thisfile,outputdict,this_err=this_err)
 
 
-def WritePickle(thisfile,outputdict,Bak=True):
+def WritePickle(thisfile,outputdict,Bak=True,protocol=None):
+    thisfile = ScratchHotixes(thisfile)
     if Bak: BackupFile(thisfile)
     try:
         with open(thisfile,'wb') as f:
             # fcntl.flock(f, fcntl.LOCK_EX)
-            pickle.dump( outputdict , f )
+            pickle.dump( outputdict , f ,protocol=None)
             # fcntl.flock(f, fcntl.LOCK_UN)
     except Exception as err:
         print(err)
@@ -353,14 +399,15 @@ def WritePickle(thisfile,outputdict,Bak=True):
 def BackupFile(*thisfilelist):
     for thisfile in thisfilelist:
         if 'Parameters' in thisfile: continue
-        try:
-            if os.path.isfile(thisfile):
-                shutil.move(thisfile, thisfile+'.bak')
-        except:
-            raise IOError('ERROR with backing up file '+thisfile)
+        # try:
+        if os.path.isfile(thisfile):
+            shutil.move(thisfile, thisfile+'.bak')
+        # except Exception as err:
+        #     raise IOError('ERROR with backing up file '+thisfile)
 
 
 def ReadDillWrap(thisfile,this_err = ''):
+    thisfile = ScratchHotixes(thisfile)
     try:
         with open( thisfile, "rb" ) as pfile:
             data = dill.load(pfile)
@@ -372,7 +419,9 @@ def ReadDillWrap(thisfile,this_err = ''):
         print(thisfile)
         return ReadPicklePy2(thisfile,this_err)
 
+@retry()
 def ReadPicklePy2(thisfile,this_err = ''):
+    thisfile = ScratchHotixes(thisfile)
     try:
         with open( thisfile, "rb" ) as pfile:
             data = pickle.load(pfile,encoding=py2_encoding)
@@ -382,6 +431,7 @@ def ReadPicklePy2(thisfile,this_err = ''):
         raise IOError(str(this_err)+'\n'+str(err2)+'\nFailed loading pickled file with encoding '+py2_encoding+': \n'+thisfile)
 
 def ReadPickleWrap_NoLock(thisfile,this_err=''):
+    thisfile = ScratchHotixes(thisfile)
     try:
         with open( thisfile, "rb" ) as pfile:
             data = pickle.load(pfile)
@@ -392,17 +442,18 @@ def ReadPickleWrap_NoLock(thisfile,this_err=''):
         print(thisfile)
         return ReadDillWrap(thisfile,this_err)
 
-
+@retry()
 def ReadPickleWrap(thisfile,thisShowRead=ShowRead):
+    thisfile = ScratchHotixes(thisfile)
     if thisShowRead and 'Parameters' not in thisfile: print('Reading Pickled file ', thisfile)
     try:
         with open( thisfile, "rb" ) as pfile:
-            fcntl.flock(pfile, fcntl.LOCK_EX)
+            # fcntl.flock(pfile, fcntl.LOCK_EX)
             data = pickle.load(pfile)
-            fcntl.flock(pfile, fcntl.LOCK_UN)
+            # fcntl.flock(pfile, fcntl.LOCK_UN)
         return data
     except Exception as err:
-        return ReadPickleWrap_NoLock(thisfile,this_err = str(err))
+        return ReadPicklePy2(thisfile,this_err = str(err))
 
 
 def CheckFTDAS(dictin,prev_key='first',this_err=''):
@@ -427,7 +478,7 @@ def RecFTDAS(dictin):
             dictout = float(dictin)
             if int(dictout) == dictout:
                 dictout = int(dictout)
-        except:
+        except Exception as err:
             try:
                 if len(str(dictin).split()) == 3 and is_number(str(dictin).split()[0]):
                     dictout = FormatToDictAvgStdChi(str(dictin))
@@ -435,7 +486,7 @@ def RecFTDAS(dictin):
                     dictout = FormatToDictAvgStd(str(dictin))
                 else:
                     dictout = str(dictin)
-            except:
+            except Exception as err:
                 print(dictin)
                 print(type(dictin))
                 raise TypeError('final value in dictionary is not string')
@@ -478,7 +529,9 @@ def FormatXml(data):
     # data = data.replace(r'\_',r'_')
     return data
 
+@retry()
 def ReadXml(thisfile,thisShowRead=ShowRead):
+    thisfile = ScratchHotixes(thisfile)
     if thisShowRead and 'Parameters' not in thisfile: print('Reading Pickled file ', thisfile)
     # try:
     with open( thisfile, 'r' ) as xml_file:
@@ -491,3 +544,18 @@ def ReadXml(thisfile,thisShowRead=ShowRead):
         # return RecFTDAS(parse(FormatXml(xml_file.read())))
     # except Exception as err:
     #     raise IOError(str(err)+'\n Failed loading xml file: \n'+thisfile)
+
+
+
+class Empty(object):
+    pass
+
+def Construct_Empty(this_class):
+    output = Empty()
+    output.__class__ = this_class
+    return output
+
+def Construct_File_Object(this_file,this_class):
+    output = Construct_Empty(this_class)
+    output.__dict__.update(ReadPickleWrap(this_file))
+    return output

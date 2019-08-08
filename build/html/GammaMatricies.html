@@ -1,0 +1,501 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>GammaMatricies module &mdash; LQCD Analysis Codebase TF Fits documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/my_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> LQCD Analysis Codebase
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Python_Analysis</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="AnalysisGUI.html">AnalysisGUI module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Autocorr.html">Autocorr module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BootStrapping.html">BootStrapping module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CreateTable.html">CreateTable module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DSDefines.html">DSDefines module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FFSolve.html">FFSolve module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FileIO.html">FileIO module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FitFunctions.html">FitFunctions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FitFunctions_TF.html">FitFunctions_TF module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FlowOpps.html">FlowOpps module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FormFactors.html">FormFactors module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">GammaMatricies module</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="MAH_control.html">MAH_control module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MiscFuns.html">MiscFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModPlot.html">ModPlot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModStylePlot.html">ModStylePlot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MomParams.html">MomParams module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MultiWrap.html">MultiWrap module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="NullPlotData.html">NullPlotData module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Params.html">Params module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PlotData.html">PlotData module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PredefFitFuns.html">PredefFitFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="QuantityLists.html">QuantityLists module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RatioCorrelators.html">RatioCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ReadBinaryCfuns.html">ReadBinaryCfuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ReadFO.html">ReadFO module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RunSetCommands.html">RunSetCommands module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFFs.html">SetsOfFFs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFits.html">SetsOfFits module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFlowOps.html">SetsOfFlowOps module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfRatios.html">SetsOfRatios module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfTwoPtCorrs.html">SetsOfTwoPtCorrs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ThreePtCorrelators.html">ThreePtCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TimeStuff.html">TimeStuff module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TwoPtCorrelators.html">TwoPtCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VarMethod.html">VarMethod module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="XmlFormatting.html">XmlFormatting module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xmltodict.html">xmltodict module</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">LQCD Analysis Codebase</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="modules.html">Python_Analysis</a> &raquo;</li>
+        
+      <li>GammaMatricies module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/GammaMatricies.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-GammaMatricies">
+<span id="gammamatricies-module"></span><h1>GammaMatricies module<a class="headerlink" href="#module-GammaMatricies" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="GammaMatricies.AlphaRotCoeffs">
+<code class="descclassname">GammaMatricies.</code><code class="descname">AlphaRotCoeffs</code><span class="sig-paren">(</span><em>C2</em>, <em>C3</em>, <em>alpha</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GammaMatricies.html#AlphaRotCoeffs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GammaMatricies.AlphaRotCoeffs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="GammaMatricies.ChromaTOGamma">
+<code class="descclassname">GammaMatricies.</code><code class="descname">ChromaTOGamma</code><span class="sig-paren">(</span><em>Opp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GammaMatricies.html#ChromaTOGamma"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GammaMatricies.ChromaTOGamma" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="GammaMatricies.CorrSpinTrace">
+<em class="property">class </em><code class="descclassname">GammaMatricies.</code><code class="descname">CorrSpinTrace</code><span class="sig-paren">(</span><em>Rep='Sakurai'</em>, <em>space='Euclid'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GammaMatricies.html#CorrSpinTrace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GammaMatricies.CorrSpinTrace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>has routines which does correlator spin traces, for use in the form factor decomposition</p>
+<p>something proportional to: trace( Projector * (pp_slashed +m )* Opp <a href="#id1"><span class="problematic" id="id2">*</span></a>(pp_slashed + m) )
+Rodgers paper has good definitions for this :D</p>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#GammaMatricies.CorrSpinTrace.FFunOpp" title="GammaMatricies.CorrSpinTrace.FFunOpp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FFunOpp</span></code></a>(Opp,&nbsp;pmu,&nbsp;ppmu,&nbsp;mass[,&nbsp;Rfac])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#GammaMatricies.CorrSpinTrace.FFunTopOpp" title="GammaMatricies.CorrSpinTrace.FFunTopOpp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FFunTopOpp</span></code></a>(Opp,&nbsp;pmu,&nbsp;ppmu,&nbsp;mass,&nbsp;alpha[,&nbsp;Rfac])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#GammaMatricies.CorrSpinTrace.FormatOpp" title="GammaMatricies.CorrSpinTrace.FormatOpp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FormatOpp</span></code></a>(opp[,&nbsp;combProjGamma])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#GammaMatricies.CorrSpinTrace.GetProj" title="GammaMatricies.CorrSpinTrace.GetProj"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GetProj</span></code></a>(*thisProj)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#GammaMatricies.CorrSpinTrace.GetProjGamma" title="GammaMatricies.CorrSpinTrace.GetProjGamma"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GetProjGamma</span></code></a>(*Opp)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#GammaMatricies.CorrSpinTrace.TracedFFun" title="GammaMatricies.CorrSpinTrace.TracedFFun"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TracedFFun</span></code></a>(Opp,&nbsp;pmu,&nbsp;ppmu,&nbsp;mass[,&nbsp;Rfac])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#GammaMatricies.CorrSpinTrace.TracedFFunTop" title="GammaMatricies.CorrSpinTrace.TracedFFunTop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TracedFFunTop</span></code></a>(Opp,&nbsp;pmu,&nbsp;ppmu,&nbsp;mass,&nbsp;alpha[,&nbsp;…])</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="60%" />
+<col width="40%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><strong>Create4Mom</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>CreateEs</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>GeGmFF</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>GetGamma</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>PsVectorFF</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>ScalarFF</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>TensorFF</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>VectorFF</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>VectorFFTop</strong></td>
+<td>&#160;</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="GammaMatricies.CorrSpinTrace.Create4Mom">
+<code class="descname">Create4Mom</code><span class="sig-paren">(</span><em>thisqvec</em>, <em>thisppvec</em>, <em>thismass</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GammaMatricies.html#CorrSpinTrace.Create4Mom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GammaMatricies.CorrSpinTrace.Create4Mom" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="GammaMatricies.CorrSpinTrace.CreateEs">
+<code class="descname">CreateEs</code><span class="sig-paren">(</span><em>momvec</em>, <em>thismass</em>, <em>curr=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GammaMatricies.html#CorrSpinTrace.CreateEs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GammaMatricies.CorrSpinTrace.CreateEs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="GammaMatricies.CorrSpinTrace.FFunOpp">
+<code class="descname">FFunOpp</code><span class="sig-paren">(</span><em>Opp</em>, <em>pmu</em>, <em>ppmu</em>, <em>mass</em>, <em>Rfac=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GammaMatricies.html#CorrSpinTrace.FFunOpp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GammaMatricies.CorrSpinTrace.FFunOpp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="GammaMatricies.CorrSpinTrace.FFunTopOpp">
+<code class="descname">FFunTopOpp</code><span class="sig-paren">(</span><em>Opp</em>, <em>pmu</em>, <em>ppmu</em>, <em>mass</em>, <em>alpha</em>, <em>Rfac=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GammaMatricies.html#CorrSpinTrace.FFunTopOpp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GammaMatricies.CorrSpinTrace.FFunTopOpp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="GammaMatricies.CorrSpinTrace.FormatOpp">
+<code class="descname">FormatOpp</code><span class="sig-paren">(</span><em>opp</em>, <em>combProjGamma=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GammaMatricies.html#CorrSpinTrace.FormatOpp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GammaMatricies.CorrSpinTrace.FormatOpp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="GammaMatricies.CorrSpinTrace.GeGmFF">
+<code class="descname">GeGmFF</code><span class="sig-paren">(</span><em>opp</em>, <em>thisqvec</em>, <em>thisppvec</em>, <em>thismass</em>, <em>Rfac=True</em>, <em>PadF3=False</em>, <em>alpha=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GammaMatricies.html#CorrSpinTrace.GeGmFF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GammaMatricies.CorrSpinTrace.GeGmFF" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="GammaMatricies.CorrSpinTrace.GetGamma">
+<code class="descname">GetGamma</code><span class="sig-paren">(</span><em>*Opp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GammaMatricies.html#CorrSpinTrace.GetGamma"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GammaMatricies.CorrSpinTrace.GetGamma" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="GammaMatricies.CorrSpinTrace.GetProj">
+<code class="descname">GetProj</code><span class="sig-paren">(</span><em>*thisProj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GammaMatricies.html#CorrSpinTrace.GetProj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GammaMatricies.CorrSpinTrace.GetProj" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="GammaMatricies.CorrSpinTrace.GetProjGamma">
+<code class="descname">GetProjGamma</code><span class="sig-paren">(</span><em>*Opp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GammaMatricies.html#CorrSpinTrace.GetProjGamma"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GammaMatricies.CorrSpinTrace.GetProjGamma" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="GammaMatricies.CorrSpinTrace.PsVectorFF">
+<code class="descname">PsVectorFF</code><span class="sig-paren">(</span><em>opp</em>, <em>thisqvec</em>, <em>thisppvec</em>, <em>thismass</em>, <em>Rfac=True</em>, <em>alpha=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GammaMatricies.html#CorrSpinTrace.PsVectorFF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GammaMatricies.CorrSpinTrace.PsVectorFF" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="GammaMatricies.CorrSpinTrace.ScalarFF">
+<code class="descname">ScalarFF</code><span class="sig-paren">(</span><em>opp</em>, <em>thisqvec</em>, <em>thisppvec</em>, <em>thismass</em>, <em>Rfac=True</em>, <em>alpha=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GammaMatricies.html#CorrSpinTrace.ScalarFF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GammaMatricies.CorrSpinTrace.ScalarFF" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="GammaMatricies.CorrSpinTrace.TensorFF">
+<code class="descname">TensorFF</code><span class="sig-paren">(</span><em>opp</em>, <em>thisqvec</em>, <em>thisppvec</em>, <em>thismass</em>, <em>Rfac=True</em>, <em>alpha=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GammaMatricies.html#CorrSpinTrace.TensorFF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GammaMatricies.CorrSpinTrace.TensorFF" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="GammaMatricies.CorrSpinTrace.TracedFFun">
+<code class="descname">TracedFFun</code><span class="sig-paren">(</span><em>Opp</em>, <em>pmu</em>, <em>ppmu</em>, <em>mass</em>, <em>Rfac=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GammaMatricies.html#CorrSpinTrace.TracedFFun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GammaMatricies.CorrSpinTrace.TracedFFun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="GammaMatricies.CorrSpinTrace.TracedFFunTop">
+<code class="descname">TracedFFunTop</code><span class="sig-paren">(</span><em>Opp</em>, <em>pmu</em>, <em>ppmu</em>, <em>mass</em>, <em>alpha</em>, <em>Rfac=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GammaMatricies.html#CorrSpinTrace.TracedFFunTop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GammaMatricies.CorrSpinTrace.TracedFFunTop" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="GammaMatricies.CorrSpinTrace.VectorFF">
+<code class="descname">VectorFF</code><span class="sig-paren">(</span><em>opp</em>, <em>thisqvec</em>, <em>thisppvec</em>, <em>thismass</em>, <em>Rfac=True</em>, <em>PadF3=False</em>, <em>alpha=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GammaMatricies.html#CorrSpinTrace.VectorFF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GammaMatricies.CorrSpinTrace.VectorFF" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="GammaMatricies.CorrSpinTrace.VectorFFTop">
+<code class="descname">VectorFFTop</code><span class="sig-paren">(</span><em>opp</em>, <em>thisqvec</em>, <em>thisppvec</em>, <em>thismass</em>, <em>Rfac=True</em>, <em>alpha=1.0</em>, <em>alpha_rot=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GammaMatricies.html#CorrSpinTrace.VectorFFTop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GammaMatricies.CorrSpinTrace.VectorFFTop" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="GammaMatricies.GammaMat">
+<em class="property">class </em><code class="descclassname">GammaMatricies.</code><code class="descname">GammaMat</code><span class="sig-paren">(</span><em>Rep='Sakurai'</em>, <em>space='Euclid'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GammaMatricies.html#GammaMat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GammaMatricies.GammaMat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Class with basic gamma matricies.</p>
+<p>Initialise with representation.</p>
+<p>resulting gamma matricies are in np.matrix format</p>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#GammaMatricies.GammaMat.MultGamma" title="GammaMatricies.GammaMat.MultGamma"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MultGamma</span></code></a>(thing,&nbsp;rgindex[,&nbsp;T])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#GammaMatricies.GammaMat.Slashed" title="GammaMatricies.GammaMat.Slashed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Slashed</span></code></a>(FVecObj[,&nbsp;Eindex])</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="57%" />
+<col width="43%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><strong>GammaMult</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>ProjMult</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>SetRep</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>SigMult</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>comutator</strong></td>
+<td>&#160;</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="GammaMatricies.GammaMat.GammaMult">
+<code class="descname">GammaMult</code><span class="sig-paren">(</span><em>lgindex</em>, <em>thing</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GammaMatricies.html#GammaMat.GammaMult"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GammaMatricies.GammaMat.GammaMult" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="GammaMatricies.GammaMat.MultGamma">
+<code class="descname">MultGamma</code><span class="sig-paren">(</span><em>thing</em>, <em>rgindex</em>, <em>T=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GammaMatricies.html#GammaMat.MultGamma"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GammaMatricies.GammaMat.MultGamma" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="GammaMatricies.GammaMat.ProjMult">
+<code class="descname">ProjMult</code><span class="sig-paren">(</span><em>pindex</em>, <em>thing</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GammaMatricies.html#GammaMat.ProjMult"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GammaMatricies.GammaMat.ProjMult" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="GammaMatricies.GammaMat.SetRep">
+<code class="descname">SetRep</code><span class="sig-paren">(</span><em>Rep</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GammaMatricies.html#GammaMat.SetRep"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GammaMatricies.GammaMat.SetRep" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="GammaMatricies.GammaMat.SigMult">
+<code class="descname">SigMult</code><span class="sig-paren">(</span><em>isig</em>, <em>jsig</em>, <em>thing</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GammaMatricies.html#GammaMat.SigMult"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GammaMatricies.GammaMat.SigMult" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="GammaMatricies.GammaMat.Slashed">
+<code class="descname">Slashed</code><span class="sig-paren">(</span><em>FVecObj</em>, <em>Eindex=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GammaMatricies.html#GammaMat.Slashed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GammaMatricies.GammaMat.Slashed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="GammaMatricies.GammaMat.comutator">
+<code class="descname">comutator</code><span class="sig-paren">(</span><em>gi</em>, <em>gj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GammaMatricies.html#GammaMat.comutator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GammaMatricies.GammaMat.comutator" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="GammaMatricies.GammaTOChroma">
+<code class="descclassname">GammaMatricies.</code><code class="descname">GammaTOChroma</code><span class="sig-paren">(</span><em>Opp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GammaMatricies.html#GammaTOChroma"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GammaMatricies.GammaTOChroma" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="GammaMatricies.TestSystem">
+<code class="descclassname">GammaMatricies.</code><code class="descname">TestSystem</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/GammaMatricies.html#TestSystem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GammaMatricies.TestSystem" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Jack Dragos
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

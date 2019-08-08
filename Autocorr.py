@@ -7,7 +7,7 @@
 # import matplotlib.pyplot as pl
 from XmlFormatting import MakeValAndErr
 from FileIO import WriteFuns,ReadFuns
-from Params import defSparam
+from Params import defSparam,this_dir
 from MiscFuns import logNA
 from BootStrapping import BlockCfgs,BootStrap
 from Params import nboot
@@ -18,23 +18,63 @@ from copy import deepcopy
 
 ##
 
-"""
-How to use:
-
-"""
-
 
 startseed = 1234
 
 
 class AutoCorrelate(object):
+    r'''Performs Autocorrelation Analysis on data
+
+    Stores an instance of an statsitcal quantity that has had autocorrelation analysis performed on it.
+
+    Attributes
+    ----------
+    values: [ variable, (replicas), montecarlo_time ]
+        data to be autocorrelated
+    Fun: function
+        function for combining the *variable* dimension of `values`
+    FunDer: function
+        derivative of `Fun`
+    Sparam: float
+        S parameter for Autocorrlation analysis
+    name : str
+        name of autocorrelation object
+    Avg : float
+        average value of the data
+    Std : float
+        Error of the data, taking into account the autocorrelation in the data
+    StdW : list of float
+        Error of the data, as a function of the parameter W
+    tauW : list of float
+        Integrated Autocorrelation time as a function of W
+    tauerrW : list of float
+        Error of the integrated Autocorrelation time as a function of W
+    tau : float
+        Integrated Autocorrelation time at optimal W
+    tauerr : float
+        Error of the integrated Autocorrelation time at optimal W
+
+    Parameters
+    ----------
+    name : str
+        name of instance
+    Fun : [ function, derivative_of_function ]
+        pass in a function and its derivative as a list of length 2
+    data : [ variable, (replicas), montecarlo_time ]
+        data to be autocorrelated
+    Sparam : float
+        S parameter for Autocorrlation analysis
+    save_covar : {True, False}, optional
+        saves the autocorrelation covariance matrix. Set to False to save memory.
+    WipeData : {True, False}, optional
+        Wipes the configuration data after computing the Autocorreltaion parameters
+    '''
+
 
     parentlist = ['SetOfCorrs.SetOfTwoPt','TwoPtCorrelators.TwoPointCorr','TwoPtCorrelators.TwoPointCorr','TwoPtCorrelators.NNQCorr']
 
     def __init__(self,  name='',Fun='NotDef', data='None',Sparam=defSparam,save_covar=True,WipeData=True):
 
-        ## is either self.values [ ivar , monte_time ]
-        ## or with replicas, self.values [ ival , ireplica , monte_time ]
         self.values = 'Not Present' ## contains regular values
         self.nval = 0.0 ## contains length of values
         ## TODO, implement numerical estimated of defivative
@@ -67,23 +107,62 @@ class AutoCorrelate(object):
 
     ## TODO overload operators
     def AddCoeff(self,coeff):
+        '''
+        Adds a coefficient to the Autocorrelation result.
+
+        Parameters
+        ----------
+        coeff : (number)
+            coefficient to be added
+        '''
         self.Avg = coeff+self.Avg
 
     def MultCoeff(self,coeff):
+        '''
+        Multiplys a coefficient to the Autocorrelation result.
+
+        Parameters
+        ----------
+        coeff : (number)
+            coefficient to be multiplied
+        '''
         self.Avg = coeff*self.Avg
         self.Std = coeff*self.Std
 
     def Power(self,thispow):
+        '''
+        takes the Autocorrelation result to a power.
+
+        Parameters
+        ----------
+        thispow : number
+            coefficient to take to the power of
+        '''
         self.Avg = self.Avg**thispow
         self.Std = self.Std * self.Avg**(thispow-1)*thispow
 
     def RemoveVals(self):
+        ''' deletes configuration values to clear memory '''
         self.values = None
         self.nval = 0.0
 
-    ## is either self.values [ ivar , monte_time ]
-    ## or with replicas, self.values [ ival , ireplica , monte_time ]
     def ImportData(self,values,this_index=None):
+        '''
+        Imports the configuration data into the autocorrelation
+        object
+
+        Parameters
+        ----------
+        values: [ variable, (replicas), montecarlo_time]
+            data to be imported into the autocorrelation object
+        this_index: list {None} optional
+            labels used for index the pandas dataframe
+
+        Raises
+        ------
+        EnvironmentError
+            if data importing is not of correct type
+        '''
         if not isinstance(values,pa.DataFrame):
             if isinstance(values,(list,np.ndarray)):
                 self.values = pa.DataFrame()
@@ -104,10 +183,44 @@ class AutoCorrelate(object):
     #             print 'Be weary of configuration list'
 
     def ImportFun(self,thisfun):
+        '''
+        Imports a function into the autocorrelation routine
+        to perform the autocorreltaion of.
+        which is performed over the sampled variables x and y.
+
+        Imports the configuration data into the autocorrelation
+        object
+
+        Parameters
+        ----------
+        thisfun: function
+            function to perform autocorrelation analysis of
+            has form myfun(*args) for independant variables args[:]
+            returns single number
+
+        Examples
+        --------
+        >>> def myfun(x,y):
+                return x/y
+        >>> my_object.ImportFun(myfun)
+        '''
         self.Fun = thisfun
         self.RemoveFuns()
 
     def BlockCfgs(self,order):
+        '''
+        returns a blocked set of configurations as to remove all autocorrelation effects
+
+        Parameters
+        ----------
+        order: int
+            order for which to perform blocking of confiuration data at
+
+        Returns
+        -------
+        pandas DataFrame:
+            input data, blocked to order `order`
+        '''
         out_df = pa.DataFrame(columns=self.values.columns)
         ## assumes replicas are first index in pandas.MultiIndex
         if self.has_reps:
@@ -126,6 +239,30 @@ class AutoCorrelate(object):
 
 
     def PlotWopt(self,plot_class,thiscol=False,thisshift=0.0,thissym=False):
+        '''
+        Plot the W parameter used to cut off the integrated autocorrelation time.
+
+        Parameters
+        ----------
+        plot_class: Plotting instance (see PlotData.py)
+            plot object to append the plot data to
+        thiscol: {False} color (see matplotlib color defines) optional
+            color to plot data as
+        thisshift: {0.0} optional
+            value to shift the data by
+        thissym: {False} character (see matplotlib symbol defines) optional
+            symbol to plot Wopt as
+
+        Returns
+        -------
+        plot_class: Plotting instance
+            same object, just with data added to be plotted
+
+        Raises
+        ------
+        IOError
+            if Wopt is not set properly in the code
+        '''
         if self.Wopt == 'Not Set':
             raise IOError('Wopt not set, please import and do werr')
         xmax = int(self.Wopt*3)
@@ -153,6 +290,30 @@ class AutoCorrelate(object):
         return plot_class
 
     def PlotTauInt(self,plot_class,thiscol=False,thisshift=0.0,thissym=False):
+        '''
+        plots the integrated autocorrelation time for this quantity
+
+        Parameters
+        ----------
+        plot_class: Plotting instance (see PlotData.py)
+            plot object to append the plot data to
+        thiscol: {False} color (see matplotlib color defines) optional
+            color to plot data as
+        thisshift: {0.0} optional
+            value to shift the data by
+        thissym: {False} character (see matplotlib symbol defines) optional
+            symbol to plot Wopt as
+
+        Returns
+        -------
+        plot_class: Plotting instance
+            same object, just with data added to be plotted
+
+        Raises
+        ------
+        IOError
+            if Wopt is not set properly in the code
+        '''
         if self.Wopt == 'Not Set':
             raise IOError('Wopt not set, please import and do werr')
         xmax = int(self.Wopt*3)
@@ -240,7 +401,7 @@ class AutoCorrelate(object):
     #     totlen = sum(map(len,x))
     #     listout = []
     #     for it in xrange(tlen):
-    #         itval = 0.0
+    #         itval = 0.0s
     #         for ix,iy in zip(x,y):
     #             for index in xrange(tlen):
     #                 if it+index < iy.size and index < ix.size:
@@ -253,12 +414,29 @@ class AutoCorrelate(object):
 
     ### autocorrelation work taken from https://arxiv.org/pdf/hep-lat/0306017.pdf
     def autocorr(self,x,y):
+        '''
+        standard autocorrlation function between two statsitcal quantities
+
+
+        Parameters
+        ----------
+        x: (M,) array_like
+            First list of values to perform autocorrelation analysis of
+        y: (M,) array_like
+            Second list of values to perform autocorrelation analysis of
+
+        Returns
+        -------
+        result: (M,) array_like
+            autocorrelation result between `x` and `y`, see [1]_ and [2]_
+
+        References
+        ----------
+        .. [1] http://stackoverflow.com/q/14297012/190597
+        .. [2] http://en.wikipedia.org/wiki/Autocorrelation#Estimation
+        '''
         if self.has_reps:
             return self.autocorr_Reps(x,y)
-        """
-        http://stackoverflow.com/q/14297012/190597
-        http://en.wikipedia.org/wiki/Autocorrelation#Estimation
-        """
         n = len(x)
         # variance = x.var()
         x = x-x.mean()
@@ -270,6 +448,33 @@ class AutoCorrelate(object):
 
 
     def autocorr_Reps(self,x,y):
+        '''
+        autocorrealtion analysis of quantity including replica streams as
+        described in [1]_.
+
+        Parameters
+        ----------
+        x: (R,M) array_like
+            First list of lists of values to perform autocorrelation analysis of,
+            including the replica streams
+        y: (R,M) array_like
+            Second list of lists of values to perform autocorrelation analysis of,
+            including the replica streams
+
+        Returns
+        -------
+        result: (M,) array_like
+            autocorrelation result between `x` and `y`
+
+        References
+        ----------
+        .. [1]  U. Wolff [ALPHA Collaboration],
+           ``Monte Carlo errors with less errors,''
+           Comput.\ Phys.\ Commun.\  {\bf 156}, 143 (2004)
+           Erratum: [Comput.\ Phys.\ Commun.\  {\bf 176}, 383 (2007)]
+           doi:10.1016/S0010-4655(03)00467-3, 10.1016/j.cpc.2006.12.001
+           [hep-lat/0306017].
+        '''
         totn = sum(map(len,x))
         n_max = max(list(map(len,x)))
         result,Rlist = 0.,0.
@@ -286,7 +491,30 @@ class AutoCorrelate(object):
         return result
 
     def gW(self,tauW,thisN):
-        ## using auto fitting window method used from (52)
+        '''
+        W parameter used for auto fitting window method used from (52) in [1]_.
+
+        Parameters
+        ----------
+        tauW: (M,) array_like
+            integrated autocorrelation function as a function of W
+        thisN: float
+            number of samples computed (min if replicas are present)
+
+        Returns
+        -------
+        iW: float
+            optimal W parameter for when no autocorrelation effects are present.
+
+        References
+        ----------
+        .. [1]  U. Wolff [ALPHA Collaboration],
+           ``Monte Carlo errors with less errors,''
+           Comput.\ Phys.\ Commun.\  {\bf 156}, 143 (2004)
+           Erratum: [Comput.\ Phys.\ Commun.\  {\bf 176}, 383 (2007)]
+           doi:10.1016/S0010-4655(03)00467-3, 10.1016/j.cpc.2006.12.001
+           [hep-lat/0306017].
+        '''
         for iW,it in enumerate(tauW):
             if iW == 0: continue
             val = np.exp(-iW/it)-it/np.sqrt(iW*thisN)
@@ -295,25 +523,94 @@ class AutoCorrelate(object):
         return float('NaN')
 
     def VarTau(self,tau,N):
-        ## Using aproximate formula (42) from paper
+        '''
+        Using aproximate formula (42) from paper [1]_.
+
+        Parameters
+        ----------
+        tau: (M,) array_like
+            tau to compute variance of
+        N: float
+            number of samples computed (min if replicas are present)
+
+        Returns
+        -------
+        iW: float
+            optimal W parameter for when no autocorrelation effects are present.
+
+        References
+        ----------
+        .. [1]  U. Wolff [ALPHA Collaboration],
+           ``Monte Carlo errors with less errors,''
+           Comput.\ Phys.\ Commun.\  {\bf 156}, 143 (2004)
+           Erratum: [Comput.\ Phys.\ Commun.\  {\bf 176}, 383 (2007)]
+           doi:10.1016/S0010-4655(03)00467-3, 10.1016/j.cpc.2006.12.001
+           [hep-lat/0306017].
+        '''
         return [np.sqrt(4/float(N) * (iW + 0.5 - itau) * itau**2) for iW,itau in enumerate(tau)]
 
     def BiasCorrect(self,CfW,N):
-        ## Bias corrections using (49)
+        '''
+        Bias corrections using (49) from paper [1]_.
+
+        Parameters
+        ----------
+        CfW: (M,) array_like
+            CfW list of errors to inflate to correct for bias
+        N: float
+            number of samples computed (min if replicas are present)
+
+        Returns
+        -------
+        CfW: (M,) array_like
+            CfW list that has been inflated to correct for bais
+
+        References
+        ----------
+        .. [1]  U. Wolff [ALPHA Collaboration],
+           ``Monte Carlo errors with less errors,''
+           Comput.\ Phys.\ Commun.\  {\bf 156}, 143 (2004)
+           Erratum: [Comput.\ Phys.\ Commun.\  {\bf 176}, 383 (2007)]
+           doi:10.1016/S0010-4655(03)00467-3, 10.1016/j.cpc.2006.12.001
+           [hep-lat/0306017].
+        '''
         W = np.arange(len(CfW))
         return CfW*(1+((2*W+1)/float(N)))
         # ## Testing
         # return CfW
 
 
-    #data = [ variable , monte time ]
-    #fun(variables) output is value
-    #funder(variables) output is partial derivatives (w.r.t variables)
-    ## AllOut = False
-    ## average, error[Woptimal], tau[Woptimal], tauerr[Woptimal]
-    ## AllOut = True
-    ## average, error(W), tau(W), tauerr(W), GFt(W), Wopt
-    def uWerrMine(self,data='PreDef',fun='PreDef',Sparam='PreDef',WipeData=True,save_covar=True):
+    def uWerrMine(self,data='PreDef',fun='PreDef',
+                  Sparam='PreDef',WipeData=True,save_covar=True):
+        '''
+        Main function for computing the total autocorrelation of quantity,
+        following the method in [1]_.
+
+        Parameters
+        ----------
+        data: {'PreDef'} [variable, (replicas), montecarlo time] optional
+            data to perform autocorrelation analysis over. Not passing in
+            any data will default to the data stored in the object
+        fun: {'PreDef'} function(*variable) optional
+            function descibing how to combine the indipendant statistical quantities.
+            Not passing in any function will default to the data stored in the object
+        Sparam: {'PreDef'} float optional
+            S parameter for Autocorrlation analysis
+        WipeData: {True} optional
+            Wipe the internal configuration data after computing the autocorrelation
+            statistical quantities.
+        save_covar: {True} optional
+            Saves the covariance matrix as an internal variable
+
+        References
+        ----------
+        .. [1]  U. Wolff [ALPHA Collaboration],
+           ``Monte Carlo errors with less errors,''
+           Comput.\ Phys.\ Commun.\  {\bf 156}, 143 (2004)
+           Erratum: [Comput.\ Phys.\ Commun.\  {\bf 176}, 383 (2007)]
+           doi:10.1016/S0010-4655(03)00467-3, 10.1016/j.cpc.2006.12.001
+           [hep-lat/0306017].        '''
+
         self.GetFuns()
         if data == 'PreDef':
             if isinstance(self.values,str):
@@ -429,7 +726,7 @@ class AutoCorrelate(object):
             self.GFt = GFt
             self.tau = tauint[Wopt]
             self.tauerr = dtauint[Wopt]
-        except:
+        except Exception as err:
             print('NaN for Autocorr')
             Wopt = -1
             self.Std = np.sqrt(np.abs(CFW[Wopt])/float(glen))
@@ -447,6 +744,9 @@ class AutoCorrelate(object):
         self.RemoveFuns()
 
     def GetFuns(self):
+        '''
+        Gets functions from pickled files
+        '''
         if not hasattr(self,'Fun') or not hasattr(self,'FunDer'):
             self.Fun,self.FunDer = ReadFuns(self.Fun_name,self.FunDer_name)
             del self.Fun_name
@@ -454,6 +754,9 @@ class AutoCorrelate(object):
 
 
     def RemoveFuns(self):
+        '''
+        Removes functions in prep for writing object to file.
+        '''
         self.Fun_name = self.Fun.__name__
         self.FunDer_name = self.FunDer.__name__
         WriteFuns(self.Fun,self.FunDer_name)
@@ -487,6 +790,9 @@ class BlockedAutoCorr(object):
 
     ## block_cutoff is a percent of the total length!
     def RemoveAuto(self,tau_cutoff = 1,block_cutoff= 10):
+        '''
+        computes the nessisary amount needed to block to remove all autocorrelation effects
+        '''
         ## TODO use tauerr?
         n_block = 1
         # this_cfglist = self.noblock_auto.values
@@ -503,7 +809,7 @@ class BlockedAutoCorr(object):
             #     print()
             #     pl.plot(this_cfglist.values[:,0])
             #     pl.title(str(n_block))
-            #     pl.savefig('/home/jackdra/LQCD/Scripts/Python_Analysis/TestGraphs/testsin'+str(n_block)+'.pdf')
+            #     pl.savefig(this_dir+'/TestGraphs/testsin'+str(n_block)+'.pdf')
             #     pl.clf()
             non_dup_cfg = pa.DataFrame(np.abs(this_cfglist.values[::n_block,:]),columns=this_cfglist.columns)
             self.auto_object = AutoCorrelate(name=self.name,Fun=self.Fun,data=non_dup_cfg,
@@ -523,6 +829,10 @@ class BlockedAutoCorr(object):
 
     ## block_cutoff is a percent of the total length!
     def GetBlockedBS(self,thisnboot=nboot,rand_list=None,tau_cutoff=0.5,block_cutoff=10,WipeData=True,noblock_comp=False):
+        '''
+        uses the computed amount of blocking required to create a bootstrapped instance
+        result
+        '''
         this_cfg,n_block = self.RemoveAuto(tau_cutoff=tau_cutoff,block_cutoff=block_cutoff)
         this_name = self.name + '_nblock'+str(n_block)
         self.n_block = n_block
@@ -533,7 +843,7 @@ class BlockedAutoCorr(object):
             non_dup_cfg = pa.DataFrame(this_cfg.values[::n_block,:],columns=this_cfg.columns)
             import matplotlib.pyplot as pl
             pl.plot(non_dup_cfg.values[:,0])
-            pl.savefig('/home/jackdra/LQCD/Scripts/Python_Analysis/TestGraphs/testsin_blocked.pdf')
+            pl.savefig(this_dir+'/TestGraphs/testsin_blocked.pdf')
             pl.clf()
         out_bs = BootStrap(thisnboot=thisnboot,name=this_name,cfgvals=this_cfg,thisDelVal=WipeData,rand_list=rand_list)
         if WipeData:
@@ -547,6 +857,9 @@ class BlockedAutoCorr(object):
 
 
 def TestBlocking(tau_cutoff=0.5,block_cutoff=10):
+    '''
+    testing function for testing the autocorrelation blocking technique
+    '''
     def thisFun(*x):
         return x[0]
     def thisDer(*x):
@@ -559,7 +872,7 @@ def TestBlocking(tau_cutoff=0.5,block_cutoff=10):
     values2 = np.sin(np.arange(this_size)*(nperiod*2*np.pi)/this_size)+values*20
     import matplotlib.pyplot as pl
     pl.plot(values2)
-    pl.savefig('/home/jackdra/LQCD/Scripts/Python_Analysis/TestGraphs/testsin.pdf')
+    pl.savefig(this_dir+'/TestGraphs/testsin.pdf')
     pl.clf()
     val_df = pa.DataFrame()
     val_df['one'] = pa.Series(values)
@@ -575,6 +888,9 @@ def TestBlocking(tau_cutoff=0.5,block_cutoff=10):
     return testdata,testdata2,testdata3,bootdata,bootdata2,bootdata3,nbb,nbb2,nbb3
 
 def TestAuto():
+    '''
+    testing function for standard autocorrelation analysis
+    '''
     def thisFun(*x):
         return x[0]
     def thisDer(*x):
@@ -637,7 +953,7 @@ def TestAuto():
     testdatarat = AutoCorrelate(Fun=[RatFun,RatFunDer],name='test_auto_ratio',data=val_df[['one','two']])
 
     this_info = pa.Series()
-    this_info['save_file'] = './TestGraphs/test_Wopt.pdf'
+    this_info['save_file'] = this_dir+'/TestGraphs/test_Wopt.pdf'
     this_info['title'] = 'Test Auto Graph'
     # this_info['xlims'] = [0,10]
     # this_info['ylims'] = [0,15]
@@ -652,7 +968,7 @@ def TestAuto():
     data_plot.PlotAll()
 
     this_info = pa.Series()
-    this_info['save_file'] = './TestGraphs/test_Auto.pdf'
+    this_info['save_file'] = this_dir+'/TestGraphs/test_Auto.pdf'
     this_info['title'] = 'Test Auto Graph'
     # this_info['xlims'] = [0,10]
     # this_info['ylims'] = [0,15]

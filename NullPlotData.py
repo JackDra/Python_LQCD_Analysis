@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 
 import pandas as pa
+fillalpha = 0.5
 
 null_series = pa.Series()
+null_series['plot_this'] = False
 null_series['boot_data'] = None
 null_series['x_data'] = None
 null_series['x_fun'] = None
@@ -19,27 +21,30 @@ null_series['key_select'] = None
 null_series['xerr_data'] = None
 null_series['type'] = None
 null_series['fit_class'] = None
-null_series['label'] = ' '
+null_series['label'] = ''
 null_series['symbol'] = 'o'
 null_series['color'] = None
 null_series['shift'] = 0
-null_series['shift_overlap'] = 0
+null_series['shift_overlap'] = 0.03
 null_series['xdatarange'] = 'Data'
-null_series['scale'] = None
+null_series['scale'] = 1.0
+null_series['y_shift'] = 1.0
 null_series['Phys'] = None
 null_series['ShowPar'] = None
 null_series['ShowEval'] = None
-null_series['Median'] = None
+null_series['Median'] = False
 null_series['suppress_key_index'] = False
 null_series['fmt_class'] = None
-null_series['supres_legend'] = None
+null_series['supress_legend'] = False
 null_series['x_scale'] = 1
-null_series['x_range_min'] = None
-null_series['x_range_max'] = None
-null_series['x_increment'] = None
+null_series['x_range_min'] = 0
+null_series['x_range_max'] = -1
+null_series['x_increment'] = 1
 null_series['hairline'] = False
-null_series['extrap_fade'] = 0
-null_series['hair_alpha'] = False
+null_series['extrap_fade'] = 1.5
+null_series['hair_alpha'] = (20,1)
+null_series['alpha'] = fillalpha
+null_series['histtype'] = 'stepfilled'
 null_series['phys_axies'] = False
 null_series['FPName'] = ''
 null_series['FPUnits'] = ''
@@ -47,3 +52,4 @@ null_series['plot_err'] = ''
 null_series['arrow_text_size'] = 30
 null_series['arrow_color'] = 'black'
 null_series['arrow_style'] = 'fancy'
+null_series['xaxis'] = 0

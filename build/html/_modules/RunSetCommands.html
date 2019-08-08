@@ -1,0 +1,418 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>RunSetCommands &mdash; LQCD Analysis Codebase TF Fits documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/my_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> LQCD Analysis Codebase
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Python_Analysis</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">LQCD Analysis Codebase</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>RunSetCommands</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for RunSetCommands</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+
+<span class="kn">import</span> <span class="nn">SetsOfFlowOps</span> <span class="k">as</span> <span class="nn">sfo</span>
+<span class="kn">import</span> <span class="nn">SetsOfTwoPtCorrs</span> <span class="k">as</span> <span class="nn">so</span>
+<span class="kn">import</span> <span class="nn">SetsOfRatios</span> <span class="k">as</span> <span class="nn">sr</span>
+<span class="kn">import</span> <span class="nn">SetsOfFFs</span> <span class="k">as</span> <span class="nn">ffs</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">FileIO</span> <span class="k">import</span> <span class="n">ReadPickleWrap</span>
+<span class="kn">from</span> <span class="nn">TimeStuff</span> <span class="k">import</span> <span class="n">Timer</span>
+
+<span class="c1"># from RunSetCommands import FOpRun,FOpFullRun</span>
+<span class="c1"># from RunSetCommands import TPRun,ARun,AFullRun</span>
+<span class="c1"># from RunSetCommands import RRun,FFRun</span>
+
+<div class="viewcode-block" id="GetJobFun"><a class="viewcode-back" href="../RunSetCommands.html#RunSetCommands.GetJobFun">[docs]</a><span class="k">def</span> <span class="nf">GetJobFun</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
+    <span class="k">if</span> <span class="s1">&#39;2pt&#39;</span> <span class="ow">in</span> <span class="n">file_name</span> <span class="ow">or</span> <span class="s1">&#39;TwoPt&#39;</span> <span class="ow">in</span> <span class="n">file_name</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">TPRun</span>
+    <span class="k">elif</span> <span class="s1">&#39;Alpha&#39;</span> <span class="ow">in</span> <span class="n">file_name</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;Full&#39;</span> <span class="ow">in</span> <span class="n">file_name</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">AFullRun</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ARun</span>
+    <span class="k">elif</span> <span class="s1">&#39;FOp&#39;</span> <span class="ow">in</span> <span class="n">file_name</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;Full&#39;</span> <span class="ow">in</span> <span class="n">file_name</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">FOpFullRun</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">FOpRun</span>
+    <span class="k">elif</span> <span class="s1">&#39;FFRun&#39;</span> <span class="ow">in</span> <span class="n">file_name</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">FFRun</span>
+    <span class="k">elif</span> <span class="s1">&#39;FFSolve&#39;</span> <span class="ow">in</span> <span class="n">file_name</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">FFSolve</span>
+    <span class="k">elif</span> <span class="s1">&#39;FFSetup&#39;</span> <span class="ow">in</span> <span class="n">file_name</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">FFSetup</span>
+    <span class="k">elif</span> <span class="s1">&#39;FFFinish&#39;</span> <span class="ow">in</span> <span class="n">file_name</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">FFFinish</span>
+    <span class="k">elif</span> <span class="s1">&#39;Rat&#39;</span> <span class="ow">in</span> <span class="n">file_name</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">RRun</span>
+    <span class="k">elif</span> <span class="s1">&#39;3pt&#39;</span> <span class="ow">in</span> <span class="n">file_name</span> <span class="ow">or</span> <span class="s1">&#39;ThreePt&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Out3ptRun</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;file name is not associated with a run type </span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">+</span><span class="n">file_name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RunJob"><a class="viewcode-back" href="../RunSetCommands.html#RunSetCommands.RunJob">[docs]</a><span class="k">def</span> <span class="nf">RunJob</span><span class="p">(</span><span class="n">PickleFile</span><span class="p">):</span>
+    <span class="n">thisFun</span> <span class="o">=</span> <span class="n">GetJobFun</span><span class="p">(</span><span class="n">PickleFile</span><span class="p">)</span>
+    <span class="n">thisInput</span> <span class="o">=</span> <span class="n">ReadPickleWrap</span><span class="p">(</span><span class="n">PickleFile</span><span class="p">)</span>
+    <span class="n">thistimer</span> <span class="o">=</span> <span class="n">Timer</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Job file &#39;</span> <span class="o">+</span> <span class="n">PickleFile</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">thisFun</span><span class="p">(</span><span class="o">*</span><span class="n">thisInput</span><span class="p">)</span>
+    <span class="n">thistimer</span><span class="o">.</span><span class="n">Stop</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="FOpRun"><a class="viewcode-back" href="../RunSetCommands.html#RunSetCommands.FOpRun">[docs]</a><span class="k">def</span> <span class="nf">FOpRun</span><span class="p">(</span><span class="n">InfoFlowList</span><span class="p">,</span><span class="n">Ahmed_comp</span><span class="p">,</span><span class="n">corr_sets</span><span class="p">,</span><span class="n">check_cfgs</span><span class="p">,</span><span class="n">def_wipe</span><span class="p">):</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">sfo</span><span class="o">.</span><span class="n">SetOfFO</span><span class="p">(</span><span class="n">InfoDict</span><span class="o">=</span><span class="n">InfoFlowList</span><span class="p">,</span><span class="n">CompAhmed</span><span class="o">=</span><span class="n">Ahmed_comp</span><span class="p">,</span><span class="n">corr_cfglists</span><span class="o">=</span><span class="n">corr_sets</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">LoadPickle</span><span class="p">(</span><span class="n">DefWipe</span><span class="o">=</span><span class="n">def_wipe</span><span class="p">,</span><span class="n">CheckCfgs</span><span class="o">=</span><span class="n">check_cfgs</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">FlowMakeChit</span><span class="p">(</span><span class="n">DefWipe</span><span class="o">=</span><span class="n">def_wipe</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="FOpFullRun"><a class="viewcode-back" href="../RunSetCommands.html#RunSetCommands.FOpFullRun">[docs]</a><span class="k">def</span> <span class="nf">FOpFullRun</span><span class="p">(</span><span class="n">InfoFlowList</span><span class="p">,</span><span class="n">corr_sets</span><span class="p">,</span><span class="n">check_cfgs</span><span class="p">,</span><span class="n">def_wipe</span><span class="p">,</span><span class="n">Only_Q</span><span class="p">):</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">sfo</span><span class="o">.</span><span class="n">SetOfFOFull</span><span class="p">(</span><span class="n">InfoDict</span><span class="o">=</span><span class="n">InfoFlowList</span><span class="p">,</span><span class="n">corr_cfglists</span><span class="o">=</span><span class="n">corr_sets</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">LoadPickle</span><span class="p">(</span><span class="n">DefWipe</span><span class="o">=</span><span class="n">def_wipe</span><span class="p">,</span><span class="n">CheckCfgs</span><span class="o">=</span><span class="n">check_cfgs</span><span class="p">,</span><span class="n">OnlyQ</span><span class="o">=</span><span class="n">Only_Q</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="TPRun"><a class="viewcode-back" href="../RunSetCommands.html#RunSetCommands.TPRun">[docs]</a><span class="k">def</span> <span class="nf">TPRun</span><span class="p">(</span><span class="n">InfoList</span><span class="p">,</span><span class="n">corr_sets</span><span class="p">,</span><span class="n">check_cfgs</span><span class="p">,</span><span class="n">def_wipe</span><span class="p">):</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">so</span><span class="o">.</span><span class="n">SetOfTwoPt</span><span class="p">(</span><span class="n">InfoDict</span><span class="o">=</span><span class="n">InfoList</span><span class="p">,</span><span class="n">corr_cfglists</span><span class="o">=</span><span class="n">corr_sets</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">LoadPickle</span><span class="p">(</span><span class="n">DefWipe</span><span class="o">=</span><span class="n">def_wipe</span><span class="p">,</span><span class="n">CheckCfgs</span><span class="o">=</span><span class="n">check_cfgs</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;do powers and do coeff turned off due to fitting issue&#39;</span><span class="p">)</span>
+    <span class="c1"># data.DoPowers()</span>
+    <span class="c1"># data.DoCoeff()</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="ARun"><a class="viewcode-back" href="../RunSetCommands.html#RunSetCommands.ARun">[docs]</a><span class="k">def</span> <span class="nf">ARun</span><span class="p">(</span><span class="n">InfoFlowList</span><span class="p">,</span><span class="n">a_noise_sub</span><span class="p">,</span><span class="n">corr_sets</span><span class="p">,</span><span class="n">check_cfgs</span><span class="p">,</span><span class="n">def_wipe</span><span class="p">):</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">so</span><span class="o">.</span><span class="n">SetOfNNQ</span><span class="p">(</span><span class="n">InfoDict</span><span class="o">=</span><span class="n">InfoFlowList</span><span class="p">,</span><span class="n">corr_cfglists</span><span class="o">=</span><span class="n">corr_sets</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">LoadPickle</span><span class="p">(</span><span class="n">DefWipe</span><span class="o">=</span><span class="n">def_wipe</span><span class="p">,</span><span class="n">CheckCfgs</span><span class="o">=</span><span class="n">check_cfgs</span><span class="p">,</span><span class="n">CheckMom</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">a_noise_sub</span><span class="p">:</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">AppendNoiseSub</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="AFullRun"><a class="viewcode-back" href="../RunSetCommands.html#RunSetCommands.AFullRun">[docs]</a><span class="k">def</span> <span class="nf">AFullRun</span><span class="p">(</span><span class="n">InfoFlowList</span><span class="p">,</span><span class="n">corr_sets</span><span class="p">,</span><span class="n">check_cfgs</span><span class="p">,</span><span class="n">def_wipe</span><span class="p">,</span><span class="n">save_mem</span><span class="p">):</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">so</span><span class="o">.</span><span class="n">SetOfNNQFull</span><span class="p">(</span><span class="n">InfoDict</span><span class="o">=</span><span class="n">InfoFlowList</span><span class="p">,</span><span class="n">corr_cfglists</span><span class="o">=</span><span class="n">corr_sets</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">LoadPickle</span><span class="p">(</span><span class="n">DefWipe</span><span class="o">=</span><span class="n">def_wipe</span><span class="p">,</span><span class="n">CheckCfgs</span><span class="o">=</span><span class="n">check_cfgs</span><span class="p">,</span><span class="n">CheckMom</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">SaveMem</span><span class="o">=</span><span class="n">save_mem</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="RRun"><a class="viewcode-back" href="../RunSetCommands.html#RunSetCommands.RRun">[docs]</a><span class="k">def</span> <span class="nf">RRun</span><span class="p">(</span><span class="n">InfoFlowList</span><span class="p">,</span><span class="n">corr_sets</span><span class="p">,</span><span class="n">check_cfgs</span><span class="p">,</span><span class="n">def_wipe</span><span class="p">,</span><span class="n">Mcore</span><span class="p">):</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">sr</span><span class="o">.</span><span class="n">SetOfRat</span><span class="p">(</span><span class="n">InfoDict</span><span class="o">=</span><span class="n">InfoFlowList</span><span class="p">,</span><span class="n">corr_cfglists</span><span class="o">=</span><span class="n">corr_sets</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">LoadPickle</span><span class="p">(</span><span class="n">DefWipe</span><span class="o">=</span><span class="n">def_wipe</span><span class="p">,</span><span class="n">CheckCfgs</span><span class="o">=</span><span class="n">check_cfgs</span><span class="p">,</span><span class="n">Mcore</span><span class="o">=</span><span class="n">Mcore</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="Out3ptRun"><a class="viewcode-back" href="../RunSetCommands.html#RunSetCommands.Out3ptRun">[docs]</a><span class="k">def</span> <span class="nf">Out3ptRun</span><span class="p">(</span><span class="n">InfoFlowList</span><span class="p">,</span><span class="n">corr_sets</span><span class="p">,</span><span class="n">this_dir</span><span class="p">):</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">sr</span><span class="o">.</span><span class="n">SetOfRat</span><span class="p">(</span><span class="n">InfoDict</span><span class="o">=</span><span class="n">InfoFlowList</span><span class="p">,</span><span class="n">corr_cfglists</span><span class="o">=</span><span class="n">corr_sets</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">Reformat3pt</span><span class="p">(</span><span class="n">this_dir</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="Out2ptRun"><a class="viewcode-back" href="../RunSetCommands.html#RunSetCommands.Out2ptRun">[docs]</a><span class="k">def</span> <span class="nf">Out2ptRun</span><span class="p">(</span><span class="n">InfoFlowList</span><span class="p">,</span><span class="n">corr_sets</span><span class="p">,</span><span class="n">this_dir</span><span class="p">):</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">so</span><span class="o">.</span><span class="n">SetOfTwoPt</span><span class="p">(</span><span class="n">InfoDict</span><span class="o">=</span><span class="n">InfoFlowList</span><span class="p">,</span><span class="n">corr_cfglists</span><span class="o">=</span><span class="n">corr_sets</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">Reformat2pt</span><span class="p">(</span><span class="n">this_dir</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="OutBoot2ptRun"><a class="viewcode-back" href="../RunSetCommands.html#RunSetCommands.OutBoot2ptRun">[docs]</a><span class="k">def</span> <span class="nf">OutBoot2ptRun</span><span class="p">(</span><span class="n">InfoFlowList</span><span class="p">,</span><span class="n">corr_sets</span><span class="p">,</span><span class="n">this_dir</span><span class="p">):</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">so</span><span class="o">.</span><span class="n">SetOfTwoPt</span><span class="p">(</span><span class="n">InfoDict</span><span class="o">=</span><span class="n">InfoFlowList</span><span class="p">,</span><span class="n">corr_cfglists</span><span class="o">=</span><span class="n">corr_sets</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">WriteBoot2pt</span><span class="p">(</span><span class="n">this_dir</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="FFSetup"><a class="viewcode-back" href="../RunSetCommands.html#RunSetCommands.FFSetup">[docs]</a><span class="k">def</span> <span class="nf">FFSetup</span><span class="p">(</span><span class="n">InfoFlowList</span><span class="p">,</span><span class="n">def_wipe</span><span class="p">,</span><span class="n">hard_wipe</span><span class="p">,</span><span class="n">cfg_list_ffile</span><span class="p">,</span><span class="n">Mcore</span><span class="p">,</span><span class="n">CommonRat</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">cfg_list_ffile</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">ffs</span><span class="o">.</span><span class="n">SetOfFF</span><span class="p">(</span><span class="n">cfglist</span><span class="o">=</span><span class="s1">&#39;fromfile&#39;</span><span class="p">,</span><span class="n">cfglist2pt</span><span class="o">=</span><span class="s1">&#39;fromfile&#39;</span><span class="p">,</span><span class="n">InfoDict</span><span class="o">=</span><span class="n">InfoFlowList</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">ffs</span><span class="o">.</span><span class="n">SetOfFF</span><span class="p">(</span><span class="n">InfoDict</span><span class="o">=</span><span class="n">InfoFlowList</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">SetupPickle</span><span class="p">(</span><span class="n">DefWipe</span><span class="o">=</span><span class="n">def_wipe</span><span class="p">,</span><span class="n">HardWipe</span><span class="o">=</span><span class="n">hard_wipe</span><span class="p">,</span><span class="n">Mcore</span><span class="o">=</span><span class="n">Mcore</span><span class="p">,</span><span class="n">CommonRatios</span><span class="o">=</span><span class="n">CommonRat</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="FFSolve"><a class="viewcode-back" href="../RunSetCommands.html#RunSetCommands.FFSolve">[docs]</a><span class="k">def</span> <span class="nf">FFSolve</span><span class="p">(</span><span class="n">InfoFlowList</span><span class="p">,</span><span class="n">def_wipe</span><span class="p">,</span><span class="n">hard_wipe</span><span class="p">,</span><span class="n">cfg_list_ffile</span><span class="p">,</span><span class="n">Mcore</span><span class="p">,</span><span class="n">CommonRat</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">cfg_list_ffile</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">ffs</span><span class="o">.</span><span class="n">SetOfFF</span><span class="p">(</span><span class="n">cfglist</span><span class="o">=</span><span class="s1">&#39;fromfile&#39;</span><span class="p">,</span><span class="n">cfglist2pt</span><span class="o">=</span><span class="s1">&#39;fromfile&#39;</span><span class="p">,</span><span class="n">InfoDict</span><span class="o">=</span><span class="n">InfoFlowList</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">ffs</span><span class="o">.</span><span class="n">SetOfFF</span><span class="p">(</span><span class="n">InfoDict</span><span class="o">=</span><span class="n">InfoFlowList</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">SolvePickle</span><span class="p">(</span><span class="n">DefWipe</span><span class="o">=</span><span class="n">def_wipe</span><span class="p">,</span><span class="n">HardWipe</span><span class="o">=</span><span class="n">hard_wipe</span><span class="p">,</span><span class="n">Mcore</span><span class="o">=</span><span class="n">Mcore</span><span class="p">,</span><span class="n">CommonRatios</span><span class="o">=</span><span class="n">CommonRat</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="FFFinish"><a class="viewcode-back" href="../RunSetCommands.html#RunSetCommands.FFFinish">[docs]</a><span class="k">def</span> <span class="nf">FFFinish</span><span class="p">(</span>   <span class="n">InfoFlowList</span><span class="p">,</span><span class="n">def_wipe</span><span class="p">,</span><span class="n">hard_wipe</span><span class="p">,</span><span class="n">cfg_list_ffile</span><span class="p">,</span>
+                <span class="n">Mcore</span><span class="p">,</span><span class="n">WipeFit</span><span class="p">,</span><span class="n">OnlyFits</span><span class="p">,</span><span class="n">DoFits</span><span class="p">,</span><span class="n">CommonRat</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">cfg_list_ffile</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">ffs</span><span class="o">.</span><span class="n">SetOfFF</span><span class="p">(</span><span class="n">cfglist</span><span class="o">=</span><span class="s1">&#39;fromfile&#39;</span><span class="p">,</span><span class="n">cfglist2pt</span><span class="o">=</span><span class="s1">&#39;fromfile&#39;</span><span class="p">,</span><span class="n">InfoDict</span><span class="o">=</span><span class="n">InfoFlowList</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">ffs</span><span class="o">.</span><span class="n">SetOfFF</span><span class="p">(</span><span class="n">InfoDict</span><span class="o">=</span><span class="n">InfoFlowList</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">LoadPickle</span><span class="p">(</span><span class="n">DefWipe</span><span class="o">=</span><span class="n">def_wipe</span><span class="p">,</span><span class="n">HardWipe</span><span class="o">=</span><span class="n">hard_wipe</span><span class="p">,</span><span class="n">Mcore</span><span class="o">=</span><span class="n">Mcore</span><span class="p">,</span>
+                    <span class="n">WipeFit</span><span class="o">=</span><span class="n">WipeFit</span><span class="p">,</span><span class="n">OnlyFits</span><span class="o">=</span><span class="n">OnlyFits</span><span class="p">,</span><span class="n">DoFits</span><span class="o">=</span><span class="n">DoFits</span><span class="p">,</span><span class="n">CommonRatios</span><span class="o">=</span><span class="n">CommonRat</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="FFRun"><a class="viewcode-back" href="../RunSetCommands.html#RunSetCommands.FFRun">[docs]</a><span class="k">def</span> <span class="nf">FFRun</span><span class="p">(</span><span class="n">InfoFlowList</span><span class="p">,</span><span class="n">def_wipe</span><span class="p">,</span><span class="n">hard_wipe</span><span class="p">,</span><span class="n">cfg_list_ffile</span><span class="p">,</span><span class="n">Mcore</span><span class="p">,</span><span class="n">CommonRat</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">cfg_list_ffile</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">ffs</span><span class="o">.</span><span class="n">SetOfFF</span><span class="p">(</span><span class="n">cfglist</span><span class="o">=</span><span class="s1">&#39;fromfile&#39;</span><span class="p">,</span><span class="n">cfglist2pt</span><span class="o">=</span><span class="s1">&#39;fromfile&#39;</span><span class="p">,</span><span class="n">InfoDict</span><span class="o">=</span><span class="n">InfoFlowList</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">ffs</span><span class="o">.</span><span class="n">SetOfFF</span><span class="p">(</span><span class="n">InfoDict</span><span class="o">=</span><span class="n">InfoFlowList</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Setting up Form Factors&#39;</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">SetupPickle</span><span class="p">(</span><span class="n">DefWipe</span><span class="o">=</span><span class="n">def_wipe</span><span class="p">,</span><span class="n">HardWipe</span><span class="o">=</span><span class="n">hard_wipe</span><span class="p">,</span><span class="n">Mcore</span><span class="o">=</span><span class="n">Mcore</span><span class="p">,</span><span class="n">CommonRatios</span><span class="o">=</span><span class="n">CommonRat</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Solving Form Factors&#39;</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">SolvePickle</span><span class="p">(</span><span class="n">DefWipe</span><span class="o">=</span><span class="n">def_wipe</span><span class="p">,</span><span class="n">HardWipe</span><span class="o">=</span><span class="n">hard_wipe</span><span class="p">,</span><span class="n">Mcore</span><span class="o">=</span><span class="n">Mcore</span><span class="p">,</span><span class="n">CommonRatios</span><span class="o">=</span><span class="n">CommonRat</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Finishing up Form Factors&#39;</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">LoadPickle</span><span class="p">(</span><span class="n">DefWipe</span><span class="o">=</span><span class="n">def_wipe</span><span class="p">,</span><span class="n">HardWipe</span><span class="o">=</span><span class="n">hard_wipe</span><span class="p">,</span><span class="n">Mcore</span><span class="o">=</span><span class="n">Mcore</span><span class="p">,</span><span class="n">CommonRatios</span><span class="o">=</span><span class="n">CommonRat</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="WriteCSH"><a class="viewcode-back" href="../RunSetCommands.html#RunSetCommands.WriteCSH">[docs]</a><span class="k">def</span> <span class="nf">WriteCSH</span><span class="p">(</span><span class="n">job_type</span><span class="p">,</span><span class="n">pickle_file</span><span class="p">,</span><span class="n">job_params</span><span class="p">,</span><span class="n">n_job</span><span class="p">,</span><span class="n">Next_Job</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">Jstring</span> <span class="o">=</span> <span class="n">job_type</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">n_job</span><span class="p">)</span>
+    <span class="n">outlist</span> <span class="o">=</span> <span class="n">GetCSHHeader</span><span class="p">(</span><span class="n">Jstring</span><span class="p">,</span><span class="n">job_params</span><span class="p">)</span>
+    <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;echo &quot;Begining run of &#39;</span><span class="o">+</span><span class="n">pickle_file</span><span class="o">+</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)</span>
+    <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;echo &quot;started &quot;`date`&#39;</span><span class="p">)</span>
+    <span class="c1"># outlist.append(r&#39;mpirun -np 1 &#39;+job_params[&#39;python_exe&#39;]+&#39; &#39;+os.getcwd()+&#39;/AnalysisGUI.py &#39;+pickle_file.replace(&#39;./&#39;,os.getcwd()+&#39;/&#39;))</span>
+    <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">job_params</span><span class="p">[</span><span class="s1">&#39;python_exe&#39;</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39; &#39;</span><span class="o">+</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span><span class="o">+</span><span class="s1">&#39;/AnalysisGUI.py &#39;</span><span class="o">+</span><span class="n">pickle_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;./&#39;</span><span class="p">,</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="p">))</span>
+    <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;if ($? != 0) then&#39;</span><span class="p">)</span>
+    <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;   echo &quot;Job Crashed, error code $? , exiting&quot;&#39;</span><span class="p">)</span>
+    <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;   exit 1&#39;</span><span class="p">)</span>
+    <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;endif&#39;</span><span class="p">)</span>
+    <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;echo &quot;&quot;&#39;</span><span class="p">)</span>
+    <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;echo &quot;finished &quot;`date`&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">Next_Job</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;echo &quot;Submitting next job &#39;</span><span class="o">+</span><span class="n">Next_Job</span><span class="o">+</span><span class="s1">&#39; &quot;&#39;</span><span class="p">)</span>
+        <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;if(`where qsub` == &quot;&quot;) then&#39;</span><span class="p">)</span>
+        <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;  sbatch &#39;</span><span class="o">+</span><span class="n">Next_Job</span><span class="p">)</span>
+        <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;else&#39;</span><span class="p">)</span>
+        <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;   qsub &#39;</span><span class="o">+</span><span class="n">Next_Job</span><span class="p">)</span>
+        <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;endif&#39;</span><span class="p">)</span>
+    <span class="n">CreateCSHFile</span><span class="p">(</span><span class="n">pickle_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.py3p&#39;</span><span class="p">,</span><span class="s1">&#39;.csh&#39;</span><span class="p">),</span><span class="n">outlist</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CreateCSHFile"><a class="viewcode-back" href="../RunSetCommands.html#RunSetCommands.CreateCSHFile">[docs]</a><span class="k">def</span> <span class="nf">CreateCSHFile</span><span class="p">(</span><span class="n">thisfile</span><span class="p">,</span><span class="n">outputlist</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">thisfile</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">iout</span> <span class="ow">in</span> <span class="n">outputlist</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">iout</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;chmod u+x &quot;</span><span class="o">+</span><span class="n">thisfile</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GetCSHHeader"><a class="viewcode-back" href="../RunSetCommands.html#RunSetCommands.GetCSHHeader">[docs]</a><span class="k">def</span> <span class="nf">GetCSHHeader</span><span class="p">(</span><span class="n">Jstring</span><span class="p">,</span><span class="n">job_params</span><span class="p">):</span>
+    <span class="n">outlist</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;#! /bin/tcsh&#39;</span><span class="p">)</span>
+    <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">job_params</span><span class="p">[</span><span class="s1">&#39;machine&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;juqueen&#39;</span><span class="p">:</span>
+        <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;# @ job_name = &#39;</span><span class="o">+</span><span class="n">Jstring</span><span class="p">)</span>
+        <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;# @ error = $(job_name).$(jobid).out&#39;</span><span class="p">)</span>
+        <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;# @ output = $(job_name).$(jobid).out&#39;</span><span class="p">)</span>
+        <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;# @ environment = COPY_ALL&#39;</span><span class="p">)</span>
+        <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;# @ wall_clock_limit = &#39;</span><span class="o">+</span><span class="n">job_params</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">])</span>
+        <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;# @ notification = error&#39;</span><span class="p">)</span>
+        <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;# @ notify_user = &#39;</span><span class="o">+</span><span class="n">job_params</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">])</span>
+        <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;# @ job_type = bluegene&#39;</span><span class="p">)</span>
+        <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;# @ bg_size = &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">job_params</span><span class="p">[</span><span class="s1">&#39;nproc&#39;</span><span class="p">]))</span>
+        <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;# @ queue&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">job_params</span><span class="p">[</span><span class="s1">&#39;Scom&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;sbatch&#39;</span><span class="p">:</span>
+            <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;#SBATCH --nodes 1&#39;</span><span class="p">)</span>
+            <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;#SBATCH --cpus-per-task=1&#39;</span><span class="p">)</span>
+            <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;#SBATCH --time=&#39;</span><span class="o">+</span><span class="n">job_params</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">])</span>
+            <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;#SBATCH --mem=&#39;</span><span class="o">+</span><span class="n">job_params</span><span class="p">[</span><span class="s1">&#39;memory&#39;</span><span class="p">])</span>
+            <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;#SBATCH -J &#39;</span><span class="o">+</span><span class="n">Jstring</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s1">&#39;RunPTG&#39;</span> <span class="ow">in</span> <span class="n">job_params</span> <span class="ow">and</span> <span class="n">job_params</span><span class="p">[</span><span class="s1">&#39;RunPTG&#39;</span><span class="p">]:</span>
+                <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;#SBATCH -A ptg&#39;</span><span class="p">)</span>
+            <span class="c1"># outlist.append(r&#39;#SBATCH -p &#39;+job_params[&#39;quetype&#39;])</span>
+            <span class="c1"># outlist.append(r&#39;#SBATCH -n &#39;+str(job_params[&#39;nproc&#39;]))</span>
+            <span class="c1"># outlist.append(r&#39;#SBATCH --time=&#39;+job_params[&#39;time&#39;])</span>
+            <span class="c1"># outlist.append(r&#39;#SBATCH --mem=&#39;+job_params[&#39;memory&#39;])</span>
+        <span class="k">elif</span> <span class="n">job_params</span><span class="p">[</span><span class="s1">&#39;Scom&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;qsub&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;email&#39;</span> <span class="ow">in</span> <span class="n">job_params</span><span class="p">:</span>
+                <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;#PBS -m bea&#39;</span><span class="p">)</span>
+                <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;#PBS -M &#39;</span><span class="o">+</span><span class="n">job_params</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">])</span>
+            <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;#PBS -l walltime=&#39;</span><span class="o">+</span><span class="n">job_params</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;,nodes=1:ppn=&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">job_params</span><span class="p">[</span><span class="s1">&#39;nproc&#39;</span><span class="p">])</span><span class="o">+</span><span class="s1">&#39;,mem=&#39;</span><span class="o">+</span><span class="n">job_params</span><span class="p">[</span><span class="s1">&#39;memory&#39;</span><span class="p">])</span>
+            <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;#PBS -N &#39;</span><span class="o">+</span><span class="n">Jstring</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">job_params</span><span class="p">[</span><span class="s1">&#39;machine&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;laconia&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s1">&#39;RunPTG&#39;</span> <span class="ow">in</span> <span class="n">job_params</span> <span class="ow">and</span> <span class="n">job_params</span><span class="p">[</span><span class="s1">&#39;RunPTG&#39;</span><span class="p">]:</span>
+                    <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;#PBS -A ptg&#39;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;#PBS -A hpccdefault&#39;</span><span class="p">)</span>
+    <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;modules&#39;</span> <span class="ow">in</span> <span class="n">job_params</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">imod</span> <span class="ow">in</span> <span class="n">job_params</span><span class="p">[</span><span class="s1">&#39;modules&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;module load &#39;</span><span class="o">+</span><span class="n">imod</span><span class="p">)</span>
+    <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">outlist</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Jack Dragos
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

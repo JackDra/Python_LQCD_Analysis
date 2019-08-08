@@ -43,6 +43,13 @@ x_funs['sqrt'] = np.sqrt
 x_funs['log'] = np.log
 x_funs['exp'] = np.exp
 
+def check_index_and_None(this_data,this_index,this_key,def_val = False):
+    if this_index not in this_data.index or this_data.loc[this_index,this_key] is None:
+        return def_val
+    else:
+        return this_data.loc[this_index,this_key]
+
+
 def fmt_Range(this_list):
     this_list = list(OrderedDict.fromkeys(this_list))
     # return map(get_val,this_list)
@@ -86,6 +93,9 @@ class DataFrame( ta.HasTraits ):
     x_function = ta.Enum(list(x_funs.keys()))
     shift = ta.Float(1.0)
     shift_overlap = ta.Float(0.005)
+    do_band = ta.Bool(False)
+    band_index = ta.Int(-1)
+    show_band_eval = ta.Bool(True)
 
     arrow_x = ta.Float(0.0)
     arrow_y = ta.Float(0.0)
@@ -108,6 +118,7 @@ class DataFrame( ta.HasTraits ):
     symbol = ta.Str('o')
     Median = ta.Bool(False)
     scale_y = ta.Float(1.0)
+    shift_y = ta.Float(0)
     fit_dim_pick = ta.Int(1)
     ShowEval = ta.List(ta.Float,[0])
     extrap_fade = ta.Float(1.5)
@@ -167,10 +178,11 @@ class DataFrame( ta.HasTraits ):
         tua.Item('symbol'),
         tua.Item('Median'),
         tua.Item('scale_y'),
+        tua.Item('shift_y'),
         tua.Item('supress_legend'),
         tua.Item('suppress_key_index'),
         tua.Item('pick_dimension',visible_when='test_pick_dim'),
-        tua.Item('dim_1',visible_when='test_dim_1'),
+        tua.Item('dim_1',visible_when='test_dim_1',name='pie'),
         tua.Item('dim_2',visible_when='test_dim_2'),
         tua.Item('dim_3',visible_when='test_dim_3'),
         tua.Item('dim_4',visible_when='test_dim_4'),
@@ -196,6 +208,9 @@ class DataFrame( ta.HasTraits ):
         tua.Item('x_range_min'),
         tua.Item('x_range_max'),
         tua.Item('x_increment'),
+        tua.Item('do_band'),
+        tua.Item('band_index',enabled_when='do_band'),
+        tua.Item('show_band_eval',enabled_when='do_band'),
         tua.Item('Apply', show_label=False),
         tua.Item('Duplicate', show_label=False),
         tua.Item('Wipe', show_label=False),
@@ -455,7 +470,6 @@ class DataFrame( ta.HasTraits ):
         self._Load_fired()
         self._Apply_fired()
 
-
     def __init__(self):
         global data_plot
         self.key_list = list(data_plot.plot_data.keys())
@@ -488,22 +502,22 @@ class DataFrame( ta.HasTraits ):
     def _pick_dimension_fired(self):
         self._Load_fired()
 
-    def _dim_1_fired(self):
-        self._Load_fired()
-    def _dim_2_fired(self):
-        self._Load_fired()
-    def _dim_3_fired(self):
-        self._Load_fired()
-    def _dim_4_fired(self):
-        self._Load_fired()
-    def _dim_5_fired(self):
-        self._Load_fired()
-    def _dim_6_fired(self):
-        self._Load_fired()
-    def _dim_7_fired(self):
-        self._Load_fired()
-    def _dim_8_fired(self):
-        self._Load_fired()
+    # def _dim_1_fired(self):
+    #     self._Load_fired()
+    # def _dim_2_fired(self):
+    #     self._Load_fired()
+    # def _dim_3_fired(self):
+    #     self._Load_fired()
+    # def _dim_4_fired(self):
+    #     self._Load_fired()
+    # def _dim_5_fired(self):
+    #     self._Load_fired()
+    # def _dim_6_fired(self):
+    #     self._Load_fired()
+    # def _dim_7_fired(self):
+    #     self._Load_fired()
+    # def _dim_8_fired(self):
+    #     self._Load_fired()
 
 
     def _Load_fired(self):
@@ -515,10 +529,8 @@ class DataFrame( ta.HasTraits ):
         if data_plot is None:
             raise EnvironmentError('plot data has not been loaded')
         # self.key_list = data_plot.plot_data.keys()
-        if 'plot_this' in data_plot.plot_data.index:
-            self.plot_this = data_plot.plot_data.loc['plot_this',self.this_key]
-        else:
-            self.plot_this = True
+        self.plot_this = bool(check_index_and_None(data_plot.plot_data,'plot_this',self.this_key,def_val=False))
+
 
         if 'arrow' in data_plot.plot_data.loc['type',self.this_key]:
             if 'x_data' in data_plot.plot_data.index:
@@ -529,35 +541,16 @@ class DataFrame( ta.HasTraits ):
                 self.arrow_y,self.arrow_y_text = data_plot.plot_data.loc['y_data',self.this_key][:2]
             else:
                 self.arrow_y,self.arrow_y_text = 0,1
-            if 'arrow_text_size' in data_plot.plot_data.index:
-                self.arrow_text_size = data_plot.plot_data.loc['arrow_text_size',self.this_key]
-            else:
-                self.arrow_text_size = 30
-            if 'arrow_color' in data_plot.plot_data.index:
-                self.arrow_color = data_plot.plot_data.loc['arrow_color',self.this_key]
-            else:
-                self.arrow_color = 'black'
-            if 'arrow_style' in data_plot.plot_data.index:
-                self.arrow_style = data_plot.plot_data.loc['arrow_style',self.this_key]
-            else:
-                self.arrow_style = 'fancy'
+            self.arrow_text_size = check_index_and_None(data_plot.plot_data,'arrow_text_size',self.this_key,def_val = 30)
+            self.arrow_color = check_index_and_None(data_plot.plot_data,'arrow_color',self.this_key,def_val = 'black')
+            self.arrow_style = check_index_and_None(data_plot.plot_data,'arrow_style',self.this_key,def_val = 'fancy')
 
-        if 'label' in data_plot.plot_data.index:
-            self.label = data_plot.plot_data.loc['label',self.this_key]
-        else:
-            self.label = 'None'
-        if 'phys_axies' in data_plot.plot_data.index:
-            self.Physical_Units = data_plot.plot_data.loc['phys_axies',self.this_key]
-        else:
-            self.Physical_Units = True
-        if 'extrap_fade' in data_plot.plot_data.index:
-            self.extrap_fade = data_plot.plot_data.loc['extrap_fade',self.this_key]
-        else:
-            self.extrap_fade = 1.5
-        if 'hairline' in data_plot.plot_data.index:
-            self.Hairline_plot = data_plot.plot_data.loc['hairline',self.this_key]
-        else:
-            self.Hairline_plot = True
+
+
+        self.label = check_index_and_None(data_plot.plot_data,'label',self.this_key,def_val = 'None')
+        self.Physical_Units = check_index_and_None(data_plot.plot_data,'phys_axies',self.this_key,def_val = True)
+        self.extrap_fade = check_index_and_None(data_plot.plot_data,'extrap_fade',self.this_key,def_val = 1.5)
+        self.Hairline_plot = check_index_and_None(data_plot.plot_data,'hairline',self.this_key,def_val = True)
         if 'hair_alpha' in data_plot.plot_data.index:
             if isinstance(data_plot.plot_data.loc['hair_alpha',self.this_key],(tuple,list,np.ndarray)):
                 self.line_alpha_scale = data_plot.plot_data.loc['hair_alpha',self.this_key][0]
@@ -575,7 +568,7 @@ class DataFrame( ta.HasTraits ):
                 self.fit_custom_xrange = True
                 try:
                     self.fit_x_min,self.fit_x_max = data_plot.plot_data.loc['xdatarange',self.this_key]
-                except:
+                except Exception as err:
                     pass
         else:
             self.fit_custom_xrange = False
@@ -594,90 +587,67 @@ class DataFrame( ta.HasTraits ):
             else:
                 try:
                     self.color = data_plot.plot_data.loc['color',self.this_key]
-                except:
+                except Exception as err:
                     pass
         else:
             self.color = 'blue'
 
-        if self.this_key not in data_plot.plot_data or 'shift' not in data_plot.plot_data.loc[:,self.this_key] or data_plot.plot_data[self.this_key]['shift'] is None:
-            self.shift = 0.0
-        else:
-            self.shift = float(data_plot.plot_data[self.this_key]['shift'])
+        self.shift = float(check_index_and_None(data_plot.plot_data,'shift',self.this_key,def_val = 0.0))
+        self.supress_legend = bool(check_index_and_None(data_plot.plot_data,'supress_legend',self.this_key,def_val = False))
 
-        if self.this_key not in data_plot.plot_data or 'supress_legend' not in data_plot.plot_data.loc[:,self.this_key] or data_plot.plot_data[self.this_key]['supress_legend'] is None:
-            self.supress_legend = False
-        else:
-            self.supress_legend = bool(data_plot.plot_data[self.this_key]['supress_legend'])
-
-
-
-        if self.this_key not in data_plot.plot_data or 'x_range_min' not in data_plot.plot_data.loc[:,self.this_key] or data_plot.plot_data[self.this_key]['x_range_min'] is None:
-            self.x_range_min = 0
-        else:
-            self.x_range_min = int(data_plot.plot_data[self.this_key]['x_range_min'])
-
-        if self.this_key not in data_plot.plot_data or 'x_range_max' not in data_plot.plot_data.loc[:,self.this_key] or data_plot.plot_data[self.this_key]['x_range_max'] is None:
-            self.x_range_max = -1
-        elif int(data_plot.plot_data[self.this_key]['x_range_max']) != 0:
-            self.x_range_max = int(data_plot.plot_data[self.this_key]['x_range_max'])
-        else:
+        xrmin_hold = check_index_and_None(data_plot.plot_data,'x_range_min',self.this_key,def_val = 0)
+        if not isinstance(xrmin_hold,bool):
+            self.x_range_min = int(xrmin_hold)
+        xrmax_hold = check_index_and_None(data_plot.plot_data,'x_range_max',self.this_key,def_val = -1)
+        if not isinstance(xrmax_hold,bool):
+            self.x_range_max = int(xrmax_hold)
+        if self.x_range_max == 0:
             self.x_range_max = -1
 
-        if self.this_key not in data_plot.plot_data or 'x_increment' not in data_plot.plot_data.loc[:,self.this_key] or data_plot.plot_data[self.this_key]['x_increment'] is None:
+        xrinc_hold = check_index_and_None(data_plot.plot_data,'x_increment',self.this_key,def_val = 1)
+        if not isinstance(xrmax_hold,bool):
+            self.x_increment = int(xrinc_hold)
+        if self.x_increment == 0:
             self.x_increment = 1
-        elif int(data_plot.plot_data[self.this_key]['x_increment']) != 0:
-            self.x_increment = int(data_plot.plot_data[self.this_key]['x_increment'])
+        this_band = check_index_and_None(data_plot.plot_data,'do_band',self.this_key,def_val = False)
+        if isinstance(this_band,int) and not isinstance(this_band,bool):
+            self.do_band = True
+            self.band_index = this_band
+            self.show_band_eval = bool(check_index_and_None(data_plot.plot_data,'show_band_eval',self.this_key,def_val = False))
+        else:
+            self.do_band = False
+            self.show_band_eval = False
 
-        if 'symbol' in data_plot.plot_data.index:
-            self.symbol = str(data_plot.plot_data.loc['symbol',self.this_key])
-        else:
-            self.symbol = 'None'
-        if 'Median' in data_plot.plot_data.index:
-            self.Median = data_plot.plot_data.loc['Median',self.this_key]
-        else:
-            self.Median = False
-        if 'suppress_key_index' in data_plot.plot_data.index:
-            self.suppress_key_index = data_plot.plot_data.loc['suppress_key_index',self.this_key]
-        else:
-            self.suppress_key_index = False
-        if 'x_fun' in data_plot.plot_data.index and hasattr(data_plot.plot_data.loc['x_fun',self.this_key],'__name__'):
-            if data_plot.plot_data.loc['x_fun',self.this_key].__name__ is not False:
-                self.x_function = data_plot.plot_data.loc['x_fun',self.this_key].__name__
+        self.symbol = str(check_index_and_None(data_plot.plot_data,'symbol',self.this_key,def_val = 'None'))
+        self.Median = bool(check_index_and_None(data_plot.plot_data,'Median',self.this_key,def_val = False))
+        self.suppress_key_index = bool(check_index_and_None(data_plot.plot_data,'suppress_key_index',self.this_key,def_val = False))
+        hold_xfun = check_index_and_None(data_plot.plot_data,'x_fun',self.this_key,def_val = 'None')
+        if hasattr(hold_xfun,'__name__') and not isinstance(hold_xfun.__name__,bool):
+            self.x_function = hold_xfun.__name__
         else:
             self.x_function = 'None'
-        if 'x_scale' in data_plot.plot_data.index:
-            self.x_scale = data_plot.plot_data.loc['x_scale',self.this_key]
-        else:
-            self.x_scale = 1
-        if 'scale' in data_plot.plot_data.index:
-            self.scale_y = data_plot.plot_data.loc['scale',self.this_key]
-        else:
-            self.scale_y = 1.0
-        if len(self.ShowEval) == 0:
-            pass
-        elif 'ShowEval' in data_plot.plot_data.index and isinstance(data_plot.plot_data.loc['ShowEval',self.this_key],(list,tuple,np.ndarray)):
-            self.ShowEval = data_plot.plot_data.loc['ShowEval',self.this_key]
+
+        self.x_scale = float(check_index_and_None(data_plot.plot_data,'x_scale',self.this_key,def_val = 1.0))
+        self.scale_y = float(check_index_and_None(data_plot.plot_data,'scale',self.this_key,def_val = 1.0))
+        self.shift_y = float(check_index_and_None(data_plot.plot_data,'y_shift',self.this_key,def_val = 0.0))
+
+        # if len(self.ShowEval) == 0:
+        #     pass
+        hold_ShowEval = check_index_and_None(data_plot.plot_data,'ShowEval',self.this_key,def_val = [])
+        if isinstance(hold_ShowEval,(list,tuple,np.ndarray)):
+            self.ShowEval = list(hold_ShowEval)
         else:
             self.ShowEval = []
-        if 'xaxis' in data_plot.plot_data.index:
-            self.fit_dim_pick = data_plot.plot_data.loc['xaxis',self.this_key]
-        else:
-            self.fit_dim_pick = 0
 
-        if 'FPName' in data_plot.plot_data.index:
-            self.Force_Param_Name = str(data_plot.plot_data.loc['FPName',self.this_key])
-        else:
-            self.Force_Param_Name = ''
+        self.fit_dim_pick = int(check_index_and_None(data_plot.plot_data,'xaxis',self.this_key,def_val = 0))
 
-        if 'FPUnits' in data_plot.plot_data.index:
-            self.Force_Param_Units = str(data_plot.plot_data.loc['FPUnits',self.this_key])
-        else:
-            self.Force_Param_Units = ''
-
+        self.Force_Param_Name = str(check_index_and_None(data_plot.plot_data,'FPName',self.this_key,def_val = ''))
+        self.Force_Param_Units = str(check_index_and_None(data_plot.plot_data,'FPUnits',self.this_key,def_val = ''))
 
 
         if '_vary' in data_plot.plot_data.loc['type',self.this_key]:
             this_series = data_plot.plot_data.loc[:,self.this_key]
+            update_dim = isinstance(this_series['key_select'],tuple) and not jpl.Py2Read
             if 'fit' in this_series['type']:
                 if 'fit_class' in this_series:
                     if isinstance(this_series['fit_class'],sff.SetOfFitFuns):
@@ -687,10 +657,12 @@ class DataFrame( ta.HasTraits ):
                 if isinstance(this_fit.index,pad.MultiIndex):
                     self.test_pick_dim = False
                     self.vary_len = len(this_fit.index.names)
-                    for icd,idim in enumerate(this_fit.index.names):
+                    for icd,(idim,ikey) in enumerate(zip(this_fit.index.names,this_series['key_select'])):
                         setattr(self,'test_dim_'+str(icd+1),True)
                         this_list = list(this_fit.index.get_level_values(idim))
                         setattr(self,'dim_'+str(icd+1)+'_list',fmt_Range(this_list))
+                        if update_dim and not isinstance(ikey,slice):
+                            setattr(self,'dim_'+str(icd+1),str(ikey))
                 else:
                     self.vary_len = 1
                     self.test_pick_dim = False
@@ -705,10 +677,12 @@ class DataFrame( ta.HasTraits ):
                 if isinstance(this_boot.index,pad.MultiIndex):
                     self.test_pick_dim = False
                     self.vary_len = len(this_boot.index.names)
-                    for icd,idim in enumerate(this_boot.index.names):
+                    for icd,(idim,ikey) in enumerate(zip(this_boot.index.names,this_series['key_select'])):
                         setattr(self,'test_dim_'+str(icd+1),True)
                         this_list = list(this_boot.index.get_level_values(idim))
                         setattr(self,'dim_'+str(icd+1)+'_list',fmt_Range(this_list))
+                        if update_dim and not isinstance(ikey,slice):
+                            setattr(self,'dim_'+str(icd+1),str(ikey))
                 else:
                     self.vary_len = 1
                     self.test_pick_dim = False
@@ -727,13 +701,15 @@ class DataFrame( ta.HasTraits ):
                         self.test_pick_dim = True
                         self.dim_list = this_series['y_data'].index.names
                         self.vary_len = len(this_series['y_data'].index.names)
-                        for icd,idim in enumerate(this_series['y_data'].index.names):
+                        for icd,(idim,ikey) in enumerate(zip(this_series['y_data'].index.names,this_series['key_select'])):
                             if idim == str(self.pick_dimension):
                                 setattr(self,'test_dim_'+str(icd+1),False)
                             else:
                                 setattr(self,'test_dim_'+str(icd+1),True)
                                 this_list = list(this_series['y_data'].index.get_level_values(idim))
                                 setattr(self,'dim_'+str(icd+1)+'_list',fmt_Range(this_list))
+                                if update_dim and not isinstance(ikey,slice):
+                                    setattr(self,'dim_'+str(icd+1),str(ikey))
                 else:
                     self.test_pick_dim = False
                     self.test_dim_1 = True
@@ -744,13 +720,15 @@ class DataFrame( ta.HasTraits ):
                     self.test_pick_dim = True
                     self.dim_list = this_series['x_data'].index.names
                     self.vary_len = len(this_series['x_data'].index.names)
-                    for icd,idim in enumerate(this_series['x_data'].index.names):
+                    for icd,(idim,ikey) in enumerate(zip(this_series['x_data'].index.names,this_series['key_select'])):
                         if idim == str(self.pick_dimension):
                             setattr(self,'test_dim_'+str(icd+1),False)
                         else:
                             setattr(self,'test_dim_'+str(icd+1),True)
                             this_list = list(this_series['x_data'].index.get_level_values(idim))
                             setattr(self,'dim_'+str(icd+1)+'_list',fmt_Range(this_list))
+                            if update_dim and not isinstance(ikey,slice):
+                                setattr(self,'dim_'+str(icd+1),str(ikey))
                 else:
                     self.test_pick_dim = False
                     self.test_dim_1 = True
@@ -816,26 +794,30 @@ class DataFrame( ta.HasTraits ):
             this_data.loc['shift_overlap',self.this_key] = self.shift_overlap
         if self.shift != 'None':
             this_data.loc['shift',self.this_key] = self.shift
-        if self.x_range_min != 'None':
-            this_data.loc['x_range_min',self.this_key] = self.x_range_min
-        if self.x_range_max != 'None':
-            this_data.loc['x_range_max',self.this_key] = self.x_range_max
-        if self.x_increment != 'None':
-            this_data.loc['x_increment',self.this_key] = self.x_increment
+        this_data.loc['x_range_min',self.this_key] = self.x_range_min
+        this_data.loc['x_range_max',self.this_key] = self.x_range_max
+        this_data.loc['x_increment',self.this_key] = self.x_increment
+        if self.do_band:
+            this_data.loc['do_band',self.this_key] = self.band_index
+            this_data.loc['show_band_eval',self.this_key] = self.show_band_eval
+        else:
+            this_data.loc['do_band',self.this_key] = False
+            this_data.loc['show_band_eval',self.this_key] = False
         if self.symbol != 'None':
             this_data.loc['symbol',self.this_key] = self.symbol
         if self.Median != 'None':
             this_data.loc['Median',self.this_key] = self.Median
         if self.scale_y != 'None':
             this_data.loc['scale',self.this_key] = self.scale_y
+        if self.shift_y != 'None':
+            this_data.loc['y_shift',self.this_key] = self.shift_y
         if self.suppress_key_index != 'None':
             this_data.loc['suppress_key_index',self.this_key] = self.suppress_key_index
         if len(list(self.ShowEval)) > 0:
             this_data.loc['ShowEval',self.this_key] = list(self.ShowEval)
         else:
             this_data.loc['ShowEval',self.this_key] = None
-        if self.fit_dim_pick != 'None':
-            this_data.loc['xaxis',self.this_key] = self.fit_dim_pick
+        this_data.loc['xaxis',self.this_key] = int(self.fit_dim_pick)
         if self.Force_Param_Name != 'None':
             this_data.loc['FPName',self.this_key] = self.Force_Param_Name
         if self.Force_Param_Units != 'None':
@@ -871,14 +853,13 @@ class DataFrame( ta.HasTraits ):
             else:
                 this_key = []
                 for ic in range(1,self.vary_len+1):
-
                     if getattr(self,'test_dim_'+str(ic)):
                         this_key.append(str(getattr(self,'dim_'+str(ic))))
                 if len(this_key) == 0:
                     this_key = slice(None)
             this_data.loc['key_select',self.this_key] = this_key
         data_plot.ImportData(this_data)
-        data_plot.PrintData()
+        print(data_plot)
         data_plot.PlotAll()
         self._Load_fired()
 
@@ -905,6 +886,10 @@ class InfoFrame( ta.HasTraits ):
     y_axis_min = ta.Str('None')
     y_axis_max = ta.Str('None')
     y_axis_max = ta.Str('None')
+    custom_y_labels = ta.Bool(False)
+    flip_vert = ta.Bool(False)
+    mirror_vert = ta.Bool(False)
+    y_axis_labels = ta.List([''])
     y_scale = ta.Enum(['None',"linear", "log", "symlog", "logit"])
     x_scale = ta.Enum(['None',"linear", "log", "symlog", "logit"])
     x_zero_line = ta.Bool(False)
@@ -963,6 +948,10 @@ class InfoFrame( ta.HasTraits ):
         tua.Item('yTick_min'),
         tua.Item('yTick_max'),
         tua.Item('yTick_inc'),
+        tua.Item('custom_y_labels'),
+        tua.Item('flip_vert',enabled_when='custom_y_labels'),
+        tua.Item('mirror_vert',enabled_when='custom_y_labels'),
+        tua.Item('y_axis_labels',enabled_when='custom_y_labels'),
         tua.Item('Apply', show_label=False),
         tua.Item('Reset_Axies', show_label=False),
         label='Ticks'
@@ -986,13 +975,6 @@ class InfoFrame( ta.HasTraits ):
             self.legend_number_of_columns = int(data_plot.plot_info['leg_ncol'])
         self.legend_font_size = int(data_plot.plot_info['leg_fontsize'])
         self.legend_alpha = float(data_plot.plot_info['leg_alpha'])
-        tua.Item('tick_size'),
-        tua.Item('xTick_min'),
-        tua.Item('xTick_max'),
-        tua.Item('xTick_inc'),
-        tua.Item('yTick_min'),
-        tua.Item('yTick_max'),
-        tua.Item('yTick_inc'),
 
         if 'xTick_min' in data_plot.plot_info:
             self.xTick_min = data_plot.plot_info['xTick_min']
@@ -1018,6 +1000,22 @@ class InfoFrame( ta.HasTraits ):
             self.yTick_inc = data_plot.plot_info['yTick_inc']
         else:
             self.yTick_inc = 0
+
+        if 'mirror_vert' in data_plot.plot_info:
+            self.mirror_vert = data_plot.plot_info['mirror_vert']
+        else:
+            self.mirror_vert = False
+
+        if 'flip_vert' in data_plot.plot_info:
+            self.flip_vert = data_plot.plot_info['flip_vert']
+        else:
+            self.flip_vert = False
+
+        if 'custom_yTicks' in data_plot.plot_info:
+            self.custom_y_labels = True
+            self.y_axis_labels = data_plot.plot_info['custom_yTicks']
+        else:
+            self.custom_y_labels = False
 
 
         if 'title' in data_plot.plot_info:
@@ -1131,6 +1129,10 @@ class InfoFrame( ta.HasTraits ):
             plot_info['yTick_min'] = self.yTick_min
             plot_info['yTick_max'] = self.yTick_max
             plot_info['yTick_inc'] = self.yTick_inc
+        if self.custom_y_labels:
+            plot_info['mirror_vert'] =  self.mirror_vert
+            plot_info['flip_vert'] =    self.flip_vert
+            plot_info['custom_yTicks'] = self.y_axis_labels
         data_plot.ImportInfo(plot_info)
         this_rc = jpl.params
         this_rc['lines.markersize'] = self.dot_size
@@ -1176,6 +1178,7 @@ class BeginFrame( ta.HasTraits ):
     Merge_Into_Plot = ta.Button()
     is_loaded = ta.Bool(False)
     is_not_loaded = ta.Bool(True)
+    force_py2 = ta.Bool(False)
 
 
     view = tua.View(
@@ -1184,6 +1187,7 @@ class BeginFrame( ta.HasTraits ):
         tua.VGroup(
         # tua.Item('Load_Plot', show_label=False,enabled_when='is_not_loaded'),
         tua.Item('file_name',springy=True),
+        tua.Item('force_py2'),
         tua.Item('Load_Plot', show_label=False),
         tua.Item('Merge_Into_Plot', show_label=False,enabled_when='is_loaded'),
         ),
@@ -1194,13 +1198,14 @@ class BeginFrame( ta.HasTraits ):
     )
 
     def _Load_Plot_fired(self):
+        Save_Prev_File(str(self.file_name))
         global data_plot
         if hasattr(data_plot,'ClearFigure'):
             data_plot.ClearFigure()
         plot_info = pad.Series()
         plot_info['save_file'] = self.file_name.replace('.pdf','')+'.pdf'
         data_plot = jpl.Plotting(plot_info=plot_info)
-        data_plot.LoadPickle(DefWipe=False)
+        data_plot.LoadPickle(DefWipe=False,force_py2=self.force_py2)
         self.Info_window = InfoFrame()
         self.Data_window = DataFrame()
         self.Info_window.configure_traits()
@@ -1209,14 +1214,14 @@ class BeginFrame( ta.HasTraits ):
         data_plot.ShowFigure()
         self.is_loaded = True
         self.is_not_loaded = False
-        Save_Prev_File(str(self.file_name))
+        # Save_Prev_File(str(self.file_name))
 
     def _Merge_Into_Plot_fired(self):
         global data_plot2,data_plot
         plot_info = pad.Series()
         plot_info['save_file'] = self.file_name.replace('.pdf','')+'.pdf'
         data_plot2 = jpl.Plotting(plot_info=plot_info)
-        data_plot2.LoadPickle(DefWipe=False)
+        data_plot2.LoadPickle(DefWipe=False,force_py2=self.force_py2)
         for iname,idata in data_plot2.plot_data.items():
             idata.name = iname
             idata['plot_this'] = False

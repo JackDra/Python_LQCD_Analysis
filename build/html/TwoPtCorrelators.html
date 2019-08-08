@@ -1,0 +1,2077 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>TwoPtCorrelators module &mdash; LQCD Analysis Codebase TF Fits documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/my_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="TimeStuff module" href="TimeStuff.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> LQCD Analysis Codebase
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Python_Analysis</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="AnalysisGUI.html">AnalysisGUI module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Autocorr.html">Autocorr module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BootStrapping.html">BootStrapping module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CreateTable.html">CreateTable module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DSDefines.html">DSDefines module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FFSolve.html">FFSolve module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FileIO.html">FileIO module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FitFunctions.html">FitFunctions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FitFunctions_TF.html">FitFunctions_TF module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FlowOpps.html">FlowOpps module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FormFactors.html">FormFactors module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GammaMatricies.html">GammaMatricies module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MAH_control.html">MAH_control module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MiscFuns.html">MiscFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModPlot.html">ModPlot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModStylePlot.html">ModStylePlot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MomParams.html">MomParams module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MultiWrap.html">MultiWrap module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="NullPlotData.html">NullPlotData module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Params.html">Params module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PlotData.html">PlotData module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PredefFitFuns.html">PredefFitFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="QuantityLists.html">QuantityLists module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RatioCorrelators.html">RatioCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ReadBinaryCfuns.html">ReadBinaryCfuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ReadFO.html">ReadFO module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RunSetCommands.html">RunSetCommands module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFFs.html">SetsOfFFs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFits.html">SetsOfFits module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFlowOps.html">SetsOfFlowOps module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfRatios.html">SetsOfRatios module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfTwoPtCorrs.html">SetsOfTwoPtCorrs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ThreePtCorrelators.html">ThreePtCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TimeStuff.html">TimeStuff module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">TwoPtCorrelators module</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VarMethod.html">VarMethod module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="XmlFormatting.html">XmlFormatting module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xmltodict.html">xmltodict module</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">LQCD Analysis Codebase</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="modules.html">Python_Analysis</a> &raquo;</li>
+        
+      <li>TwoPtCorrelators module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/TwoPtCorrelators.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-TwoPtCorrelators">
+<span id="twoptcorrelators-module"></span><h1>TwoPtCorrelators module<a class="headerlink" href="#module-TwoPtCorrelators" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="TwoPtCorrelators.AvgBootData">
+<code class="descclassname">TwoPtCorrelators.</code><code class="descname">AvgBootData</code><span class="sig-paren">(</span><em>this_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#AvgBootData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.AvgBootData" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="TwoPtCorrelators.AvgBootDir">
+<code class="descclassname">TwoPtCorrelators.</code><code class="descname">AvgBootDir</code><span class="sig-paren">(</span><em>this_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#AvgBootDir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.AvgBootDir" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr">
+<em class="property">class </em><code class="descclassname">TwoPtCorrelators.</code><code class="descname">FlowedTwoPtCorr</code><span class="sig-paren">(</span><em>thisnboot=200</em>, <em>cfglist={}</em>, <em>Info={}</em>, <em>thissym='Not Set'</em>, <em>thiscol='Not Set'</em>, <em>thisshift=0.0</em>, <em>name=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#FlowedTwoPtCorr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>C2(t_f,t) uses bootstrap class
+t_f = flow time
+t = time</p>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#TwoPtCorrelators.FlowedTwoPtCorr.AllFlowRatPlot" title="TwoPtCorrelators.FlowedTwoPtCorr.AllFlowRatPlot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AllFlowRatPlot</span></code></a>(plot_class,&nbsp;tsink[,&nbsp;thiscol,&nbsp;…])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#TwoPtCorrelators.FlowedTwoPtCorr.EffMassFitPlot" title="TwoPtCorrelators.FlowedTwoPtCorr.EffMassFitPlot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EffMassFitPlot</span></code></a>(plot_class,&nbsp;state,&nbsp;fitr[,&nbsp;…])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#TwoPtCorrelators.FlowedTwoPtCorr.EffMassPlot" title="TwoPtCorrelators.FlowedTwoPtCorr.EffMassPlot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EffMassPlot</span></code></a>(plot_class[,&nbsp;xlims,&nbsp;tflowlist,&nbsp;…])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#TwoPtCorrelators.FlowedTwoPtCorr.Fit" title="TwoPtCorrelators.FlowedTwoPtCorr.Fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Fit</span></code></a>([state,&nbsp;fit_range,&nbsp;iGuess,&nbsp;EstDir,&nbsp;…])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#TwoPtCorrelators.FlowedTwoPtCorr.FlowRatPlot" title="TwoPtCorrelators.FlowedTwoPtCorr.FlowRatPlot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FlowRatPlot</span></code></a>(plot_class[,&nbsp;xlims,&nbsp;tflowlist,&nbsp;…])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#TwoPtCorrelators.FlowedTwoPtCorr.LogFitPlot" title="TwoPtCorrelators.FlowedTwoPtCorr.LogFitPlot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LogFitPlot</span></code></a>(plot_class,&nbsp;state,&nbsp;fitr[,&nbsp;xlims,&nbsp;…])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#TwoPtCorrelators.FlowedTwoPtCorr.LogPlot" title="TwoPtCorrelators.FlowedTwoPtCorr.LogPlot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LogPlot</span></code></a>(plot_class[,&nbsp;xlims,&nbsp;tflowlist,&nbsp;…])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#TwoPtCorrelators.FlowedTwoPtCorr.Plot" title="TwoPtCorrelators.FlowedTwoPtCorr.Plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Plot</span></code></a>(plot_class[,&nbsp;xlims,&nbsp;tflowlist,&nbsp;…])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#TwoPtCorrelators.FlowedTwoPtCorr.RecRelPlot" title="TwoPtCorrelators.FlowedTwoPtCorr.RecRelPlot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RecRelPlot</span></code></a>(plot_class,&nbsp;state,&nbsp;fitr[,&nbsp;…])</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="70%" />
+<col width="30%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><strong>All_Streams</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>Bootstrap</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>CheckCol</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>CheckSym</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>CheckTsrc</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>Check_Streams</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>Create_Streams_Dirs</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>EffMass</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>FixRead</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>GetCfgList</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>GetShift</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>ImportCfgList</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>ImportFitRanges</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>ImportPlotParams</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>LoadPickle</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>Read</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>ReadAndWrite</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>RemoveVals</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>SetCustomName</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>Stats</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>UpdateName</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>Update_Stream_List</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>Write</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>items</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>itemsAvgStd</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>iteritems</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>keys</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>values</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>valuesAvgStd</strong></td>
+<td>&#160;</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.AllFlowRatPlot">
+<code class="descname">AllFlowRatPlot</code><span class="sig-paren">(</span><em>plot_class</em>, <em>tsink</em>, <em>thiscol='PreDefine'</em>, <em>thissym='PreDefine'</em>, <em>thisshift='PreDefine'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#FlowedTwoPtCorr.AllFlowRatPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.AllFlowRatPlot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.All_Streams">
+<code class="descname">All_Streams</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#FlowedTwoPtCorr.All_Streams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.All_Streams" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.Bootstrap">
+<code class="descname">Bootstrap</code><span class="sig-paren">(</span><em>WipeData=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#FlowedTwoPtCorr.Bootstrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.Bootstrap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.C2_Fit_Stats">
+<code class="descname">C2_Fit_Stats</code><em class="property"> = None</em><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.C2_Fit_Stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.C2_Fit_Stats DataFrame:</p>
+<p>columns =   boot,   Avg,        Std</p>
+<p>rows =      states fitted to, flow_time, time fit range</p>
+<dl class="docutils">
+<dt>Avg/Std elements are pa.Series instances with:</dt>
+<dd>index = fit parameters
+values = Avg/Std values</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.C2_Stats">
+<code class="descname">C2_Stats</code><em class="property"> = None</em><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.C2_Stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.C2_Stats DataFrame:</p>
+<dl class="docutils">
+<dt>columns =   boot,   Avg,        Std</dt>
+<dd>EffM,   EffMAvg,    EffMStd</dd>
+</dl>
+<p>rows =      flow_time, time separation</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.C2_cfgs">
+<code class="descname">C2_cfgs</code><em class="property"> = None</em><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.C2_cfgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.C2_cfgs DataFrame:</p>
+<p>columns =   config_numbers , Op[itflow, it]</p>
+<p>rows =      stream , configuration</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.CheckCol">
+<code class="descname">CheckCol</code><span class="sig-paren">(</span><em>thiscol</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#FlowedTwoPtCorr.CheckCol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.CheckCol" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.CheckSym">
+<code class="descname">CheckSym</code><span class="sig-paren">(</span><em>thissym</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#FlowedTwoPtCorr.CheckSym"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.CheckSym" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.CheckTsrc">
+<code class="descname">CheckTsrc</code><span class="sig-paren">(</span><em>this_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#FlowedTwoPtCorr.CheckTsrc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.CheckTsrc" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.Check_Streams">
+<code class="descname">Check_Streams</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#FlowedTwoPtCorr.Check_Streams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.Check_Streams" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.Create_Streams_Dirs">
+<code class="descname">Create_Streams_Dirs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#FlowedTwoPtCorr.Create_Streams_Dirs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.Create_Streams_Dirs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.EffMass">
+<code class="descname">EffMass</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#FlowedTwoPtCorr.EffMass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.EffMass" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.EffMassFitPlot">
+<code class="descname">EffMassFitPlot</code><span class="sig-paren">(</span><em>plot_class</em>, <em>state</em>, <em>fitr</em>, <em>xlims='Data'</em>, <em>tflowlist=[]</em>, <em>thiscol='PreDefine'</em>, <em>thisshift='PreDefine'</em>, <em>Phys=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#FlowedTwoPtCorr.EffMassFitPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.EffMassFitPlot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.EffMassPlot">
+<code class="descname">EffMassPlot</code><span class="sig-paren">(</span><em>plot_class, xlims=[4, 15], tflowlist=[], thiscol='PreDefine', thissym='PreDefine', thisshift='PreDefine', Phys=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#FlowedTwoPtCorr.EffMassPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.EffMassPlot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.Fit">
+<code class="descname">Fit</code><span class="sig-paren">(</span><em>state='PreDef'</em>, <em>fit_range='PreDef'</em>, <em>iGuess='PreDef'</em>, <em>EstDir=False</em>, <em>Ratio=False</em>, <em>WipeFit=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#FlowedTwoPtCorr.Fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.Fit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.FixRead">
+<code class="descname">FixRead</code><span class="sig-paren">(</span><em>readdict</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#FlowedTwoPtCorr.FixRead"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.FixRead" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.FlowRatPlot">
+<code class="descname">FlowRatPlot</code><span class="sig-paren">(</span><em>plot_class, xlims=[4, 15], tflowlist=[], thiscol='PreDefine', thissym='PreDefine', thisshift='PreDefine'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#FlowedTwoPtCorr.FlowRatPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.FlowRatPlot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.GetCfgList">
+<code class="descname">GetCfgList</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#FlowedTwoPtCorr.GetCfgList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.GetCfgList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.GetShift">
+<code class="descname">GetShift</code><span class="sig-paren">(</span><em>xlims</em>, <em>thisshift</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#FlowedTwoPtCorr.GetShift"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.GetShift" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.ImportCfgList">
+<code class="descname">ImportCfgList</code><span class="sig-paren">(</span><em>cfglist</em>, <em>stream_list='PreDefine'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#FlowedTwoPtCorr.ImportCfgList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.ImportCfgList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.ImportFitRanges">
+<code class="descname">ImportFitRanges</code><span class="sig-paren">(</span><em>fit_range</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#FlowedTwoPtCorr.ImportFitRanges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.ImportFitRanges" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.ImportPlotParams">
+<code class="descname">ImportPlotParams</code><span class="sig-paren">(</span><em>thiscol</em>, <em>thissym</em>, <em>thisshift</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#FlowedTwoPtCorr.ImportPlotParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.ImportPlotParams" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.LoadPickle">
+<code class="descname">LoadPickle</code><span class="sig-paren">(</span><em>DefWipe=False</em>, <em>WipeData=True</em>, <em>CheckCfgs=False</em>, <em>NoFit=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#FlowedTwoPtCorr.LoadPickle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.LoadPickle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.LogFitPlot">
+<code class="descname">LogFitPlot</code><span class="sig-paren">(</span><em>plot_class</em>, <em>state</em>, <em>fitr</em>, <em>xlims='Data'</em>, <em>tflowlist=[]</em>, <em>thiscol='PreDefine'</em>, <em>thisshift='PreDefine'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#FlowedTwoPtCorr.LogFitPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.LogFitPlot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.LogPlot">
+<code class="descname">LogPlot</code><span class="sig-paren">(</span><em>plot_class, xlims=[4, 15], tflowlist=[], thiscol='PreDefine', thissym='PreDefine', thisshift='PreDefine', norm=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#FlowedTwoPtCorr.LogPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.LogPlot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.Plot">
+<code class="descname">Plot</code><span class="sig-paren">(</span><em>plot_class, xlims=[4, 15], tflowlist=[], thiscol='PreDefine', thissym='PreDefine', thisshift='PreDefine', norm=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#FlowedTwoPtCorr.Plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.Plot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.Read">
+<code class="descname">Read</code><span class="sig-paren">(</span><em>show_timer=True</em>, <em>Full=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#FlowedTwoPtCorr.Read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.Read" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.ReadAndWrite">
+<code class="descname">ReadAndWrite</code><span class="sig-paren">(</span><em>WipeData=True</em>, <em>NoFit=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#FlowedTwoPtCorr.ReadAndWrite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.ReadAndWrite" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.RecRelPlot">
+<code class="descname">RecRelPlot</code><span class="sig-paren">(</span><em>plot_class</em>, <em>state</em>, <em>fitr</em>, <em>thiscol='PreDefine'</em>, <em>thisshift='PreDefine'</em>, <em>thissym='PreDef'</em>, <em>Phys=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#FlowedTwoPtCorr.RecRelPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.RecRelPlot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.RemoveVals">
+<code class="descname">RemoveVals</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#FlowedTwoPtCorr.RemoveVals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.RemoveVals" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.SetCustomName">
+<code class="descname">SetCustomName</code><span class="sig-paren">(</span><em>string=''</em>, <em>stringLL=''</em>, <em>fo_for_cfgs='PreDef'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#FlowedTwoPtCorr.SetCustomName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.SetCustomName" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.Stats">
+<code class="descname">Stats</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#FlowedTwoPtCorr.Stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.Stats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.UpdateName">
+<code class="descname">UpdateName</code><span class="sig-paren">(</span><em>opp</em>, <em>C2</em>, <em>C22</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#FlowedTwoPtCorr.UpdateName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.UpdateName" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.Update_Stream_List">
+<code class="descname">Update_Stream_List</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#FlowedTwoPtCorr.Update_Stream_List"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.Update_Stream_List" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.Write">
+<code class="descname">Write</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#FlowedTwoPtCorr.Write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.Write" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.items">
+<code class="descname">items</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#FlowedTwoPtCorr.items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.items" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.itemsAvgStd">
+<code class="descname">itemsAvgStd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#FlowedTwoPtCorr.itemsAvgStd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.itemsAvgStd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.iteritems">
+<code class="descname">iteritems</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#FlowedTwoPtCorr.iteritems"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.iteritems" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.keys">
+<code class="descname">keys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#FlowedTwoPtCorr.keys"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.keys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.parentlist">
+<code class="descname">parentlist</code><em class="property"> = ['SetOfCorrs.SetOfTwoPt', 'TwoPtCorrelators.NNQCorr', 'TwoPtCorrelators.NNQFullCorr', 'VarMethod.VariationalTwoPt']</em><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.parentlist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.values">
+<code class="descname">values</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#FlowedTwoPtCorr.values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.values" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.FlowedTwoPtCorr.valuesAvgStd">
+<code class="descname">valuesAvgStd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#FlowedTwoPtCorr.valuesAvgStd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.FlowedTwoPtCorr.valuesAvgStd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="TwoPtCorrelators.GetInterpFlag">
+<code class="descclassname">TwoPtCorrelators.</code><code class="descname">GetInterpFlag</code><span class="sig-paren">(</span><em>thisInterp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#GetInterpFlag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.GetInterpFlag" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="TwoPtCorrelators.NNQCorr">
+<em class="property">class </em><code class="descclassname">TwoPtCorrelators.</code><code class="descname">NNQCorr</code><span class="sig-paren">(</span><em>thisnboot=200</em>, <em>cfglist={}</em>, <em>Info={}</em>, <em>thissym='Not Set'</em>, <em>thiscol='Not Set'</em>, <em>thisshift=0.0</em>, <em>name=''</em>, <em>man_load_cfgs=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>NNQ(p,t,tf) uses bootstrap class
+p  = momentum
+t  = time
+tf = tflow</p>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#TwoPtCorrelators.NNQCorr.AlphaFitPlot" title="TwoPtCorrelators.NNQCorr.AlphaFitPlot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AlphaFitPlot</span></code></a>(plot_class,&nbsp;fitr[,&nbsp;xlims,&nbsp;…])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#TwoPtCorrelators.NNQCorr.AlphaNNQFitPlot" title="TwoPtCorrelators.NNQCorr.AlphaNNQFitPlot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AlphaNNQFitPlot</span></code></a>(plot_class,&nbsp;fitr[,&nbsp;xlims,&nbsp;…])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#TwoPtCorrelators.NNQCorr.AlphaPlot" title="TwoPtCorrelators.NNQCorr.AlphaPlot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AlphaPlot</span></code></a>(plot_class[,&nbsp;xlims,&nbsp;momlist,&nbsp;…])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#TwoPtCorrelators.NNQCorr.AlphaPlotVsEnergy" title="TwoPtCorrelators.NNQCorr.AlphaPlotVsEnergy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AlphaPlotVsEnergy</span></code></a>(plot_class,&nbsp;fitr[,&nbsp;…])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#TwoPtCorrelators.NNQCorr.Bootstrap" title="TwoPtCorrelators.NNQCorr.Bootstrap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Bootstrap</span></code></a>([WipeData,&nbsp;tflowlist,&nbsp;show_timer])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#TwoPtCorrelators.NNQCorr.GetCfgList" title="TwoPtCorrelators.NNQCorr.GetCfgList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GetCfgList</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#TwoPtCorrelators.NNQCorr.LoadPickle" title="TwoPtCorrelators.NNQCorr.LoadPickle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LoadPickle</span></code></a>([WipeData,&nbsp;DefWipe,&nbsp;CheckCfgs,&nbsp;…])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#TwoPtCorrelators.NNQCorr.Read" title="TwoPtCorrelators.NNQCorr.Read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Read</span></code></a>()</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="74%" />
+<col width="26%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><strong>AlphaPlotTauIntWopt</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>AlphaPlotTflow</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>AlphaPlotTflowTauIntWopt</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>AlphaRatio</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>CheckCol</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>CheckSym</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>CombineCfgLists</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>Construct_NNQ_File</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>EffMass</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>FitAlpha</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>FitNNQ</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>FixRead</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>GetFuns</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>GetShift</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>Get_Extrapolation</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>ImportCfgList</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>ImportFitRanges</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>ImportPlotParams</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>LoadCfgs</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>ObsToName</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>Overload_wrap</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>RatFunAndDer</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>ReadAndWrite</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>RemoveFuns</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>RemoveVals</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>SetCustomName</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>SetFunction</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>SetTFit</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>SetTflowFit</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>Stats</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>Update_Stream_List</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>Write</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>cos</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>items</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>itemsAvgStd</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>keys</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>sin</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>values</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>valuesAvgStd</strong></td>
+<td>&#160;</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.AlphaFitPlot">
+<code class="descname">AlphaFitPlot</code><span class="sig-paren">(</span><em>plot_class, fitr, xlims='Data', momlist=['p000'], thiscol='PreDefine', thisshift='PreDefine', thistflowlist='PreDef', Auto=False, WipeFit=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.AlphaFitPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.AlphaFitPlot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.AlphaNNQFitPlot">
+<code class="descname">AlphaNNQFitPlot</code><span class="sig-paren">(</span><em>plot_class, fitr, xlims='Data', momlist=['p000'], thiscol='PreDefine', thisshift='PreDefine', thistflowlist='PreDef', Auto=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.AlphaNNQFitPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.AlphaNNQFitPlot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.AlphaPlot">
+<code class="descname">AlphaPlot</code><span class="sig-paren">(</span><em>plot_class, xlims=[1, 15], momlist=['p000'], thiscol='PreDefine', thissym='PreDefine', thisshift='PreDefine', thistflowlist='PreDef', Auto=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.AlphaPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.AlphaPlot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.AlphaPlotTauIntWopt">
+<code class="descname">AlphaPlotTauIntWopt</code><span class="sig-paren">(</span><em>plot_class, xlims=[1, 15], momlist=['p000'], thiscol='PreDefine', thissym='PreDefine', thisshift='PreDefine', thistflowlist='PreDef'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.AlphaPlotTauIntWopt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.AlphaPlotTauIntWopt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.AlphaPlotTflow">
+<code class="descname">AlphaPlotTflow</code><span class="sig-paren">(</span><em>plot_class, tflowplot=array([4.01, 5.01, 6.01]), momlist=['p000'], thiscol='PreDefine', thissym='PreDefine', thisshift='PreDefine', thistsinklist='PreDef', Auto=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.AlphaPlotTflow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.AlphaPlotTflow" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.AlphaPlotTflowTauIntWopt">
+<code class="descname">AlphaPlotTflowTauIntWopt</code><span class="sig-paren">(</span><em>plot_class, tflowplot=array([4.01, 5.01, 6.01]), momlist=['p000'], thiscol='PreDefine', thissym='PreDefine', thisshift='PreDefine', thistsinklist='PreDef'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.AlphaPlotTflowTauIntWopt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.AlphaPlotTflowTauIntWopt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.AlphaPlotVsEnergy">
+<code class="descname">AlphaPlotVsEnergy</code><span class="sig-paren">(</span><em>plot_class, fitr, momlist=['p000'], thiscol='PreDefine', thissym='PreDefine', thisshift='PreDefine', thistflowlist='PreDef', Auto=False, PhysEnergy=True, WipeFit=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.AlphaPlotVsEnergy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.AlphaPlotVsEnergy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.AlphaRatio">
+<code class="descname">AlphaRatio</code><span class="sig-paren">(</span><em>DefWipeG2=False</em>, <em>DoAuto=True</em>, <em>show_timer=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.AlphaRatio"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.AlphaRatio" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.Bootstrap">
+<code class="descname">Bootstrap</code><span class="sig-paren">(</span><em>WipeData=False</em>, <em>tflowlist='PreDef'</em>, <em>show_timer=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.Bootstrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.Bootstrap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.CheckCol">
+<code class="descname">CheckCol</code><span class="sig-paren">(</span><em>thiscol</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.CheckCol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.CheckCol" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.CheckSym">
+<code class="descname">CheckSym</code><span class="sig-paren">(</span><em>thissym</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.CheckSym"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.CheckSym" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.CombineCfgLists">
+<code class="descname">CombineCfgLists</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.CombineCfgLists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.CombineCfgLists" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.Construct_NNQ_File">
+<code class="descname">Construct_NNQ_File</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.Construct_NNQ_File"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.Construct_NNQ_File" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.EffMass">
+<code class="descname">EffMass</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.EffMass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.EffMass" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.FitAlpha">
+<code class="descname">FitAlpha</code><span class="sig-paren">(</span><em>fit_range='PreDef'</em>, <em>iGuess='PreDef'</em>, <em>EstDir=False</em>, <em>thistflowlist='PreDef'</em>, <em>WipeFit=True</em>, <em>show_timer=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.FitAlpha"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.FitAlpha" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.FitNNQ">
+<code class="descname">FitNNQ</code><span class="sig-paren">(</span><em>NNfit='First'</em>, <em>fit_range='PreDef'</em>, <em>iGuess='PreDef'</em>, <em>EstDir=False</em>, <em>thistflowlist='PreDef'</em>, <em>WipeFit=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.FitNNQ"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.FitNNQ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.FixRead">
+<code class="descname">FixRead</code><span class="sig-paren">(</span><em>readdict</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.FixRead"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.FixRead" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.GetCfgList">
+<code class="descname">GetCfgList</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.GetCfgList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.GetCfgList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.GetFuns">
+<code class="descname">GetFuns</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.GetFuns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.GetFuns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.GetShift">
+<code class="descname">GetShift</code><span class="sig-paren">(</span><em>xlims</em>, <em>thisshift</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.GetShift"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.GetShift" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.Get_Extrapolation">
+<code class="descname">Get_Extrapolation</code><span class="sig-paren">(</span><em>keep_keys=slice(None</em>, <em>None</em>, <em>None)</em>, <em>fmted=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.Get_Extrapolation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.Get_Extrapolation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.ImportCfgList">
+<code class="descname">ImportCfgList</code><span class="sig-paren">(</span><em>cfglist</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.ImportCfgList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.ImportCfgList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.ImportFitRanges">
+<code class="descname">ImportFitRanges</code><span class="sig-paren">(</span><em>fit_range</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.ImportFitRanges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.ImportFitRanges" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.ImportPlotParams">
+<code class="descname">ImportPlotParams</code><span class="sig-paren">(</span><em>thiscol</em>, <em>thissym</em>, <em>thisshift</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.ImportPlotParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.ImportPlotParams" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.LoadCfgs">
+<code class="descname">LoadCfgs</code><span class="sig-paren">(</span><em>cfglist</em>, <em>name=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.LoadCfgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.LoadCfgs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.LoadPickle">
+<code class="descname">LoadPickle</code><span class="sig-paren">(</span><em>WipeData=True</em>, <em>DefWipe=False</em>, <em>CheckCfgs=False</em>, <em>CheckMom=True</em>, <em>legacy=False</em>, <em>NoFit=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.LoadPickle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.LoadPickle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="TwoPtCorrelators.NNQCorr.NNQ_Fit_col_names">
+<code class="descname">NNQ_Fit_col_names</code><em class="property"> = None</em><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.NNQ_Fit_col_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.NNQ_Stats DataFrame:</p>
+<dl class="docutils">
+<dt>columns =   NNQboot,    NNQAvg,         NNQStd</dt>
+<dd>boot</dd>
+</dl>
+<p>rows =      momentum,   flow_time,  fit_range
+boot elements are SetsOfFitFuns</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="TwoPtCorrelators.NNQCorr.NNQ_Stats">
+<code class="descname">NNQ_Stats</code><em class="property"> = None</em><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.NNQ_Stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.NNQ_Stats DataFrame:</p>
+<dl class="docutils">
+<dt>columns =   NNQboot,    NNQAvg,         NNQStd</dt>
+<dd>EffM,       EffMAvg,        EffMStd
+Alphaboot,  AlphaAvg,       AlphaStd
+AlphaAuto,  AlphaAutoAvg,   AlphaAutoStd</dd>
+</dl>
+<p>rows =      momentum,   source_sink_sep,    flow_time</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="TwoPtCorrelators.NNQCorr.NNQ_cfgs">
+<code class="descname">NNQ_cfgs</code><em class="property"> = None</em><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.NNQ_cfgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.NNQ_cfgs DataFrame:</p>
+<p>columns =   xsrc_list , configs , C2, Op, NNQ</p>
+<p>rows =      istream, iccfg</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.ObsToName">
+<code class="descname">ObsToName</code><span class="sig-paren">(</span><em>thisop</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.ObsToName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.ObsToName" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.Overload_wrap">
+<code class="descname">Overload_wrap</code><span class="sig-paren">(</span><em>NNQ2</em>, <em>this_fun</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.Overload_wrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.Overload_wrap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.RatFunAndDer">
+<code class="descname">RatFunAndDer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.RatFunAndDer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.RatFunAndDer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.Read">
+<code class="descname">Read</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.Read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.Read" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.ReadAndWrite">
+<code class="descname">ReadAndWrite</code><span class="sig-paren">(</span><em>WipeData=True</em>, <em>NoFit=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.ReadAndWrite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.ReadAndWrite" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.RemoveFuns">
+<code class="descname">RemoveFuns</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.RemoveFuns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.RemoveFuns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.RemoveVals">
+<code class="descname">RemoveVals</code><span class="sig-paren">(</span><em>WipeData=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.RemoveVals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.RemoveVals" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.SetCustomName">
+<code class="descname">SetCustomName</code><span class="sig-paren">(</span><em>string=''</em>, <em>stringLL=''</em>, <em>fo_for_cfgs='PreDef'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.SetCustomName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.SetCustomName" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.SetFunction">
+<code class="descname">SetFunction</code><span class="sig-paren">(</span><em>Fun</em>, <em>npar</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.SetFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.SetFunction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.SetTFit">
+<code class="descname">SetTFit</code><span class="sig-paren">(</span><em>tsink</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.SetTFit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.SetTFit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.SetTflowFit">
+<code class="descname">SetTflowFit</code><span class="sig-paren">(</span><em>tflow</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.SetTflowFit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.SetTflowFit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.Stats">
+<code class="descname">Stats</code><span class="sig-paren">(</span><em>DefWipeG2=False</em>, <em>DoAuto=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.Stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.Stats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.Update_Stream_List">
+<code class="descname">Update_Stream_List</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.Update_Stream_List"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.Update_Stream_List" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.Write">
+<code class="descname">Write</code><span class="sig-paren">(</span><em>WipeData=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.Write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.Write" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.cos">
+<code class="descname">cos</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.cos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.cos" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.items">
+<code class="descname">items</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.items" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.itemsAvgStd">
+<code class="descname">itemsAvgStd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.itemsAvgStd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.itemsAvgStd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.keys">
+<code class="descname">keys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.keys"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.keys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="TwoPtCorrelators.NNQCorr.parentlist">
+<code class="descname">parentlist</code><em class="property"> = ['SetOfCorrs.SetOfNNQ', 'TwoPtCorrelators.NNQFullCorr']</em><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.parentlist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.sin">
+<code class="descname">sin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.sin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.sin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.values">
+<code class="descname">values</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.values" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQCorr.valuesAvgStd">
+<code class="descname">valuesAvgStd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQCorr.valuesAvgStd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQCorr.valuesAvgStd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="TwoPtCorrelators.NNQFullCorr">
+<em class="property">class </em><code class="descclassname">TwoPtCorrelators.</code><code class="descname">NNQFullCorr</code><span class="sig-paren">(</span><em>thisnboot=200</em>, <em>cfglist={}</em>, <em>Info={}</em>, <em>thissym='Not Set'</em>, <em>thiscol='Not Set'</em>, <em>thisshift=0.0</em>, <em>name=''</em>, <em>man_load_cfgs=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>NNQFull(p,t,tf) uses bootstrap class
+p  = momentum
+t  = time
+tf = tflow</p>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#TwoPtCorrelators.NNQFullCorr.AlphaFitPlot" title="TwoPtCorrelators.NNQFullCorr.AlphaFitPlot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AlphaFitPlot</span></code></a>(plot_class,&nbsp;fitr[,&nbsp;xlims,&nbsp;…])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#TwoPtCorrelators.NNQFullCorr.AlphaPlot" title="TwoPtCorrelators.NNQFullCorr.AlphaPlot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AlphaPlot</span></code></a>(plot_class[,&nbsp;xlims,&nbsp;momlist,&nbsp;…])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#TwoPtCorrelators.NNQFullCorr.AlphaPlotVsEnergy" title="TwoPtCorrelators.NNQFullCorr.AlphaPlotVsEnergy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AlphaPlotVsEnergy</span></code></a>(plot_class,&nbsp;fitr[,&nbsp;…])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#TwoPtCorrelators.NNQFullCorr.AlphaPlotVstiFitr" title="TwoPtCorrelators.NNQFullCorr.AlphaPlotVstiFitr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AlphaPlotVstiFitr</span></code></a>(plot_class,&nbsp;flowtime,&nbsp;…)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#TwoPtCorrelators.NNQFullCorr.Bootstrap" title="TwoPtCorrelators.NNQFullCorr.Bootstrap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Bootstrap</span></code></a>([WipeData,&nbsp;tflowlist,&nbsp;show_timer,&nbsp;…])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#TwoPtCorrelators.NNQFullCorr.GetCfgList" title="TwoPtCorrelators.NNQFullCorr.GetCfgList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GetCfgList</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#TwoPtCorrelators.NNQFullCorr.LoadPickle" title="TwoPtCorrelators.NNQFullCorr.LoadPickle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LoadPickle</span></code></a>([WipeData,&nbsp;DefWipe,&nbsp;CheckCfgs,&nbsp;…])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#TwoPtCorrelators.NNQFullCorr.Read" title="TwoPtCorrelators.NNQFullCorr.Read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Read</span></code></a>()</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="72%" />
+<col width="28%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><strong>AlphaPlotCovar</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>AlphaPlotDist</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>AlphaPlotImproveFit</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>AlphaPlotTflow</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>AlphaPlotTsum</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>AlphaPlotVstfFitr</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>AlphaRatio</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>CheckCol</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>CheckSym</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>CombineCfgLists</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>Construct_NNQFull_File</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>Create_NNQ2_fun</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>Create_NNQ_CPEven_fun</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>Create_NNQ_fun</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>Create_Tsrc_Fun</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>EffMass</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>FitAlpha</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>FixRead</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>GetFuns</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>GetShift</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>Get_Extrapolation</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>ImportCfgList</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>ImportFitRanges</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>ImportPlotParams</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>LoadCfgs</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>ObsToName</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>Overload_wrap</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>PlotIntLine</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>PlotIntTsink</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>Plot_Tau_Fit</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>Plot_Tsink_Fit</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>RatFunAndDer</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>RatioNNQ2sub</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>ReadAndWrite</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>RemoveAllBoots</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>RemoveFuns</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>RemoveVals</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>SetCustomName</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>SetFunction</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>SetTFit</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>SetTflowFit</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>Stats</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>Update_Stream_List</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>Write</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>cos</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>items</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>itemsAvgStd</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>iteritems</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>keys</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>sin</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>values</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>valuesAvgStd</strong></td>
+<td>&#160;</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.AlphaFitPlot">
+<code class="descname">AlphaFitPlot</code><span class="sig-paren">(</span><em>plot_class, fitr, xlims='Data', momlist=['p000'], thistflowlist='PreDef', thispar='First', WipeFit=False, thiscol='PreDefine', thisshift='PreDefine', Auto=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.AlphaFitPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.AlphaFitPlot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.AlphaPlot">
+<code class="descname">AlphaPlot</code><span class="sig-paren">(</span><em>plot_class, xlims=[1, 15], momlist=['p000'], thistflowlist='PreDef', tsum_list='PreDef', spec_tsum_list='PreDef', thiscol='PreDefine', thissym='PreDefine', thisshift='PreDefine', Auto=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.AlphaPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.AlphaPlot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.AlphaPlotCovar">
+<code class="descname">AlphaPlotCovar</code><span class="sig-paren">(</span><em>plot_class, momlist=['p000'], thistsinklist='PreDef', thistflowlist='PreDef', spec_tsum_list='PreDef', thiscol='PreDefine', thissym='PreDefine', thisshift='PreDefine'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.AlphaPlotCovar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.AlphaPlotCovar" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.AlphaPlotDist">
+<code class="descname">AlphaPlotDist</code><span class="sig-paren">(</span><em>plot_class</em>, <em>tflow</em>, <em>tsum</em>, <em>tsink</em>, <em>spec_tsum=None</em>, <em>mom='p000'</em>, <em>thiscol='PreDefine'</em>, <em>Auto=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.AlphaPlotDist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.AlphaPlotDist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.AlphaPlotImproveFit">
+<code class="descname">AlphaPlotImproveFit</code><span class="sig-paren">(</span><em>plot_class, fitr, xlims=[1, 15], momlist=['p000'], thistflowlist='PreDef', WipeFit=False, thiscol='PreDefine', thissym='PreDefine', thisshift='PreDefine', this_par='First'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.AlphaPlotImproveFit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.AlphaPlotImproveFit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.AlphaPlotTflow">
+<code class="descname">AlphaPlotTflow</code><span class="sig-paren">(</span><em>plot_class, tflowplot=array([4.01, 5.01, 6.01]), momlist=['p000'], thistsinklist='PreDef', tsum_list='PreDef', thiscol='PreDefine', thissym='PreDefine', thisshift='PreDefine', Auto=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.AlphaPlotTflow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.AlphaPlotTflow" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.AlphaPlotTsum">
+<code class="descname">AlphaPlotTsum</code><span class="sig-paren">(</span><em>plot_class, momlist=['p000'], thistsinklist='PreDef', thistflowlist='PreDef', fit_list='None', WipeFit=False, spec_tsum_list='PreDef', thiscol='PreDefine', thissym='PreDefine', thisshift='PreDefine', Auto=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.AlphaPlotTsum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.AlphaPlotTsum" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.AlphaPlotVsEnergy">
+<code class="descname">AlphaPlotVsEnergy</code><span class="sig-paren">(</span><em>plot_class, fitr, momlist=['p000'], thistflowlist='PreDef', thiscol='PreDefine', thissym='PreDefine', thisshift='PreDefine', Auto=False, PhysEnergy=True, WipeFit=False, thispar='\\alpha'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.AlphaPlotVsEnergy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.AlphaPlotVsEnergy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.AlphaPlotVstfFitr">
+<code class="descname">AlphaPlotVstfFitr</code><span class="sig-paren">(</span><em>plot_class</em>, <em>flowtime</em>, <em>thistfitr</em>, <em>fit_min</em>, <em>thismom='p000'</em>, <em>thiscol='PreDefine'</em>, <em>thissym='PreDefine'</em>, <em>thisshift='PreDefine'</em>, <em>fit_max_list='All'</em>, <em>WipeFit=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.AlphaPlotVstfFitr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.AlphaPlotVstfFitr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.AlphaPlotVstiFitr">
+<code class="descname">AlphaPlotVstiFitr</code><span class="sig-paren">(</span><em>plot_class</em>, <em>flowtime</em>, <em>thistfitr</em>, <em>fit_max</em>, <em>thismom='p000'</em>, <em>thiscol='PreDefine'</em>, <em>thissym='PreDefine'</em>, <em>thisshift='PreDefine'</em>, <em>fit_min_list='All'</em>, <em>Auto=False</em>, <em>WipeFit=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.AlphaPlotVstiFitr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.AlphaPlotVstiFitr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.AlphaRatio">
+<code class="descname">AlphaRatio</code><span class="sig-paren">(</span><em>DefWipeG2=False</em>, <em>DoAuto=True</em>, <em>show_timer=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.AlphaRatio"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.AlphaRatio" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.Bootstrap">
+<code class="descname">Bootstrap</code><span class="sig-paren">(</span><em>WipeData=False</em>, <em>tflowlist='PreDef'</em>, <em>show_timer=True</em>, <em>DoAuto=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.Bootstrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.Bootstrap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.CheckCol">
+<code class="descname">CheckCol</code><span class="sig-paren">(</span><em>thiscol</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.CheckCol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.CheckCol" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.CheckSym">
+<code class="descname">CheckSym</code><span class="sig-paren">(</span><em>thissym</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.CheckSym"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.CheckSym" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.CombineCfgLists">
+<code class="descname">CombineCfgLists</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.CombineCfgLists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.CombineCfgLists" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.Construct_NNQFull_File">
+<code class="descname">Construct_NNQFull_File</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.Construct_NNQFull_File"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.Construct_NNQFull_File" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.Create_NNQ2_fun">
+<code class="descname">Create_NNQ2_fun</code><span class="sig-paren">(</span><em>it_sum</em>, <em>jt_sum</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.Create_NNQ2_fun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.Create_NNQ2_fun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.Create_NNQ_CPEven_fun">
+<code class="descname">Create_NNQ_CPEven_fun</code><span class="sig-paren">(</span><em>it_sum</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.Create_NNQ_CPEven_fun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.Create_NNQ_CPEven_fun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.Create_NNQ_fun">
+<code class="descname">Create_NNQ_fun</code><span class="sig-paren">(</span><em>it_sum</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.Create_NNQ_fun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.Create_NNQ_fun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.Create_Tsrc_Fun">
+<code class="descname">Create_Tsrc_Fun</code><span class="sig-paren">(</span><em>ictflow</em>, <em>it_sink</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.Create_Tsrc_Fun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.Create_Tsrc_Fun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.EffMass">
+<code class="descname">EffMass</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.EffMass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.EffMass" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.FitAlpha">
+<code class="descname">FitAlpha</code><span class="sig-paren">(</span><em>fit_range='PreDef'</em>, <em>tsum_ranges='PreDef'</em>, <em>iGuess='PreDef'</em>, <em>EstDir=False</em>, <em>thistflowlist='PreDef'</em>, <em>WipeFit=True</em>, <em>show_timer=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.FitAlpha"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.FitAlpha" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.FixRead">
+<code class="descname">FixRead</code><span class="sig-paren">(</span><em>readdict</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.FixRead"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.FixRead" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.GetCfgList">
+<code class="descname">GetCfgList</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.GetCfgList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.GetCfgList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.GetFuns">
+<code class="descname">GetFuns</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.GetFuns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.GetFuns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.GetShift">
+<code class="descname">GetShift</code><span class="sig-paren">(</span><em>xlims</em>, <em>thisshift</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.GetShift"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.GetShift" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.Get_Extrapolation">
+<code class="descname">Get_Extrapolation</code><span class="sig-paren">(</span><em>keep_keys=slice(None</em>, <em>None</em>, <em>None)</em>, <em>fmted=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.Get_Extrapolation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.Get_Extrapolation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.ImportCfgList">
+<code class="descname">ImportCfgList</code><span class="sig-paren">(</span><em>cfglist</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.ImportCfgList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.ImportCfgList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.ImportFitRanges">
+<code class="descname">ImportFitRanges</code><span class="sig-paren">(</span><em>fit_range</em>, <em>tsum_fit_range</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.ImportFitRanges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.ImportFitRanges" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.ImportPlotParams">
+<code class="descname">ImportPlotParams</code><span class="sig-paren">(</span><em>thiscol</em>, <em>thissym</em>, <em>thisshift</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.ImportPlotParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.ImportPlotParams" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.LoadCfgs">
+<code class="descname">LoadCfgs</code><span class="sig-paren">(</span><em>cfglist</em>, <em>name=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.LoadCfgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.LoadCfgs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.LoadPickle">
+<code class="descname">LoadPickle</code><span class="sig-paren">(</span><em>WipeData=True</em>, <em>DefWipe=False</em>, <em>CheckCfgs=False</em>, <em>CheckMom=True</em>, <em>legacy=False</em>, <em>SaveMem=False</em>, <em>NoFit=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.LoadPickle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.LoadPickle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="TwoPtCorrelators.NNQFullCorr.NNQFull_Fit_col_names">
+<code class="descname">NNQFull_Fit_col_names</code><em class="property"> = None</em><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.NNQFull_Fit_col_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.NNQFull_Fit_Stats DataFrame:</p>
+<dl class="docutils">
+<dt>columns =   NNQFullboot,    NNQFullAvg,         NNQFullStd</dt>
+<dd>boot</dd>
+</dl>
+<p>rows =      momentum,   flow_time, fit_range
+boot elements are SetsOfFitFuns instances</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="TwoPtCorrelators.NNQFullCorr.NNQFull_Stats">
+<code class="descname">NNQFull_Stats</code><em class="property"> = None</em><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.NNQFull_Stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.NNQFull_Stats DataFrame:</p>
+<dl class="docutils">
+<dt>columns =   NNQFullboot,    NNQFullAvg,         NNQFullStd</dt>
+<dd>Alphaboot,      AlphaAvg,           AlphaStd
+AlphaAuto,      AlphaAutoAvg,       AlphaAutoStd</dd>
+</dl>
+<p>rows =      momentum,   source_sink_sep,    flow_time,  flow_op_trange</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="TwoPtCorrelators.NNQFullCorr.NNQFull_cfgs">
+<code class="descname">NNQFull_cfgs</code><em class="property"> = None</em><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.NNQFull_cfgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.NNQFull_cfgs DataFrame:</p>
+<p>columns =   xsrc_list , configs</p>
+<p>rows =      istream, iccfg</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="TwoPtCorrelators.NNQFullCorr.NNQInt_Stats">
+<code class="descname">NNQInt_Stats</code><em class="property"> = None</em><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.NNQInt_Stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.NNQInt_Stats DataFrame:</p>
+<dl class="docutils">
+<dt>columns =   NNQIntboot,     NNQIntAvg,          NNQIntStd</dt>
+<dd>AlphaIntboot,   AlphaIntAvg,        AlphaIntStd
+AlphaAuto,      AlphaAutoAvg,       AlphaAutoStd</dd>
+</dl>
+<p>rows =      momentum,   source_sink_sep,    flow_time</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="TwoPtCorrelators.NNQFullCorr.NNQ_subNNQ2_Stats">
+<code class="descname">NNQ_subNNQ2_Stats</code><em class="property"> = None</em><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.NNQ_subNNQ2_Stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.NNQ_subNNQ2_Stats DataFrame:</p>
+<dl class="docutils">
+<dt>columns =   Alphaboot,  AlphaAvg,       AlphaStd</dt>
+<dd>AlphaAuto,  AlphaAutoAvg,   AlphaAutoStd</dd>
+</dl>
+<p>rows =      momentum,   source_sink_sep,    flow_time,  flow_op_trange, flow_op_2_trange</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.ObsToName">
+<code class="descname">ObsToName</code><span class="sig-paren">(</span><em>thisop</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.ObsToName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.ObsToName" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.Overload_wrap">
+<code class="descname">Overload_wrap</code><span class="sig-paren">(</span><em>NNQFull2</em>, <em>this_fun</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.Overload_wrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.Overload_wrap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.PlotIntLine">
+<code class="descname">PlotIntLine</code><span class="sig-paren">(</span><em>plot_class</em>, <em>this_mom</em>, <em>this_flow</em>, <em>this_tsink</em>, <em>thiscol</em>, <em>Auto=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.PlotIntLine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.PlotIntLine" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.PlotIntTsink">
+<code class="descname">PlotIntTsink</code><span class="sig-paren">(</span><em>plot_class, this_mom, this_flow, xlims=[1, 15], Auto=False, thiscol='PreDefine', thissym='PreDefine', thisshift='PreDefine'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.PlotIntTsink"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.PlotIntTsink" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.Plot_Tau_Fit">
+<code class="descname">Plot_Tau_Fit</code><span class="sig-paren">(</span><em>plot_class</em>, <em>fitr</em>, <em>mom</em>, <em>tsink</em>, <em>tflow</em>, <em>thiscol</em>, <em>thisshift</em>, <em>xlims='Data'</em>, <em>WipeFit=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.Plot_Tau_Fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.Plot_Tau_Fit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.Plot_Tsink_Fit">
+<code class="descname">Plot_Tsink_Fit</code><span class="sig-paren">(</span><em>plot_class</em>, <em>fitr</em>, <em>mom</em>, <em>tsum</em>, <em>tflow</em>, <em>thiscol</em>, <em>thisshift</em>, <em>xlims='Data'</em>, <em>WipeFit=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.Plot_Tsink_Fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.Plot_Tsink_Fit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.RatFunAndDer">
+<code class="descname">RatFunAndDer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.RatFunAndDer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.RatFunAndDer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.RatioNNQ2sub">
+<code class="descname">RatioNNQ2sub</code><span class="sig-paren">(</span><em>DefWipeG2=False</em>, <em>DoAuto=True</em>, <em>show_timer=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.RatioNNQ2sub"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.RatioNNQ2sub" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.Read">
+<code class="descname">Read</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.Read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.Read" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.ReadAndWrite">
+<code class="descname">ReadAndWrite</code><span class="sig-paren">(</span><em>WipeData=True</em>, <em>SaveMem=False</em>, <em>NoFit=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.ReadAndWrite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.ReadAndWrite" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.RemoveAllBoots">
+<code class="descname">RemoveAllBoots</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.RemoveAllBoots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.RemoveAllBoots" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.RemoveFuns">
+<code class="descname">RemoveFuns</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.RemoveFuns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.RemoveFuns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.RemoveVals">
+<code class="descname">RemoveVals</code><span class="sig-paren">(</span><em>WipeData=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.RemoveVals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.RemoveVals" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.SetCustomName">
+<code class="descname">SetCustomName</code><span class="sig-paren">(</span><em>string=''</em>, <em>stringLL=''</em>, <em>fo_for_cfgs='PreDef'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.SetCustomName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.SetCustomName" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.SetFunction">
+<code class="descname">SetFunction</code><span class="sig-paren">(</span><em>Fun</em>, <em>npar</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.SetFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.SetFunction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.SetTFit">
+<code class="descname">SetTFit</code><span class="sig-paren">(</span><em>tsink</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.SetTFit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.SetTFit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.SetTflowFit">
+<code class="descname">SetTflowFit</code><span class="sig-paren">(</span><em>tflow</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.SetTflowFit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.SetTflowFit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.Stats">
+<code class="descname">Stats</code><span class="sig-paren">(</span><em>DefWipeG2=False</em>, <em>DoAuto=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.Stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.Stats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.Update_Stream_List">
+<code class="descname">Update_Stream_List</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.Update_Stream_List"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.Update_Stream_List" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.Write">
+<code class="descname">Write</code><span class="sig-paren">(</span><em>WipeData=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.Write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.Write" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.cos">
+<code class="descname">cos</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.cos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.cos" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.items">
+<code class="descname">items</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.items" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.itemsAvgStd">
+<code class="descname">itemsAvgStd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.itemsAvgStd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.itemsAvgStd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.iteritems">
+<code class="descname">iteritems</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.iteritems"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.iteritems" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.keys">
+<code class="descname">keys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.keys"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.keys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="TwoPtCorrelators.NNQFullCorr.parentlist">
+<code class="descname">parentlist</code><em class="property"> = ['SetOfCorrs.SetOfNNQFull']</em><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.parentlist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.sin">
+<code class="descname">sin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.sin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.sin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.values">
+<code class="descname">values</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.values" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.NNQFullCorr.valuesAvgStd">
+<code class="descname">valuesAvgStd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#NNQFullCorr.valuesAvgStd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.NNQFullCorr.valuesAvgStd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="TwoPtCorrelators.ReadBootFile">
+<code class="descclassname">TwoPtCorrelators.</code><code class="descname">ReadBootFile</code><span class="sig-paren">(</span><em>this_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#ReadBootFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.ReadBootFile" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="TwoPtCorrelators.ReformatC2">
+<code class="descclassname">TwoPtCorrelators.</code><code class="descname">ReformatC2</code><span class="sig-paren">(</span><em>this_file</em>, <em>out_filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#ReformatC2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.ReformatC2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="TwoPtCorrelators.TestFlowCorr">
+<code class="descclassname">TwoPtCorrelators.</code><code class="descname">TestFlowCorr</code><span class="sig-paren">(</span><em>DefWipe=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TestFlowCorr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TestFlowCorr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="TwoPtCorrelators.TestLoadFile">
+<code class="descclassname">TwoPtCorrelators.</code><code class="descname">TestLoadFile</code><span class="sig-paren">(</span><em>this_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TestLoadFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TestLoadFile" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="TwoPtCorrelators.TestNNQCorr">
+<code class="descclassname">TwoPtCorrelators.</code><code class="descname">TestNNQCorr</code><span class="sig-paren">(</span><em>DefWipe=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TestNNQCorr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TestNNQCorr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="TwoPtCorrelators.TestNNQFullCorr">
+<code class="descclassname">TwoPtCorrelators.</code><code class="descname">TestNNQFullCorr</code><span class="sig-paren">(</span><em>DefWipe=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TestNNQFullCorr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TestNNQFullCorr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="TwoPtCorrelators.TestTPCorr">
+<code class="descclassname">TwoPtCorrelators.</code><code class="descname">TestTPCorr</code><span class="sig-paren">(</span><em>DefWipe=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TestTPCorr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TestTPCorr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="TwoPtCorrelators.TwoPointCorr">
+<em class="property">class </em><code class="descclassname">TwoPtCorrelators.</code><code class="descname">TwoPointCorr</code><span class="sig-paren">(</span><em>thisnboot=200</em>, <em>cfglist={}</em>, <em>Info={}</em>, <em>thissym='Not Set'</em>, <em>thiscol='Not Set'</em>, <em>thisshift=0.0</em>, <em>name=''</em>, <em>man_load_cfgs=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>C2(p,t) uses bootstrap class
+p =  momentum
+t = time</p>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#TwoPtCorrelators.TwoPointCorr.EffMassFitPlot" title="TwoPtCorrelators.TwoPointCorr.EffMassFitPlot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EffMassFitPlot</span></code></a>(plot_class,&nbsp;state,&nbsp;fitr[,&nbsp;…])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#TwoPtCorrelators.TwoPointCorr.EffMassPlot" title="TwoPtCorrelators.TwoPointCorr.EffMassPlot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EffMassPlot</span></code></a>(plot_class[,&nbsp;xlims,&nbsp;momlist,&nbsp;…])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#TwoPtCorrelators.TwoPointCorr.Fit" title="TwoPtCorrelators.TwoPointCorr.Fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Fit</span></code></a>([state,&nbsp;fit_range,&nbsp;iGuess,&nbsp;EstDir,&nbsp;…])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#TwoPtCorrelators.TwoPointCorr.LogFitPlot" title="TwoPtCorrelators.TwoPointCorr.LogFitPlot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LogFitPlot</span></code></a>(plot_class,&nbsp;state,&nbsp;fitr[,&nbsp;xlims,&nbsp;…])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#TwoPtCorrelators.TwoPointCorr.LogPlot" title="TwoPtCorrelators.TwoPointCorr.LogPlot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LogPlot</span></code></a>(plot_class[,&nbsp;xlims,&nbsp;momlist,&nbsp;…])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#TwoPtCorrelators.TwoPointCorr.Plot" title="TwoPtCorrelators.TwoPointCorr.Plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Plot</span></code></a>(plot_class[,&nbsp;momlist,&nbsp;thiscol,&nbsp;…])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#TwoPtCorrelators.TwoPointCorr.Read" title="TwoPtCorrelators.TwoPointCorr.Read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Read</span></code></a>([show_timer,&nbsp;Full,&nbsp;file_type])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#TwoPtCorrelators.TwoPointCorr.RecRelPlot" title="TwoPtCorrelators.TwoPointCorr.RecRelPlot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RecRelPlot</span></code></a>(plot_class,&nbsp;state,&nbsp;fitr[,&nbsp;…])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#TwoPtCorrelators.TwoPointCorr.WriteBootToFile" title="TwoPtCorrelators.TwoPointCorr.WriteBootToFile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WriteBootToFile</span></code></a>(thisdir[,&nbsp;show_timer])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#TwoPtCorrelators.TwoPointCorr.WriteCfgsToFile" title="TwoPtCorrelators.TwoPointCorr.WriteCfgsToFile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WriteCfgsToFile</span></code></a>(thisdir[,&nbsp;show_timer])</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="69%" />
+<col width="31%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><strong>Bootstrap</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>CheckCol</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>CheckSym</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>ChopDepVarList</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>Construct_2pt_File</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>EffMass</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>FixRead</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>GetCfgList</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>GetFuns</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>GetShift</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>ImportCfgList</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>ImportFitRanges</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>ImportPlotParams</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>LoadCfgs</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>LoadPickle</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>Overload_wrap</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>ReadAndWrite</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>Read_Cfgs</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>RemoveFuns</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>RemoveVals</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>SetCustomName</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>Stats</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>UpdateName</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>Update_Stream_List</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>Write</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>Write_Cfgs</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>items</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>itemsAvgStd</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>iteritems</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>keys</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>values</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>valuesAvgStd</strong></td>
+<td>&#160;</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.Bootstrap">
+<code class="descname">Bootstrap</code><span class="sig-paren">(</span><em>WipeData=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.Bootstrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.Bootstrap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="TwoPtCorrelators.TwoPointCorr.C2_Fit_Stats">
+<code class="descname">C2_Fit_Stats</code><em class="property"> = None</em><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.C2_Fit_Stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.C2_Fit_Stats DataFrame:</p>
+<p>columns =   boot</p>
+<p>rows =      states fitted to, momenta</p>
+<p>boot is SetOfFits object
+Avg/Std elements are pa.Series instances with:</p>
+<blockquote>
+<div>index = fit parameters
+values = Avg/Std values</div></blockquote>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="TwoPtCorrelators.TwoPointCorr.C2_Stats">
+<code class="descname">C2_Stats</code><em class="property"> = None</em><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.C2_Stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.C2_Stats DataFrame:</p>
+<dl class="docutils">
+<dt>columns =   boot,   Avg,        Std</dt>
+<dd>EffM,   EffMAvg,    EffMStd</dd>
+</dl>
+<p>rows =      momenta, time separation</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="TwoPtCorrelators.TwoPointCorr.C2_cfgs">
+<code class="descname">C2_cfgs</code><em class="property"> = None</em><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.C2_cfgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.C2_cfgs DataFrame:</p>
+<p>columns =   config_numbers , Op[ip, it]</p>
+<p>rows =      stream , configuration</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.CheckCol">
+<code class="descname">CheckCol</code><span class="sig-paren">(</span><em>thiscol</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.CheckCol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.CheckCol" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.CheckSym">
+<code class="descname">CheckSym</code><span class="sig-paren">(</span><em>thissym</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.CheckSym"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.CheckSym" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.ChopDepVarList">
+<code class="descname">ChopDepVarList</code><span class="sig-paren">(</span><em>this_df</em>, <em>read_meta</em>, <em>show_err=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.ChopDepVarList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.ChopDepVarList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.Construct_2pt_File">
+<code class="descname">Construct_2pt_File</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.Construct_2pt_File"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.Construct_2pt_File" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.EffMass">
+<code class="descname">EffMass</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.EffMass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.EffMass" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.EffMassFitPlot">
+<code class="descname">EffMassFitPlot</code><span class="sig-paren">(</span><em>plot_class, state, fitr, xlims='Data', momlist=['p000'], thiscol='PreDefine', thisshift='PreDefine', Phys=True, plot_type='effmass'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.EffMassFitPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.EffMassFitPlot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.EffMassPlot">
+<code class="descname">EffMassPlot</code><span class="sig-paren">(</span><em>plot_class, xlims=[4, 15], momlist=['p000'], thiscol='PreDefine', thissym='PreDefine', thisshift='PreDefine', Phys=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.EffMassPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.EffMassPlot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.Fit">
+<code class="descname">Fit</code><span class="sig-paren">(</span><em>state='PreDef'</em>, <em>fit_range='PreDef'</em>, <em>iGuess='PreDef'</em>, <em>EstDir=False</em>, <em>Ratio=False</em>, <em>WipeFit=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.Fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.Fit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.FixRead">
+<code class="descname">FixRead</code><span class="sig-paren">(</span><em>readdict</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.FixRead"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.FixRead" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.GetCfgList">
+<code class="descname">GetCfgList</code><span class="sig-paren">(</span><em>name=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.GetCfgList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.GetCfgList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.GetFuns">
+<code class="descname">GetFuns</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.GetFuns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.GetFuns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.GetShift">
+<code class="descname">GetShift</code><span class="sig-paren">(</span><em>xlims</em>, <em>thisshift</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.GetShift"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.GetShift" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.ImportCfgList">
+<code class="descname">ImportCfgList</code><span class="sig-paren">(</span><em>cfgsrclist</em>, <em>stream_list='PreDefine'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.ImportCfgList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.ImportCfgList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.ImportFitRanges">
+<code class="descname">ImportFitRanges</code><span class="sig-paren">(</span><em>fit_range</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.ImportFitRanges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.ImportFitRanges" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.ImportPlotParams">
+<code class="descname">ImportPlotParams</code><span class="sig-paren">(</span><em>thiscol</em>, <em>thissym</em>, <em>thisshift</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.ImportPlotParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.ImportPlotParams" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.LoadCfgs">
+<code class="descname">LoadCfgs</code><span class="sig-paren">(</span><em>cfglist</em>, <em>name=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.LoadCfgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.LoadCfgs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.LoadPickle">
+<code class="descname">LoadPickle</code><span class="sig-paren">(</span><em>DefWipe=False</em>, <em>WipeData=True</em>, <em>CheckCfgs=False</em>, <em>CheckMom=True</em>, <em>NoFit=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.LoadPickle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.LoadPickle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.LogFitPlot">
+<code class="descname">LogFitPlot</code><span class="sig-paren">(</span><em>plot_class, state, fitr, xlims='Data', momlist=['p000'], thiscol='PreDefine', thisshift='PreDefine'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.LogFitPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.LogFitPlot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.LogPlot">
+<code class="descname">LogPlot</code><span class="sig-paren">(</span><em>plot_class, xlims='All', momlist=['p000'], thiscol='PreDefine', thissym='PreDefine', thisshift='PreDefine', norm=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.LogPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.LogPlot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.Overload_wrap">
+<code class="descname">Overload_wrap</code><span class="sig-paren">(</span><em>C22</em>, <em>this_fun</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.Overload_wrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.Overload_wrap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.Plot">
+<code class="descname">Plot</code><span class="sig-paren">(</span><em>plot_class, momlist=['p000'], thiscol='PreDefine', thissym='PreDefine', thisshift='PreDefine', norm=False, log=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.Plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.Plot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.Read">
+<code class="descname">Read</code><span class="sig-paren">(</span><em>show_timer=True</em>, <em>Full=False</em>, <em>file_type='PreDef'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.Read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.Read" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.ReadAndWrite">
+<code class="descname">ReadAndWrite</code><span class="sig-paren">(</span><em>WipeData=True</em>, <em>NoFit=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.ReadAndWrite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.ReadAndWrite" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.Read_Cfgs">
+<code class="descname">Read_Cfgs</code><span class="sig-paren">(</span><em>file_type='PreDef'</em>, <em>show_timer=True</em>, <em>CheckCfgs=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.Read_Cfgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.Read_Cfgs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.RecRelPlot">
+<code class="descname">RecRelPlot</code><span class="sig-paren">(</span><em>plot_class</em>, <em>state</em>, <em>fitr</em>, <em>thiscol='PreDefine'</em>, <em>thisshift='PreDefine'</em>, <em>thissym='PreDef'</em>, <em>Phys=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.RecRelPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.RecRelPlot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.RemoveFuns">
+<code class="descname">RemoveFuns</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.RemoveFuns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.RemoveFuns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.RemoveVals">
+<code class="descname">RemoveVals</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.RemoveVals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.RemoveVals" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.SetCustomName">
+<code class="descname">SetCustomName</code><span class="sig-paren">(</span><em>string=''</em>, <em>stringLL=''</em>, <em>fo_for_cfgs='PreDef'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.SetCustomName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.SetCustomName" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.Stats">
+<code class="descname">Stats</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.Stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.Stats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.UpdateName">
+<code class="descname">UpdateName</code><span class="sig-paren">(</span><em>opp</em>, <em>C2</em>, <em>C22</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.UpdateName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.UpdateName" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.Update_Stream_List">
+<code class="descname">Update_Stream_List</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.Update_Stream_List"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.Update_Stream_List" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.Write">
+<code class="descname">Write</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.Write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.Write" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.WriteBootToFile">
+<code class="descname">WriteBootToFile</code><span class="sig-paren">(</span><em>thisdir</em>, <em>show_timer=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.WriteBootToFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.WriteBootToFile" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.WriteCfgsToFile">
+<code class="descname">WriteCfgsToFile</code><span class="sig-paren">(</span><em>thisdir</em>, <em>show_timer=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.WriteCfgsToFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.WriteCfgsToFile" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.Write_Cfgs">
+<code class="descname">Write_Cfgs</code><span class="sig-paren">(</span><em>file_type='PreDef'</em>, <em>show_timer=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.Write_Cfgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.Write_Cfgs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.items">
+<code class="descname">items</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.items" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.itemsAvgStd">
+<code class="descname">itemsAvgStd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.itemsAvgStd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.itemsAvgStd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.iteritems">
+<code class="descname">iteritems</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.iteritems"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.iteritems" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.keys">
+<code class="descname">keys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.keys"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.keys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="TwoPtCorrelators.TwoPointCorr.parentlist">
+<code class="descname">parentlist</code><em class="property"> = ['SetOfCorrs.SetOfTwoPt', 'TwoPtCorrelators.NNQCorr', 'TwoPtCorrelators.NNQFullCorr', 'VarMethod.VariationalTwoPt']</em><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.parentlist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.values">
+<code class="descname">values</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.values" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="TwoPtCorrelators.TwoPointCorr.valuesAvgStd">
+<code class="descname">valuesAvgStd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TwoPtCorrelators.html#TwoPointCorr.valuesAvgStd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#TwoPtCorrelators.TwoPointCorr.valuesAvgStd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="TimeStuff.html" class="btn btn-neutral" title="TimeStuff module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Jack Dragos
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

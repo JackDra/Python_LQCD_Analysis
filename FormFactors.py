@@ -11,7 +11,7 @@ from PredefFitFuns import FormFactorO1,FormFactorO2,FormFactorO3
 from TwoPtCorrelators import TwoPointCorr,NNQCorr,NNQFullCorr
 from FitFunctions import Fitting
 from Params import outputdir,defInfo,alpha_guess,myeps
-from FileIO import WriteExcel
+from FileIO import WriteExcel,Construct_File_Object
 from XmlFormatting import AvgStdToFormat
 from FileIO import WriteXml,WritePickle,ReadPickleWrap,ReadFuns,WriteFuns
 from PredefFitFuns import DPfitfun,LinearFitFun,A_x_exp_minus_m_x
@@ -316,6 +316,8 @@ class FormFact(object):
     (e.g. vector, pseudo-vector, tensor etc...)
 
     """
+    def Construct_FormFact_File(this_file):
+        return Construct_File_Object(this_file,FormFact)
 
     def __init__(self,currtype,q2list,pp2list = [0],Info=defInfo,tflowlist=[],name=''):
 
@@ -388,7 +390,7 @@ class FormFact(object):
         if isinstance(self.mass,(dict,OrderedDict)):
             this_str += '_'+list(self.mass.keys())[0]
         if isinstance(self.alpha,(dict,OrderedDict)):
-            this_str += '_'+list(self.alpha.keys())[0]+'_'+list(self.alpha.values())[0].keys()[0]
+            this_str += '_'+list(self.alpha.keys())[0]+'_'+list(list(self.alpha.values())[0].keys())[0]
         self.SetCustomName(string=this_str)
 
     def SetCustomName(self,string=''):
@@ -602,12 +604,12 @@ class FormFact(object):
             #     raise IOError('kappa folders used in FormFact (from FormFactors.py) have changed, check alpha and mass used.')
             # self.kappafolder = alpha.kappafolder + '/'
             # self.SetCustomName(string=self.name)
-            if 'boot' not in alpha.NNQFull_Fit_Stats or 'p000' not in list(alpha.NNQFull_Fit_Stats['boot'].keys()):
-                raise IOError('No zero momentum found in NNQFull_Fit_Stats in TwoPointCorr, try running Fit()')
+            if 'boot' not in alpha.NNQFull_Fit_Stats:
+                raise IOError('No fits have been performed on the AlphaFull object passed to Form Factors')
             for itflow in tflowlist:
-                if itflow not in list(alpha.NNQFull_Fit_Stats['boot']['p000'].keys()):
-                    print(list(alpha.NNQFull_Fit_Stats['boot']['p000'].keys()), itflow)
-                    raise IOError('No tflow found in Fit Dict in NNQFullCorr, try funning Fit() with correct flow time list')
+                if ('p000',itflow) not in alpha.NNQFull_Fit_Stats['boot'].index:
+                    print(alpha.NNQFull_Fit_Stats['boot'])
+                    raise IOError('No zero momentum found in NNQFull_Fit_Stats in TwoPointCorr, try running Fit()')
                 ifitr,this_data = alpha.NNQFull_Fit_Stats.at[('p000',itflow),'boot'].GetMaxFitr()
                 ifitr = ifitr.replace('fittwor','tsumfitr')
                 self.alpha[itflow]['alpha_'+ifitr] = this_data.iloc[0].fit_data['Params'].iloc[0]
@@ -617,12 +619,12 @@ class FormFact(object):
             #     raise IOError('kappa folders used in FormFact (from FormFactors.py) have changed, check alpha and mass used.')
             # self.kappafolder = alpha.kappafolder + '/'
             # self.SetCustomName(string=self.name)
-            if 'boot' not in alpha.NNQ_Fit_Stats or 'p000' not in list(alpha.NNQ_Fit_Stats['boot'].keys()):
-                raise IOError('No zero momentum found in NNQ_Fit_Stats in TwoPointCorr, try running Fit()')
+            if 'boot' not in alpha.NNQ_Fit_Stats:
+                raise IOError('No fits have been performed on the Alpha object passed to Form Factors')
             for itflow in tflowlist:
-                if itflow not in list(alpha.NNQ_Fit_Stats['boot']['p000'].keys()):
-                    print(list(alpha.NNQ_Fit_Stats['boot']['p000'].keys()), itflow)
-                    raise IOError('No tflow found in Fit Dict in NNQCorr, try funning Fit() with correct flow time list')
+                if ('p000',itflow) not in alpha.NNQ_Fit_Stats['boot'].index:
+                    print(alpha.NNQ_Fit_Stats['boot'])
+                    raise IOError('No zero momentum found in NNQ_Fit_Stats in TwoPointCorr, try running Fit()')
                 ifitr,this_data = alpha.NNQ_Fit_Stats.at[('p000',itflow),'boot'].GetMaxFitr()
                 self.alpha[itflow]['alpha_'+ifitr] = this_data.iloc[0].fit_data['Params'].iloc[0]
             return
@@ -641,7 +643,7 @@ class FormFact(object):
                     if itflow not in list(alpha.keys()):
                         raise IOError('No tflow found in alpha.keys(), alpha can be dictionary with tflows')
                     self.alpha[itflow]['alpha_'+alpha.name] = alpha
-        except:
+        except Exception as err:
             if alpha == 'No Alpha' or alpha == 'PreDef':
                 self.alpha = 'Not Set'
             elif self.alpha != 'Not Set':
@@ -806,7 +808,7 @@ class FormFact(object):
                 # self.outDict[imass][ipp][itflow][self.qparams.Getpsqrdform(iq,pre='q')]['Coeff_of_'+ipar]['_'.join([gammakey,iq])] = AvgStdToFormat(paramdata.Avg,paramdata.Std)
                 try:
                     self.outDict['Equations'][imass][ipp][itflow][thisqsqrd]['_'.join([gammakey,iq])] += ' ('+AvgStdToFormat(paramdata.Avg,paramdata.Std,dec=5,numlen=8)+ ') '+ipar + ' +'
-                except:
+                except Exception as err:
                     self.outDict['Equations'][imass][ipp][itflow][thisqsqrd]['_'.join([gammakey,iq])] = ' ('+AvgStdToFormat(paramdata.Avg,paramdata.Std,dec=5,numlen=8)+ ') '+ipar + ' +'
                 if ipar == self.ffpars[-1]:
                     self.outDict['Equations'][imass][ipp][itflow][thisqsqrd]['_'.join([gammakey,iq])] = self.outDict['Equations'][imass][ipp][itflow][thisqsqrd]['_'.join([gammakey,iq])][:-1]
@@ -817,7 +819,7 @@ class FormFact(object):
                 ## also, you can play around with the ordering of keys to get the formating you like !!
                 try:
                     self.outDict['Equations'][imass][ipp][thisqsqrd]['_'.join([gammakey,iq])] += ' ('+AvgStdToFormat(paramdata.Avg,paramdata.Std,dec=5,numlen=8)+ ') '+ipar + ' +'
-                except:
+                except Exception as err:
                     self.outDict['Equations'][imass][ipp][thisqsqrd]['_'.join([gammakey,iq])] = ' ('+AvgStdToFormat(paramdata.Avg,paramdata.Std,dec=5,numlen=8)+ ') '+ipar + ' +'
                 if ipar == self.ffpars[-1]:
                     self.outDict['Equations'][imass][ipp][thisqsqrd]['_'.join([gammakey,iq])] = self.outDict['Equations'][imass][ipp][thisqsqrd]['_'.join([gammakey,iq])][:-1]
@@ -832,7 +834,7 @@ class FormFact(object):
                 # self.outDict[imass][ipp][itflow][self.qparams.Getpsqrdform(iq,pre='q')]['Coeff_of_'+ipar]['_'.join([gammakey,iq])] = AvgStdToFormat(paramdata.Avg,paramdata.Std)
                 try:
                     self.outDict['Equations_Reduced'][imass][ipp][itflow][thisqsqrd]['_'.join([gammakey,iq])] += ' ('+AvgStdToFormat(paramdata.Avg,paramdata.Std,dec=5,numlen=8)+ ') '+ipar + ' +'
-                except:
+                except Exception as err:
                     self.outDict['Equations_Reduced'][imass][ipp][itflow][thisqsqrd]['_'.join([gammakey,iq])] = ' ('+AvgStdToFormat(paramdata.Avg,paramdata.Std,dec=5,numlen=8)+ ') '+ipar + ' +'
                 if ipar == self.ffpars[-1]:
                     self.outDict['Equations_Reduced'][imass][ipp][itflow][thisqsqrd]['_'.join([gammakey,iq])] = self.outDict['Equations_Reduced'][imass][ipp][itflow][thisqsqrd]['_'.join([gammakey,iq])][:-1]
@@ -843,7 +845,7 @@ class FormFact(object):
                 ## also, you can play around with the ordering of keys to get the formating you like !!
                 try:
                     self.outDict['Equations_Reduced'][imass][ipp][thisqsqrd]['_'.join([gammakey,iq])] += ' ('+AvgStdToFormat(paramdata.Avg,paramdata.Std,dec=5,numlen=8)+ ') '+ipar + ' +'
-                except:
+                except Exception as err:
                     self.outDict['Equations_Reduced'][imass][ipp][thisqsqrd]['_'.join([gammakey,iq])] = ' ('+AvgStdToFormat(paramdata.Avg,paramdata.Std,dec=5,numlen=8)+ ') '+ipar + ' +'
                 if ipar == self.ffpars[-1]:
                     self.outDict['Equations_Reduced'][imass][ipp][thisqsqrd]['_'.join([gammakey,iq])] = self.outDict['Equations_Reduced'][imass][ipp][thisqsqrd]['_'.join([gammakey,iq])][:-1]
@@ -926,3 +928,4 @@ def TestFF(DefWipe=False,this_curr='VectorTop',qsqrdlist=[0,1]):
 
 if __name__ == '__main__':
     data = TestFF()
+    print('data is in data')

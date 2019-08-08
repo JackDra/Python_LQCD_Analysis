@@ -1,0 +1,1565 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>FlowOpps module &mdash; LQCD Analysis Codebase TF Fits documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/my_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="FitFunctions_TF module" href="FitFunctions_TF.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> LQCD Analysis Codebase
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Python_Analysis</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="AnalysisGUI.html">AnalysisGUI module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Autocorr.html">Autocorr module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BootStrapping.html">BootStrapping module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CreateTable.html">CreateTable module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DSDefines.html">DSDefines module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FFSolve.html">FFSolve module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FileIO.html">FileIO module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FitFunctions.html">FitFunctions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FitFunctions_TF.html">FitFunctions_TF module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">FlowOpps module</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="FormFactors.html">FormFactors module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GammaMatricies.html">GammaMatricies module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MAH_control.html">MAH_control module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MiscFuns.html">MiscFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModPlot.html">ModPlot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModStylePlot.html">ModStylePlot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MomParams.html">MomParams module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MultiWrap.html">MultiWrap module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="NullPlotData.html">NullPlotData module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Params.html">Params module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PlotData.html">PlotData module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PredefFitFuns.html">PredefFitFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="QuantityLists.html">QuantityLists module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RatioCorrelators.html">RatioCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ReadBinaryCfuns.html">ReadBinaryCfuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ReadFO.html">ReadFO module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RunSetCommands.html">RunSetCommands module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFFs.html">SetsOfFFs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFits.html">SetsOfFits module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFlowOps.html">SetsOfFlowOps module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfRatios.html">SetsOfRatios module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfTwoPtCorrs.html">SetsOfTwoPtCorrs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ThreePtCorrelators.html">ThreePtCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TimeStuff.html">TimeStuff module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TwoPtCorrelators.html">TwoPtCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VarMethod.html">VarMethod module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="XmlFormatting.html">XmlFormatting module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xmltodict.html">xmltodict module</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">LQCD Analysis Codebase</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="modules.html">Python_Analysis</a> &raquo;</li>
+        
+      <li>FlowOpps module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/FlowOpps.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-FlowOpps">
+<span id="flowopps-module"></span><h1>FlowOpps module<a class="headerlink" href="#module-FlowOpps" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="FlowOpps.CombineInfo">
+<code class="descclassname">FlowOpps.</code><code class="descname">CombineInfo</code><span class="sig-paren">(</span><em>Info</em>, <em>Info2</em>, <em>Opp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#CombineInfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.CombineInfo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="FlowOpps.FlowOp">
+<em class="property">class </em><code class="descclassname">FlowOpps.</code><code class="descname">FlowOp</code><span class="sig-paren">(</span><em>thisnboot=200</em>, <em>cfglist={}</em>, <em>Info={}</em>, <em>thissym='Not Set'</em>, <em>thiscol='Not Set'</em>, <em>thisshift=0.0</em>, <em>name=''</em>, <em>LLname=''</em>, <em>man_load_cfgs=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Op(tf) uses bootstrap class
+tf = flow time</p>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#FlowOpps.FlowOp.FlowFit" title="FlowOpps.FlowOp.FlowFit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FlowFit</span></code></a>([flowfit_range,&nbsp;FlowiGuess,&nbsp;EstDir,&nbsp;…])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#FlowOpps.FlowOp.FlowFitPlot" title="FlowOpps.FlowOp.FlowFitPlot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FlowFitPlot</span></code></a>(plot_class,&nbsp;fitr[,&nbsp;xlims,&nbsp;…])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#FlowOpps.FlowOp.FlowMakeChit" title="FlowOpps.FlowOp.FlowMakeChit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FlowMakeChit</span></code></a>(OtherOpp[,&nbsp;DefWipe,&nbsp;Improve,&nbsp;…])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#FlowOpps.FlowOp.FlowMakeOppSquared" title="FlowOpps.FlowOp.FlowMakeOppSquared"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FlowMakeOppSquared</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#FlowOpps.FlowOp.FlowPlot" title="FlowOpps.FlowOp.FlowPlot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FlowPlot</span></code></a>(plot_class[,&nbsp;xlims,&nbsp;thiscol,&nbsp;…])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#FlowOpps.FlowOp.FlowPlotAuto" title="FlowOpps.FlowOp.FlowPlotAuto"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FlowPlotAuto</span></code></a>(plot_class[,&nbsp;xlims,&nbsp;thiscol,&nbsp;…])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#FlowOpps.FlowOp.FlowSetFunction" title="FlowOpps.FlowOp.FlowSetFunction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FlowSetFunction</span></code></a>(Fun,&nbsp;npar)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#FlowOpps.FlowOp.PlotMonteTimeDeltaEps" title="FlowOpps.FlowOp.PlotMonteTimeDeltaEps"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PlotMonteTimeDeltaEps</span></code></a>(plot_class,&nbsp;flowtime)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="77%" />
+<col width="23%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><strong>All_Streams</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>Check_Streams</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>ChopDepVarList</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>Compute_t0</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>Construct_FO_File</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>Create_Streams_Dirs</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>FixRead</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>FlowAutocorr</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>FlowBootAndWrite</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>FlowBootstrap</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>FlowCheckCol</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>FlowCheckSym</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>FlowCombinePreBS</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>FlowCombinePreBS_FixFT</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>FlowCombinePreBS_FixFT_Interp</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>FlowFitAndWrite</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>FlowGetCfgList</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>FlowGetShift</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>FlowImportCfgList</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>FlowImportPlotParams</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>FlowLoadPickle</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>FlowObsToName</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>FlowPlot_mul_tf2</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>FlowRead</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>FlowReadAndWrite</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>FlowRemoveVals</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>FlowSetCustomName</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>FlowStats</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>FlowUpdateName</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>FlowWrite</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>Flowitems</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>FlowitemsAvgStd</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>Flowkeys</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>Flownext</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>Flowvalues</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>FlowvaluesAvgStd</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>Format_Flattened_Cfgs</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>GetChitFuns</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>GetCombOpp</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>GetFuns</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>GetInterp</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>GetObsFun</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>Get_Extrapolation</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>Get_Flattened_Cfgs</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>LoadCfgs</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>MakeStreamCfgs</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>PlotMonteTime</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>PlotTauIntWOpt</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>Read_Cfgs</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>RemoveFuns</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>Update_Stream_List</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>Write_Cfgs</strong></td>
+<td>&#160;</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="FlowOpps.FlowOp.All_Streams">
+<code class="descname">All_Streams</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.All_Streams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.All_Streams" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.Check_Streams">
+<code class="descname">Check_Streams</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.Check_Streams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.Check_Streams" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.ChopDepVarList">
+<code class="descname">ChopDepVarList</code><span class="sig-paren">(</span><em>this_df</em>, <em>read_meta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.ChopDepVarList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.ChopDepVarList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.Compute_t0">
+<code class="descname">Compute_t0</code><span class="sig-paren">(</span><em>nfit=6</em>, <em>fix_energy=True</em>, <em>DefWipe=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.Compute_t0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.Compute_t0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.Construct_FO_File">
+<code class="descname">Construct_FO_File</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.Construct_FO_File"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.Construct_FO_File" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.Create_Streams_Dirs">
+<code class="descname">Create_Streams_Dirs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.Create_Streams_Dirs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.Create_Streams_Dirs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.FixRead">
+<code class="descname">FixRead</code><span class="sig-paren">(</span><em>readdict</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.FixRead"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.FixRead" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.FlowAutocorr">
+<code class="descname">FlowAutocorr</code><span class="sig-paren">(</span><em>tflowlist='PreDef'</em>, <em>show_timer=True</em>, <em>CheckCfgs=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.FlowAutocorr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.FlowAutocorr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.FlowBootAndWrite">
+<code class="descname">FlowBootAndWrite</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.FlowBootAndWrite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.FlowBootAndWrite" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.FlowBootstrap">
+<code class="descname">FlowBootstrap</code><span class="sig-paren">(</span><em>tflowlist='PreDef'</em>, <em>WipeData=True</em>, <em>show_timer=True</em>, <em>Improve=False</em>, <em>CheckCfgs=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.FlowBootstrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.FlowBootstrap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.FlowCheckCol">
+<code class="descname">FlowCheckCol</code><span class="sig-paren">(</span><em>thiscol</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.FlowCheckCol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.FlowCheckCol" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.FlowCheckSym">
+<code class="descname">FlowCheckSym</code><span class="sig-paren">(</span><em>thissym</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.FlowCheckSym"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.FlowCheckSym" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.FlowCombinePreBS">
+<code class="descname">FlowCombinePreBS</code><span class="sig-paren">(</span><em>FlowOps2</em>, <em>Operation='x'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.FlowCombinePreBS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.FlowCombinePreBS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.FlowCombinePreBS_FixFT">
+<code class="descname">FlowCombinePreBS_FixFT</code><span class="sig-paren">(</span><em>FlowOps2</em>, <em>Operation='x'</em>, <em>flow_time=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.FlowCombinePreBS_FixFT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.FlowCombinePreBS_FixFT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.FlowCombinePreBS_FixFT_Interp">
+<code class="descname">FlowCombinePreBS_FixFT_Interp</code><span class="sig-paren">(</span><em>FlowOps2</em>, <em>Operation='x'</em>, <em>flow_time=6.01</em>, <em>Phys=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.FlowCombinePreBS_FixFT_Interp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.FlowCombinePreBS_FixFT_Interp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.FlowFit">
+<code class="descname">FlowFit</code><span class="sig-paren">(</span><em>flowfit_range='PreDef'</em>, <em>FlowiGuess='PreDef'</em>, <em>EstDir=False</em>, <em>WipeFit=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.FlowFit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.FlowFit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.FlowFitAndWrite">
+<code class="descname">FlowFitAndWrite</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.FlowFitAndWrite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.FlowFitAndWrite" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.FlowFitPlot">
+<code class="descname">FlowFitPlot</code><span class="sig-paren">(</span><em>plot_class</em>, <em>fitr</em>, <em>xlims='Data'</em>, <em>thiscol='PreDefine'</em>, <em>thisshift='PreDefine'</em>, <em>legparindex=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.FlowFitPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.FlowFitPlot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.FlowGetCfgList">
+<code class="descname">FlowGetCfgList</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.FlowGetCfgList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.FlowGetCfgList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.FlowGetShift">
+<code class="descname">FlowGetShift</code><span class="sig-paren">(</span><em>xlims</em>, <em>thisshift</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.FlowGetShift"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.FlowGetShift" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.FlowImportCfgList">
+<code class="descname">FlowImportCfgList</code><span class="sig-paren">(</span><em>cfglist</em>, <em>stream_list='PreDefine'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.FlowImportCfgList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.FlowImportCfgList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.FlowImportPlotParams">
+<code class="descname">FlowImportPlotParams</code><span class="sig-paren">(</span><em>thiscol</em>, <em>thissym</em>, <em>thisshift</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.FlowImportPlotParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.FlowImportPlotParams" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.FlowLoadPickle">
+<code class="descname">FlowLoadPickle</code><span class="sig-paren">(</span><em>DefWipe=False</em>, <em>WipeData=False</em>, <em>CheckCfgs=True</em>, <em>show_timer=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.FlowLoadPickle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.FlowLoadPickle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.FlowMakeChit">
+<code class="descname">FlowMakeChit</code><span class="sig-paren">(</span><em>OtherOpp</em>, <em>DefWipe=True</em>, <em>Improve=False</em>, <em>ShowPrint=True</em>, <em>RandT='None'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.FlowMakeChit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.FlowMakeChit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.FlowMakeOppSquared">
+<code class="descname">FlowMakeOppSquared</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.FlowMakeOppSquared"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.FlowMakeOppSquared" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.FlowObsToName">
+<code class="descname">FlowObsToName</code><span class="sig-paren">(</span><em>obs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.FlowObsToName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.FlowObsToName" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.FlowPlot">
+<code class="descname">FlowPlot</code><span class="sig-paren">(</span><em>plot_class</em>, <em>xlims='data'</em>, <em>thiscol='PreDefine'</em>, <em>thissym='PreDefine'</em>, <em>thisshift='PreDefine'</em>, <em>FlowRad=True</em>, <em>t0_xvals=True</em>, <em>lab_append=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.FlowPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.FlowPlot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.FlowPlotAuto">
+<code class="descname">FlowPlotAuto</code><span class="sig-paren">(</span><em>plot_class</em>, <em>xlims='data'</em>, <em>thiscol='PreDefine'</em>, <em>thissym='PreDefine'</em>, <em>thisshift='PreDefine'</em>, <em>FlowRad=True</em>, <em>t0_xvals=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.FlowPlotAuto"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.FlowPlotAuto" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.FlowPlot_mul_tf2">
+<code class="descname">FlowPlot_mul_tf2</code><span class="sig-paren">(</span><em>plot_class</em>, <em>xlims='data'</em>, <em>thiscol='PreDefine'</em>, <em>thissym='PreDefine'</em>, <em>thisshift='PreDefine'</em>, <em>FlowRad=True</em>, <em>BorA='boot'</em>, <em>mul=False</em>, <em>tpow=1</em>, <em>t0_xvals=True</em>, <em>just_E=False</em>, <em>lab_append=''</em>, <em>forcet0=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.FlowPlot_mul_tf2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.FlowPlot_mul_tf2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.FlowRead">
+<code class="descname">FlowRead</code><span class="sig-paren">(</span><em>show_timer=True</em>, <em>cfg_file_type='PreDef'</em>, <em>CheckCfgs=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.FlowRead"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.FlowRead" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.FlowReadAndWrite">
+<code class="descname">FlowReadAndWrite</code><span class="sig-paren">(</span><em>tflowlist='PreDef'</em>, <em>WipeData=False</em>, <em>show_timer=True</em>, <em>CheckCfgs=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.FlowReadAndWrite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.FlowReadAndWrite" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.FlowRemoveVals">
+<code class="descname">FlowRemoveVals</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.FlowRemoveVals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.FlowRemoveVals" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.FlowSetCustomName">
+<code class="descname">FlowSetCustomName</code><span class="sig-paren">(</span><em>string=''</em>, <em>stringLL=''</em>, <em>RTDir=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.FlowSetCustomName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.FlowSetCustomName" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.FlowSetFunction">
+<code class="descname">FlowSetFunction</code><span class="sig-paren">(</span><em>Fun</em>, <em>npar</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.FlowSetFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.FlowSetFunction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.FlowStats">
+<code class="descname">FlowStats</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.FlowStats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.FlowStats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.FlowUpdateName">
+<code class="descname">FlowUpdateName</code><span class="sig-paren">(</span><em>opp</em>, <em>Op</em>, <em>Op2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.FlowUpdateName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.FlowUpdateName" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.FlowWrite">
+<code class="descname">FlowWrite</code><span class="sig-paren">(</span><em>ExtraInfo='None'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.FlowWrite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.FlowWrite" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.Flowitems">
+<code class="descname">Flowitems</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.Flowitems"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.Flowitems" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.FlowitemsAvgStd">
+<code class="descname">FlowitemsAvgStd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.FlowitemsAvgStd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.FlowitemsAvgStd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.Flowkeys">
+<code class="descname">Flowkeys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.Flowkeys"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.Flowkeys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.Flownext">
+<code class="descname">Flownext</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.Flownext"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.Flownext" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.Flowvalues">
+<code class="descname">Flowvalues</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.Flowvalues"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.Flowvalues" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.FlowvaluesAvgStd">
+<code class="descname">FlowvaluesAvgStd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.FlowvaluesAvgStd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.FlowvaluesAvgStd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.Format_Flattened_Cfgs">
+<code class="descname">Format_Flattened_Cfgs</code><span class="sig-paren">(</span><em>this_df</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.Format_Flattened_Cfgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.Format_Flattened_Cfgs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.GetChitFuns">
+<code class="descname">GetChitFuns</code><span class="sig-paren">(</span><em>thiscoeff</em>, <em>thispow</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.GetChitFuns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.GetChitFuns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.GetCombOpp">
+<code class="descname">GetCombOpp</code><span class="sig-paren">(</span><em>opp1</em>, <em>opp2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.GetCombOpp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.GetCombOpp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.GetFuns">
+<code class="descname">GetFuns</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.GetFuns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.GetFuns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.GetInterp">
+<code class="descname">GetInterp</code><span class="sig-paren">(</span><em>this_to</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.GetInterp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.GetInterp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.GetObsFun">
+<code class="descname">GetObsFun</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.GetObsFun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.GetObsFun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.Get_Extrapolation">
+<code class="descname">Get_Extrapolation</code><span class="sig-paren">(</span><em>fmted=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.Get_Extrapolation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.Get_Extrapolation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.Get_Flattened_Cfgs">
+<code class="descname">Get_Flattened_Cfgs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.Get_Flattened_Cfgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.Get_Flattened_Cfgs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.LoadCfgs">
+<code class="descname">LoadCfgs</code><span class="sig-paren">(</span><em>cfglist</em>, <em>name=''</em>, <em>LLname=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.LoadCfgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.LoadCfgs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.MakeStreamCfgs">
+<code class="descname">MakeStreamCfgs</code><span class="sig-paren">(</span><em>cfglist</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.MakeStreamCfgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.MakeStreamCfgs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="FlowOpps.FlowOp.Op_Stats">
+<code class="descname">Op_Stats</code><em class="property"> = None</em><a class="headerlink" href="#FlowOpps.FlowOp.Op_Stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.Op_Stats DataFrame:</p>
+<dl class="docutils">
+<dt>columns =   boot, Avg,      Std</dt>
+<dd>Auto, AutoAvg,  AutoStd</dd>
+</dl>
+<p>rows =      flow time</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="FlowOpps.FlowOp.Op_cfgs">
+<code class="descname">Op_cfgs</code><em class="property"> = None</em><a class="headerlink" href="#FlowOpps.FlowOp.Op_cfgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.Op_cfgs DataFrame:</p>
+<p>columns =   config_numbers , Op[itflow]</p>
+<p>rows =      stream , configuration</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.PlotMonteTime">
+<code class="descname">PlotMonteTime</code><span class="sig-paren">(</span><em>plot_class</em>, <em>flowtime</em>, <em>stream='first'</em>, <em>thiscol='PreDefine'</em>, <em>thisshift='PreDefine'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.PlotMonteTime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.PlotMonteTime" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.PlotMonteTimeDeltaEps">
+<code class="descname">PlotMonteTimeDeltaEps</code><span class="sig-paren">(</span><em>plot_class</em>, <em>flowtime</em>, <em>stream='first'</em>, <em>thiseps=1e-05</em>, <em>MultQ=False</em>, <em>thiscol='PreDefine'</em>, <em>thisshift='PreDefine'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.PlotMonteTimeDeltaEps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.PlotMonteTimeDeltaEps" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.PlotTauIntWOpt">
+<code class="descname">PlotTauIntWOpt</code><span class="sig-paren">(</span><em>plot_class</em>, <em>xlims='data'</em>, <em>thiscol='PreDefine'</em>, <em>thissym='PreDefine'</em>, <em>thisshift='PreDefine'</em>, <em>FlowRad=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.PlotTauIntWOpt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.PlotTauIntWOpt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.Read_Cfgs">
+<code class="descname">Read_Cfgs</code><span class="sig-paren">(</span><em>file_type='PreDef'</em>, <em>show_timer=True</em>, <em>CheckCfgs=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.Read_Cfgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.Read_Cfgs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.RemoveFuns">
+<code class="descname">RemoveFuns</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.RemoveFuns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.RemoveFuns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.Update_Stream_List">
+<code class="descname">Update_Stream_List</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.Update_Stream_List"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.Update_Stream_List" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOp.Write_Cfgs">
+<code class="descname">Write_Cfgs</code><span class="sig-paren">(</span><em>file_type='PreDef'</em>, <em>show_timer=True</em>, <em>CheckCfgs=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOp.Write_Cfgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOp.Write_Cfgs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="FlowOpps.FlowOp.parentlist">
+<code class="descname">parentlist</code><em class="property"> = ['FlowOpps.FlowOpFullSquared', 'TwoPtCorrelators.TwoPointCorr', 'TwoPtCorrelators.NNQCorr', 'TwoPtCorrelators.NNQFullCorr', 'VarMethod.VariationalTwoPt', 'RatioCorrelators.RatioCorr', 'RatioCorrelators.RatioFOCorr', 'RatioCorrelators.RatioFOFullCorr']</em><a class="headerlink" href="#FlowOpps.FlowOp.parentlist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="FlowOpps.FlowOpFullSquared">
+<em class="property">class </em><code class="descclassname">FlowOpps.</code><code class="descname">FlowOpFullSquared</code><span class="sig-paren">(</span><em>thisnboot=200</em>, <em>cfglist={}</em>, <em>Info={}</em>, <em>thissym='Not Set'</em>, <em>thiscol='Not Set'</em>, <em>thisshift=0.0</em>, <em>name=''</em>, <em>LLname=''</em>, <em>man_load_cfgs=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Op(tf,t) uses bootstrap class
+tf = flow time
+t = time slice</p>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#FlowOpps.FlowOpFullSquared.Fit_All_Props" title="FlowOpps.FlowOpFullSquared.Fit_All_Props"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Fit_All_Props</span></code></a>(fit_range[,&nbsp;sum_list,&nbsp;…])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#FlowOpps.FlowOpFullSquared.PlotOp2CorrTflow" title="FlowOpps.FlowOpFullSquared.PlotOp2CorrTflow"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PlotOp2CorrTflow</span></code></a>(plot_class,&nbsp;thistrange,&nbsp;…)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#FlowOpps.FlowOpFullSquared.PlotOp2CorrTsink" title="FlowOpps.FlowOpFullSquared.PlotOp2CorrTsink"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PlotOp2CorrTsink</span></code></a>(plot_class,&nbsp;flowtime,&nbsp;thistsum)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#FlowOpps.FlowOpFullSquared.PlotOp2CorrTsum" title="FlowOpps.FlowOpFullSquared.PlotOp2CorrTsum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PlotOp2CorrTsum</span></code></a>(plot_class,&nbsp;flowtime,&nbsp;thistrange)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#FlowOpps.FlowOpFullSquared.PlotVstiFitr" title="FlowOpps.FlowOpFullSquared.PlotVstiFitr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PlotVstiFitr</span></code></a>(plot_class,&nbsp;flowtime,&nbsp;thistsum,&nbsp;…)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="74%" />
+<col width="26%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><strong>All_Streams</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>Check_Streams</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>ChopDepVarList</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>Construct_FOFull_File</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>CreateChiTinv</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>CreateOpCorr</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>CreateOpCorrDummy</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>CreateOpCorrSumR</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>CreateShiftCorr</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>Create_Streams_Dirs</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>Do_toAvg</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>FixRead</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>FlowBootAndWrite</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>FlowBootChi</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>FlowBootO2</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>FlowBootstrap</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>FlowCheckCol</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>FlowCheckSym</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>FlowGetCfgList</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>FlowGetCfgList_New</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>FlowGetShift</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>FlowImportCfgList</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>FlowImportPlotParams</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>FlowLoadPickle</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>FlowObsToChi</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>FlowObsToName</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>FlowRead</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>FlowReadAndWrite</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>FlowRead_New</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>FlowRemoveVals</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>FlowSetCustomName</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>FlowStats</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>FlowWrite</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>Flowitems</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>Flowitems2</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>Flowitems2Auto</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>Flowitems2_toavg</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>FlowitemsAuto</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>FlowitemsAvgStd</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>Flowitems_toavg</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>Flowkeys</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>Flownext</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>Flowvalues</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>FlowvaluesAuto</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>FlowvaluesAvgStd</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>GetAutoFuns</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>GetAvgAutoFuns</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>GetAvgChiAutoFuns</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>GetChitFuns</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>GetFuns</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>GetObsFun</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>ImportTimeList</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>LoadCfgs</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>MakeRandomTimeList</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>MakeStreamCfgs</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>PlotChiLine</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>PlotChiLineAuto</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>PlotChiTflow</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>PlotFOLine</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>PlotFOLineAuto</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>PlotOp2CorrTflowAuto</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>PlotOp2CorrTsinkAuto</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>PlotOp2CorrTsumAuto</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>PlotOpT</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>PlotOpTAuto</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>PlotTflowAuto_TauIntWOpt</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>PlotTsinkAuto_TauIntWOpt</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>PlotTsumAuto_TauIntWOpt</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>PlotVstfFitr</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>Plot_Prop</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>Plot_Prop_Tflow</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>Read_Cfgs</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>RemoveFuns</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>RemoveOp2</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>SublatMethod</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>Update_Stream_List</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>Write_Cfgs</strong></td>
+<td>&#160;</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.All_Streams">
+<code class="descname">All_Streams</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.All_Streams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.All_Streams" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.Check_Streams">
+<code class="descname">Check_Streams</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.Check_Streams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.Check_Streams" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="FlowOpps.FlowOpFullSquared.Chi_Stats">
+<code class="descname">Chi_Stats</code><em class="property"> = None</em><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.Chi_Stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.Chi_Stats DataFrame:</p>
+<dl class="docutils">
+<dt>columns =   boot, Avg,      Std</dt>
+<dd>Auto, AutoAvg,  AutoStd</dd>
+</dl>
+<p>rows =      flow time</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.ChopDepVarList">
+<code class="descname">ChopDepVarList</code><span class="sig-paren">(</span><em>this_df</em>, <em>read_meta</em>, <em>show_err=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.ChopDepVarList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.ChopDepVarList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.Construct_FOFull_File">
+<code class="descname">Construct_FOFull_File</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.Construct_FOFull_File"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.Construct_FOFull_File" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.CreateChiTinv">
+<code class="descname">CreateChiTinv</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.CreateChiTinv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.CreateChiTinv" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.CreateOpCorr">
+<code class="descname">CreateOpCorr</code><span class="sig-paren">(</span><em>DefWipe=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.CreateOpCorr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.CreateOpCorr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.CreateOpCorrDummy">
+<code class="descname">CreateOpCorrDummy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.CreateOpCorrDummy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.CreateOpCorrDummy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.CreateOpCorrSumR">
+<code class="descname">CreateOpCorrSumR</code><span class="sig-paren">(</span><em>DefWipe=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.CreateOpCorrSumR"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.CreateOpCorrSumR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.CreateShiftCorr">
+<code class="descname">CreateShiftCorr</code><span class="sig-paren">(</span><em>shift_num=1</em>, <em>Force=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.CreateShiftCorr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.CreateShiftCorr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.Create_Streams_Dirs">
+<code class="descname">Create_Streams_Dirs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.Create_Streams_Dirs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.Create_Streams_Dirs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.Do_toAvg">
+<code class="descname">Do_toAvg</code><span class="sig-paren">(</span><em>show_timer=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.Do_toAvg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.Do_toAvg" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.Fit_All_Props">
+<code class="descname">Fit_All_Props</code><span class="sig-paren">(</span><em>fit_range</em>, <em>sum_list='All'</em>, <em>tflow_list='All'</em>, <em>fun_info='PreDef'</em>, <em>WipeFit=False</em>, <em>show_timer=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.Fit_All_Props"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.Fit_All_Props" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.FixRead">
+<code class="descname">FixRead</code><span class="sig-paren">(</span><em>readdict</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.FixRead"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.FixRead" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.FlowBootAndWrite">
+<code class="descname">FlowBootAndWrite</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.FlowBootAndWrite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.FlowBootAndWrite" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.FlowBootChi">
+<code class="descname">FlowBootChi</code><span class="sig-paren">(</span><em>show_timer=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.FlowBootChi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.FlowBootChi" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.FlowBootO2">
+<code class="descname">FlowBootO2</code><span class="sig-paren">(</span><em>DefWipe=False</em>, <em>show_timer=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.FlowBootO2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.FlowBootO2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.FlowBootstrap">
+<code class="descname">FlowBootstrap</code><span class="sig-paren">(</span><em>DefWipe=False</em>, <em>show_timer=True</em>, <em>WipeData=True</em>, <em>OnlyQ=False</em>, <em>CheckCfgs=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.FlowBootstrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.FlowBootstrap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.FlowCheckCol">
+<code class="descname">FlowCheckCol</code><span class="sig-paren">(</span><em>thiscol</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.FlowCheckCol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.FlowCheckCol" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.FlowCheckSym">
+<code class="descname">FlowCheckSym</code><span class="sig-paren">(</span><em>thissym</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.FlowCheckSym"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.FlowCheckSym" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.FlowGetCfgList">
+<code class="descname">FlowGetCfgList</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.FlowGetCfgList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.FlowGetCfgList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.FlowGetCfgList_New">
+<code class="descname">FlowGetCfgList_New</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.FlowGetCfgList_New"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.FlowGetCfgList_New" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.FlowGetShift">
+<code class="descname">FlowGetShift</code><span class="sig-paren">(</span><em>xlims</em>, <em>thisshift</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.FlowGetShift"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.FlowGetShift" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.FlowImportCfgList">
+<code class="descname">FlowImportCfgList</code><span class="sig-paren">(</span><em>cfglist</em>, <em>stream_list='PreDefine'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.FlowImportCfgList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.FlowImportCfgList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.FlowImportPlotParams">
+<code class="descname">FlowImportPlotParams</code><span class="sig-paren">(</span><em>thiscol</em>, <em>thissym</em>, <em>thisshift</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.FlowImportPlotParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.FlowImportPlotParams" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.FlowLoadPickle">
+<code class="descname">FlowLoadPickle</code><span class="sig-paren">(</span><em>DefWipe=False</em>, <em>WipeData=False</em>, <em>CheckCfgs=False</em>, <em>OnlyQ=False</em>, <em>show_timer=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.FlowLoadPickle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.FlowLoadPickle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.FlowObsToChi">
+<code class="descname">FlowObsToChi</code><span class="sig-paren">(</span><em>obs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.FlowObsToChi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.FlowObsToChi" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.FlowObsToName">
+<code class="descname">FlowObsToName</code><span class="sig-paren">(</span><em>obs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.FlowObsToName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.FlowObsToName" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.FlowRead">
+<code class="descname">FlowRead</code><span class="sig-paren">(</span><em>show_timer=True</em>, <em>cfg_file_type='PreDef'</em>, <em>CheckCfgs=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.FlowRead"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.FlowRead" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.FlowReadAndWrite">
+<code class="descname">FlowReadAndWrite</code><span class="sig-paren">(</span><em>DefWipe=False</em>, <em>WipeData=False</em>, <em>show_timer=True</em>, <em>OnlyQ=False</em>, <em>CheckCfgs=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.FlowReadAndWrite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.FlowReadAndWrite" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.FlowRead_New">
+<code class="descname">FlowRead_New</code><span class="sig-paren">(</span><em>show_timer=True</em>, <em>cfg_file_type='PreDef'</em>, <em>CheckCfgs=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.FlowRead_New"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.FlowRead_New" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.FlowRemoveVals">
+<code class="descname">FlowRemoveVals</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.FlowRemoveVals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.FlowRemoveVals" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.FlowSetCustomName">
+<code class="descname">FlowSetCustomName</code><span class="sig-paren">(</span><em>string=''</em>, <em>stringLL=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.FlowSetCustomName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.FlowSetCustomName" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.FlowStats">
+<code class="descname">FlowStats</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.FlowStats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.FlowStats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.FlowWrite">
+<code class="descname">FlowWrite</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.FlowWrite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.FlowWrite" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.Flowitems">
+<code class="descname">Flowitems</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.Flowitems"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.Flowitems" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.Flowitems2">
+<code class="descname">Flowitems2</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.Flowitems2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.Flowitems2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.Flowitems2Auto">
+<code class="descname">Flowitems2Auto</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.Flowitems2Auto"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.Flowitems2Auto" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.Flowitems2_toavg">
+<code class="descname">Flowitems2_toavg</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.Flowitems2_toavg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.Flowitems2_toavg" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.FlowitemsAuto">
+<code class="descname">FlowitemsAuto</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.FlowitemsAuto"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.FlowitemsAuto" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.FlowitemsAvgStd">
+<code class="descname">FlowitemsAvgStd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.FlowitemsAvgStd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.FlowitemsAvgStd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.Flowitems_toavg">
+<code class="descname">Flowitems_toavg</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.Flowitems_toavg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.Flowitems_toavg" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.Flowkeys">
+<code class="descname">Flowkeys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.Flowkeys"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.Flowkeys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.Flownext">
+<code class="descname">Flownext</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.Flownext"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.Flownext" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.Flowvalues">
+<code class="descname">Flowvalues</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.Flowvalues"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.Flowvalues" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.FlowvaluesAuto">
+<code class="descname">FlowvaluesAuto</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.FlowvaluesAuto"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.FlowvaluesAuto" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.FlowvaluesAvgStd">
+<code class="descname">FlowvaluesAvgStd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.FlowvaluesAvgStd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.FlowvaluesAvgStd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.GetAutoFuns">
+<code class="descname">GetAutoFuns</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.GetAutoFuns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.GetAutoFuns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.GetAvgAutoFuns">
+<code class="descname">GetAvgAutoFuns</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.GetAvgAutoFuns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.GetAvgAutoFuns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.GetAvgChiAutoFuns">
+<code class="descname">GetAvgChiAutoFuns</code><span class="sig-paren">(</span><em>thiscoeff</em>, <em>thispow</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.GetAvgChiAutoFuns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.GetAvgChiAutoFuns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.GetChitFuns">
+<code class="descname">GetChitFuns</code><span class="sig-paren">(</span><em>thiscoeff</em>, <em>thispow</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.GetChitFuns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.GetChitFuns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.GetFuns">
+<code class="descname">GetFuns</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.GetFuns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.GetFuns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.GetObsFun">
+<code class="descname">GetObsFun</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.GetObsFun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.GetObsFun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.ImportTimeList">
+<code class="descname">ImportTimeList</code><span class="sig-paren">(</span><em>timelist_in</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.ImportTimeList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.ImportTimeList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.LoadCfgs">
+<code class="descname">LoadCfgs</code><span class="sig-paren">(</span><em>cfglist</em>, <em>name=''</em>, <em>LLname=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.LoadCfgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.LoadCfgs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.MakeRandomTimeList">
+<code class="descname">MakeRandomTimeList</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.MakeRandomTimeList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.MakeRandomTimeList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.MakeStreamCfgs">
+<code class="descname">MakeStreamCfgs</code><span class="sig-paren">(</span><em>cfglist</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.MakeStreamCfgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.MakeStreamCfgs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="FlowOpps.FlowOpFullSquared.Op2_Stats">
+<code class="descname">Op2_Stats</code><em class="property"> = None</em><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.Op2_Stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.Op2_Stats DataFrame:</p>
+<p>columns =   boot, Avg,      Std</p>
+<p>rows =      flow time , time separation , sum time, source time</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="FlowOpps.FlowOpFullSquared.Op2_avg_Stats">
+<code class="descname">Op2_avg_Stats</code><em class="property"> = None</em><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.Op2_avg_Stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.Op2_avg_Stats DataFrame:</p>
+<dl class="docutils">
+<dt>columns =   boot, Avg,      Std</dt>
+<dd>Auto, AutoAvg,  AutoStd</dd>
+</dl>
+<p>rows =      flow time , time separation , sum time</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="FlowOpps.FlowOpFullSquared.Op_Stats">
+<code class="descname">Op_Stats</code><em class="property"> = None</em><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.Op_Stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.Op_Stats DataFrame:</p>
+<p>columns =   boot, Avg,      Std</p>
+<p>rows =      flow time, it_src</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="FlowOpps.FlowOpFullSquared.Op_avg_Stats">
+<code class="descname">Op_avg_Stats</code><em class="property"> = None</em><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.Op_avg_Stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.Op_avg_Stats DataFrame:</p>
+<dl class="docutils">
+<dt>columns =   boot, Avg,      Std</dt>
+<dd>Auto, AutoAvg,  AutoStd</dd>
+</dl>
+<p>rows =      flow time</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="FlowOpps.FlowOpFullSquared.Op_cfgs">
+<code class="descname">Op_cfgs</code><em class="property"> = None</em><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.Op_cfgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.Op_cfgs DataFrame:</p>
+<p>columns =   config_numbers , Op[itflow,it]</p>
+<p>rows =      stream , configuration</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.PlotChiLine">
+<code class="descname">PlotChiLine</code><span class="sig-paren">(</span><em>plot_class</em>, <em>flowtime</em>, <em>thiscol</em>, <em>Vary=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.PlotChiLine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.PlotChiLine" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.PlotChiLineAuto">
+<code class="descname">PlotChiLineAuto</code><span class="sig-paren">(</span><em>plot_class</em>, <em>flowtime</em>, <em>thiscol</em>, <em>Vary=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.PlotChiLineAuto"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.PlotChiLineAuto" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.PlotChiTflow">
+<code class="descname">PlotChiTflow</code><span class="sig-paren">(</span><em>plot_class</em>, <em>thiscol='PreDefine'</em>, <em>thissym='PreDefine'</em>, <em>thisshift='PreDefine'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.PlotChiTflow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.PlotChiTflow" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.PlotFOLine">
+<code class="descname">PlotFOLine</code><span class="sig-paren">(</span><em>plot_class</em>, <em>flowtime</em>, <em>thiscol</em>, <em>Vary=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.PlotFOLine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.PlotFOLine" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.PlotFOLineAuto">
+<code class="descname">PlotFOLineAuto</code><span class="sig-paren">(</span><em>plot_class</em>, <em>flowtime</em>, <em>thiscol</em>, <em>Vary=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.PlotFOLineAuto"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.PlotFOLineAuto" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.PlotOp2CorrTflow">
+<code class="descname">PlotOp2CorrTflow</code><span class="sig-paren">(</span><em>plot_class</em>, <em>thistrange</em>, <em>thistsum</em>, <em>thiscol='PreDefine'</em>, <em>thissym='PreDefine'</em>, <em>thisshift='PreDefine'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.PlotOp2CorrTflow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.PlotOp2CorrTflow" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.PlotOp2CorrTflowAuto">
+<code class="descname">PlotOp2CorrTflowAuto</code><span class="sig-paren">(</span><em>plot_class</em>, <em>thistrange</em>, <em>thistsum</em>, <em>thiscol='PreDefine'</em>, <em>thissym='PreDefine'</em>, <em>thisshift='PreDefine'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.PlotOp2CorrTflowAuto"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.PlotOp2CorrTflowAuto" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.PlotOp2CorrTsink">
+<code class="descname">PlotOp2CorrTsink</code><span class="sig-paren">(</span><em>plot_class</em>, <em>flowtime</em>, <em>thistsum</em>, <em>thiscol='PreDefine'</em>, <em>thissym='PreDefine'</em>, <em>thisshift='PreDefine'</em>, <em>fitr='First'</em>, <em>shifted=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.PlotOp2CorrTsink"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.PlotOp2CorrTsink" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.PlotOp2CorrTsinkAuto">
+<code class="descname">PlotOp2CorrTsinkAuto</code><span class="sig-paren">(</span><em>plot_class</em>, <em>flowtime</em>, <em>thistsum</em>, <em>thiscol='PreDefine'</em>, <em>thissym='PreDefine'</em>, <em>thisshift='PreDefine'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.PlotOp2CorrTsinkAuto"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.PlotOp2CorrTsinkAuto" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.PlotOp2CorrTsum">
+<code class="descname">PlotOp2CorrTsum</code><span class="sig-paren">(</span><em>plot_class</em>, <em>flowtime</em>, <em>thistrange</em>, <em>thiscol='PreDefine'</em>, <em>thissym='PreDefine'</em>, <em>thisshift='PreDefine'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.PlotOp2CorrTsum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.PlotOp2CorrTsum" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.PlotOp2CorrTsumAuto">
+<code class="descname">PlotOp2CorrTsumAuto</code><span class="sig-paren">(</span><em>plot_class</em>, <em>flowtime</em>, <em>thistrange</em>, <em>thiscol='PreDefine'</em>, <em>thissym='PreDefine'</em>, <em>thisshift='PreDefine'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.PlotOp2CorrTsumAuto"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.PlotOp2CorrTsumAuto" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.PlotOpT">
+<code class="descname">PlotOpT</code><span class="sig-paren">(</span><em>plot_class</em>, <em>flowtime</em>, <em>thiscol='PreDefine'</em>, <em>thissym='PreDefine'</em>, <em>thisshift='PreDefine'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.PlotOpT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.PlotOpT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.PlotOpTAuto">
+<code class="descname">PlotOpTAuto</code><span class="sig-paren">(</span><em>plot_class</em>, <em>flowtime</em>, <em>thiscol='PreDefine'</em>, <em>thissym='PreDefine'</em>, <em>thisshift='PreDefine'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.PlotOpTAuto"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.PlotOpTAuto" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.PlotTflowAuto_TauIntWOpt">
+<code class="descname">PlotTflowAuto_TauIntWOpt</code><span class="sig-paren">(</span><em>plot_class</em>, <em>thistrange</em>, <em>thistsum</em>, <em>thiscol='PreDefine'</em>, <em>thissym='PreDefine'</em>, <em>thisshift='PreDefine'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.PlotTflowAuto_TauIntWOpt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.PlotTflowAuto_TauIntWOpt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.PlotTsinkAuto_TauIntWOpt">
+<code class="descname">PlotTsinkAuto_TauIntWOpt</code><span class="sig-paren">(</span><em>plot_class</em>, <em>flowtime</em>, <em>thistsum</em>, <em>thiscol='PreDefine'</em>, <em>thissym='PreDefine'</em>, <em>thisshift='PreDefine'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.PlotTsinkAuto_TauIntWOpt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.PlotTsinkAuto_TauIntWOpt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.PlotTsumAuto_TauIntWOpt">
+<code class="descname">PlotTsumAuto_TauIntWOpt</code><span class="sig-paren">(</span><em>plot_class</em>, <em>flowtime</em>, <em>thistrange</em>, <em>thiscol='PreDefine'</em>, <em>thissym='PreDefine'</em>, <em>thisshift='PreDefine'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.PlotTsumAuto_TauIntWOpt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.PlotTsumAuto_TauIntWOpt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.PlotVstfFitr">
+<code class="descname">PlotVstfFitr</code><span class="sig-paren">(</span><em>plot_class</em>, <em>flowtime</em>, <em>thistsum</em>, <em>fit_min</em>, <em>thiscol='PreDefine'</em>, <em>thissym='PreDefine'</em>, <em>thisshift='PreDefine'</em>, <em>fit_max_list='All'</em>, <em>thisparam='First'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.PlotVstfFitr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.PlotVstfFitr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.PlotVstiFitr">
+<code class="descname">PlotVstiFitr</code><span class="sig-paren">(</span><em>plot_class</em>, <em>flowtime</em>, <em>thistsum</em>, <em>fit_max</em>, <em>thiscol='PreDefine'</em>, <em>thissym='PreDefine'</em>, <em>thisshift='PreDefine'</em>, <em>fit_min_list='All'</em>, <em>thisparam='First'</em>, <em>x_is_min=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.PlotVstiFitr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.PlotVstiFitr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.Plot_Prop">
+<code class="descname">Plot_Prop</code><span class="sig-paren">(</span><em>plot_class</em>, <em>thiscol</em>, <em>thisshift</em>, <em>tfitr='First'</em>, <em>tsum='First'</em>, <em>tflow='First'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.Plot_Prop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.Plot_Prop" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.Plot_Prop_Tflow">
+<code class="descname">Plot_Prop_Tflow</code><span class="sig-paren">(</span><em>plot_class</em>, <em>thiscol='PreDefine'</em>, <em>thissym='PreDefine'</em>, <em>thisshift='PreDefine'</em>, <em>tfitr='First'</em>, <em>tsum='First'</em>, <em>thisparam='First'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.Plot_Prop_Tflow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.Plot_Prop_Tflow" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="FlowOpps.FlowOpFullSquared.Prop_Fit_Stats">
+<code class="descname">Prop_Fit_Stats</code><em class="property"> = None</em><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.Prop_Fit_Stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.Prop_Fit_Stats DataFrame:</p>
+<p>columns =   boot, Avg,      Std</p>
+<p>rows =      sum time , flow time</p>
+<p>type = SetOfFitFuns</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.Read_Cfgs">
+<code class="descname">Read_Cfgs</code><span class="sig-paren">(</span><em>file_type='PreDef'</em>, <em>show_timer=True</em>, <em>CheckCfgs=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.Read_Cfgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.Read_Cfgs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.RemoveFuns">
+<code class="descname">RemoveFuns</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.RemoveFuns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.RemoveFuns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.RemoveOp2">
+<code class="descname">RemoveOp2</code><span class="sig-paren">(</span><em>thisdict</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.RemoveOp2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.RemoveOp2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.SublatMethod">
+<code class="descname">SublatMethod</code><span class="sig-paren">(</span><em>DefWipe=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.SublatMethod"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.SublatMethod" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.Update_Stream_List">
+<code class="descname">Update_Stream_List</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.Update_Stream_List"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.Update_Stream_List" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="FlowOpps.FlowOpFullSquared.Write_Cfgs">
+<code class="descname">Write_Cfgs</code><span class="sig-paren">(</span><em>file_type='PreDef'</em>, <em>show_timer=True</em>, <em>CheckCfgs=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#FlowOpFullSquared.Write_Cfgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.Write_Cfgs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="FlowOpps.FlowOpFullSquared.parentlist">
+<code class="descname">parentlist</code><em class="property"> = ['TwoPtCorrelators.TwoPointCorr', 'TwoPtCorrelators.NNQCorr', 'TwoPtCorrelators.NNQFullCorr', 'VarMethod.VariationalTwoPt', 'RatioCorrelators.RatioCorr', 'RatioCorrelators.RatioFOCorr', 'RatioCorrelators.RatioFOFullCorr']</em><a class="headerlink" href="#FlowOpps.FlowOpFullSquared.parentlist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="FlowOpps.GetOppFromStr">
+<code class="descclassname">FlowOpps.</code><code class="descname">GetOppFromStr</code><span class="sig-paren">(</span><em>thisOp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#GetOppFromStr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.GetOppFromStr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="FlowOpps.ReformatFO">
+<code class="descclassname">FlowOpps.</code><code class="descname">ReformatFO</code><span class="sig-paren">(</span><em>this_file</em>, <em>out_filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#ReformatFO"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.ReformatFO" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="FlowOpps.ReformatFO_picktf">
+<code class="descclassname">FlowOpps.</code><code class="descname">ReformatFO_picktf</code><span class="sig-paren">(</span><em>this_file</em>, <em>out_filename</em>, <em>pic_ft</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#ReformatFO_picktf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.ReformatFO_picktf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="FlowOpps.TestFO">
+<code class="descclassname">FlowOpps.</code><code class="descname">TestFO</code><span class="sig-paren">(</span><em>DefWipe=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#TestFO"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.TestFO" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="FlowOpps.TestFOFull">
+<code class="descclassname">FlowOpps.</code><code class="descname">TestFOFull</code><span class="sig-paren">(</span><em>DefWipe=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/FlowOpps.html#TestFOFull"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#FlowOpps.TestFOFull" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="FitFunctions_TF.html" class="btn btn-neutral" title="FitFunctions_TF module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Jack Dragos
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -11,6 +11,7 @@ from BootStrapping import BootStrap
 import numpy as np
 import pandas as pa
 from PlotData import Plotting
+from Params import this_dir
 
 W_header,W_cfgs = ReadWithMeta(weinberg_file)
 Q_header,Q_cfgs = ReadWithMeta(top_file)
@@ -53,7 +54,7 @@ hold_series['symbol'] = 'o'
 this_data['test_1'] = hold_series
 
 this_info = pa.Series()
-this_info['save_file'] = './TestGraphs/ForMatAndrea.pdf'
+this_info['save_file'] = this_dir+'/TestGraphs/ForMatAndrea.pdf'
 this_info['title'] = r'$\frac{t_f<W(t_f)W(0.21)>}{<Q(5.01) W(0.21)>}$'
 this_info['title_pad'] = 20
 this_info['xlabel'] = r'$t_f$'

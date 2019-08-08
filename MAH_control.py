@@ -3,7 +3,9 @@
 import sys
 from subprocess import Popen
 import time
-master_ens_list = ['mpi411','mpi570','mpi701','L16','L20','L28','qu_L24']
+master_ens_list = ['mpi411','mpi570','mpi701',
+                   'L16','L20','L28',
+                   'qu_L24','qu_L28','qu_L32']
 
 nblock_list = []
 if len(sys.argv)> 1:
@@ -14,7 +16,7 @@ if len(sys.argv)> 1:
         elif 'latspace' in iarg and 'ens' in iarg:
             ens_list.append(['L16','L20','L28'])
         elif 'quenched' in iarg and 'ens' in iarg:
-            ens_list.append(['qu_L24'])
+            ens_list.append(['qu_L24','qu_L28','qu_L32'])
         elif 'nblock' in iarg:
             nblock_list.append(iarg)
         elif iarg not in master_ens_list:
@@ -24,6 +26,8 @@ if len(sys.argv)> 1:
 else:
     ens_list = master_ens_list
 
+if len(ens_list) == 0:
+    ens_list = master_ens_list
 if len(nblock_list) == 0:
     nblock_list = ['nblock1','nblock2','nblock3']
 

@@ -1,0 +1,316 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ReadFO &mdash; LQCD Analysis Codebase TF Fits documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/my_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> LQCD Analysis Codebase
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Python_Analysis</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">LQCD Analysis Codebase</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>ReadFO</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ReadFO</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">XmlFormatting</span> <span class="k">import</span> <span class="n">tflowstr</span>
+<span class="kn">from</span> <span class="nn">Params</span> <span class="k">import</span> <span class="n">nt</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<div class="viewcode-block" id="FlowReadTopCharge"><a class="viewcode-back" href="../ReadFO.html#ReadFO.FlowReadTopCharge">[docs]</a><span class="k">def</span> <span class="nf">FlowReadTopCharge</span><span class="p">(</span><span class="n">thisfile</span><span class="p">,</span><span class="n">tf_list</span><span class="o">=</span><span class="s1">&#39;All&#39;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">thisfile</span><span class="p">):</span>
+        <span class="n">readfile</span> <span class="o">=</span> <span class="n">thisfile</span>
+    <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">thisfile</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;ng00&#39;</span><span class="p">,</span><span class="s1">&#39;ng&#39;</span><span class="p">)):</span>
+        <span class="n">readfile</span> <span class="o">=</span> <span class="n">thisfile</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;ng00&#39;</span><span class="p">,</span><span class="s1">&#39;ng&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Warning, file not found&#39;</span><span class="p">,</span><span class="n">thisfile</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[],[]</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">readfile</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ifile</span><span class="p">:</span>
+        <span class="n">tflowlist</span><span class="p">,</span><span class="n">topchargelist</span> <span class="o">=</span> <span class="p">[],[]</span>
+        <span class="k">for</span> <span class="n">iline</span><span class="p">,</span><span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ifile</span><span class="p">):</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()))</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">tflow</span><span class="p">,</span><span class="n">topcharge</span><span class="p">,</span><span class="n">cmplxdump</span> <span class="o">=</span> <span class="n">val</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">tflow</span><span class="p">,</span><span class="n">topcharge</span> <span class="o">=</span> <span class="n">val</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;error with file: </span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">+</span><span class="n">readfile</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1"> on line: &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">iline</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">tf_list</span> <span class="o">==</span> <span class="s1">&#39;All&#39;</span> <span class="ow">or</span>  <span class="n">tflowstr</span><span class="p">(</span><span class="n">tflow</span><span class="p">)</span> <span class="ow">in</span> <span class="n">tf_list</span><span class="p">:</span>
+                <span class="n">tflowlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="n">tflow</span><span class="p">))</span>
+                <span class="n">topchargelist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">topcharge</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tflowlist</span><span class="p">,</span><span class="n">topchargelist</span></div>
+
+
+<div class="viewcode-block" id="FlowReadTopCharge_New"><a class="viewcode-back" href="../ReadFO.html#ReadFO.FlowReadTopCharge_New">[docs]</a><span class="k">def</span> <span class="nf">FlowReadTopCharge_New</span><span class="p">(</span><span class="n">thisfile</span><span class="p">,</span><span class="n">tf_list</span><span class="o">=</span><span class="s1">&#39;All&#39;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">thisfile</span><span class="p">):</span>
+        <span class="n">readfile</span> <span class="o">=</span> <span class="n">thisfile</span>
+    <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">thisfile</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;ng00&#39;</span><span class="p">,</span><span class="s1">&#39;ng&#39;</span><span class="p">)):</span>
+        <span class="n">readfile</span> <span class="o">=</span> <span class="n">thisfile</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;ng00&#39;</span><span class="p">,</span><span class="s1">&#39;ng&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Warning, file not found&#39;</span><span class="p">,</span><span class="n">thisfile</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[],[]</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">readfile</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ifile</span><span class="p">:</span>
+        <span class="n">tflowlist</span><span class="p">,</span><span class="n">topchargelist</span> <span class="o">=</span> <span class="p">[],[]</span>
+        <span class="n">flow_line</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">for</span> <span class="n">iline</span><span class="p">,</span><span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ifile</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">flow_line</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+
+                <span class="n">val</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()))</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                    <span class="n">tflow</span><span class="p">,</span><span class="n">topcharge</span><span class="p">,</span><span class="n">cmplxdump</span> <span class="o">=</span> <span class="n">val</span>
+                <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">tflow</span><span class="p">,</span><span class="n">topcharge</span> <span class="o">=</span> <span class="n">val</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;error with file: </span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">+</span><span class="n">readfile</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1"> on line: &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">iline</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+                <span class="c1">## this is fix for 10.0 problem</span>
+                <span class="k">if</span> <span class="n">tf_list</span> <span class="o">==</span> <span class="s1">&#39;All&#39;</span> <span class="ow">or</span>  <span class="n">tflowstr</span><span class="p">(</span><span class="n">tflow</span><span class="p">)</span> <span class="ow">in</span> <span class="n">tf_list</span><span class="p">:</span>
+                    <span class="n">tflowlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="n">tflow</span><span class="p">))</span>
+                    <span class="n">topchargelist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">topcharge</span><span class="p">)</span>
+                <span class="n">flow_line</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">flow_line</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">tflowlist</span><span class="p">,</span><span class="n">topchargelist</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="p">[[</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">y</span><span class="p">,</span><span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">tflowlist</span><span class="p">,</span><span class="n">topchargelist</span><span class="p">))])</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">tflowlist</span><span class="p">),</span><span class="nb">list</span><span class="p">(</span><span class="n">topchargelist</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ReadTsInFlowOp"><a class="viewcode-back" href="../ReadFO.html#ReadFO.ReadTsInFlowOp">[docs]</a><span class="k">def</span> <span class="nf">ReadTsInFlowOp</span><span class="p">(</span><span class="n">thisfile</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">thisfile</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">thisfile</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ifile</span><span class="p">:</span>
+            <span class="n">tlist</span><span class="p">,</span><span class="n">topchargelist</span> <span class="o">=</span> <span class="p">[],[]</span>
+            <span class="n">tpos_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">iline</span><span class="p">,</span><span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ifile</span><span class="p">):</span>
+                <span class="n">hold</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()))</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">hold</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">hold</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">hold</span><span class="p">)</span><span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">tpos_list</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">65</span><span class="p">:</span>
+                        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Error in file:&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">thisfile</span><span class="p">))</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error line:&#39;</span><span class="p">,</span><span class="n">iline</span><span class="p">)</span>
+                    <span class="n">tpos_list</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="k">continue</span>
+                <span class="n">tval</span><span class="p">,</span><span class="n">topcharge</span><span class="p">,</span><span class="n">cmplxdump</span> <span class="o">=</span> <span class="n">hold</span>
+                <span class="n">tlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tval</span><span class="p">)</span>
+                <span class="n">topchargelist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">topcharge</span><span class="p">)</span>
+                <span class="n">tpos_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">topcharge</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">tlist</span><span class="p">,</span><span class="n">topchargelist</span><span class="p">,</span><span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Warning, file not found&#39;</span><span class="p">,</span><span class="n">thisfile</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[],[],</span><span class="kc">True</span></div>
+
+<div class="viewcode-block" id="FmtReadTs"><a class="viewcode-back" href="../ReadFO.html#ReadFO.FmtReadTs">[docs]</a><span class="k">def</span> <span class="nf">FmtReadTs</span><span class="p">(</span><span class="n">thisfile</span><span class="p">,</span><span class="n">nt</span><span class="o">=</span><span class="n">nt</span><span class="p">):</span>
+    <span class="n">tlist</span><span class="p">,</span><span class="n">topchargelist</span><span class="p">,</span><span class="n">err</span> <span class="o">=</span> <span class="n">ReadTsInFlowOp</span><span class="p">(</span><span class="n">thisfile</span><span class="p">)</span>
+    <span class="n">tlist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">tlist</span><span class="p">))</span>
+    <span class="n">topchargelist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">topchargelist</span><span class="p">))</span>
+    <span class="n">out_tlist</span> <span class="o">=</span> <span class="n">tlist</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="n">nt</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">out_toplist</span><span class="p">,</span><span class="n">out_sum_toplist</span> <span class="o">=</span> <span class="p">[],[]</span>
+    <span class="n">out_tflowlist</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,(</span><span class="n">it</span><span class="p">,</span><span class="n">itop</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">tlist</span><span class="p">,</span><span class="n">topchargelist</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">i</span><span class="o">%</span><span class="p">(</span><span class="n">nt</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">out_sum_toplist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">itop</span><span class="p">)</span>
+            <span class="n">out_tflowlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">out_toplist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">itop</span><span class="p">)</span>
+    <span class="n">out_toplist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">out_toplist</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">64</span><span class="p">)</span>
+    <span class="n">out_sum_toplist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">out_sum_toplist</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">out_tlist</span><span class="p">,</span><span class="n">out_tflowlist</span><span class="p">,</span><span class="n">out_sum_toplist</span><span class="p">,</span><span class="n">out_toplist</span><span class="p">,</span><span class="n">err</span></div>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span><span class="nn">os</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;please pass in a file to read&#39;</span><span class="p">)</span>
+    <span class="n">file_name</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;file not found: </span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">+</span><span class="n">file_name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;full&#39;</span><span class="p">:</span>
+        <span class="n">tlist</span><span class="p">,</span><span class="n">tflow_list</span><span class="p">,</span><span class="n">file_data_summed</span><span class="p">,</span><span class="n">file_data</span><span class="p">,</span><span class="n">err</span> <span class="o">=</span> <span class="n">FmtReadTs</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;read full flowed operator in tlist tflow_list summed_file_data file_data dimensions are [ t flow , time ] for file_data_summed and [ t flow ] for summed_file_data&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">tflow_list</span><span class="p">,</span><span class="n">file_data</span> <span class="o">=</span> <span class="n">FlowReadTopCharge_New</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">tflow_list</span><span class="p">,</span><span class="n">file_data</span> <span class="o">=</span> <span class="n">FlowReadTopCharge</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;read flowed operator in file_data and tflow_list, dimensions are [ t flow ]&#39;</span><span class="p">)</span>
+    <span class="n">file_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">file_data</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Jack Dragos
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

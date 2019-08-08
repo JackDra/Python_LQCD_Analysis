@@ -12,6 +12,7 @@ from PredefFitFuns import C3OneStateFitFunNoExp,C3MomTwoStateFitFunNoExp
 from ReadBinaryCfuns import ReadFSCfunPickCHROMA,RC3Full
 from BootStrapping import BootStrap
 from FileIO import WriteXml,WritePickle,ReadPickleWrap,WriteExcel,ReadWithMeta,WriteWithMeta
+from FileIO import Construct_File_Object
 # import cPickle as pickle
 # import dill as pickle
 from DSDefines import DSfundict
@@ -70,6 +71,8 @@ class ThreePointCorr(object):
 
 
     """
+    def Construct_3pt_File(this_file):
+        return Construct_File_Object(this_file,ThreePointCorr)
 
 
     ## TODO: create variational flag and interface with this function.
@@ -532,7 +535,7 @@ class ThreePointCorr(object):
         if self.DS not in ['doub','sing']:
             try:
                 self.LoadDS(WipeData=WipeData,DefWipe=DefWipe,show_timer=show_timer)
-            except:
+            except Exception as err:
                 print('reading doublet and singlet failed, reading with wipeing now')
                 self.LoadDS(WipeData=WipeData,DefWipe=True,show_timer=show_timer)
         else:
@@ -893,7 +896,7 @@ class ThreePointCorr(object):
         if self.DS not in ['doub','sing']:
             try:
                 self.LoadDS(WipeData=WipeData,DefWipe=DefWipe,show_timer=show_timer)
-            except:
+            except Exception as err:
                 print('reading doublet and singlet failed, reading with wipeing now')
                 print(self.filename)
                 self.LoadDS(WipeData=WipeData,DefWipe=True,show_timer=show_timer)
@@ -988,7 +991,7 @@ class ThreePointCorr(object):
                 break
         if isin:
             def Chop_fun(val):
-                return np.array(val)[index].tolist()
+                return np.array(val)[tuple(index)].tolist()
             this_df.loc[:,'C3'] = this_df.loc[:,'C3'].apply(Chop_fun)
         return this_df,isin
 
@@ -1221,7 +1224,7 @@ class ThreePointCorr(object):
     #             try:
     #                 for ip,it,iC3 in self.items():
     #                     result[(ip,it)] = iC3 + C32
-    #             except:
+    #             except Exception as err:
     #                 raise EnvironmentError('Invalid value to combine with BootStrap class')
     #         return result
 
@@ -1239,7 +1242,7 @@ class ThreePointCorr(object):
     #             try:
     #                 for ip,it,iC3 in self.items():
     #                     result[(ip,it)] = iC3 - C32
-    #             except:
+    #             except Exception as err:
     #                 raise EnvironmentError('Invalid value to combine with BootStrap class')
     #         return result
 
@@ -1257,7 +1260,7 @@ class ThreePointCorr(object):
     #             try:
     #                 for ip,it,iC3 in self.items():
     #                     result[(ip,it)] = iC3 * C32
-    #             except:
+    #             except Exception as err:
     #                 raise EnvironmentError('Invalid value to combine with BootStrap class')
     #         return result
 
@@ -1272,7 +1275,7 @@ class ThreePointCorr(object):
     #             for (ip,it,iC3) in self.items():
     #                 try:
     #                     result[(ip,it)] = iC3 / C32[(ip,it)]
-    #                 except:
+    #                 except Exception as err:
     #                     if any([ibs == 0 for ibs in C32[(ip,it)].bootvals]):
     #                         raise ZeroDivisionError('Dividing by zero found in bootstrap division for '+C32.name + ' '+C32[(ip,it)].name)
 
@@ -1282,7 +1285,7 @@ class ThreePointCorr(object):
     #             try:
     #                 for ip,it,iC3 in self.items():
     #                     result[(ip,it)] = iC3 / C32
-    #             except:
+    #             except Exception as err:
     #                 raise EnvironmentError('Invalid value to combine with BootStrap class')
     #         return result
 
@@ -1301,7 +1304,7 @@ class ThreePointCorr(object):
     #             try:
     #                 for ip,it,iC3 in self.items():
     #                     result[(ip,it)] = iC3 ** C32
-    #             except:
+    #             except Exception as err:
     #                 raise EnvironmentError('Invalid value to combine with BootStrap class')
     #         return result
 
@@ -1320,7 +1323,7 @@ class ThreePointCorr(object):
     #         try:
     #             for ip,it,iC3 in self.items():
     #                 result[(ip,it)] = C32 + iC3
-    #         except:
+    #         except Exception as err:
     #             raise EnvironmentError('Invalid value to combine with BootStrap class')
     #     return result
 
@@ -1335,7 +1338,7 @@ class ThreePointCorr(object):
     #         try:
     #             for ip,it,iC3 in self.items():
     #                 result[(ip,it)] =  C32 - iC3
-    #         except:
+    #         except Exception as err:
     #             raise EnvironmentError('Invalid value to combine with BootStrap class')
     #     return result
 
@@ -1350,7 +1353,7 @@ class ThreePointCorr(object):
     #         try:
     #             for ip,it,iC3 in self.items():
     #                 result[(ip,it)] = C32 * iC3
-    #         except:
+    #         except Exception as err:
     #             raise EnvironmentError('Invalid value to combine with BootStrap class')
     #     return result
 
@@ -1362,7 +1365,7 @@ class ThreePointCorr(object):
     #         for (ip,it,iC3) in self.items():
     #             try:
     #                 result[(ip,it)] = C32[(ip,it)] / iC3
-    #             except:
+    #             except Exception as err:
     #                 if any([ibs == 0 for ibs in iC3.bootvals]):
     #                     raise ZeroDivisionError('Dividing by zero found in bootstrap division for '+self.name + ' '+iC3.name)
 
@@ -1370,7 +1373,7 @@ class ThreePointCorr(object):
     #         for ip,it,iC3 in self.items():
     #             try:
     #                 result[(ip,it)] = C32 / iC3
-    #             except:
+    #             except Exception as err:
     #                 if iC3 == 0:
     #                     raise ZeroDivisionError('Dividing by zero found in bootstrap division')
     #                 else:
@@ -1389,7 +1392,7 @@ class ThreePointCorr(object):
     #         try:
     #             for ip,it,iC3 in self.items():
     #                 result[(ip,it)] = C32 ** iC3
-    #         except:
+    #         except Exception as err:
     #             raise EnvironmentError('Invalid value to combine with BootStrap class')
     #     return result
 
@@ -1454,6 +1457,8 @@ class NJNQCorr(object):
 
 
     """
+    def Construct_NJNQ_File(this_file):
+        return Construct_File_Object(this_file,NJNQCorr)
 
 
     ## TODO: create variational flag and interface with this function.
@@ -2137,6 +2142,8 @@ class NJNQFullCorr(object):
 
     """
 
+    def Construct_NJNQFull_File(this_file):
+        return Construct_File_Object(this_file,NJNQFullCorr)
 
     ## TODO: create variational flag and interface with this function.
 
@@ -2362,7 +2369,7 @@ class NJNQFullCorr(object):
             # print np.array(this_df['iFO'])[:,:].shape, it_sum
             try:
                 return np.mean(this_df['iC3']*np.array(this_df['iFO'])[:,it_sum])
-            except:
+            except Exception as err:
                 return float('NaN')
         return NJNQ_fun
 
@@ -2403,8 +2410,8 @@ class NJNQFullCorr(object):
                     if '_sum' in self.tr_sum_type:
                         if '_sym' in self.tr_sum_type and '_src_sink' not in self.tr_sum_type:
                             tflow_rolled[0] = tflow_rolled[0]/2.
-                            if self.nt/2 == self.nt/2.:
-                                tflow_rolled[self.nt/2-1] = tflow_rolled[self.nt/2-1]/2.
+                            if float(self.nt//2) == self.nt/2.:
+                                tflow_rolled[int(self.nt/2-1)] = tflow_rolled[int(self.nt/2-1)]/2
                         out_list.append(np.cumsum(tflow_rolled))
                     else:
                         out_list.append(tflow_rolled*self.nt)
@@ -3023,4 +3030,5 @@ def TestNJNQFull(DefWipe=False):
 if __name__ == '__main__':
     data3 = Test3pt()
     dataNJNQ = TestNJNQ()
-    dataFull = TestNJNQFull()
+    # dataFull = TestNJNQFull()
+    print('Testing 3ptcorr complete, see data3 and dataNJNQ variables')

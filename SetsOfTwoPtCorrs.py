@@ -19,6 +19,7 @@ from TimeStuff import Timer
 from copy import copy
 import PlotData as jpl
 from NullPlotData import null_series
+from FileIO import Construct_Empty
 from VarMethod import VariationalMethod
 
 
@@ -67,6 +68,19 @@ class SetOfTwoPt(object):
 
 
     """
+    def Construct_2pt_Set(this_file_list):
+        from TwoPtCorrelators import TwoPointCorr
+        set_list = [TwoPointCorr.Construct_2pt_File(ifile) for ifile in this_file_list]
+        out_class = Construct_Empty(SetOfTwoPt)
+        out_class.cfglist = {}
+        out_class.InfoDict = []
+        out_class.Plotdir = graphdir+'/G2/'
+        out_class.name = 'Set1'
+        out_class.SetC2 = {}
+        for iset in set_list:
+            out_class.SetC2[iset.name] = iset
+        return out_class
+
     instances = []
 
     parentlist = []
@@ -785,7 +799,7 @@ class SetOfTwoPt(object):
                     result.name = '+'.join([self.name,NumbToFileName(C22)])
                     for iset,ip,it,iC2 in list(self.items()):
                         result[(iset,ip,it)] = iC2 + C22
-                except:
+                except Exception as err:
                     raise EnvironmentError('Invalid value to combine with BootStrap class')
             return result
 
@@ -810,7 +824,7 @@ class SetOfTwoPt(object):
                     for iset,ip,it,iC2 in list(self.items()):
                         result.name = '-'.join([self.name,NumbToFileName(C22)])
                         result[(iset,ip,it)] = iC2 - C22
-                except:
+                except Exception as err:
                     raise EnvironmentError('Invalid value to combine with BootStrap class')
             return result
 
@@ -836,7 +850,7 @@ class SetOfTwoPt(object):
                     for iset,ip,it,iC2 in list(self.items()):
                         result.name = 'x'.join([self.name,NumbToFileName(C22)])
                         result[(iset,ip,it)] = iC2 * C22
-                except:
+                except Exception as err:
                     raise EnvironmentError('Invalid value to combine with BootStrap class')
             return result
 
@@ -853,7 +867,7 @@ class SetOfTwoPt(object):
                         try:
                             if (iset,ip,it) not in list(C22.keys()): continue
                             result[(iset,ip,it)] = iC2 / C22[(iset,ip,it)]
-                        except:
+                        except Exception as err:
                             if any([ibs == 0 for ibs in C22[(iset,ip,it)].bootvals]):
                                 raise ZeroDivisionError('Dividing by zero found in bootstrap division for '+C22.name + ' '+C22[(iset,ip,it)].name)
             elif type(C22) in 'TwoPtCorrelators.TwoPointCorr':
@@ -862,7 +876,7 @@ class SetOfTwoPt(object):
                     try:
                         if (ip,it) not in list(C22.keys()): continue
                         result[(iset,ip,it)] = iC2 / C22[(ip,it)]
-                    except:
+                    except Exception as err:
                         if any([ibs == 0 for ibs in C22[(ip,it)].bootvals]):
                             raise ZeroDivisionError('Dividing by zero found in bootstrap division for '+C22.name + ' '+C22[(ip,it)].name)
             else:
@@ -872,7 +886,7 @@ class SetOfTwoPt(object):
                     for iset,ip,it,iC2 in list(self.items()):
                         result.name = 'div'.join([self.name,NumbToFileName(C22)])
                         result[(iset,ip,it)] = iC2 / C22
-                except:
+                except Exception as err:
                     raise EnvironmentError('Invalid value to combine with BootStrap class')
             return result
 
@@ -898,7 +912,7 @@ class SetOfTwoPt(object):
                     for iset,ip,it,iC2 in list(self.items()):
                         result.name = 'pow'.join([self.name,NumbToFileName(C22)])
                         result[(iset,ip,it)] = iC2 ** C22
-                except:
+                except Exception as err:
                     raise EnvironmentError('Invalid value to combine with BootStrap class')
             return result
 
@@ -924,7 +938,7 @@ class SetOfTwoPt(object):
                 result.name = '+'.join([NumbToFileName(C22),self.name])
                 for iset,ip,it,iC2 in list(self.items()):
                     result[(iset,ip,it)] = C22 + iC2
-            except:
+            except Exception as err:
                 raise EnvironmentError('Invalid value to combine with BootStrap class')
         return result
 
@@ -947,7 +961,7 @@ class SetOfTwoPt(object):
                 result.name = '-'.join([NumbToFileName(C22),self.name])
                 for iset,ip,it,iC2 in list(self.items()):
                     result[(iset,ip,it)] = C22 - iC2
-            except:
+            except Exception as err:
                 raise EnvironmentError('Invalid value to combine with BootStrap class')
         return result
 
@@ -969,7 +983,7 @@ class SetOfTwoPt(object):
                 result.name = 'x'.join([NumbToFileName(C22),self.name])
                 for iset,ip,it,iC2 in list(self.items()):
                     result[(iset,ip,it)] = C22 * iC2
-            except:
+            except Exception as err:
                 raise EnvironmentError('Invalid value to combine with BootStrap class')
         return result
 
@@ -983,7 +997,7 @@ class SetOfTwoPt(object):
                     try:
                         if (iset,ip,it) not in list(C22.keys()): continue
                         result[(iset,ip,it)] = C22[(iset,ip,it)] / iC2
-                    except:
+                    except Exception as err:
                         if any([ibs == 0 for ibs in iC2.bootvals]):
                             raise ZeroDivisionError('Dividing by zero found in bootstrap division for '+self.name + ' '+iC2.name)
         elif type(C22) in 'TwoPtCorrelators.TwoPointCorr':
@@ -992,7 +1006,7 @@ class SetOfTwoPt(object):
                 try:
                     if (ip,it) not in list(C22.keys()): continue
                     result[(iset,ip,it)] = C22[(ip,it)] / iC2
-                except:
+                except Exception as err:
                     if any([ibs == 0 for ibs in iC2.bootvals]):
                         raise ZeroDivisionError('Dividing by zero found in bootstrap division for '+C22.name + ' '+C22[(ip,it)].name)
         else:
@@ -1000,7 +1014,7 @@ class SetOfTwoPt(object):
             try:
                 for iset,ip,it,iC2 in list(self.items()):
                     result[(iset,ip,it)] = C22 / iC2
-            except:
+            except Exception as err:
                 raise EnvironmentError('Invalid value to combine with BootStrap class')
         return result
 
@@ -1023,7 +1037,7 @@ class SetOfTwoPt(object):
                 result.name = 'pow'.join([NumbToFileName(C22),self.name])
                 for iset,ip,it,iC2 in list(self.items()):
                     result[(iset,ip,it)] = C22 ** iC2
-            except:
+            except Exception as err:
                 raise EnvironmentError('Invalid value to combine with BootStrap class')
         return result
 
@@ -1047,6 +1061,18 @@ class SetOfNNQ(object):
     NNQ(set) Inherits from TwoPtCorrelators Class
 
     """
+    def Construct_NNQ_Set(this_file_list):
+        set_list = [NNQCorr.Construct_NNQ_File(ifile) for ifile in this_file_list]
+        out_class = Construct_Empty(SetOfNNQ)
+        out_class.cfglist = {}
+        out_class.InfoDict = []
+        out_class.Plotdir = graphdir+'/Alpha/'
+        out_class.name = 'Set1'
+        out_class.SetC2 = {}
+        for iset in set_list:
+            out_class.SetC2[iset.name] = iset
+        return out_class
+
     instances = []
 
     parentlist = []
@@ -1997,6 +2023,18 @@ class SetOfNNQFull(object):
     NNQFull(set) Inherits from TwoPtCorrelators Class
 
     """
+
+    def Construct_NNQFull_Set(this_file_list):
+        set_list = [NNQFullCorr.Construct_NNQFull_File(ifile) for ifile in this_file_list]
+        out_class = Construct_Empty(SetOfNNQFull)
+        out_class.cfglist = {}
+        out_class.InfoDict = []
+        out_class.Plotdir = graphdir+'/AlphaFull/'
+        out_class.name = 'Set1'
+        out_class.SetC2 = {}
+        for iset in set_list:
+            out_class.SetC2[iset.name] = iset
+        return out_class
     instances = []
 
     parentlist = []
@@ -2997,3 +3035,14 @@ class SetOfNNQFull(object):
             np.float(self[ikey])
             self[ikey].Stats()
         return 1.0
+
+def TestSet2pt(this_file_list):
+    return SetOfTwoPt.Construct_2pt_Set(this_file_list)
+
+
+if __name__ == '__main__':
+    this_file_list = []
+    this_file_list.append('/home/jackdra/LQCD/Results/DebugResults/RC32x64Kud01375400Ks01364000/G2/Pickle/MassForFF.py3p')
+    this_data = TestSet2pt(this_file_list)
+    this_data.SetC2['MassForFF'].C2_Stats
+    

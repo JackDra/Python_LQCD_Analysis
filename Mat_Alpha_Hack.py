@@ -10,7 +10,7 @@ from NullPlotData import null_series
 import numpy as np
 import os
 from Autocorr import AutoCorrelate
-from PredefFitFuns import LinearFitFun,LinFFDer,c3FitFun_nosqrt
+from PredefFitFuns import LinearFitFun,LinFFDer,c3FitFun_nosqrt,c3FitFun_nosqrt_log
 import SetsOfFits as sff
 from copy import deepcopy
 from PlotData import Plotting
@@ -225,7 +225,7 @@ def GetCfgQuenched(ens_name,InfoFlow):
     cfglist_W = pa.DataFrame()
     cfglist_E = pa.DataFrame()
     cval_Q,cval_W,cval_E,ival = [],[],[],[]
-    master_folder = '/mnt/research/lqcd/gauge_observables/'
+    master_folder = '/mnt/research/lqcd/weinberg_data/'
     master_folder += dim_str+beta + '/'
     if not os.path.isdir(master_folder):
         print('path not found:')
@@ -746,7 +746,7 @@ def ErrEpsShift(this_data):
 
 
 import sys
-master_ens_list = ['mpi411','mpi570','mpi701','L16','L20','L28','qu_L24']
+master_ens_list = ['mpi411','mpi570','mpi701','L16','L20','L28','qu_L24','qu_L28','qu_L32']
 t0_dict = {}
 t0_dict['mpi411'] =     2.5377162290
 t0_dict['mpi570'] =     2.3999592122
@@ -755,6 +755,8 @@ t0_dict['L16'] =        1.3628954894
 t0_dict['L20'] =        2.2386627909
 t0_dict['L28'] =        4.9885618908
 t0_dict['qu_L24'] =     3.2060027740
+t0_dict['qu_L28'] =     4.4433376418
+t0_dict['qu_L32'] =     6.0324704599
 
 
 a_dict = {}
@@ -764,14 +766,18 @@ a_dict['mpi701'] =  0.0907
 a_dict['L16'] =  0.1095
 a_dict['L20'] =  0.0936
 a_dict['L28'] =  0.0684
-a_dict['qu_L24'] =  0.07
+# these lattice spacing are fixed such that sqrt(8t_0) is 0.4 fm
+a_dict['qu_L24'] =  0.07898289551435124
+a_dict['qu_L28'] =  0.06709039362546686
+a_dict['qu_L32'] =  0.057579434581241117
 fit_info_list = []
 fit_info = {}
-fit_info['Funs'] = [c3FitFun_nosqrt,3]
+# fit_info['Funs'] = [c3FitFun_nosqrt,3]
+fit_info['Funs'] = [c3FitFun_nosqrt_log,4]
 fit_info_list.append(fit_info)
 tflow_fit_min = 0.1
 tflow_fit_max = 0.4
-min_par_tflow = 20
+min_par_tflow = 1
 min_hold = tflow_fit_min
 max_hold = tflow_fit_max
 tflow_fit_min = {}
@@ -803,13 +809,15 @@ if len(sys.argv)> 1:
         elif 'latspace' in iarg and 'ens' in iarg:
             ens_list.append(['L16','L20','L28'])
         elif 'quenched' in iarg and 'ens' in iarg:
-            ens_list.append(['qu_L24'])
+            ens_list.append(['qu_L24','qu_L28','qu_L32'])
         elif 'nblock' in iarg:
             run_nb = int(iarg.replace('nblock',''))
         elif iarg not in master_ens_list:
             print('Warning, ensemble name not found: ',iarg)
         else:
             ens_list.append(iarg)
+    if len(ens_list) == 0:
+        ens_list = master_ens_list
 else:
     ens_list = master_ens_list
 print()
@@ -817,12 +825,12 @@ print('Running over ensembles')
 print(', '.join(ens_list))
 print()
 
-
+DefWipe=True
 def FitRat(this_data,this_key,nbstr=''):
     fit_data = this_data.Op_Stats[['boot']].reset_index()
     this_file = scratchdir+'/fit_WQ_'+this_key+nbstr+'.py3p'
     this_fit = False
-    if os.path.isfile(this_file):
+    if os.path.isfile(this_file) and not DefWipe:
         with open(this_file,'rb') as f:
             this_fit,dummy = pik.load(f)
     if this_fit is False or len(this_fit.Fit_Stats_fmt['Fit']) == 0:
@@ -1033,7 +1041,8 @@ def PlotFlowTime(t0_scale,this_nb=1):
             # # data_plot_QWcomp = data_QW2.FlowPlot(data_plot_QWcomp)
             # data_plot_WWvsQW = data_QW.FlowPlot_mul_tf2(data_plot_WWvsQW,mul=True)
             # data_plot_WWvsQW = data_WW.FlowPlot_mul_tf2(data_plot_WWvsQW,mul=True)
-    if 'L28' in data_QQ_list.keys(): QQ_28 = data_QQ_list['L28'].GetInterp(ts_list['L28'])
+    if 'L28' in data_QQ_list.keys() and 'qu_' not in data_QQ_list.keys():
+        QQ_28 = data_QQ_list['L28'].GetInterp(ts_list['L28'])
     else: QQ_28 = None
     leg_lab_ext = r' \frac{t_{s}}{t_{0}}='+t0_scale_str.replace('t_s','')
     for ikey,iens in ens_dict.items():

@@ -3,6 +3,7 @@
 import numpy as np
 import xarray as xr
 import scipy.linalg as lalg
+from Params import this_dir
 from warnings import warn
 import PlotData as jpl
 import pandas as pa
@@ -26,7 +27,7 @@ takes a matrix of objects and creates performs the variational method on it
 class VariationalMethod(object):
 
     '''
-
+    Class for computing variational method on matricies of 2pt correlators
     '''
 
     def __init__(self, matrix_corr = None , t0=2,dt=2,name='',symetrize=True,output_folder=''):
@@ -294,7 +295,7 @@ class VariationalMethod(object):
             out_corr.SetCustomName(string=self.name+'varmeth_state'+str(this_state),stringLL=self.name+'varmeth_state'+str(this_state))
         try:
             out_series = self.booted_proj_corr.unstack().sel(**kwargs).to_series()
-        except:
+        except Exception as err:
             out_series = self.booted_proj_corr.sel(**kwargs).unstack().to_series()
 
         if hasattr(self,'ref_corr'):
@@ -330,7 +331,7 @@ class VariationalMethod(object):
             out_corr.SetCustomName(string=self.name+'prony_state'+str(this_state),stringLL=self.name+'prony_state'+str(this_state))
         try:
             out_series = self.booted_pro_proj_corr.unstack().sel(**kwargs).to_series()
-        except:
+        except Exception as err:
             out_series = self.booted_pro_proj_corr.sel(**kwargs).unstack().to_series()
         if hasattr(self,'ref_corr'):
             out_series = out_series.swaplevel().sort_index()
@@ -370,7 +371,7 @@ class VariationalMethod(object):
             del kwargs['shift']
         try:
             data_plot = self.booted_eff_mass.unstack().sel(**kwargs)
-        except:
+        except Exception as err:
             data_plot = self.booted_eff_mass.sel(**kwargs).unstack()
         data_plot = data_plot.stack(all=data_plot.dims).to_pandas()
         this_index = pa.MultiIndex.from_tuples(list(map_str(data_plot.index)),names=data_plot.index.names)
@@ -404,7 +405,7 @@ class VariationalMethod(object):
             del kwargs['shift']
         try:
             data_plot = self.booted_proj_eff_mass.unstack().sel(**kwargs)
-        except:
+        except Exception as err:
             data_plot = self.booted_proj_eff_mass.sel(**kwargs).unstack()
         data_plot = data_plot.stack(all=self.booted_proj_eff_mass.dims).to_pandas()
         this_index = pa.MultiIndex.from_tuples(list(map_str(data_plot.index)),names=data_plot.index.names)
@@ -439,7 +440,7 @@ class VariationalMethod(object):
             del kwargs['shift']
         try:
             data_plot = self.booted_pro_proj_eff_mass.unstack().sel(**kwargs)
-        except:
+        except Exception as err:
             data_plot = self.booted_pro_proj_eff_mass.sel(**kwargs).unstack()
         data_plot = data_plot.stack(all=self.booted_pro_proj_eff_mass.dims).to_pandas()
         this_index = pa.MultiIndex.from_tuples(list(map_str(data_plot.index)),names=data_plot.index.names)
@@ -477,7 +478,7 @@ class VariationalMethod(object):
             del kwargs['shift']
         try:
             data_plot = self.eff_mass.unstack().sel(**kwargs)
-        except:
+        except Exception as err:
             data_plot = self.eff_mass.sel(**kwargs).unstack()
         data_plot = data_plot.stack(all=data_plot.dims).to_pandas()
         this_index = pa.MultiIndex.from_tuples(list(map_str(data_plot.index)),names=data_plot.index.names)
@@ -509,7 +510,7 @@ class VariationalMethod(object):
             del kwargs['shift']
         try:
             data_plot = self.proj_eff_mass.unstack().sel(**kwargs)
-        except:
+        except Exception as err:
             data_plot = self.proj_eff_mass.sel(**kwargs).unstack()
         data_plot = data_plot.stack(all=self.proj_eff_mass.dims).to_pandas()
         this_index = pa.MultiIndex.from_tuples(list(map_str(data_plot.index)),names=data_plot.index.names)
@@ -543,7 +544,7 @@ class VariationalMethod(object):
             del kwargs['shift']
         try:
             data_plot = self.pro_proj_eff_mass.unstack().sel(**kwargs)
-        except:
+        except Exception as err:
             data_plot = self.pro_proj_eff_mass.sel(**kwargs).unstack()
         data_plot = data_plot.stack(all=self.pro_proj_eff_mass.dims).to_pandas()
         this_index = pa.MultiIndex.from_tuples(list(map_str(data_plot.index)),names=data_plot.index.names)
@@ -694,7 +695,7 @@ if __name__ == '__main__':
     boot = True
     raw_data = CreateAndreaTest(nt=nt,boot=boot)
     this_info = pa.Series()
-    this_info['save_file'] = '/home/jackdra/LQCD/Scripts/Python_Analysis/TestGraphs/TestVar.pdf'
+    this_info['save_file'] = this_dir+'/TestGraphs/TestVar.pdf'
     this_info['title'] = 'TestData'
     this_info['x_label'] = 't/a'
     this_info['y_label'] = 'EffMass'
@@ -735,3 +736,4 @@ if __name__ == '__main__':
     data_plot = test_class.PlotEffMass_VarMeth(data_plot)
     data_plot = test_class.PlotEffMass_Prony(data_plot)
     data_plot.PlotAll()
+    print('Test variational method complete, see test_class variable')

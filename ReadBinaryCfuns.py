@@ -6,6 +6,7 @@ import os
 import sys
 from GammaMatricies import GammaTOChroma
 # from MomParams import *
+import time
 
 SeekIncSize = 8
 ChromaSIS = 16
@@ -43,7 +44,6 @@ def GetBar3ptLoc(ig,ip,tsinklen,momlistlen,thiscomplextype,PolProj=False):
     outloc = headerlen + np.sum(gammablockList[:ig]) + momblockList[ig]*ip
     return outloc , outloc + cmplxblocklen,magicNumshift
 
-
 ## noDer[igamma , ip , it]
 ## forcent is total length, not array index!
 class ReadFSCfunPickCHROMA:
@@ -64,8 +64,10 @@ class ReadFSCfunPickCHROMA:
                 else: thiscomplextype = complextype
             else: thiscomplextype = force_cmplx_type
             if not os.path.isfile(thisfile):
-                print('ERROR FILE:',thisfile)
-                raise IOError('Could not read 3 point correlation function')
+                time.sleep(10)
+                if not os.path.isfile(thisfile):
+                    print('ERROR FILE:',thisfile)
+                    raise IOError('Could not read 3 point correlation function')
             with open(thisfile,'rb') as f:
                 try:
                     for igamma,thisgamma in enumerate(thisGammaList):
@@ -73,7 +75,8 @@ class ReadFSCfunPickCHROMA:
                         datahold.append([])
                         for ip,ipstr in enumerate(thisMomList):
                             iploc = params.TOip(ipstr)
-                            loc,loccons,magmin = GetBar3ptLoc(igammaloc,iploc,forcent,len(params.momlist),thiscomplextype,PolProj=('GMA3' in thisfile))
+                            loc,loccons,magmin = GetBar3ptLoc(igammaloc,iploc,forcent,len(params.momlist),
+                                                              thiscomplextype,PolProj=('GMA3' in thisfile))
                             magicloc = loc-magmin
                             if 'Cons' in thisgamma:
                                 loc = loccons
@@ -151,8 +154,10 @@ class RC3Full:
                 else: thiscomplextype = complextype
             else: thiscomplextype = complextype
             if not os.path.isfile(thisfile):
-                print('ERROR FILE:',thisfile)
-                raise IOError('Could not read 3 point correlation function')
+                time.sleep(10)
+                if not os.path.isfile(thisfile):
+                    print('ERROR FILE:',thisfile)
+                    raise IOError('Could not read 3 point correlation function')
             with open(thisfile,'rb') as f:
                 f,this_f_info = ReadC3Header(f)
                 self.f_info.append(this_f_info)
@@ -315,8 +320,10 @@ class R2CChromaXMLFileList:
             datatfixhold = []
             # print 'Reading ' ,thisfile
             if not os.path.isfile(thisfile):
-                print('ERROR FILE:',thisfile)
-                raise IOError('Could not read 2 point correlation function')
+                time.sleep(10)
+                if not os.path.isfile(thisfile):
+                    print('ERROR FILE:',thisfile)
+                    raise IOError('Could not read 2 point correlation function')
             with open(thisfile,'r') as f:
                 BarPart,InterpPart,InterpParttfix,ReadMom = False,False,False,False
                 for line in f:
@@ -430,8 +437,10 @@ class RC2Full:
             datag5hold = []
             # print 'Reading ' ,thisfile
             if not os.path.isfile(thisfile):
-                print('ERROR FILE:',thisfile)
-                raise IOError('Could not read 2 point correlation function')
+                time.sleep(10)
+                if not os.path.isfile(thisfile):
+                    print('ERROR FILE:',thisfile)
+                    raise IOError('Could not read 2 point correlation function')
             with open(thisfile,'r') as f:
                 BarPart,InterpPart,InterpPartg5,ReadMom = False,False,False,False
                 for line in f:
@@ -525,93 +534,21 @@ class NaNCfunError(Exception):
         return repr(self.value)
 
 
+def TestRead2pt(this_file,thisMomList=['0 0 0'],InterpNumb='9',MesOrBar='Baryon'):
+    return R2CChromaXMLFileList([this_file],thisMomList,InterpNumb=InterpNumb,MesOrBar=MesOrBar).data
+
+def TestRead3pt(this_file,thisMomList=['0 0 0'],thisGammaList=['g4'],file_nt=nt):
+    return ReadFSCfunPickCHROMA([this_file],thisMomList,thisGammaList,forcent=file_nt).data
+
 if __name__ == "__main__":
+    if len(sys.argv) == 1:
+        print('please pass in a file to read')
     file_name = sys.argv[1]
     if not os.path.isfile(file_name):
-        raise IOError('file not found \n'+file_name)
-    with open(file_name,'rb') as f:
-        f,data = ReadC3Header(f)
-    for ikey,ival in data.items():
-        print(ikey, ival)
-
-
-
-
-
-
-# ## Der[igamma , ip , it]
-# class ReadFSDerCfunPick:
-#     def __init__(self,file,thisMomList,thisDGList):
-#         self.data = []
-#         f = open(file,'rb')
-#         tmpdata = array('d')
-#         tmpdata.read(f,DGBSize*nmom*nt*2)
-#         tmpdata.byteswap()
-#         for igd,thisgamma in enumerate(thisDGList):
-#             cmplxflag = False
-#             if 'cmplx' in thisgamma:
-#                 cmplxflag = True
-#                 thisgamma = thisgamma.replace('cmplx','')
-#             igdloc = DGSet.index(thisgamma)
-#             self.data.append([])
-#             for ip,iploc in enumerate(thisMomList):
-#                 self.data[igd].append([])
-#                 for it in xrange(nt):
-#                     loc = igdloc*2 + iploc*DGBSize*2 + it*DGBSize*nmom*2
-#                     if cmplxflag: loc += 1
-#                     self.data[igd][ip].append(tmpdata[loc])
-#                     if np.isnan(self.data[igd][ip][it]):
-#                         raise NaNCfunError('NaN Values: '+thisgamma+' ' +qvecSet[iploc] + ' it='+str(it+1) )
-
-#         f.close()
-
-# ## noDer[igamma , ip , it]
-# class ReadFSCfunPick:
-#     def __init__(self,file,thisMomList,thisGammaList):
-#         self.data = []
-#         f = open(file,'rb')
-#         tmpdata = array('d')
-#         try:
-#             tmpdata.read(f,GBSize*nmom*nt*2)
-#         except:
-#             print file
-#         tmpdata.byteswap()
-#         for igamma,thisgamma in enumerate(thisGammaList):
-#             cmplxflag = False
-#             if 'cmplx' in thisgamma:
-#                 cmplxflag = True
-#                 thisgamma = thisgamma.replace('cmplx','')
-#             igammaloc = GammaSet.index(thisgamma)
-#             self.data.append([])
-#             for ip,iploc in enumerate(thisMomList):
-#                 self.data[igamma].append([])
-#                 for it in xrange(nt):
-#                     loc = igammaloc*2 + iploc*GBSize*2 + it*GBSize*nmom*2
-#                     if cmplxflag: loc += 1
-#                     self.data[igamma][ip].append(tmpdata[loc])
-#                     if np.isnan(self.data[igamma][ip][it]):
-#                         raise NaNCfunError('NaN Values: '+thisgamma+ ' ' +qvecSet[iploc] + ' it='+str(it+1) )
-
-#         f.close()
-
-# ##[ip,it]
-# class Read2ptCfunPickOld:
-#     def __init__(self,file,thisMomList):
-#         self.data = []
-#         f = open(file,'rb')
-#         tmpdata = array('d')
-#         tmpdata.read(f,nmom*ns*ns*nt*2)
-#         tmpdata.byteswap()
-#         for ip,iploc in enumerate(thisMomList):
-#             self.data.append([])
-#             for it in xrange(nt):
-#         ##11 + 22 projected spin component ns = 4 works
-#                 loc = it*2*ns**2 + iploc*nt*2*ns**2
-#                 self.data[ip].append(tmpdata[loc]+tmpdata[loc+10])
-#                 if np.isnan(self.data[ip][it]):
-#                     raise NaNCfunError('NaN Values: ' +qvecSet[iploc] + ' it='+str(it+1) )
-#                 # if 'cmplx' in RI:
-#                 #     self.datai[ipread].append(tmpdata[loc+1]+tmpdata[loc+11])
-#             if self.data[ip][tsource-1] < 0.0:
-#                 self.data[ip] = np.negative(self.data[ip])
-#         f.close()
+        raise IOError('file not found: \n'+file_name)
+    try:
+        file_data = TestRead2pt(file_name)
+        print('read 2pt correlator successfull to file_data, dimensions are [ momentum, t_sink ]')
+    except Exception as err:
+        file_data = TestRead3pt(file_name)
+        print('read 3pt correlator successfull to file_data, dimensions are [ current_insersion_gamma, transfer momentum, t current ]')

@@ -1,0 +1,306 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ReadBinaryCfuns module &mdash; LQCD Analysis Codebase TF Fits documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/my_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ReadFO module" href="ReadFO.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> LQCD Analysis Codebase
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Python_Analysis</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="AnalysisGUI.html">AnalysisGUI module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Autocorr.html">Autocorr module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BootStrapping.html">BootStrapping module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CreateTable.html">CreateTable module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DSDefines.html">DSDefines module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FFSolve.html">FFSolve module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FileIO.html">FileIO module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FitFunctions.html">FitFunctions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FitFunctions_TF.html">FitFunctions_TF module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FlowOpps.html">FlowOpps module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FormFactors.html">FormFactors module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GammaMatricies.html">GammaMatricies module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MAH_control.html">MAH_control module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MiscFuns.html">MiscFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModPlot.html">ModPlot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModStylePlot.html">ModStylePlot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MomParams.html">MomParams module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MultiWrap.html">MultiWrap module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="NullPlotData.html">NullPlotData module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Params.html">Params module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PlotData.html">PlotData module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PredefFitFuns.html">PredefFitFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="QuantityLists.html">QuantityLists module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RatioCorrelators.html">RatioCorrelators module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">ReadBinaryCfuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ReadFO.html">ReadFO module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RunSetCommands.html">RunSetCommands module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFFs.html">SetsOfFFs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFits.html">SetsOfFits module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFlowOps.html">SetsOfFlowOps module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfRatios.html">SetsOfRatios module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfTwoPtCorrs.html">SetsOfTwoPtCorrs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ThreePtCorrelators.html">ThreePtCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TimeStuff.html">TimeStuff module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TwoPtCorrelators.html">TwoPtCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VarMethod.html">VarMethod module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="XmlFormatting.html">XmlFormatting module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xmltodict.html">xmltodict module</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">LQCD Analysis Codebase</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="modules.html">Python_Analysis</a> &raquo;</li>
+        
+      <li>ReadBinaryCfuns module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/ReadBinaryCfuns.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-ReadBinaryCfuns">
+<span id="readbinarycfuns-module"></span><h1>ReadBinaryCfuns module<a class="headerlink" href="#module-ReadBinaryCfuns" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="ReadBinaryCfuns.GetBar3ptLoc">
+<code class="descclassname">ReadBinaryCfuns.</code><code class="descname">GetBar3ptLoc</code><span class="sig-paren">(</span><em>ig</em>, <em>ip</em>, <em>tsinklen</em>, <em>momlistlen</em>, <em>thiscomplextype</em>, <em>PolProj=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ReadBinaryCfuns.html#GetBar3ptLoc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ReadBinaryCfuns.GetBar3ptLoc" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="ReadBinaryCfuns.NaNCfunError">
+<em class="property">exception </em><code class="descclassname">ReadBinaryCfuns.</code><code class="descname">NaNCfunError</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ReadBinaryCfuns.html#NaNCfunError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ReadBinaryCfuns.NaNCfunError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="ReadBinaryCfuns.R2CChromaXMLFileList">
+<em class="property">class </em><code class="descclassname">ReadBinaryCfuns.</code><code class="descname">R2CChromaXMLFileList</code><span class="sig-paren">(</span><em>thisfileList</em>, <em>thisMomList</em>, <em>InterpNumb='9'</em>, <em>MesOrBar='Baryon'</em>, <em>tfix=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ReadBinaryCfuns.html#R2CChromaXMLFileList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ReadBinaryCfuns.R2CChromaXMLFileList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="ReadBinaryCfuns.RC2Full">
+<em class="property">class </em><code class="descclassname">ReadBinaryCfuns.</code><code class="descname">RC2Full</code><span class="sig-paren">(</span><em>thisfileList</em>, <em>thisMomList</em>, <em>InterpNumb='9'</em>, <em>MesOrBar='Baryon'</em>, <em>Dog5=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ReadBinaryCfuns.html#RC2Full"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ReadBinaryCfuns.RC2Full" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="ReadBinaryCfuns.RC3Full">
+<em class="property">class </em><code class="descclassname">ReadBinaryCfuns.</code><code class="descname">RC3Full</code><span class="sig-paren">(</span><em>thisfileList</em>, <em>thisMomList</em>, <em>thisGammaList</em>, <em>forcent=64</em>, <em>check_fs=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ReadBinaryCfuns.html#RC3Full"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ReadBinaryCfuns.RC3Full" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ReadBinaryCfuns.ReadC3Header">
+<code class="descclassname">ReadBinaryCfuns.</code><code class="descname">ReadC3Header</code><span class="sig-paren">(</span><em>f_object</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ReadBinaryCfuns.html#ReadC3Header"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ReadBinaryCfuns.ReadC3Header" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="ReadBinaryCfuns.ReadFSCfunPickCHROMA">
+<em class="property">class </em><code class="descclassname">ReadBinaryCfuns.</code><code class="descname">ReadFSCfunPickCHROMA</code><span class="sig-paren">(</span><em>thisfileList</em>, <em>thisMomList</em>, <em>thisGammaList</em>, <em>forcent=64</em>, <em>check_fs=False</em>, <em>force_cmplx_type=&lt;class 'numpy.complex128'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ReadBinaryCfuns.html#ReadFSCfunPickCHROMA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ReadBinaryCfuns.ReadFSCfunPickCHROMA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ReadBinaryCfuns.TestRead2pt">
+<code class="descclassname">ReadBinaryCfuns.</code><code class="descname">TestRead2pt</code><span class="sig-paren">(</span><em>this_file, thisMomList=['0 0 0'], InterpNumb='9', MesOrBar='Baryon'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ReadBinaryCfuns.html#TestRead2pt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ReadBinaryCfuns.TestRead2pt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ReadBinaryCfuns.TestRead3pt">
+<code class="descclassname">ReadBinaryCfuns.</code><code class="descname">TestRead3pt</code><span class="sig-paren">(</span><em>this_file, thisMomList=['0 0 0'], thisGammaList=['g4'], file_nt=64</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ReadBinaryCfuns.html#TestRead3pt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ReadBinaryCfuns.TestRead3pt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ReadBinaryCfuns.holder">
+<code class="descclassname">ReadBinaryCfuns.</code><code class="descname">holder</code><span class="sig-paren">(</span><em>thisfile</em>, <em>cmplx_dtype=&lt;class 'numpy.complex64'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ReadBinaryCfuns.html#holder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ReadBinaryCfuns.holder" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="ReadFO.html" class="btn btn-neutral float-right" title="ReadFO module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Jack Dragos
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

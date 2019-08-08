@@ -1,13 +1,10 @@
 #!/usr/bin/env python
-## THIS FILE IS TEMPORARY, FOR DEBUGGING AND SIMPLE DEFAULT PARAMETERS
-## TODO: either default parameters in file, or even GUI?...
 
-from collections import OrderedDict
 from MiscFuns import mkdir_p
 import numpy as np
 from PredefFitFuns import ConstantFitFun
 from copy import deepcopy
-import pickle as pickle
+import pickle as pik
 # import dill as pickle
 import os
 import socket
@@ -18,23 +15,24 @@ if sys.version_info[0] < 3:
 
 
 socket_name = socket.gethostname()
-guess_dir = ''
+this_dir = os.getcwd() + '/'
+if 'python_lqcd_analysis' not in this_dir:
+    raise EnvironmentError('Please run code from the script directory!')
+
 if 'jack' in socket_name.lower():
     this_machine = 'jack_lappy'
 elif 'juqueen' in socket_name:
     this_machine = 'juqueen'
 elif 'dev' in socket_name or 'gateway' in socket_name or 'lac-' in socket_name or 'css-' in socket_name:
     this_machine = 'laconia'
-    guess_dir = '/mnt/home/dragosja/Scripts/Python_Analysis/'
 else:
     # print 'Warning, socket name ',socket_name,' not recognised, setting to default'
     # this_machine = 'unknown'
-    print('Warning, socket name ',socket_name,' not recognised, assuming laconia')
-    this_machine = 'laconia'
-    guess_dir = '/mnt/home/dragosja/Scripts/Python_Analysis/'
+    print('Warning, socket name ',socket_name,' not recognised, using:',socket_name)
+    this_machine = socket_name
 
 def Def_pdict():
-    paramdict = OrderedDict()
+    paramdict = {}
     paramdict['Multicore'] = False
     paramdict['Debug_Mode'] = False
     paramdict['num_of_procs'] = 4
@@ -48,8 +46,8 @@ def Def_pdict():
     paramdict['Solver_Prec'] = 10**(-8)
     # paramdict['data_directory'] = '/mnt/research/lqcd/CfunAnalysis/'
     # paramdict['cfun_prefix'] = '/cfunPChroma/'
-    paramdict['formatted_cfg_dir'] = os.getcwd()+'/Configs/'
-    paramdict['data_directory'] = '/home/jackdra/PHD/CHROMA/TestVar/scratch/'
+    paramdict['formatted_cfg_dir'] = this_dir+'/Configs/'
+    paramdict['data_directory'] = this_dir+'/Data/'
     paramdict['cfun_prefix'] = '/cfunsg5/'
     paramdict['n_space'] = 32
     paramdict['n_time'] = 64
@@ -59,25 +57,21 @@ def Def_pdict():
     paramdict['nchi_fit_threshold'] = 10
     paramdict['plot_the_ff'] = True
     paramdict['normed_histograms'] = True
-    paramdict['def_min_fitr'] = 3
+    paramdict['def_min_fitr'] = 1
+    paramdict['scratch_hotfix'] = False
     return paramdict
 
 try:
-    if os.path.isfile('./Param_p3.py3p'):
-        this_file = os.getcwd()+'/Param_p3.py3p'
+    if os.path.isfile(this_dir+'/Param_p3.py3p'):
+        this_file = this_dir+'/Param_p3.py3p'
         with open( this_file, "rb" ) as pfile:
             print('Reading Params from, ', this_file)
-            paramdict =  pickle.load(pfile)
-    elif os.path.isfile('../Param_p3.py3p'):
-        this_file = os.getcwd()+'/../Param_p3.py3p'
+            paramdict =  pik.load(pfile)
+    elif os.path.isfile(this_dir+'../Param_p3.py3p'):
+        this_file = this_dir+'../Param_p3.py3p'
         with open( this_file, "rb" ) as pfile:
             print('Reading Params from, ', this_file)
-            paramdict =  pickle.load(pfile)
-    elif len(guess_dir) > 0 and os.path.isfile(guess_dir+'Param_p3.py3p'):
-        this_file = guess_dir+'Param_p3.py3p'
-        with open( this_file, "rb" ) as pfile:
-            print('Reading Params from, ', this_file)
-            paramdict =  pickle.load(pfile)
+            paramdict =  pik.load(pfile)
     else:
         paramdict = Def_pdict()
         # raise IOError('Param_p3.p is not set, need to deal with this?')
@@ -87,18 +81,17 @@ except Exception as err:
     print(str(err))
     paramdict = Def_pdict()
 
-if os.path.isfile('./JobParam_p3.py3p'):
-    with open( './JobParam_p3.py3p', "rb" ) as pfile:
-        def_job_params =  pickle.load(pfile)
-elif os.path.isfile('../JobParam_p3.py3p'):
-    with open( '../JobParam_p3.py3p', "rb" ) as pfile:
-        def_job_params =  pickle.load(pfile)
+if os.path.isfile(this_dir+'/JobParam_p3.py3p'):
+    with open( this_dir+'/JobParam_p3.py3p', "rb" ) as pfile:
+        def_job_params =  pik.load(pfile)
+elif os.path.isfile(this_dir+'../JobParam_p3.py3p'):
+    with open( this_dir+'../JobParam_p3.py3p', "rb" ) as pfile:
+        def_job_params =  pik.load(pfile)
 else:
-    def_job_params = OrderedDict()
+    def_job_params = {}
     def_job_params['machine'] = this_machine
     def_job_params['python_exe'] = 'python'
     def_job_params['time'] = '4:50:00'
-    def_job_params['email'] = 'jack.dragos@gmail.com'
     def_job_params['nproc'] = 1
     def_job_params['RunPTG'] = False
     if this_machine == 'juqueen':
@@ -114,18 +107,17 @@ else:
     def_job_params['memory'] = '12GB'
 
 
-if os.path.isfile('./JobParamSolve.py3p'):
-    with open( './JobParamSolve.py3p', "rb" ) as pfile:
-        def_job_params_solve =  pickle.load(pfile)
-elif os.path.isfile('../JobParamSolve.py3p'):
-    with open( '../JobParamSolve.py3p', "rb" ) as pfile:
-        def_job_params_solve =  pickle.load(pfile)
+if os.path.isfile(this_dir+'/JobParamSolve.py3p'):
+    with open( this_dir+'/JobParamSolve.py3p', "rb" ) as pfile:
+        def_job_params_solve =  pik.load(pfile)
+elif os.path.isfile(this_dir+'../JobParamSolve.py3p'):
+    with open( this_dir+'../JobParamSolve.py3p', "rb" ) as pfile:
+        def_job_params_solve =  pik.load(pfile)
 else:
-    def_job_params_solve = OrderedDict()
+    def_job_params_solve = {}
     def_job_params_solve['machine'] = this_machine
     def_job_params_solve['python_exe'] = 'python'
     def_job_params_solve['time'] = '4:50:00'
-    def_job_params_solve['email'] = 'jack.dragos@gmail.com'
     def_job_params_solve['nproc'] = 1
     def_job_params_solve['RunPTG'] = False
     if this_machine == 'juqueen':
@@ -183,14 +175,15 @@ if 'Wipe_All_Fits' in list(paramdict.keys()):
     Wipe_All_Fits = paramdict['Wipe_All_Fits']
 plot_style = 'classic'
 
-colourset8 = [ '#000080','#B22222','#00B800','#8B008B', '#0000FF','#FF0000','#000000','#32CD32','#FF0066']
+colourset8 = [  '#000080','#B22222','#00B800','#8B008B',
+                '#0000FF','#FF0000','#000000','#32CD32','#FF0066']
 markerset = ['o','s','^','v','d']
 
 lineres = 100
 
 defMaxIter = paramdict['Max_Iters']
 defPrec = paramdict['Solver_Prec']## max number of iterations for least squares fitting.
-fillalpha = 0.5
+
 defSparam = 1.5
 
 shiftmax = 3
@@ -207,7 +200,7 @@ datadir = paramdict['data_directory']
 if 'formatted_cfg_dir' in paramdict:
     cfgfmtdir = paramdict['formatted_cfg_dir']
 else:
-    cfgfmtdir = os.getcwd()+'/Configs/'
+    cfgfmtdir = this_dir+'/Configs/'
 if not os.path.isdir(cfgfmtdir):
     print('Warning, config directory not found:')
     print(cfgfmtdir)
@@ -216,17 +209,17 @@ if not os.path.isdir(cfgfmtdir):
 if 'output_directory' in paramdict:
     outputdir = paramdict['output_directory']
 else:
-    outputdir = datadir+'/resultsREWORK/'
+    outputdir = this_dir+'/results/'
 if 'scratch_directory' in paramdict:
     scratchdir = paramdict['scratch_directory']
 else:
-    scratchdir = outputdir+'/scratch/'
+    scratchdir = datadir+'/scratch/'
 
 test_file = scratchdir + '/debug_file.test'
 if 'flow_new_format' in paramdict:
     flow_new_format = paramdict['flow_new_format']
 else:
-    flow_new_format = False
+    flow_new_format = True
 functiondir = scratchdir + '/functions/'
 cfundir = datadir + paramdict['cfun_prefix']
 ########################################################
@@ -240,21 +233,18 @@ try:
     mkdir_p(graphdir)
     mkdir_p(scratchdir)
     mkdir_p(functiondir)
-except:
-    print(os.getcwd())
-    if os.path.isfile('./Param_p3.py3p'):
-        print('./Param_p3.p found')
-    elif os.path.isfile('../Param_p3.py3p'):
-        print('../Param_p3.p found')
-    elif len(guess_dir) > 0 and os.path.isfile(guess_dir+'Param_p3.py3p'):
-        print(guess_dir+'Param_p3.p found')
+except Exception as err:
+    if os.path.isfile(this_dir+'/Param_p3.py3p'):
+        print(this_dir+'/Param_p3.p found')
+    elif os.path.isfile(this_dir+'../Param_p3.py3p'):
+        print(this_dir+'../Param_p3.p found')
     else:
         print('No parameter file found')
     errorstr = (graphdir +
                 '\n error making directory, machine identified as \n '+
                 this_machine)
     print(errorstr)
-    print('THIS MUST BE FIXED BEFORE RUNNING')
+    print(err)
 # MomSqrdSet = [ '0','1','2','3','4','5','6','7','8','9' ]
 MomSqrdSet = [ '0','1','2','3','4']
 defmom2list = list(range(5))
@@ -274,7 +264,7 @@ alpha_guess = -0.5 ## guess for what the nucleon mixing angle alpha is......
 latspace = paramdict['lattice_spacing'] ## In fermi
 # hbarcdivlat = hbarc/latspace
 
-defxlim = [4,10]
+defxlim = [4,15]
 defxlimAlpha = [1,15]
 defxlimAlphaTflow = [0,1] ## in sqrt(8t)
 defxlimOpMore = np.arange(0.01,9.11,0.1)
@@ -290,6 +280,7 @@ def chitcoeff(nt,nxyz,latspace,obs):
         return (hbarc/(latspace*nxyz**(0.75)*nt**(0.25))) ## (1/V)^1/4 [GeV]
     elif 'W' in obs:
         return (hbarc/((latspace*nxyz**(0.75)*nt**(0.25)))**0.5) ## (1/V)^1/8 [GeV]
+
 
 nboot = paramdict['n_boot']
 if 'nchi_threshold' in list(paramdict.keys()):
@@ -312,6 +303,13 @@ if 'normed_histograms' in list(paramdict.keys()):
 else:
     normed_histograms = True
 
+
+if 'scratch_hotfix' in list(paramdict.keys()):
+    scratch_hotfix = paramdict['scratch_hotfix']
+else:
+    scratch_hotfix = False
+
+
 if 'def_min_fitr' in list(paramdict.keys()):
     def_min_fitr = paramdict['def_min_fitr']
 else:
@@ -328,7 +326,7 @@ else:
 MesICS1 = [10**-6,np.log(0.2)]
 MesICS2 = [10**-6,10,np.log(0.2),np.log(0.2)]
 
-defInfo = OrderedDict()
+defInfo = {}
 defInfo['outdir'] = outputdir
 defInfo['show_cfgs'] = True
 defInfo['nxyzt'] = [32,32,32,64]
@@ -439,7 +437,7 @@ defInfoMes3 = deepcopy(defInfoMes)
 defInfoMes3['ism'] = 16
 
 
-defFitDict = OrderedDict()
+defFitDict = {}
 defFitDict['Kud01375400Ks01364000_-a-_Baryon_CPEven_tsrc0_ism64_jsm64'] = ('state1','fitr10-20')
 defFitDict['Kud01375400Ks01364000_-a-_Baryon_CPEven_tsrc0_ism32_jsm64'] = ('state1','fitr9-20')
 defFitDict['Kud01375400Ks01364000_-a-_Baryon_CPEven_tsrc0_ism16_jsm64'] = ('state1','fitr9-20')
@@ -466,7 +464,7 @@ defFitDict['MassForFF'] = defFitDict['Kud01375400Ks01364000_-a-_Baryon_CPEven_ts
 
 defFitAllGamma = 'fitr4-8'
 
-defFitDict2 = OrderedDict()
+defFitDict2 = {}
 defFitDict2['Baryon_CPEven_tsrc0_ism64_jsm64'] = ('state2','fitr5-20')
 defFitDict2['Baryon_CPEven_tsrc0_ism32_jsm64'] = ('state2','fitr5-20')
 defFitDict2['Baryon_CPEven_tsrc0_ism16_jsm64'] = ('state2','fitr5-20')
@@ -476,7 +474,7 @@ defFitDict2['Meson_Pion_tsrc0_ism16_jsm64'] = ('state2','fitr5-20',MesICS2)
 
 
 ##HERE TODO
-defFitAlpha = OrderedDict()
+defFitAlpha = {}
 defFitAlpha['tsrc0_ism64_jsm64_TopCharge'] = 'fitr8-10'
 defFitAlpha['tsrc0_ism32_jsm32_TopCharge'] = 'fitr8-10'
 defFitAlpha['tsrc0_ism16_jsm16_TopCharge'] = 'fitr8-10'
@@ -491,7 +489,7 @@ defFitAlpha['Kud01375400Ks01364000_-a-_tsrc0_ism16_jsm64_TopCharge'] = 'fitr8-10
 
 
 
-defcfglist = OrderedDict()
+defcfglist = {}
 defcfglist['-a-004310'] = list(map(str,[101,102]))
 defcfglist['-a-004010'] = list(map(str,[101,102]))
 defcfglist['-a-003310'] = list(map(str,[101,102]))

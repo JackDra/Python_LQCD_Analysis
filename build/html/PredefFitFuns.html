@@ -1,0 +1,1101 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>PredefFitFuns module &mdash; LQCD Analysis Codebase TF Fits documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/my_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="QuantityLists module" href="QuantityLists.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> LQCD Analysis Codebase
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Python_Analysis</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="AnalysisGUI.html">AnalysisGUI module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Autocorr.html">Autocorr module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BootStrapping.html">BootStrapping module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CreateTable.html">CreateTable module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DSDefines.html">DSDefines module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FFSolve.html">FFSolve module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FileIO.html">FileIO module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FitFunctions.html">FitFunctions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FitFunctions_TF.html">FitFunctions_TF module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FlowOpps.html">FlowOpps module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FormFactors.html">FormFactors module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GammaMatricies.html">GammaMatricies module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MAH_control.html">MAH_control module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MiscFuns.html">MiscFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModPlot.html">ModPlot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModStylePlot.html">ModStylePlot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MomParams.html">MomParams module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MultiWrap.html">MultiWrap module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="NullPlotData.html">NullPlotData module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Params.html">Params module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PlotData.html">PlotData module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">PredefFitFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="QuantityLists.html">QuantityLists module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RatioCorrelators.html">RatioCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ReadBinaryCfuns.html">ReadBinaryCfuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ReadFO.html">ReadFO module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RunSetCommands.html">RunSetCommands module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFFs.html">SetsOfFFs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFits.html">SetsOfFits module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFlowOps.html">SetsOfFlowOps module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfRatios.html">SetsOfRatios module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfTwoPtCorrs.html">SetsOfTwoPtCorrs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ThreePtCorrelators.html">ThreePtCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TimeStuff.html">TimeStuff module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TwoPtCorrelators.html">TwoPtCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VarMethod.html">VarMethod module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="XmlFormatting.html">XmlFormatting module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xmltodict.html">xmltodict module</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">LQCD Analysis Codebase</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="modules.html">Python_Analysis</a> &raquo;</li>
+        
+      <li>PredefFitFuns module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/PredefFitFuns.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-PredefFitFuns">
+<span id="predeffitfuns-module"></span><h1>PredefFitFuns module<a class="headerlink" href="#module-PredefFitFuns" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="PredefFitFuns.A_x_exp_minus_m_x">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">A_x_exp_minus_m_x</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#A_x_exp_minus_m_x"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.A_x_exp_minus_m_x" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.Alpha_Prop_Der">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">Alpha_Prop_Der</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#Alpha_Prop_Der"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.Alpha_Prop_Der" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.Alpha_Prop_Der_2exp">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">Alpha_Prop_Der_2exp</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#Alpha_Prop_Der_2exp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.Alpha_Prop_Der_2exp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.Alpha_Prop_Der_plin">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">Alpha_Prop_Der_plin</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#Alpha_Prop_Der_plin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.Alpha_Prop_Der_plin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.Alpha_Prop_Fit">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">Alpha_Prop_Fit</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#Alpha_Prop_Fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.Alpha_Prop_Fit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.Alpha_Prop_Fit_2exp">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">Alpha_Prop_Fit_2exp</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#Alpha_Prop_Fit_2exp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.Alpha_Prop_Fit_2exp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.Alpha_Prop_Fit_plin">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">Alpha_Prop_Fit_plin</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#Alpha_Prop_Fit_plin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.Alpha_Prop_Fit_plin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.C2OSFAntiper">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">C2OSFAntiper</code><span class="sig-paren">(</span><em>t</em>, <em>p</em>, <em>tsink</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#C2OSFAntiper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.C2OSFAntiper" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.C2OSFAntiperDer">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">C2OSFAntiperDer</code><span class="sig-paren">(</span><em>t</em>, <em>p</em>, <em>tsink</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#C2OSFAntiperDer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.C2OSFAntiperDer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.C2OSFFDer">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">C2OSFFDer</code><span class="sig-paren">(</span><em>t</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#C2OSFFDer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.C2OSFFDer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.C2OSFFNoExpDer">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">C2OSFFNoExpDer</code><span class="sig-paren">(</span><em>t</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#C2OSFFNoExpDer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.C2OSFFNoExpDer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.C2OneStateFitFun">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">C2OneStateFitFun</code><span class="sig-paren">(</span><em>t</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#C2OneStateFitFun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.C2OneStateFitFun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.C2OneStateFitFunNoExp">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">C2OneStateFitFunNoExp</code><span class="sig-paren">(</span><em>t</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#C2OneStateFitFunNoExp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.C2OneStateFitFunNoExp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.C2TSFFDer">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">C2TSFFDer</code><span class="sig-paren">(</span><em>t</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#C2TSFFDer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.C2TSFFDer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.C2TSFFNoExpDer">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">C2TSFFNoExpDer</code><span class="sig-paren">(</span><em>t</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#C2TSFFNoExpDer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.C2TSFFNoExpDer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.C2TSFLineFun">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">C2TSFLineFun</code><span class="sig-paren">(</span><em>t</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#C2TSFLineFun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.C2TSFLineFun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.C2TwoStateFitFun">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">C2TwoStateFitFun</code><span class="sig-paren">(</span><em>t</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#C2TwoStateFitFun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.C2TwoStateFitFun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.C2TwoStateFitFunCM">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">C2TwoStateFitFunCM</code><span class="sig-paren">(</span><em>t</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#C2TwoStateFitFunCM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.C2TwoStateFitFunCM" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.C2TwoStateFitFunCMNoExp">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">C2TwoStateFitFunCMNoExp</code><span class="sig-paren">(</span><em>t</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#C2TwoStateFitFunCMNoExp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.C2TwoStateFitFunCMNoExp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.C2TwoStateFitFunNoExp">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">C2TwoStateFitFunNoExp</code><span class="sig-paren">(</span><em>t</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#C2TwoStateFitFunNoExp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.C2TwoStateFitFunNoExp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.C3MomTSFFDer">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">C3MomTSFFDer</code><span class="sig-paren">(</span><em>tf</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#C3MomTSFFDer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.C3MomTSFFDer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.C3MomTwoStateFitFun">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">C3MomTwoStateFitFun</code><span class="sig-paren">(</span><em>tf</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#C3MomTwoStateFitFun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.C3MomTwoStateFitFun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.C3MomTwoStateFitFunNoExp">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">C3MomTwoStateFitFunNoExp</code><span class="sig-paren">(</span><em>tf</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#C3MomTwoStateFitFunNoExp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.C3MomTwoStateFitFunNoExp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.C3OSFFDer">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">C3OSFFDer</code><span class="sig-paren">(</span><em>tf</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#C3OSFFDer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.C3OSFFDer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.C3OneStateFitFun">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">C3OneStateFitFun</code><span class="sig-paren">(</span><em>tf</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#C3OneStateFitFun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.C3OneStateFitFun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.C3OneStateFitFunNoExp">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">C3OneStateFitFunNoExp</code><span class="sig-paren">(</span><em>tf</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#C3OneStateFitFunNoExp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.C3OneStateFitFunNoExp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.C3TSFLineFun">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">C3TSFLineFun</code><span class="sig-paren">(</span><em>Vals</em>, <em>thistcurr</em>, <em>thistsink</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#C3TSFLineFun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.C3TSFLineFun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.Chi_Prop_Der">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">Chi_Prop_Der</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#Chi_Prop_Der"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.Chi_Prop_Der" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.Chi_Prop_Der_2exp">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">Chi_Prop_Der_2exp</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#Chi_Prop_Der_2exp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.Chi_Prop_Der_2exp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.Chi_Prop_Fit">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">Chi_Prop_Fit</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#Chi_Prop_Fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.Chi_Prop_Fit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.Chi_Prop_Fit_2exp">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">Chi_Prop_Fit_2exp</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#Chi_Prop_Fit_2exp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.Chi_Prop_Fit_2exp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.Chipt_Chit">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">Chipt_Chit</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#Chipt_Chit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.Chipt_Chit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ChitFitFun">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ChitFitFun</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ChitFitFun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ChitFitFun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ChitFitFunDer">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ChitFitFunDer</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ChitFitFunDer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ChitFitFunDer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ConstFFDer">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ConstFFDer</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ConstFFDer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ConstFFDer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ConstantFitFun">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ConstantFitFun</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ConstantFitFun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ConstantFitFun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ContFFDer">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ContFFDer</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ContFFDer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ContFFDer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ContFFDer_mix">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ContFFDer_mix</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ContFFDer_mix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ContFFDer_mix" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ContFFDer_x0">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ContFFDer_x0</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ContFFDer_x0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ContFFDer_x0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ContFFDer_x0_mix">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ContFFDer_x0_mix</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ContFFDer_x0_mix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ContFFDer_x0_mix" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ContFitFun">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ContFitFun</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ContFitFun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ContFitFun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ContFitFun_mix">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ContFitFun_mix</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ContFitFun_mix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ContFitFun_mix" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ContFitFun_x0">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ContFitFun_x0</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ContFitFun_x0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ContFitFun_x0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ContFitFun_x0_mix">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ContFitFun_x0_mix</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ContFitFun_x0_mix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ContFitFun_x0_mix" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ContPlLogFFDer">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ContPlLogFFDer</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ContPlLogFFDer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ContPlLogFFDer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ContPlLogFFDer_NP">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ContPlLogFFDer_NP</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ContPlLogFFDer_NP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ContPlLogFFDer_NP" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ContPlLogFFDer_NP_latmN">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ContPlLogFFDer_NP_latmN</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ContPlLogFFDer_NP_latmN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ContPlLogFFDer_NP_latmN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ContPlLogFFDer_NP_mC2">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ContPlLogFFDer_NP_mC2</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ContPlLogFFDer_NP_mC2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ContPlLogFFDer_NP_mC2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ContPlLogFFDer_NP_nompi3">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ContPlLogFFDer_NP_nompi3</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ContPlLogFFDer_NP_nompi3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ContPlLogFFDer_NP_nompi3" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ContPlLogFFDer_mix">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ContPlLogFFDer_mix</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ContPlLogFFDer_mix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ContPlLogFFDer_mix" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ContPlLogFFDer_x0">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ContPlLogFFDer_x0</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ContPlLogFFDer_x0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ContPlLogFFDer_x0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ContPlLogFFDer_x0_N">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ContPlLogFFDer_x0_N</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ContPlLogFFDer_x0_N"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ContPlLogFFDer_x0_N" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ContPlLogFFDer_x0_N_latmN">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ContPlLogFFDer_x0_N_latmN</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ContPlLogFFDer_x0_N_latmN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ContPlLogFFDer_x0_N_latmN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ContPlLogFFDer_x0_P">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ContPlLogFFDer_x0_P</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ContPlLogFFDer_x0_P"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ContPlLogFFDer_x0_P" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ContPlLogFFDer_x0_P_latmN">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ContPlLogFFDer_x0_P_latmN</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ContPlLogFFDer_x0_P_latmN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ContPlLogFFDer_x0_P_latmN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ContPlLogFFDer_x0_dN">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ContPlLogFFDer_x0_dN</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ContPlLogFFDer_x0_dN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ContPlLogFFDer_x0_dN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ContPlLogFFDer_x0_mix">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ContPlLogFFDer_x0_mix</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ContPlLogFFDer_x0_mix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ContPlLogFFDer_x0_mix" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ContPlLogFitFun">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ContPlLogFitFun</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ContPlLogFitFun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ContPlLogFitFun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ContPlLogFitFun_NP">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ContPlLogFitFun_NP</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ContPlLogFitFun_NP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ContPlLogFitFun_NP" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ContPlLogFitFun_NP_latmN">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ContPlLogFitFun_NP_latmN</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ContPlLogFitFun_NP_latmN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ContPlLogFitFun_NP_latmN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ContPlLogFitFun_NP_mC2">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ContPlLogFitFun_NP_mC2</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ContPlLogFitFun_NP_mC2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ContPlLogFitFun_NP_mC2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ContPlLogFitFun_NP_nompi3">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ContPlLogFitFun_NP_nompi3</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ContPlLogFitFun_NP_nompi3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ContPlLogFitFun_NP_nompi3" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ContPlLogFitFun_mix">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ContPlLogFitFun_mix</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ContPlLogFitFun_mix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ContPlLogFitFun_mix" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ContPlLogFitFun_x0">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ContPlLogFitFun_x0</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ContPlLogFitFun_x0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ContPlLogFitFun_x0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ContPlLogFitFun_x0_N">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ContPlLogFitFun_x0_N</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ContPlLogFitFun_x0_N"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ContPlLogFitFun_x0_N" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ContPlLogFitFun_x0_N_latmN">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ContPlLogFitFun_x0_N_latmN</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ContPlLogFitFun_x0_N_latmN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ContPlLogFitFun_x0_N_latmN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ContPlLogFitFun_x0_P">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ContPlLogFitFun_x0_P</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ContPlLogFitFun_x0_P"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ContPlLogFitFun_x0_P" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ContPlLogFitFun_x0_P_latmN">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ContPlLogFitFun_x0_P_latmN</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ContPlLogFitFun_x0_P_latmN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ContPlLogFitFun_x0_P_latmN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ContPlLogFitFun_x0_dN">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ContPlLogFitFun_x0_dN</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ContPlLogFitFun_x0_dN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ContPlLogFitFun_x0_dN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ContPlLogFitFun_x0_mix">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ContPlLogFitFun_x0_mix</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ContPlLogFitFun_x0_mix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ContPlLogFitFun_x0_mix" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.CreateFFO">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">CreateFFO</code><span class="sig-paren">(</span><em>thislen</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#CreateFFO"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.CreateFFO" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.CreateOORFF">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">CreateOORFF</code><span class="sig-paren">(</span><em>Const</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#CreateOORFF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.CreateOORFF" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.DPfitfun">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">DPfitfun</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#DPfitfun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.DPfitfun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.DPfitfun2">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">DPfitfun2</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#DPfitfun2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.DPfitfun2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.DPfitfun2Der">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">DPfitfun2Der</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#DPfitfun2Der"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.DPfitfun2Der" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.DPfitfunDer">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">DPfitfunDer</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#DPfitfunDer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.DPfitfunDer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.DPfitfunOnePar">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">DPfitfunOnePar</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#DPfitfunOnePar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.DPfitfunOnePar" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.DPfitfunOneParDer">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">DPfitfunOneParDer</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#DPfitfunOneParDer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.DPfitfunOneParDer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.FormFactorO1">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">FormFactorO1</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#FormFactorO1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.FormFactorO1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.FormFactorO1Der">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">FormFactorO1Der</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#FormFactorO1Der"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.FormFactorO1Der" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.FormFactorO2">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">FormFactorO2</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#FormFactorO2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.FormFactorO2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.FormFactorO2Der">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">FormFactorO2Der</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#FormFactorO2Der"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.FormFactorO2Der" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.FormFactorO3">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">FormFactorO3</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#FormFactorO3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.FormFactorO3" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.FormFactorO3Der">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">FormFactorO3Der</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#FormFactorO3Der"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.FormFactorO3Der" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.FormFactorO4">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">FormFactorO4</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#FormFactorO4"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.FormFactorO4" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.FormFactorO4Der">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">FormFactorO4Der</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#FormFactorO4Der"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.FormFactorO4Der" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.FormFactorO5">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">FormFactorO5</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#FormFactorO5"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.FormFactorO5" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.FormFactorO5Der">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">FormFactorO5Der</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#FormFactorO5Der"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.FormFactorO5Der" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.FormFactorO6">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">FormFactorO6</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#FormFactorO6"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.FormFactorO6" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.FormFactorO6Der">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">FormFactorO6Der</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#FormFactorO6Der"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.FormFactorO6Der" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.FormFactorO7">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">FormFactorO7</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#FormFactorO7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.FormFactorO7" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.FormFactorO7Der">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">FormFactorO7Der</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#FormFactorO7Der"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.FormFactorO7Der" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.FormFactorO8">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">FormFactorO8</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#FormFactorO8"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.FormFactorO8" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.FormFactorO8Der">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">FormFactorO8Der</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#FormFactorO8Der"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.FormFactorO8Der" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.LinFFDer">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">LinFFDer</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#LinFFDer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.LinFFDer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.LinFFDer_2D">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">LinFFDer_2D</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#LinFFDer_2D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.LinFFDer_2D" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.LinFFDer_x0">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">LinFFDer_x0</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#LinFFDer_x0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.LinFFDer_x0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.LinearFF_2D">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">LinearFF_2D</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#LinearFF_2D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.LinearFF_2D" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.LinearFitFun">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">LinearFitFun</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#LinearFitFun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.LinearFitFun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.LinearFitFun_x0">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">LinearFitFun_x0</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#LinearFitFun_x0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.LinearFitFun_x0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.LogFFDer">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">LogFFDer</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#LogFFDer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.LogFFDer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.LogFFDer_x0">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">LogFFDer_x0</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#LogFFDer_x0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.LogFFDer_x0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.LogFitFun">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">LogFitFun</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#LogFitFun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.LogFitFun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.LogFitFun_x0">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">LogFitFun_x0</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#LogFitFun_x0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.LogFitFun_x0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.OORNFFDer">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">OORNFFDer</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#OORNFFDer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.OORNFFDer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ParmDivX">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ParmDivX</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ParmDivX"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ParmDivX" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ParmDivXDer">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ParmDivXDer</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ParmDivXDer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ParmDivXDer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ParmDivXP">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ParmDivXP</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ParmDivXP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ParmDivXP" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.ParmDivXPDer">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">ParmDivXPDer</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#ParmDivXPDer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.ParmDivXPDer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.RF_Prop_Der">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">RF_Prop_Der</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#RF_Prop_Der"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.RF_Prop_Der" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.RF_Prop_Fit">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">RF_Prop_Fit</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#RF_Prop_Fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.RF_Prop_Fit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.RandTFitFun">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">RandTFitFun</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#RandTFitFun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.RandTFitFun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.Ratio">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">Ratio</code><span class="sig-paren">(</span><em>*a</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#Ratio"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.Ratio" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.RatioDer">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">RatioDer</code><span class="sig-paren">(</span><em>*a</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#RatioDer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.RatioDer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.SchiffFFDer">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">SchiffFFDer</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#SchiffFFDer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.SchiffFFDer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.SchiffFFDer_noa">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">SchiffFFDer_noa</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#SchiffFFDer_noa"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.SchiffFFDer_noa" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.SchiffFitFun">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">SchiffFitFun</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#SchiffFitFun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.SchiffFitFun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.SchiffFitFun_noa">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">SchiffFitFun_noa</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#SchiffFitFun_noa"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.SchiffFitFun_noa" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.SqPlLogFFDer">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">SqPlLogFFDer</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#SqPlLogFFDer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.SqPlLogFFDer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.SqPlLogFFDer_x0">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">SqPlLogFFDer_x0</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#SqPlLogFFDer_x0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.SqPlLogFFDer_x0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.SqPlLogFitFun">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">SqPlLogFitFun</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#SqPlLogFitFun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.SqPlLogFitFun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.SqPlLogFitFun_x0">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">SqPlLogFitFun_x0</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#SqPlLogFitFun_x0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.SqPlLogFitFun_x0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.SquaredFFDer">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">SquaredFFDer</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#SquaredFFDer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.SquaredFFDer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.SquaredFFDer_x0">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">SquaredFFDer_x0</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#SquaredFFDer_x0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.SquaredFFDer_x0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.SquaredFitFun">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">SquaredFitFun</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#SquaredFitFun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.SquaredFitFun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.SquaredFitFun_x0">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">SquaredFitFun_x0</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#SquaredFitFun_x0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.SquaredFitFun_x0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.TestTwoVarFFDer">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">TestTwoVarFFDer</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#TestTwoVarFFDer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.TestTwoVarFFDer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.TestTwoVarFitFun">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">TestTwoVarFitFun</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#TestTwoVarFitFun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.TestTwoVarFitFun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.c3ContFFDer">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">c3ContFFDer</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#c3ContFFDer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.c3ContFFDer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.c3ContFitFun">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">c3ContFitFun</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#c3ContFitFun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.c3ContFitFun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.c3EFFDer">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">c3EFFDer</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#c3EFFDer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.c3EFFDer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.c3EFFDer2">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">c3EFFDer2</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#c3EFFDer2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.c3EFFDer2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.c3EFFDer2_nosqrt">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">c3EFFDer2_nosqrt</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#c3EFFDer2_nosqrt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.c3EFFDer2_nosqrt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.c3EFFDer3_nosqrt">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">c3EFFDer3_nosqrt</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#c3EFFDer3_nosqrt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.c3EFFDer3_nosqrt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.c3EFFDer_nosqrt">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">c3EFFDer_nosqrt</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#c3EFFDer_nosqrt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.c3EFFDer_nosqrt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.c3ExpFitFun">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">c3ExpFitFun</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#c3ExpFitFun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.c3ExpFitFun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.c3ExpFitFun2">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">c3ExpFitFun2</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#c3ExpFitFun2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.c3ExpFitFun2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.c3ExpFitFun2_nosqrt">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">c3ExpFitFun2_nosqrt</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#c3ExpFitFun2_nosqrt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.c3ExpFitFun2_nosqrt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.c3ExpFitFun3_nosqrt">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">c3ExpFitFun3_nosqrt</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#c3ExpFitFun3_nosqrt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.c3ExpFitFun3_nosqrt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.c3ExpFitFun_nosqrt">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">c3ExpFitFun_nosqrt</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#c3ExpFitFun_nosqrt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.c3ExpFitFun_nosqrt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.c3FFDer">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">c3FFDer</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#c3FFDer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.c3FFDer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.c3FFDer_NoA">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">c3FFDer_NoA</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#c3FFDer_NoA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.c3FFDer_NoA" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.c3FFDer_V2">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">c3FFDer_V2</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#c3FFDer_V2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.c3FFDer_V2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.c3FFDer_log">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">c3FFDer_log</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#c3FFDer_log"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.c3FFDer_log" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.c3FFDer_nosqrt">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">c3FFDer_nosqrt</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#c3FFDer_nosqrt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.c3FFDer_nosqrt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.c3FFDer_nosqrt_log">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">c3FFDer_nosqrt_log</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#c3FFDer_nosqrt_log"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.c3FFDer_nosqrt_log" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.c3FitFun">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">c3FitFun</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#c3FitFun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.c3FitFun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.c3FitFun_NoA">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">c3FitFun_NoA</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#c3FitFun_NoA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.c3FitFun_NoA" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.c3FitFun_V2">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">c3FitFun_V2</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#c3FitFun_V2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.c3FitFun_V2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.c3FitFun_log">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">c3FitFun_log</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#c3FitFun_log"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.c3FitFun_log" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.c3FitFun_nosqrt">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">c3FitFun_nosqrt</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#c3FitFun_nosqrt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.c3FitFun_nosqrt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.c3FitFun_nosqrt_log">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">c3FitFun_nosqrt_log</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#c3FitFun_nosqrt_log"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.c3FitFun_nosqrt_log" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.c3PFDer">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">c3PFDer</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#c3PFDer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.c3PFDer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.c3PFDer2">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">c3PFDer2</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#c3PFDer2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.c3PFDer2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.c3PFDer2_skip1">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">c3PFDer2_skip1</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#c3PFDer2_skip1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.c3PFDer2_skip1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.c3PFDer3">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">c3PFDer3</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#c3PFDer3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.c3PFDer3" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.c3PFDer3_skip1">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">c3PFDer3_skip1</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#c3PFDer3_skip1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.c3PFDer3_skip1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.c3PFDer_skip1">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">c3PFDer_skip1</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#c3PFDer_skip1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.c3PFDer_skip1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.c3PolyFun">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">c3PolyFun</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#c3PolyFun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.c3PolyFun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.c3PolyFun2">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">c3PolyFun2</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#c3PolyFun2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.c3PolyFun2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.c3PolyFun2_skip1">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">c3PolyFun2_skip1</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#c3PolyFun2_skip1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.c3PolyFun2_skip1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.c3PolyFun3">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">c3PolyFun3</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#c3PolyFun3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.c3PolyFun3" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.c3PolyFun3_skip1">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">c3PolyFun3_skip1</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#c3PolyFun3_skip1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.c3PolyFun3_skip1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.c3PolyFun_skip1">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">c3PolyFun_skip1</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#c3PolyFun_skip1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.c3PolyFun_skip1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.eyeFun">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">eyeFun</code><span class="sig-paren">(</span><em>*a</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#eyeFun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.eyeFun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.eyeFunDer">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">eyeFunDer</code><span class="sig-paren">(</span><em>*a</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#eyeFunDer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.eyeFunDer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.fullq2FFDer">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">fullq2FFDer</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#fullq2FFDer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.fullq2FFDer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.fullq2FitFun">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">fullq2FitFun</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#fullq2FitFun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.fullq2FitFun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.hx_fun">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">hx_fun</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#hx_fun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.hx_fun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PredefFitFuns.makexunit">
+<code class="descclassname">PredefFitFuns.</code><code class="descname">makexunit</code><span class="sig-paren">(</span><em>xin</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PredefFitFuns.html#makexunit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PredefFitFuns.makexunit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="QuantityLists.html" class="btn btn-neutral float-right" title="QuantityLists module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Jack Dragos
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

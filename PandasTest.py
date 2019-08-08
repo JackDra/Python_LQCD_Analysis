@@ -2,9 +2,49 @@
 import pystan
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as pl
+from Params import this_dir
+
+# C [ism, jsm, t, b]
+C_list = []
+for ism in range(3):
+    C_list.append([])
+    for jsm in range(3):
+        C_list[-1].append([])
+        for ib in range(200):
+            this_file = '...'
+            t_list = read_file(this_file)
+            C_list[-1][-1].append(t_list)
+# C_list [ism, jsm, b, t]
+C_list = np.array(C_list)
+# C_list [ism, jsm, t, b]
+C_list = np.swapaxis(C_list,2,3)
+
+Meff = np.log(C_list[:,:,:-1,:]/C_list[:,:,1:,:])
+# Meff [ism, jsm, t, b]
+for ism in range(3):
+    # this_Meff [t, b] [[...],[...]...]
+    this_Meff = Meff[ism,ism]
+    avg_t = np.avg(Meff[ism,ism],axis=1)
+    std_t = np.std(Meff[ism,ism],axis=1)
+    pl.errorbar(range(len(avg_t)),avg_t,std_t)
 
 
 
+str(34).zfill(5)
+
+for line in file:
+    print(line.strip().replace('<','>').split('>'))
+    this_val = float(line.strip().replace('<','>').split('>')[2])
+
+
+C[:,0,1]
+
+import os
+for subdir,dirs,files in os.walk(os.path.abspath('./')):
+    for ifile in files:
+        if ifile[-3:] == '.py':
+            print(os.path.join(subdir, ifile))
 # The Stan model as a string.
 model_string = """
 data {
@@ -183,7 +223,7 @@ import pandas as pa
 data.attrs['lat_space'] = 0.0980
 data.attrs['cfg_list'] = pa.Series([1,2,3,4],index=['one','two','four','three'])
 data
-test_file = '/home/jackdra/LQCD/Scripts/Python_Analysis/TestGraphs/test_netcdf.nc'
+test_file = this_dir+'/TestGraphs/test_netcdf.nc'
 data.to_netcdf(test_file)
 
 data_read = xr.open_dataarray(test_file)
@@ -219,7 +259,7 @@ data.values()
 import numpy as np
 import dask.dataframe as dd
 import pandas as pa
-data = pa.read_csv('/home/jackdra/LQCD/Scripts/Python_Analysis/Configs/t2_energy_16X32.dat',delimiter=' ')
+data = pa.read_csv('./Configs/t2_energy_16X32.dat',delimiter=' ')
 data
 flow_list = np.arange(3.01,9.02,1.0)
 out_list,err_list = [],[]
@@ -514,7 +554,7 @@ this_series.index.get_level_values(('lower','number')
 # pl.title(r'$\frac{t_f<W(t_f)W(0.21)>}{<Q(5.01) W(0.21)>}$')
 # pl.xlabel(r'$t_f$')
 # pl.ylabel(r'Ratio')
-# pl.savefig('./TestGraphs/ForMatAndrea.pdf')
+# pl.savefig(this_dir+'/TestGraphs/ForMatAndrea.pdf')
 
 # W_021 = W_data['Op_Stats'].loc['t_f0.21','boot']
 # Q_5 = Q_data['Op_Stats'].loc['t_f5.01','boot']
@@ -592,7 +632,7 @@ this_series.index.get_level_values(('lower','number')
 # cfg_data.tsink_list = np.arange(32)
 # cfg_data.tsink_list
 #
-# test_file = './TestGraphs/Testmsg.msg'
+# test_file = this_dir+'/TestGraphs/Testmsg.msg'
 # import cPickle as pickle
 #
 # with open(test_file,'wb') as f:
@@ -663,14 +703,14 @@ this_series.index.get_level_values(('lower','number')
 # fmt_data['std'] = auto_list.apply(lambda x : x.std)
 # fmt_data['formatted'] = auto_list.apply(lambda x : makevalanderr(x.avg,x.std))
 # fmt_data
-# fmt_data.to_csv('./testgraphs/mathias_data.csv')
+# fmt_data.to_csv(this_dir+'/TestGraphs/mathias_data.csv')
 #
 #
 # rho_list.loc[('s1.5',slice(none))]
 #
 #
 # this_info = pa.series()
-# this_info['save_file'] = './testgraphs/mathias_top_w.pdf'
+# this_info['save_file'] = this_dir+'/TestGraphs/mathias_top_w.pdf'
 # this_info['title'] = 'test w auto graph'
 # # this_info['xlims'] = [0,10]
 # # this_info['ylims'] = [0,15]
@@ -697,7 +737,7 @@ this_series.index.get_level_values(('lower','number')
 # tauerr_list
 #
 # this_info = pa.series()
-# this_info['save_file'] = './testgraphs/mathias_top_tauint.pdf'
+# this_info['save_file'] = this_dir+'/TestGraphs/mathias_top_tauint.pdf'
 # this_info['title'] = 'test tau int auto graph'
 # # this_info['xlims'] = [0,10]
 # # this_info['ylims'] = [0,15]
@@ -824,7 +864,7 @@ this_series.index.get_level_values(('lower','number')
 # pl.plot(data,this_fun )
 # pl.xlim(-5,35)
 # pl.ylim(0.1,0.22)
-# pl.savefig('./testgraphs/fit_test.pdf')
+# pl.savefig(this_dir+'/TestGraphs/fit_test.pdf')
 # range(10)[slice(1,10,3)]
 #
 # def pie(a):
@@ -1347,7 +1387,7 @@ this_series.index.get_level_values(('lower','number')
 # newseries = pandas.series(df['a'])
 # newseries.index
 # newseries.iteritems()
-# newseries.to_csv('./testgraphs/test.cvs')
+# newseries.to_csv(this_dir+'/TestGraphs/test.cvs')
 #
 # # bootstrap
 # # # %timeit df.iloc[np.random.randint(n, size=n)]
@@ -1389,7 +1429,7 @@ this_series.index.get_level_values(('lower','number')
 # df_sum.plot.kde()
 # pl.plot()
 # pl.legend()
-# pl.savefig('./testgraphs/pandas.pdf')
+# pl.savefig(this_dir+'/TestGraphs/pandas.pdf')
 #
 #
 # np.random.random_integers

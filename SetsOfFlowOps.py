@@ -15,6 +15,7 @@ import FitFunctions as ff
 import PlotData as jpl
 from NullPlotData import null_series
 import pandas as pa
+from FileIO import Construct_Empty
 
 # import matplotlib
 # matplotlib.use('Agg') # Must be before importing matplotlib.pyplot or pylab!
@@ -61,6 +62,18 @@ class SetOfFO(object):
 
 
     """
+    def Construct_FO_Set(this_file_list):
+        set_list = [FlowOp.Construct_FO_File(ifile) for ifile in this_file_list]
+        out_class = Construct_Empty(SetOfFO)
+        out_class.cfglist = {}
+        out_class.InfoDict = []
+        out_class.Plotdir = graphdir+'/FlowOp/'
+        out_class.name = 'Set1'
+        out_class.SetFO = {}
+        for iset in set_list:
+            out_class.SetFO[iset.name] = iset
+        return out_class
+
     instances = []
 
     parentlist = []
@@ -801,7 +814,7 @@ class SetOfFO(object):
                     result.name = '+'.join([self.name,NumbToFileName(FO2)])
                     for iset,itflow,iFO in list(self.items()):
                         result[(iset,itflow)] = iFO + FO2
-                except:
+                except Exception as err:
                     raise EnvironmentError('Invalid value to combine with BootStrap class')
             return result
 
@@ -826,7 +839,7 @@ class SetOfFO(object):
                     for iset,itflow,iFO in list(self.items()):
                         result.name = '-'.join([self.name,NumbToFileName(FO2)])
                         result[(iset,itflow)] = iFO - FO2
-                except:
+                except Exception as err:
                     raise EnvironmentError('Invalid value to combine with BootStrap class')
             return result
 
@@ -852,7 +865,7 @@ class SetOfFO(object):
                     for iset,itflow,iFO in list(self.items()):
                         result.name = 'x'.join([self.name,NumbToFileName(FO2)])
                         result[(iset,itflow)] = iFO * FO2
-                except:
+                except Exception as err:
                     raise EnvironmentError('Invalid value to combine with BootStrap class')
             return result
 
@@ -869,7 +882,7 @@ class SetOfFO(object):
                         try:
                             if (iset,itflow) not in list(FO2.keys()): continue
                             result[(iset,itflow)] = iFO / FO2[(iset,itflow)]
-                        except:
+                        except Exception as err:
                             if any([ibs == 0 for ibs in FO2[(iset,itflow)].bootvals]):
                                 raise ZeroDivisionError('Dividing by zero found in bootstrap division for '+FO2.name + ' '+FO2[(iset,itflow)].name)
             # elif type(FO2) in 'TwoPtCorrelators.TwoPointCorr':
@@ -878,7 +891,7 @@ class SetOfFO(object):
             #         try:
             #             if (itflow) not in FO2.keys(): continue
             #             result[(iset,itflow)] = iFO / FO2[(itflow)]
-            #         except:
+            #         except Exception as err:
             #             if any([ibs == 0 for ibs in FO2[(itflow)].bootvals]):
             #                 raise ZeroDivisionError('Dividing by zero found in bootstrap division for '+FO2.name + ' '+FO2[(itflow)].name)
             else:
@@ -888,7 +901,7 @@ class SetOfFO(object):
                     for iset,itflow,iFO in list(self.items()):
                         result.name = 'div'.join([self.name,NumbToFileName(FO2)])
                         result[(iset,itflow)] = iFO / FO2
-                except:
+                except Exception as err:
                     raise EnvironmentError('Invalid value to combine with BootStrap class')
             return result
 
@@ -914,7 +927,7 @@ class SetOfFO(object):
                     for iset,itflow,iFO in list(self.items()):
                         result.name = 'pow'.join([self.name,NumbToFileName(FO2)])
                         result[(iset,itflow)] = iFO ** FO2
-                except:
+                except Exception as err:
                     raise EnvironmentError('Invalid value to combine with BootStrap class')
             return result
 
@@ -940,7 +953,7 @@ class SetOfFO(object):
                 result.name = '+'.join([NumbToFileName(FO2),self.name])
                 for iset,itflow,iFO in list(self.items()):
                     result[(iset,itflow)] = FO2 + iFO
-            except:
+            except Exception as err:
                 raise EnvironmentError('Invalid value to combine with BootStrap class')
         return result
 
@@ -963,7 +976,7 @@ class SetOfFO(object):
                 result.name = '-'.join([NumbToFileName(FO2),self.name])
                 for iset,itflow,iFO in list(self.items()):
                     result[(iset,itflow)] = FO2 - iFO
-            except:
+            except Exception as err:
                 raise EnvironmentError('Invalid value to combine with BootStrap class')
         return result
 
@@ -985,7 +998,7 @@ class SetOfFO(object):
                 result.name = 'x'.join([NumbToFileName(FO2),self.name])
                 for iset,itflow,iFO in list(self.items()):
                     result[(iset,itflow)] = FO2 * iFO
-            except:
+            except Exception as err:
                 raise EnvironmentError('Invalid value to combine with BootStrap class')
         return result
 
@@ -999,7 +1012,7 @@ class SetOfFO(object):
                     try:
                         if (iset,itflow) not in list(FO2.keys()): continue
                         result[(iset,itflow)] = FO2[(iset,itflow)] / iFO
-                    except:
+                    except Exception as err:
                         if any([ibs == 0 for ibs in iFO.bootvals]):
                             raise ZeroDivisionError('Dividing by zero found in bootstrap division for '+self.name + ' '+iFO.name)
         # elif type(FO2) in 'TwoPtCorrelators.TwoPointCorr':
@@ -1008,7 +1021,7 @@ class SetOfFO(object):
         #         try:
         #             if (itflow) not in FO2.keys(): continue
         #             result[(iset,itflow)] = FO2[(itflow)] / iFO
-        #         except:
+        #         except Exception as err:
         #             if any([ibs == 0 for ibs in iFO.bootvals]):
         #                 raise ZeroDivisionError('Dividing by zero found in bootstrap division for '+FO2.name + ' '+FO2[(itflow)].name)
         else:
@@ -1016,7 +1029,7 @@ class SetOfFO(object):
             try:
                 for iset,itflow,iFO in list(self.items()):
                     result[(iset,itflow)] = FO2 / iFO
-            except:
+            except Exception as err:
                 raise EnvironmentError('Invalid value to combine with BootStrap class')
         return result
 
@@ -1039,7 +1052,7 @@ class SetOfFO(object):
                 result.name = 'pow'.join([NumbToFileName(FO2),self.name])
                 for iset,itflow,iFO in list(self.items()):
                     result[(iset,itflow)] = FO2 ** iFO
-            except:
+            except Exception as err:
                 raise EnvironmentError('Invalid value to combine with BootStrap class')
         return result
 
@@ -1059,6 +1072,19 @@ class SetOfFOFull(object):
 
 
     """
+    def Construct_FOFull_Set(this_file_list):
+        set_list = [FlowOpFullSquared.Construct_FOFull_File(ifile) for ifile in this_file_list]
+        out_class = Construct_Empty(SetOfFOFull)
+        out_class.cfglist = {}
+        out_class.InfoDict = []
+        out_class.Plotdir = graphdir+'/FlowOpFull/'
+        out_class.name = 'Set1'
+        out_class.SetFO = {}
+        for iset in set_list:
+            out_class.SetFO[iset.name] = iset
+        return out_class
+
+
     instances = []
 
     parentlist = []
@@ -1776,7 +1802,7 @@ class SetOfFOFull(object):
                     result.name = '+'.join([self.name,NumbToFileName(FO2)])
                     for iset,itflow,iFO in list(self.items()):
                         result[(iset,itflow)] = iFO + FO2
-                except:
+                except Exception as err:
                     raise EnvironmentError('Invalid value to combine with BootStrap class')
             return result
 
@@ -1801,7 +1827,7 @@ class SetOfFOFull(object):
                     for iset,itflow,iFO in list(self.items()):
                         result.name = '-'.join([self.name,NumbToFileName(FO2)])
                         result[(iset,itflow)] = iFO - FO2
-                except:
+                except Exception as err:
                     raise EnvironmentError('Invalid value to combine with BootStrap class')
             return result
 
@@ -1827,7 +1853,7 @@ class SetOfFOFull(object):
                     for iset,itflow,iFO in list(self.items()):
                         result.name = 'x'.join([self.name,NumbToFileName(FO2)])
                         result[(iset,itflow)] = iFO * FO2
-                except:
+                except Exception as err:
                     raise EnvironmentError('Invalid value to combine with BootStrap class')
             return result
 
@@ -1844,7 +1870,7 @@ class SetOfFOFull(object):
                         try:
                             if (iset,itflow) not in list(FO2.keys()): continue
                             result[(iset,itflow)] = iFO / FO2[(iset,itflow)]
-                        except:
+                        except Exception as err:
                             if any([ibs == 0 for ibs in FO2[(iset,itflow)].bootvals]):
                                 raise ZeroDivisionError('Dividing by zero found in bootstrap division for '+FO2.name + ' '+FO2[(iset,itflow)].name)
             # elif type(FO2) in 'TwoPtCorrelators.TwoPointCorr':
@@ -1853,7 +1879,7 @@ class SetOfFOFull(object):
             #         try:
             #             if (itflow) not in FO2.keys(): continue
             #             result[(iset,itflow)] = iFO / FO2[(itflow)]
-            #         except:
+            #         except Exception as err:
             #             if any([ibs == 0 for ibs in FO2[(itflow)].bootvals]):
             #                 raise ZeroDivisionError('Dividing by zero found in bootstrap division for '+FO2.name + ' '+FO2[(itflow)].name)
             else:
@@ -1863,7 +1889,7 @@ class SetOfFOFull(object):
                     for iset,itflow,iFO in list(self.items()):
                         result.name = 'div'.join([self.name,NumbToFileName(FO2)])
                         result[(iset,itflow)] = iFO / FO2
-                except:
+                except Exception as err:
                     raise EnvironmentError('Invalid value to combine with BootStrap class')
             return result
 
@@ -1889,7 +1915,7 @@ class SetOfFOFull(object):
                     for iset,itflow,iFO in list(self.items()):
                         result.name = 'pow'.join([self.name,NumbToFileName(FO2)])
                         result[(iset,itflow)] = iFO ** FO2
-                except:
+                except Exception as err:
                     raise EnvironmentError('Invalid value to combine with BootStrap class')
             return result
 
@@ -1915,7 +1941,7 @@ class SetOfFOFull(object):
                 result.name = '+'.join([NumbToFileName(FO2),self.name])
                 for iset,itflow,iFO in list(self.items()):
                     result[(iset,itflow)] = FO2 + iFO
-            except:
+            except Exception as err:
                 raise EnvironmentError('Invalid value to combine with BootStrap class')
         return result
 
@@ -1938,7 +1964,7 @@ class SetOfFOFull(object):
                 result.name = '-'.join([NumbToFileName(FO2),self.name])
                 for iset,itflow,iFO in list(self.items()):
                     result[(iset,itflow)] = FO2 - iFO
-            except:
+            except Exception as err:
                 raise EnvironmentError('Invalid value to combine with BootStrap class')
         return result
 
@@ -1960,7 +1986,7 @@ class SetOfFOFull(object):
                 result.name = 'x'.join([NumbToFileName(FO2),self.name])
                 for iset,itflow,iFO in list(self.items()):
                     result[(iset,itflow)] = FO2 * iFO
-            except:
+            except Exception as err:
                 raise EnvironmentError('Invalid value to combine with BootStrap class')
         return result
 
@@ -1974,7 +2000,7 @@ class SetOfFOFull(object):
                     try:
                         if (iset,itflow) not in list(FO2.keys()): continue
                         result[(iset,itflow)] = FO2[(iset,itflow)] / iFO
-                    except:
+                    except Exception as err:
                         if any([ibs == 0 for ibs in iFO.bootvals]):
                             raise ZeroDivisionError('Dividing by zero found in bootstrap division for '+self.name + ' '+iFO.name)
         # elif type(FO2) in 'TwoPtCorrelators.TwoPointCorr':
@@ -1983,7 +2009,7 @@ class SetOfFOFull(object):
         #         try:
         #             if (itflow) not in FO2.keys(): continue
         #             result[(iset,itflow)] = FO2[(itflow)] / iFO
-        #         except:
+        #         except Exception as err:
         #             if any([ibs == 0 for ibs in iFO.bootvals]):
         #                 raise ZeroDivisionError('Dividing by zero found in bootstrap division for '+FO2.name + ' '+FO2[(itflow)].name)
         else:
@@ -1991,7 +2017,7 @@ class SetOfFOFull(object):
             try:
                 for iset,itflow,iFO in list(self.items()):
                     result[(iset,itflow)] = FO2 / iFO
-            except:
+            except Exception as err:
                 raise EnvironmentError('Invalid value to combine with BootStrap class')
         return result
 
@@ -2014,6 +2040,6 @@ class SetOfFOFull(object):
                 result.name = 'pow'.join([NumbToFileName(FO2),self.name])
                 for iset,itflow,iFO in list(self.items()):
                     result[(iset,itflow)] = FO2 ** iFO
-            except:
+            except Exception as err:
                 raise EnvironmentError('Invalid value to combine with BootStrap class')
         return result

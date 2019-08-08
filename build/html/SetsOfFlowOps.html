@@ -1,0 +1,741 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>SetsOfFlowOps module &mdash; LQCD Analysis Codebase TF Fits documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/my_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> LQCD Analysis Codebase
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Python_Analysis</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="AnalysisGUI.html">AnalysisGUI module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Autocorr.html">Autocorr module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BootStrapping.html">BootStrapping module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CreateTable.html">CreateTable module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DSDefines.html">DSDefines module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FFSolve.html">FFSolve module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FileIO.html">FileIO module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FitFunctions.html">FitFunctions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FitFunctions_TF.html">FitFunctions_TF module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FlowOpps.html">FlowOpps module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FormFactors.html">FormFactors module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GammaMatricies.html">GammaMatricies module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MAH_control.html">MAH_control module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MiscFuns.html">MiscFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModPlot.html">ModPlot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModStylePlot.html">ModStylePlot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MomParams.html">MomParams module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MultiWrap.html">MultiWrap module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="NullPlotData.html">NullPlotData module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Params.html">Params module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PlotData.html">PlotData module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PredefFitFuns.html">PredefFitFuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="QuantityLists.html">QuantityLists module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RatioCorrelators.html">RatioCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ReadBinaryCfuns.html">ReadBinaryCfuns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ReadFO.html">ReadFO module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RunSetCommands.html">RunSetCommands module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFFs.html">SetsOfFFs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfFits.html">SetsOfFits module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">SetsOfFlowOps module</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfRatios.html">SetsOfRatios module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SetsOfTwoPtCorrs.html">SetsOfTwoPtCorrs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ThreePtCorrelators.html">ThreePtCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TimeStuff.html">TimeStuff module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TwoPtCorrelators.html">TwoPtCorrelators module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VarMethod.html">VarMethod module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="XmlFormatting.html">XmlFormatting module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xmltodict.html">xmltodict module</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">LQCD Analysis Codebase</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="modules.html">Python_Analysis</a> &raquo;</li>
+        
+      <li>SetsOfFlowOps module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/SetsOfFlowOps.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-SetsOfFlowOps">
+<span id="setsofflowops-module"></span><h1>SetsOfFlowOps module<a class="headerlink" href="#module-SetsOfFlowOps" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="SetsOfFlowOps.SetOfFO">
+<em class="property">class </em><code class="descclassname">SetsOfFlowOps.</code><code class="descname">SetOfFO</code><span class="sig-paren">(</span><em>cfglist={}</em>, <em>InfoDict=[]</em>, <em>name=''</em>, <em>corr_cfglists=True</em>, <em>CompAhmed=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFO"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFO" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>FO(set) Inherits from FlowOp in FlowOpps.py</p>
+<p>plotting parameters (Move to different file?) ####</p>
+<p>InfoDict is a list of Info dictionaries to be bassed to TwoPtCorr:</p>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#SetsOfFlowOps.SetOfFO.GetSet" title="SetsOfFlowOps.SetOfFO.GetSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GetSet</span></code></a>(thisset)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#SetsOfFlowOps.SetOfFO.Plot" title="SetsOfFlowOps.SetOfFO.Plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Plot</span></code></a>(plot_info[,&nbsp;fitDict,&nbsp;AComp])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#SetsOfFlowOps.SetOfFO.PlotMonteTime" title="SetsOfFlowOps.SetOfFO.PlotMonteTime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PlotMonteTime</span></code></a>(tflowlist,&nbsp;plot_info)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#SetsOfFlowOps.SetOfFO.PlotMonteTimeDeltaEps" title="SetsOfFlowOps.SetOfFO.PlotMonteTimeDeltaEps"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PlotMonteTimeDeltaEps</span></code></a>(tflowlist,&nbsp;plot_info,&nbsp;…)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#SetsOfFlowOps.SetOfFO.PlotTauInt" title="SetsOfFlowOps.SetOfFO.PlotTauInt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PlotTauInt</span></code></a>(tflowlist,&nbsp;plot_info)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#SetsOfFlowOps.SetOfFO.PlotTauIntOverFlow" title="SetsOfFlowOps.SetOfFO.PlotTauIntOverFlow"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PlotTauIntOverFlow</span></code></a>(plot_info)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#SetsOfFlowOps.SetOfFO.PlotWopt" title="SetsOfFlowOps.SetOfFO.PlotWopt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PlotWopt</span></code></a>(tflowlist,&nbsp;plot_info)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="69%" />
+<col width="31%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><strong>Construct_FO_Set</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>FlowMakeChit</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>FlowMakeOppSquared</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>GetCfgList</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>GetUnCorrCfgList</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>ImportCfgList</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>LoadPickle</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>PlotVsPionMass</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>PlotVsQuarkMass</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>Read</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>ReadAndWrite</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>Stats</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>Write</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>items</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>itemsAvgStd</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>keys</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>values</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>valuesAvgStd</strong></td>
+<td>&#160;</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFO.Construct_FO_Set">
+<code class="descname">Construct_FO_Set</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFO.Construct_FO_Set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFO.Construct_FO_Set" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFO.FlowMakeChit">
+<code class="descname">FlowMakeChit</code><span class="sig-paren">(</span><em>DefWipe=False</em>, <em>Improve=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFO.FlowMakeChit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFO.FlowMakeChit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFO.FlowMakeOppSquared">
+<code class="descname">FlowMakeOppSquared</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFO.FlowMakeOppSquared"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFO.FlowMakeOppSquared" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFO.GetCfgList">
+<code class="descname">GetCfgList</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFO.GetCfgList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFO.GetCfgList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFO.GetSet">
+<code class="descname">GetSet</code><span class="sig-paren">(</span><em>thisset</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFO.GetSet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFO.GetSet" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFO.GetUnCorrCfgList">
+<code class="descname">GetUnCorrCfgList</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFO.GetUnCorrCfgList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFO.GetUnCorrCfgList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFO.ImportCfgList">
+<code class="descname">ImportCfgList</code><span class="sig-paren">(</span><em>cfglist</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFO.ImportCfgList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFO.ImportCfgList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFO.LoadPickle">
+<code class="descname">LoadPickle</code><span class="sig-paren">(</span><em>DefWipe=False</em>, <em>CheckCfgs=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFO.LoadPickle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFO.LoadPickle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFO.Plot">
+<code class="descname">Plot</code><span class="sig-paren">(</span><em>plot_info, fitDict={'Kud01375400Ks01364000_-a-_Baryon_CPEven_tsrc0_ism16_PoF0D1': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPEven_tsrc0_ism16_jsm64': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPEven_tsrc0_ism32_PoF0D1': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPEven_tsrc0_ism32_jsm64': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPEven_tsrc0_ism64_PoF0D1': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPEven_tsrc0_ism64_jsm64': ('state1', 'fitr10-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPOdd_tsrc0_ism16_PoF0D1': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPOdd_tsrc0_ism16_jsm64': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPOdd_tsrc0_ism32_PoF0D1': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPOdd_tsrc0_ism32_jsm64': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPOdd_tsrc0_ism64_PoF0D1': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_Baryon_CPOdd_tsrc0_ism64_jsm64': ('state1', 'fitr9-20'), 'Kud01375400Ks01364000_-a-_P3_doub_pp000_tsrc0_tsink13_ism16_PoF0D1': 'fitr4-8', 'Kud01375400Ks01364000_-a-_P3_doub_pp000_tsrc0_tsink13_ism32_PoF0D1': 'fitr4-8', 'Kud01375400Ks01364000_-a-_P3_doub_pp000_tsrc0_tsink13_ism64_PoF0D1': 'fitr4-8', 'Kud01375400Ks01364000_-a-_P4_doub_pp000_tsrc0_tsink13_ism16_PoF0D1': 'fitr4-8', 'Kud01375400Ks01364000_-a-_P4_doub_pp000_tsrc0_tsink13_ism32_PoF0D1': 'fitr4-8', 'Kud01375400Ks01364000_-a-_P4_doub_pp000_tsrc0_tsink13_ism64_PoF0D1': 'fitr4-8', 'Kud01375400Ks01364000_Meson_Pion_tsrc0_ism16_jsm64': ('state1', 'fitr9-20', [1e-06, -1.6094379124341003]), 'Kud01375400Ks01364000_Meson_Pion_tsrc0_ism32_jsm64': ('state1', 'fitr9-20', [1e-06, -1.6094379124341003]), 'Kud01375400Ks01364000_Meson_Pion_tsrc0_ism64_jsm64': ('state1', 'fitr9-20', [1e-06, -1.6094379124341003]), 'MassForFF': ('state1', 'fitr10-20')}, AComp='PreDef'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFO.Plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFO.Plot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFO.PlotMonteTime">
+<code class="descname">PlotMonteTime</code><span class="sig-paren">(</span><em>tflowlist</em>, <em>plot_info</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFO.PlotMonteTime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFO.PlotMonteTime" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFO.PlotMonteTimeDeltaEps">
+<code class="descname">PlotMonteTimeDeltaEps</code><span class="sig-paren">(</span><em>tflowlist</em>, <em>plot_info</em>, <em>epslist</em>, <em>MultQ=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFO.PlotMonteTimeDeltaEps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFO.PlotMonteTimeDeltaEps" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFO.PlotTauInt">
+<code class="descname">PlotTauInt</code><span class="sig-paren">(</span><em>tflowlist</em>, <em>plot_info</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFO.PlotTauInt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFO.PlotTauInt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFO.PlotTauIntOverFlow">
+<code class="descname">PlotTauIntOverFlow</code><span class="sig-paren">(</span><em>plot_info</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFO.PlotTauIntOverFlow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFO.PlotTauIntOverFlow" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFO.PlotVsPionMass">
+<code class="descname">PlotVsPionMass</code><span class="sig-paren">(</span><em>fit_list</em>, <em>plot_info</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFO.PlotVsPionMass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFO.PlotVsPionMass" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFO.PlotVsQuarkMass">
+<code class="descname">PlotVsQuarkMass</code><span class="sig-paren">(</span><em>tflowlist</em>, <em>plot_info</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFO.PlotVsQuarkMass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFO.PlotVsQuarkMass" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFO.PlotWopt">
+<code class="descname">PlotWopt</code><span class="sig-paren">(</span><em>tflowlist</em>, <em>plot_info</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFO.PlotWopt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFO.PlotWopt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFO.Read">
+<code class="descname">Read</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFO.Read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFO.Read" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFO.ReadAndWrite">
+<code class="descname">ReadAndWrite</code><span class="sig-paren">(</span><em>DefWipe=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFO.ReadAndWrite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFO.ReadAndWrite" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFO.Stats">
+<code class="descname">Stats</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFO.Stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFO.Stats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFO.Write">
+<code class="descname">Write</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFO.Write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFO.Write" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="SetsOfFlowOps.SetOfFO.instances">
+<code class="descname">instances</code><em class="property"> = []</em><a class="headerlink" href="#SetsOfFlowOps.SetOfFO.instances" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFO.items">
+<code class="descname">items</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFO.items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFO.items" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFO.itemsAvgStd">
+<code class="descname">itemsAvgStd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFO.itemsAvgStd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFO.itemsAvgStd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFO.keys">
+<code class="descname">keys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFO.keys"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFO.keys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="SetsOfFlowOps.SetOfFO.parentlist">
+<code class="descname">parentlist</code><em class="property"> = []</em><a class="headerlink" href="#SetsOfFlowOps.SetOfFO.parentlist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFO.values">
+<code class="descname">values</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFO.values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFO.values" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFO.valuesAvgStd">
+<code class="descname">valuesAvgStd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFO.valuesAvgStd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFO.valuesAvgStd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="SetsOfFlowOps.SetOfFOFull">
+<em class="property">class </em><code class="descclassname">SetsOfFlowOps.</code><code class="descname">SetOfFOFull</code><span class="sig-paren">(</span><em>cfglist={}</em>, <em>InfoDict=[]</em>, <em>name=''</em>, <em>corr_cfglists=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFOFull"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFOFull" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>FOFull(set) Inherits from FlowOpFullSquared in FlowOpps.py</p>
+<p>plotting parameters (Move to different file?) ####</p>
+<p>InfoDict is a list of Info dictionaries to be bassed to TwoPtCorr:</p>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#SetsOfFlowOps.SetOfFOFull.GetSet" title="SetsOfFlowOps.SetOfFOFull.GetSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GetSet</span></code></a>(thisset)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#SetsOfFlowOps.SetOfFOFull.PlotFitOverTflow" title="SetsOfFlowOps.SetOfFOFull.PlotFitOverTflow"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PlotFitOverTflow</span></code></a>(tfitlist,&nbsp;tsumlist,&nbsp;…)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#SetsOfFlowOps.SetOfFOFull.PlotOverTflow" title="SetsOfFlowOps.SetOfFOFull.PlotOverTflow"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PlotOverTflow</span></code></a>(tsumlist,&nbsp;tsinklist,&nbsp;plot_info)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#SetsOfFlowOps.SetOfFOFull.PlotOverTsink" title="SetsOfFlowOps.SetOfFOFull.PlotOverTsink"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PlotOverTsink</span></code></a>(tflowlist,&nbsp;tsumlist,&nbsp;plot_info)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#SetsOfFlowOps.SetOfFOFull.PlotOverTsum" title="SetsOfFlowOps.SetOfFOFull.PlotOverTsum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PlotOverTsum</span></code></a>(tflowlist,&nbsp;tsinklist,&nbsp;plot_info)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#SetsOfFlowOps.SetOfFOFull.PlotTauInt" title="SetsOfFlowOps.SetOfFOFull.PlotTauInt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PlotTauInt</span></code></a>(tflowlist,&nbsp;tsinklist,&nbsp;tsumlist,&nbsp;…)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#SetsOfFlowOps.SetOfFOFull.PlotTauIntOverTflow" title="SetsOfFlowOps.SetOfFOFull.PlotTauIntOverTflow"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PlotTauIntOverTflow</span></code></a>(tsumlist,&nbsp;tsinklist,&nbsp;…)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#SetsOfFlowOps.SetOfFOFull.PlotTauIntOverTsink" title="SetsOfFlowOps.SetOfFOFull.PlotTauIntOverTsink"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PlotTauIntOverTsink</span></code></a>(tflowlist,&nbsp;tsumlist,&nbsp;…)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#SetsOfFlowOps.SetOfFOFull.PlotTauIntOverTsum" title="SetsOfFlowOps.SetOfFOFull.PlotTauIntOverTsum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PlotTauIntOverTsum</span></code></a>(tflowlist,&nbsp;tsinklist,&nbsp;…)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#SetsOfFlowOps.SetOfFOFull.PlotWopt" title="SetsOfFlowOps.SetOfFOFull.PlotWopt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PlotWopt</span></code></a>(tflowlist,&nbsp;tsinklist,&nbsp;tsumlist,&nbsp;…)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="71%" />
+<col width="29%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><strong>Construct_FOFull_Set</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>GetCfgList</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>GetUnCorrCfgList</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>ImportCfgList</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>LoadPickle</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>PlotOverT</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>PlotVsPionMass</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>PlotVstfFitr</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>PlotVstiFitr</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>Read</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>ReadAndWrite</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>Stats</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>Write</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>items</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>itemsAvgStd</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>keys</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>values</strong></td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>valuesAvgStd</strong></td>
+<td>&#160;</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFOFull.Construct_FOFull_Set">
+<code class="descname">Construct_FOFull_Set</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFOFull.Construct_FOFull_Set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFOFull.Construct_FOFull_Set" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFOFull.GetCfgList">
+<code class="descname">GetCfgList</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFOFull.GetCfgList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFOFull.GetCfgList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFOFull.GetSet">
+<code class="descname">GetSet</code><span class="sig-paren">(</span><em>thisset</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFOFull.GetSet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFOFull.GetSet" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFOFull.GetUnCorrCfgList">
+<code class="descname">GetUnCorrCfgList</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFOFull.GetUnCorrCfgList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFOFull.GetUnCorrCfgList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFOFull.ImportCfgList">
+<code class="descname">ImportCfgList</code><span class="sig-paren">(</span><em>cfglist</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFOFull.ImportCfgList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFOFull.ImportCfgList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFOFull.LoadPickle">
+<code class="descname">LoadPickle</code><span class="sig-paren">(</span><em>DefWipe=False</em>, <em>CheckCfgs=False</em>, <em>OnlyQ=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFOFull.LoadPickle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFOFull.LoadPickle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFOFull.PlotFitOverTflow">
+<code class="descname">PlotFitOverTflow</code><span class="sig-paren">(</span><em>tfitlist</em>, <em>tsumlist</em>, <em>parlist</em>, <em>plot_info</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFOFull.PlotFitOverTflow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFOFull.PlotFitOverTflow" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFOFull.PlotOverT">
+<code class="descname">PlotOverT</code><span class="sig-paren">(</span><em>tflowlist</em>, <em>plot_info</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFOFull.PlotOverT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFOFull.PlotOverT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFOFull.PlotOverTflow">
+<code class="descname">PlotOverTflow</code><span class="sig-paren">(</span><em>tsumlist</em>, <em>tsinklist</em>, <em>plot_info</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFOFull.PlotOverTflow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFOFull.PlotOverTflow" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFOFull.PlotOverTsink">
+<code class="descname">PlotOverTsink</code><span class="sig-paren">(</span><em>tflowlist</em>, <em>tsumlist</em>, <em>plot_info</em>, <em>fitrlist='None'</em>, <em>shifted=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFOFull.PlotOverTsink"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFOFull.PlotOverTsink" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFOFull.PlotOverTsum">
+<code class="descname">PlotOverTsum</code><span class="sig-paren">(</span><em>tflowlist</em>, <em>tsinklist</em>, <em>plot_info</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFOFull.PlotOverTsum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFOFull.PlotOverTsum" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFOFull.PlotTauInt">
+<code class="descname">PlotTauInt</code><span class="sig-paren">(</span><em>tflowlist</em>, <em>tsinklist</em>, <em>tsumlist</em>, <em>plot_info</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFOFull.PlotTauInt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFOFull.PlotTauInt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFOFull.PlotTauIntOverTflow">
+<code class="descname">PlotTauIntOverTflow</code><span class="sig-paren">(</span><em>tsumlist</em>, <em>tsinklist</em>, <em>plot_info</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFOFull.PlotTauIntOverTflow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFOFull.PlotTauIntOverTflow" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFOFull.PlotTauIntOverTsink">
+<code class="descname">PlotTauIntOverTsink</code><span class="sig-paren">(</span><em>tflowlist</em>, <em>tsumlist</em>, <em>plot_info</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFOFull.PlotTauIntOverTsink"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFOFull.PlotTauIntOverTsink" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFOFull.PlotTauIntOverTsum">
+<code class="descname">PlotTauIntOverTsum</code><span class="sig-paren">(</span><em>tflowlist</em>, <em>tsinklist</em>, <em>plot_info</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFOFull.PlotTauIntOverTsum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFOFull.PlotTauIntOverTsum" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFOFull.PlotVsPionMass">
+<code class="descname">PlotVsPionMass</code><span class="sig-paren">(</span><em>tflowlist</em>, <em>tfitlist</em>, <em>tsumlist</em>, <em>parlist</em>, <em>plot_info</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFOFull.PlotVsPionMass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFOFull.PlotVsPionMass" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFOFull.PlotVstfFitr">
+<code class="descname">PlotVstfFitr</code><span class="sig-paren">(</span><em>tflowlist</em>, <em>tsumlist</em>, <em>fit_min_list</em>, <em>plot_info</em>, <em>fit_max_list='All'</em>, <em>parlist='First'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFOFull.PlotVstfFitr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFOFull.PlotVstfFitr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFOFull.PlotVstiFitr">
+<code class="descname">PlotVstiFitr</code><span class="sig-paren">(</span><em>tflowlist</em>, <em>tsumlist</em>, <em>fit_max_list</em>, <em>plot_info</em>, <em>fit_min_list='All'</em>, <em>parlist='First'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFOFull.PlotVstiFitr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFOFull.PlotVstiFitr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFOFull.PlotWopt">
+<code class="descname">PlotWopt</code><span class="sig-paren">(</span><em>tflowlist</em>, <em>tsinklist</em>, <em>tsumlist</em>, <em>plot_info</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFOFull.PlotWopt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFOFull.PlotWopt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFOFull.Read">
+<code class="descname">Read</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFOFull.Read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFOFull.Read" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFOFull.ReadAndWrite">
+<code class="descname">ReadAndWrite</code><span class="sig-paren">(</span><em>DefWipe=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFOFull.ReadAndWrite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFOFull.ReadAndWrite" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFOFull.Stats">
+<code class="descname">Stats</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFOFull.Stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFOFull.Stats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFOFull.Write">
+<code class="descname">Write</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFOFull.Write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFOFull.Write" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="SetsOfFlowOps.SetOfFOFull.instances">
+<code class="descname">instances</code><em class="property"> = []</em><a class="headerlink" href="#SetsOfFlowOps.SetOfFOFull.instances" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFOFull.items">
+<code class="descname">items</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFOFull.items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFOFull.items" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFOFull.itemsAvgStd">
+<code class="descname">itemsAvgStd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFOFull.itemsAvgStd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFOFull.itemsAvgStd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFOFull.keys">
+<code class="descname">keys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFOFull.keys"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFOFull.keys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="SetsOfFlowOps.SetOfFOFull.parentlist">
+<code class="descname">parentlist</code><em class="property"> = []</em><a class="headerlink" href="#SetsOfFlowOps.SetOfFOFull.parentlist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFOFull.values">
+<code class="descname">values</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFOFull.values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFOFull.values" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="SetsOfFlowOps.SetOfFOFull.valuesAvgStd">
+<code class="descname">valuesAvgStd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SetsOfFlowOps.html#SetOfFOFull.valuesAvgStd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SetsOfFlowOps.SetOfFOFull.valuesAvgStd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Jack Dragos
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

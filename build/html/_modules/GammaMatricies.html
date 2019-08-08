@@ -1,0 +1,819 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>GammaMatricies &mdash; LQCD Analysis Codebase TF Fits documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/my_theme.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> LQCD Analysis Codebase
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Python_Analysis</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">LQCD Analysis Codebase</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>GammaMatricies</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for GammaMatricies</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">deepcopy</span><span class="p">,</span><span class="n">copy</span>
+<span class="kn">from</span> <span class="nn">Params</span> <span class="k">import</span> <span class="n">myeps</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<div class="viewcode-block" id="GammaTOChroma"><a class="viewcode-back" href="../GammaMatricies.html#GammaMatricies.GammaTOChroma">[docs]</a><span class="k">def</span> <span class="nf">GammaTOChroma</span><span class="p">(</span><span class="n">Opp</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">Opp</span><span class="p">,</span><span class="nb">int</span><span class="p">):</span>
+        <span class="n">Opp</span> <span class="o">=</span> <span class="s1">&#39;g&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">Opp</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">Opp</span><span class="p">,(</span><span class="nb">list</span><span class="p">,</span><span class="nb">tuple</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">Opp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">Opp</span> <span class="o">=</span> <span class="s1">&#39;g&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">Opp</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">+</span><span class="s1">&#39;g&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">Opp</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">Opp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">Opp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="mi">15</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Opp</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)))</span><span class="o">+</span><span class="mi">1</span>
+            <span class="n">Opp</span> <span class="o">=</span> <span class="s1">&#39;g5g&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">Opp</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;gamma list too long &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Opp</span><span class="p">)))</span>
+
+    <span class="k">if</span> <span class="n">Opp</span> <span class="o">==</span> <span class="s1">&#39;Pion&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">15</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">Opp</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;g&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:])</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">GammaTOChroma</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span><span class="n">Opp</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;g&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:])))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="s1">&#39;g&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;g&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="ow">in</span> <span class="n">Opp</span><span class="p">:</span>
+                <span class="k">return</span> <span class="mi">2</span><span class="o">**</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span><span class="o">**</span><span class="p">(</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="s1">&#39;g&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;g5&#39;</span> <span class="ow">in</span> <span class="n">Opp</span> <span class="ow">or</span> <span class="s1">&#39;g5g&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="ow">in</span> <span class="n">Opp</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">15</span><span class="o">-</span><span class="mi">2</span><span class="o">**</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="s1">&#39;g&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="ow">in</span> <span class="n">Opp</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">2</span><span class="o">**</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;g5&#39;</span> <span class="ow">in</span> <span class="n">Opp</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">15</span>
+    <span class="k">elif</span> <span class="s1">&#39;I&#39;</span> <span class="ow">in</span> <span class="n">Opp</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span></div>
+
+<div class="viewcode-block" id="AlphaRotCoeffs"><a class="viewcode-back" href="../GammaMatricies.html#GammaMatricies.AlphaRotCoeffs">[docs]</a><span class="k">def</span> <span class="nf">AlphaRotCoeffs</span><span class="p">(</span><span class="n">C2</span><span class="p">,</span><span class="n">C3</span><span class="p">,</span><span class="n">alpha</span><span class="p">):</span>
+    <span class="n">c2a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">alpha</span><span class="p">)</span>
+    <span class="n">s2a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">alpha</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">C2</span><span class="o">*</span><span class="n">c2a</span> <span class="o">-</span> <span class="n">C3</span><span class="o">*</span><span class="n">s2a</span><span class="p">,</span><span class="n">C3</span><span class="o">*</span><span class="n">c2a</span> <span class="o">+</span> <span class="n">C2</span><span class="o">*</span><span class="n">s2a</span></div>
+
+
+<div class="viewcode-block" id="ChromaTOGamma"><a class="viewcode-back" href="../GammaMatricies.html#GammaMatricies.ChromaTOGamma">[docs]</a><span class="k">def</span> <span class="nf">ChromaTOGamma</span><span class="p">(</span><span class="n">Opp</span><span class="p">):</span>
+    <span class="n">Opp</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">Opp</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">Opp</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;I&#39;</span>
+    <span class="k">elif</span> <span class="n">Opp</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">8</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="s1">&#39;g&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">Opp</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">Opp</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">9</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="s1">&#39;g1g&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">Opp</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">Opp</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span><span class="mi">10</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="s1">&#39;g2g&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">Opp</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">Opp</span> <span class="o">==</span> <span class="mi">12</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;g3g4&#39;</span>
+    <span class="k">elif</span> <span class="n">Opp</span> <span class="o">==</span> <span class="mi">15</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;g5&#39;</span>
+    <span class="k">elif</span> <span class="n">Opp</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span><span class="mi">11</span><span class="p">,</span><span class="mi">13</span><span class="p">,</span><span class="mi">14</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="s1">&#39;g5g&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="mi">15</span><span class="o">-</span><span class="n">Opp</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span></div>
+
+
+<span class="n">mattype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">complex</span>
+<span class="n">z_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">),</span><span class="n">mattype</span><span class="p">)</span>
+
+<div class="viewcode-block" id="GammaMat"><a class="viewcode-back" href="../GammaMatricies.html#GammaMatricies.GammaMat">[docs]</a><span class="k">class</span> <span class="nc">GammaMat</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class with basic gamma matricies.</span>
+
+<span class="sd">    Initialise with representation.</span>
+
+<span class="sd">    resulting gamma matricies are in np.matrix format</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">Rep</span><span class="o">=</span><span class="s1">&#39;Sakurai&#39;</span><span class="p">,</span><span class="n">space</span><span class="o">=</span><span class="s1">&#39;Euclid&#39;</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">Rep</span> <span class="o">=</span> <span class="n">Rep</span>
+        <span class="c1">## sets up gamma matricies</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">space</span> <span class="o">=</span> <span class="n">space</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Euclid</span> <span class="o">=</span> <span class="s1">&#39;euclid&#39;</span> <span class="ow">in</span> <span class="n">space</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetRep</span><span class="p">(</span><span class="n">Rep</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="GammaMat.SetRep"><a class="viewcode-back" href="../GammaMatricies.html#GammaMatricies.GammaMat.SetRep">[docs]</a>    <span class="k">def</span> <span class="nf">SetRep</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">Rep</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s1">&#39;sakura&#39;</span> <span class="ow">in</span> <span class="n">Rep</span> <span class="ow">or</span> <span class="s1">&#39;Sakurai&#39;</span> <span class="ow">in</span> <span class="n">Rep</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">g0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">g4</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">([[</span>  <span class="mi">1</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">],</span>
+                                           <span class="p">[</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">],</span>
+                                           <span class="p">[</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>  <span class="mi">0</span><span class="p">],</span>
+                                           <span class="p">[</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]],</span><span class="n">mattype</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">g1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">([[</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span><span class="p">],</span>
+                                 <span class="p">[</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span><span class="p">,</span>  <span class="mi">0</span><span class="p">],</span>
+                                 <span class="p">[</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="n">j</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">],</span>
+                                 <span class="p">[</span> <span class="mi">1</span><span class="n">j</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">]],</span><span class="n">mattype</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">g2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">([[</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                                 <span class="p">[</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>  <span class="mi">0</span><span class="p">],</span>
+                                 <span class="p">[</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">],</span>
+                                 <span class="p">[</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">]],</span><span class="n">mattype</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">g3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">([[</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span><span class="p">,</span>  <span class="mi">0</span><span class="p">],</span>
+                                 <span class="p">[</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="n">j</span><span class="p">],</span>
+                                 <span class="p">[</span> <span class="mi">1</span><span class="n">j</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">],</span>
+                                 <span class="p">[</span>  <span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">]],</span><span class="n">mattype</span><span class="p">)</span>
+
+            <span class="c1"># self.g5 = np.matrix([[  0,  0, -1,  0],</span>
+            <span class="c1">#                      [  0,  0,  0, -1],</span>
+            <span class="c1">#                      [ -1,  0,  0,  0],</span>
+            <span class="c1">#                      [  0, -1,  0,  0]],mattype)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">g_mu_Tsign</span> <span class="o">=</span> <span class="p">[</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+            <span class="c1"># self.sigma_mu_nu = [[z_mat,-1j*self.g0*self.g1,-1j*self.g0*self.g2,-1j*self.g0*self.g3,z_mat],</span>
+            <span class="c1">#    [-1j*self.g1*self.g0,z_mat,-1j*self.g1*self.g2,-1j*self.g1*self.g3,-1j*self.g1*self.g4],</span>
+            <span class="c1">#    [-1j*self.g2*self.g0,-1j*self.g2*self.g1,z_mat,-1j*self.g2*self.g3,-1j*self.g2*self.g4],</span>
+            <span class="c1">#    [-1j*self.g3*self.g0,-1j*self.g3*self.g1,-1j*self.g3*self.g2,z_mat,-1j*self.g3*self.g4],</span>
+            <span class="c1">#    [z_mat,-1j*self.g4*self.g1,-1j*self.g4*self.g2,-1j*self.g4*self.g3,z_mat]]</span>
+
+        <span class="c1">## TODO, needs change for whole code tho</span>
+        <span class="k">elif</span> <span class="s1">&#39;SZIN&#39;</span> <span class="ow">in</span> <span class="n">Rep</span><span class="p">:</span>
+            <span class="c1">## CHROMA representation</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;setting gamma rep to SZIN&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">g0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">g4</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">([[</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>  <span class="mi">0</span><span class="p">],</span>
+                                           <span class="p">[</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">1</span><span class="p">],</span>
+                                           <span class="p">[</span>  <span class="mi">1</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">],</span>
+                                           <span class="p">[</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">]],</span><span class="n">mattype</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">g1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">([[</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="n">j</span><span class="p">],</span>
+                                 <span class="p">[</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="n">j</span><span class="p">,</span>  <span class="mi">0</span><span class="p">],</span>
+                                 <span class="p">[</span>  <span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">],</span>
+                                 <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">]],</span><span class="n">mattype</span><span class="p">)</span>
+
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">g2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">([[</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                                 <span class="p">[</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>  <span class="mi">0</span><span class="p">],</span>
+                                 <span class="p">[</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">],</span>
+                                 <span class="p">[</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">]],</span><span class="n">mattype</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">g3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">([[</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="n">j</span><span class="p">,</span>  <span class="mi">0</span><span class="p">],</span>
+                                 <span class="p">[</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span><span class="p">],</span>
+                                 <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">],</span>
+                                 <span class="p">[</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="n">j</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">]],</span><span class="n">mattype</span><span class="p">)</span>
+        <span class="c1"># elif &#39;dirac&#39; in Rep or &#39;Dirac&#39; in Rep:</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">Rep</span><span class="o">+</span><span class="s1">&#39; not a recognised representation for gamma matricies&#39;</span><span class="p">)</span>
+
+        <span class="c1">## include gamma 5 here?</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Euclid</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">g5</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">g1</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">g2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">g3</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">g4</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;SZIN&#39;</span> <span class="ow">in</span> <span class="n">Rep</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">g1</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">g1</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">g2</span> <span class="o">=</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">g2</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">g3</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">g3</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">g5</span> <span class="o">=</span> <span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">g0</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">g1</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">g2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">g3</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;chiral Minkowski space not implemented for anything other than SZIN rep&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">g_mu</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">g0</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">g1</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">g2</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">g3</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">g4</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigma_mu_nu</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">mu</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sigma_mu_nu</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+            <span class="k">for</span> <span class="n">nu</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sigma_mu_nu</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">comutator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">g_mu</span><span class="p">[</span><span class="n">mu</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">g_mu</span><span class="p">[</span><span class="n">nu</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigma_5_nu</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">g5</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">g0</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">g5</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">g1</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">g5</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">g2</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">g5</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">g3</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">g5</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">g4</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigma_nu_5</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">g0</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">g5</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">g1</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">g5</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">g2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">g5</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">g3</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">g5</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">g4</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">g5</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">G_unpol</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="n">mattype</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">g4</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">G_pol</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">G_unpol</span><span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">g3</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">g5</span>
+
+        <span class="c1">## if you like dictionaries</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">GammaDict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">ig</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">GammaDict</span><span class="p">[</span><span class="s1">&#39;g&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">ig</span><span class="p">)]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">g_mu</span><span class="p">[</span><span class="n">ig</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">GammaDict</span><span class="p">[</span><span class="s1">&#39;g5&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">g5</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">GammaDict</span><span class="p">[</span><span class="s1">&#39;P4&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">G_unpol</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">GammaDict</span><span class="p">[</span><span class="s1">&#39;P3&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">G_pol</span>
+        <span class="k">for</span> <span class="n">ig</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">jg</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">GammaDict</span><span class="p">[</span><span class="s1">&#39;sig&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">ig</span><span class="p">)</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">jg</span><span class="p">)]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma_mu_nu</span><span class="p">[</span><span class="n">ig</span><span class="p">][</span><span class="n">jg</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">ig</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">GammaDict</span><span class="p">[</span><span class="s1">&#39;sig5&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">ig</span><span class="p">)]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma_5_nu</span><span class="p">[</span><span class="n">ig</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">ig</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">GammaDict</span><span class="p">[</span><span class="s1">&#39;sig&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">ig</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;5&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma_nu_5</span><span class="p">[</span><span class="n">ig</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">GammaDict</span><span class="p">[</span><span class="s1">&#39;I&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="n">mattype</span><span class="p">),</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">GammaDict</span><span class="p">[</span><span class="s1">&#39;neg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">GammaDict</span><span class="p">[</span><span class="s1">&#39;I&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">GammaDict</span><span class="p">[</span><span class="s1">&#39;cmplx&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span><span class="n">j</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">GammaDict</span><span class="p">[</span><span class="s1">&#39;I&#39;</span><span class="p">]</span></div>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ikey</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ikey</span><span class="p">,</span><span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ikey</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ikey</span><span class="p">,</span><span class="nb">tuple</span><span class="p">):</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GammaDict</span><span class="p">[</span><span class="n">ikey</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+            <span class="k">for</span> <span class="n">jkey</span> <span class="ow">in</span> <span class="n">ikey</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+                <span class="k">if</span> <span class="n">jkey</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">GammaDict</span><span class="p">:</span>
+                    <span class="n">output</span> <span class="o">=</span> <span class="n">output</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">GammaDict</span><span class="p">[</span><span class="n">jkey</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">output</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">GammaDict</span><span class="p">[</span><span class="n">ikey</span><span class="p">]</span>
+
+<div class="viewcode-block" id="GammaMat.comutator"><a class="viewcode-back" href="../GammaMatricies.html#GammaMatricies.GammaMat.comutator">[docs]</a>    <span class="k">def</span> <span class="nf">comutator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">gi</span><span class="p">,</span><span class="n">gj</span><span class="p">):</span>
+        <span class="n">out_gi</span><span class="p">,</span><span class="n">out_gj</span> <span class="o">=</span> <span class="n">gi</span><span class="p">,</span><span class="n">gj</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gi</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+            <span class="n">out_gi</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">out_gi</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gj</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+            <span class="n">out_gj</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">out_gj</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">gi</span><span class="o">*</span><span class="n">gj</span> <span class="o">-</span> <span class="n">gj</span><span class="o">*</span><span class="n">gi</span></div>
+
+
+<div class="viewcode-block" id="GammaMat.SigMult"><a class="viewcode-back" href="../GammaMatricies.html#GammaMatricies.GammaMat.SigMult">[docs]</a>    <span class="k">def</span> <span class="nf">SigMult</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">isig</span><span class="p">,</span><span class="n">jsig</span><span class="p">,</span><span class="n">thing</span><span class="p">):</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">GammaMult</span><span class="p">(</span><span class="n">isig</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">GammaMult</span><span class="p">(</span><span class="n">jsig</span><span class="p">,</span><span class="n">thing</span><span class="p">))</span></div>
+
+    <span class="c1">##TODO, go nuts with the predefined functions</span>
+
+<div class="viewcode-block" id="GammaMat.ProjMult"><a class="viewcode-back" href="../GammaMatricies.html#GammaMatricies.GammaMat.ProjMult">[docs]</a>    <span class="k">def</span> <span class="nf">ProjMult</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">pindex</span><span class="p">,</span><span class="n">thing</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">pindex</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">or</span> <span class="n">pindex</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">thing</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">GammaMult</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="n">thing</span><span class="p">))</span><span class="o">/</span><span class="mf">2.</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">ProjMult</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">GammaMult</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">GammaMult</span><span class="p">(</span><span class="n">pindex</span><span class="p">,</span><span class="n">thing</span><span class="p">)</span> <span class="p">))</span></div>
+
+    <span class="c1">## either pass in string corresponding to above, or anything else</span>
+    <span class="c1">## this is for 1 gamma matrix, multiple gamma matricies to come!</span>
+    <span class="c1">## this is an efficiency thing btw, probably not needed but I did it before</span>
+    <span class="c1">## Infact, I havn&#39;t bothered to implement these efficiency routines in the rest of the code</span>
+    <span class="c1">## I guess TODO if you want...</span>
+<div class="viewcode-block" id="GammaMat.MultGamma"><a class="viewcode-back" href="../GammaMatricies.html#GammaMatricies.GammaMat.MultGamma">[docs]</a>    <span class="k">def</span> <span class="nf">MultGamma</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">thing</span><span class="p">,</span><span class="n">rgindex</span><span class="p">,</span><span class="n">T</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">):</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">thing</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">T</span><span class="p">:</span> <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">g_mu_Tsign</span><span class="p">[</span><span class="n">rgindex</span><span class="p">]</span><span class="o">*</span><span class="n">output</span>
+            <span class="k">if</span> <span class="n">rgindex</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">rgindex</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+                <span class="n">output</span><span class="p">[:,(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)]</span> <span class="o">=</span> <span class="o">-</span><span class="n">output</span><span class="p">[:,(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)]</span>
+            <span class="k">elif</span> <span class="n">rgindex</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">output</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rot90</span><span class="p">(</span><span class="n">output</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> <span class="o">*</span> <span class="mi">1</span><span class="n">j</span>
+                <span class="n">output</span><span class="p">[:,(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)]</span> <span class="o">=</span> <span class="o">-</span><span class="n">output</span><span class="p">[:,(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)]</span>
+            <span class="k">elif</span> <span class="n">rgindex</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">output</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rot90</span><span class="p">(</span><span class="n">output</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+                <span class="n">output</span><span class="p">[:,(</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">)]</span> <span class="o">=</span> <span class="o">-</span><span class="n">output</span><span class="p">[:,(</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">)]</span>
+            <span class="k">elif</span> <span class="n">rgindex</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">output</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">output</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">1</span><span class="n">j</span>
+                <span class="n">output</span><span class="p">[:,(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)]</span> <span class="o">=</span> <span class="o">-</span><span class="n">output</span><span class="p">[:,(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)]</span>
+            <span class="k">elif</span> <span class="n">rgindex</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+                <span class="n">output</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">output</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">output</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">T</span><span class="p">:</span> <span class="k">return</span> <span class="n">output</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">g_mu</span><span class="p">[</span><span class="n">rgindex</span><span class="p">]</span><span class="o">.</span><span class="n">T</span>
+            <span class="k">else</span><span class="p">:</span> <span class="k">return</span> <span class="n">output</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">g_mu</span><span class="p">[</span><span class="n">rgindex</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="GammaMat.GammaMult"><a class="viewcode-back" href="../GammaMatricies.html#GammaMatricies.GammaMat.GammaMult">[docs]</a>    <span class="k">def</span> <span class="nf">GammaMult</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">lgindex</span><span class="p">,</span><span class="n">thing</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">MultGamma</span><span class="p">(</span><span class="n">thing</span><span class="o">.</span><span class="n">T</span><span class="p">,</span><span class="n">lgindex</span><span class="p">,</span><span class="n">T</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">g_mu</span><span class="p">[</span><span class="n">lgindex</span><span class="p">]</span><span class="o">*</span><span class="n">thing</span></div>
+
+    <span class="c1">## default is (energy, px, py ,pz)</span>
+    <span class="c1">## can use (px,py,pz,energy) as well if Eindex = 4</span>
+<div class="viewcode-block" id="GammaMat.Slashed"><a class="viewcode-back" href="../GammaMatricies.html#GammaMatricies.GammaMat.Slashed">[docs]</a>    <span class="k">def</span> <span class="nf">Slashed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">FVecObj</span><span class="p">,</span><span class="n">Eindex</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">Euclid</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;slashed not implemented for non-euclidean yet&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">FVecObj</span><span class="p">,(</span><span class="nb">list</span><span class="p">,</span><span class="nb">tuple</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;Slashed requires numpy array to do element-wise multiplication&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">Eindex</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">ig</span> <span class="o">*</span> <span class="n">ivec</span> <span class="k">for</span> <span class="n">ivec</span><span class="p">,</span><span class="n">ig</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">FVecObj</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">g_mu</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])],</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">Eindex</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">ig</span> <span class="o">*</span> <span class="n">ivec</span> <span class="k">for</span> <span class="n">ivec</span><span class="p">,</span><span class="n">ig</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">FVecObj</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">g_mu</span><span class="p">[</span><span class="mi">1</span><span class="p">:])],</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;Eindex must be 0 or 4&#39;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="CorrSpinTrace"><a class="viewcode-back" href="../GammaMatricies.html#GammaMatricies.CorrSpinTrace">[docs]</a><span class="k">class</span> <span class="nc">CorrSpinTrace</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    has routines which does correlator spin traces, for use in the form factor decomposition</span>
+
+<span class="sd">    something proportional to: trace( Projector * (pp_slashed +m )* Opp *(pp_slashed + m) )</span>
+<span class="sd">    Rodgers paper has good definitions for this :D</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">Rep</span><span class="o">=</span><span class="s1">&#39;Sakurai&#39;</span><span class="p">,</span><span class="n">space</span><span class="o">=</span><span class="s1">&#39;Euclid&#39;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Rep</span> <span class="o">=</span> <span class="n">Rep</span>
+        <span class="c1">## sets up gamma matricies class for use</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Gammas</span> <span class="o">=</span> <span class="n">GammaMat</span><span class="p">(</span><span class="n">Rep</span><span class="o">=</span><span class="n">Rep</span><span class="p">,</span><span class="n">space</span><span class="o">=</span><span class="n">space</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">CurrFFs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Scalar&#39;</span>   <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ScalarFF</span><span class="p">,</span>
+                        <span class="s1">&#39;Vector&#39;</span>   <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">VectorFF</span><span class="p">,</span>
+                        <span class="s1">&#39;GeGm&#39;</span>     <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">GeGmFF</span><span class="p">,</span>
+                        <span class="s1">&#39;VectorTop&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">VectorFFTop</span><span class="p">,</span>
+                        <span class="s1">&#39;VectorTopBNL&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">VectorFFTop</span><span class="p">,</span>
+                        <span class="s1">&#39;VectorTopBNL_mal&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">VectorFFTop</span><span class="p">,</span>
+                        <span class="s1">&#39;VectorWein&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">VectorFFTop</span><span class="p">,</span>
+                        <span class="s1">&#39;VectorWeinBNL&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">VectorFFTop</span><span class="p">,</span>
+                        <span class="s1">&#39;VectorTopNoV&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">VectorFFTop</span><span class="p">,</span>
+                        <span class="s1">&#39;PsScalar&#39;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ScalarFF</span><span class="p">,</span>
+                        <span class="s1">&#39;PsVector&#39;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">PsVectorFF</span><span class="p">,</span>
+                        <span class="s1">&#39;Tensor&#39;</span>   <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">TensorFF</span><span class="p">}</span>
+
+
+    <span class="c1">## key of this class is just the form factor function</span>
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ikey</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">CurrFFs</span><span class="p">[</span><span class="n">ikey</span><span class="p">]</span>
+
+    <span class="c1">## pmu is source 4-momentum</span>
+    <span class="c1">## ppmu is sink 4-momentum</span>
+    <span class="c1">## the energy component is just the energy, the -j is done in here</span>
+    <span class="c1">## Opp can be anyting you can use to __getitem__ from GammaMat (string, or list of string to multiply together etc...)</span>
+<div class="viewcode-block" id="CorrSpinTrace.FFunOpp"><a class="viewcode-back" href="../GammaMatricies.html#GammaMatricies.CorrSpinTrace.FFunOpp">[docs]</a>    <span class="k">def</span> <span class="nf">FFunOpp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">Opp</span><span class="p">,</span><span class="n">pmu</span><span class="p">,</span><span class="n">ppmu</span><span class="p">,</span><span class="n">mass</span><span class="p">,</span><span class="n">Rfac</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">thisOpp</span> <span class="o">=</span> <span class="n">Opp</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thisOpp</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span><span class="n">thisOpp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Gammas</span><span class="p">[</span><span class="n">Opp</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thisOpp</span><span class="p">,</span><span class="nb">tuple</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thisOpp</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span><span class="n">thisOpp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Gammas</span><span class="p">[</span><span class="n">Opp</span><span class="p">]</span>
+        <span class="n">Ep</span><span class="p">,</span> <span class="n">Epp</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span><span class="n">j</span><span class="o">*</span><span class="n">pmu</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="o">-</span><span class="mf">1.0</span><span class="n">j</span><span class="o">*</span><span class="n">ppmu</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">pplusm</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span><span class="n">j</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">Gammas</span><span class="o">.</span><span class="n">Slashed</span><span class="p">(</span><span class="n">pmu</span><span class="p">)</span> <span class="o">+</span> <span class="n">mass</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+        <span class="n">pprimeplusm</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span><span class="n">j</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">Gammas</span><span class="o">.</span><span class="n">Slashed</span><span class="p">(</span><span class="n">ppmu</span><span class="p">)</span> <span class="o">+</span> <span class="n">mass</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+        <span class="n">pplusm</span> <span class="o">/=</span> <span class="n">Ep</span>
+        <span class="n">pprimeplusm</span> <span class="o">/=</span> <span class="n">Epp</span>
+        <span class="c1"># pplusm = (self.Gammas.g4 - (1j/Ep) * (pmu[1]*self.Gammas.g1 + pmu[2]*self.Gammas.g2 + pmu[3]*self.Gammas.g3) + (mass / Ep) * np.eye(4))</span>
+        <span class="c1"># pprimeplusm = (self.Gammas.g4 - (1j/Epp) * (ppmu[1]*self.Gammas.g1 + ppmu[2]*self.Gammas.g2 + ppmu[3]*self.Gammas.g3) + (mass / Epp )* np.eye(4))</span>
+        <span class="k">if</span> <span class="n">Rfac</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">pprimeplusm</span> <span class="o">*</span> <span class="n">thisOpp</span> <span class="o">*</span> <span class="n">pplusm</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Epp</span><span class="o">*</span><span class="n">Ep</span><span class="o">/</span><span class="p">((</span><span class="n">Epp</span><span class="o">+</span><span class="n">mass</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">Ep</span><span class="o">+</span><span class="n">mass</span><span class="p">)))</span> <span class="o">*</span> <span class="mi">1</span><span class="o">/</span><span class="mf">4.</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">pprimeplusm</span> <span class="o">*</span> <span class="n">thisOpp</span> <span class="o">*</span> <span class="n">pplusm</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1</span><span class="o">/</span><span class="mf">4.</span></div>
+
+
+
+    <span class="c1">## Form Factor decomposition needs alpha too when using CP voilating operator!!</span>
+<div class="viewcode-block" id="CorrSpinTrace.FFunTopOpp"><a class="viewcode-back" href="../GammaMatricies.html#GammaMatricies.CorrSpinTrace.FFunTopOpp">[docs]</a>    <span class="k">def</span> <span class="nf">FFunTopOpp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">Opp</span><span class="p">,</span><span class="n">pmu</span><span class="p">,</span><span class="n">ppmu</span><span class="p">,</span><span class="n">mass</span><span class="p">,</span><span class="n">alpha</span><span class="p">,</span><span class="n">Rfac</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">thisOpp</span> <span class="o">=</span> <span class="n">Opp</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thisOpp</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span><span class="n">thisOpp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Gammas</span><span class="p">[</span><span class="n">Opp</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thisOpp</span><span class="p">,</span><span class="nb">tuple</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thisOpp</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span><span class="n">thisOpp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Gammas</span><span class="p">[</span><span class="n">Opp</span><span class="p">]</span>
+        <span class="n">Ep</span><span class="p">,</span> <span class="n">Epp</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span><span class="n">j</span><span class="o">*</span><span class="n">pmu</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="o">-</span><span class="mf">1.0</span><span class="n">j</span><span class="o">*</span><span class="n">ppmu</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">pplusm</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span><span class="n">j</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">Gammas</span><span class="o">.</span><span class="n">Slashed</span><span class="p">(</span><span class="n">pmu</span><span class="p">)</span> <span class="o">+</span> <span class="n">mass</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+        <span class="n">pprimeplusm</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span><span class="n">j</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">Gammas</span><span class="o">.</span><span class="n">Slashed</span><span class="p">(</span><span class="n">ppmu</span><span class="p">)</span> <span class="o">+</span> <span class="n">mass</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+        <span class="n">pplusm</span> <span class="o">/=</span> <span class="n">Ep</span>
+        <span class="n">pprimeplusm</span> <span class="o">/=</span> <span class="n">Epp</span>
+        <span class="c1"># pplusm = (self.Gammas.g4 - (1j/Ep) * (pmu[1]*self.Gammas.g1 + pmu[2]*self.Gammas.g2 + pmu[3]*self.Gammas.g3) + (mass / Ep) * np.eye(4))</span>
+        <span class="c1"># pprimeplusm = (self.Gammas.g4 - (1j/Epp) * (ppmu[1]*self.Gammas.g1 + ppmu[2]*self.Gammas.g2 + ppmu[3]*self.Gammas.g3) + (mass / Epp )* np.eye(4))</span>
+        <span class="n">g5facp</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">alpha</span><span class="o">*</span><span class="n">mass</span><span class="o">/</span><span class="n">Ep</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">Gammas</span><span class="o">.</span><span class="n">g5</span>
+        <span class="n">g5facpprime</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">alpha</span><span class="o">*</span><span class="n">mass</span><span class="o">/</span><span class="n">Epp</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">Gammas</span><span class="o">.</span><span class="n">g5</span>
+        <span class="k">if</span> <span class="n">Rfac</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">((</span><span class="n">pprimeplusm</span> <span class="o">*</span> <span class="n">thisOpp</span> <span class="o">*</span> <span class="n">g5facp</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Epp</span><span class="o">*</span><span class="n">Ep</span><span class="o">/</span><span class="p">((</span><span class="n">Epp</span><span class="o">+</span><span class="n">mass</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">Ep</span><span class="o">+</span><span class="n">mass</span><span class="p">)))</span> <span class="o">*</span> <span class="mi">1</span><span class="o">/</span><span class="mf">4.</span><span class="p">,</span>
+                    <span class="p">(</span><span class="n">g5facpprime</span> <span class="o">*</span> <span class="n">thisOpp</span> <span class="o">*</span> <span class="n">pplusm</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Epp</span><span class="o">*</span><span class="n">Ep</span><span class="o">/</span><span class="p">((</span><span class="n">Epp</span><span class="o">+</span><span class="n">mass</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">Ep</span><span class="o">+</span><span class="n">mass</span><span class="p">)))</span> <span class="o">*</span> <span class="mi">1</span><span class="o">/</span><span class="mf">4.</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">((</span><span class="n">pprimeplusm</span> <span class="o">*</span> <span class="n">thisOpp</span> <span class="o">*</span> <span class="n">g5facp</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1</span><span class="o">/</span><span class="mf">4.</span><span class="p">,</span> <span class="p">(</span><span class="n">g5facpprime</span> <span class="o">*</span> <span class="n">thisOpp</span> <span class="o">*</span> <span class="n">pplusm</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1</span><span class="o">/</span><span class="mf">4.</span><span class="p">)</span></div>
+
+
+
+    <span class="c1">## traced with projector of FFunOpp</span>
+<div class="viewcode-block" id="CorrSpinTrace.TracedFFun"><a class="viewcode-back" href="../GammaMatricies.html#GammaMatricies.CorrSpinTrace.TracedFFun">[docs]</a>    <span class="k">def</span> <span class="nf">TracedFFun</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">Opp</span><span class="p">,</span><span class="n">pmu</span><span class="p">,</span><span class="n">ppmu</span><span class="p">,</span><span class="n">mass</span><span class="p">,</span><span class="n">Rfac</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">thisProj</span><span class="p">,</span><span class="n">thisOpp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetProjGamma</span><span class="p">(</span><span class="o">*</span><span class="n">Opp</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">thisProj</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">FFunOpp</span><span class="p">(</span><span class="n">thisOpp</span><span class="p">,</span><span class="n">pmu</span><span class="p">,</span><span class="n">ppmu</span><span class="p">,</span><span class="n">mass</span><span class="p">,</span><span class="n">Rfac</span><span class="o">=</span><span class="n">Rfac</span><span class="p">))</span></div>
+
+    <span class="c1">## see https://arxiv.org/pdf/1507.02343v2.pdf for definitin of CP odd form factor decomposition.</span>
+<div class="viewcode-block" id="CorrSpinTrace.TracedFFunTop"><a class="viewcode-back" href="../GammaMatricies.html#GammaMatricies.CorrSpinTrace.TracedFFunTop">[docs]</a>    <span class="k">def</span> <span class="nf">TracedFFunTop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">Opp</span><span class="p">,</span><span class="n">pmu</span><span class="p">,</span><span class="n">ppmu</span><span class="p">,</span><span class="n">mass</span><span class="p">,</span><span class="n">alpha</span><span class="p">,</span><span class="n">Rfac</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">thisProj</span><span class="p">,</span><span class="n">thisOpp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetProjGamma</span><span class="p">(</span><span class="o">*</span><span class="n">Opp</span><span class="p">)</span>
+        <span class="n">leftval</span><span class="p">,</span><span class="n">rightval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">FFunTopOpp</span><span class="p">(</span><span class="n">thisOpp</span><span class="p">,</span><span class="n">pmu</span><span class="p">,</span><span class="n">ppmu</span><span class="p">,</span><span class="n">mass</span><span class="p">,</span><span class="n">alpha</span><span class="p">,</span><span class="n">Rfac</span><span class="o">=</span><span class="n">Rfac</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">thisProj</span> <span class="o">*</span> <span class="n">leftval</span><span class="p">)</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">thisProj</span> <span class="o">*</span> <span class="n">rightval</span><span class="p">)</span></div>
+
+
+
+    <span class="c1">## these functions are expecting a list of gamma matricies</span>
+<div class="viewcode-block" id="CorrSpinTrace.GetProjGamma"><a class="viewcode-back" href="../GammaMatricies.html#GammaMatricies.CorrSpinTrace.GetProjGamma">[docs]</a>    <span class="k">def</span> <span class="nf">GetProjGamma</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">Opp</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetProj</span><span class="p">(</span><span class="o">*</span><span class="n">Opp</span><span class="p">),</span><span class="bp">self</span><span class="o">.</span><span class="n">GetGamma</span><span class="p">(</span><span class="o">*</span><span class="n">Opp</span><span class="p">)</span></div>
+
+    <span class="c1">## only returns first projector found, if none found, returns identity</span>
+<div class="viewcode-block" id="CorrSpinTrace.GetProj"><a class="viewcode-back" href="../GammaMatricies.html#GammaMatricies.CorrSpinTrace.GetProj">[docs]</a>    <span class="k">def</span> <span class="nf">GetProj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">thisProj</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">iProj</span> <span class="ow">in</span> <span class="n">thisProj</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;P&#39;</span> <span class="ow">in</span> <span class="n">iProj</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Gammas</span><span class="p">[</span><span class="n">iProj</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Gammas</span><span class="p">[</span><span class="s1">&#39;I&#39;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="CorrSpinTrace.GetGamma"><a class="viewcode-back" href="../GammaMatricies.html#GammaMatricies.CorrSpinTrace.GetGamma">[docs]</a>    <span class="k">def</span> <span class="nf">GetGamma</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">Opp</span><span class="p">):</span>
+        <span class="n">outlist</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">iOpp</span> <span class="ow">in</span> <span class="n">Opp</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;P&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">iOpp</span><span class="p">:</span>
+                <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">iOpp</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">outlist</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Gammas</span><span class="p">[</span><span class="n">outlist</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Gammas</span><span class="p">[</span><span class="s1">&#39;I&#39;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="CorrSpinTrace.CreateEs"><a class="viewcode-back" href="../GammaMatricies.html#GammaMatricies.CorrSpinTrace.CreateEs">[docs]</a>    <span class="k">def</span> <span class="nf">CreateEs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">momvec</span><span class="p">,</span><span class="n">thismass</span><span class="p">,</span><span class="n">curr</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="n">momvecsqrd</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">iq</span><span class="o">**</span><span class="mi">2</span> <span class="k">for</span> <span class="n">iq</span> <span class="ow">in</span> <span class="n">momvec</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">thismass</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">momvecsqrd</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CorrSpinTrace.Create4Mom"><a class="viewcode-back" href="../GammaMatricies.html#GammaMatricies.CorrSpinTrace.Create4Mom">[docs]</a>    <span class="k">def</span> <span class="nf">Create4Mom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">thisqvec</span><span class="p">,</span><span class="n">thisppvec</span><span class="p">,</span><span class="n">thismass</span><span class="p">):</span>
+        <span class="n">thispvec</span> <span class="o">=</span> <span class="p">[</span><span class="n">ipp</span><span class="o">-</span><span class="n">iq</span> <span class="k">for</span> <span class="n">ipp</span><span class="p">,</span><span class="n">iq</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">thisppvec</span><span class="p">,</span><span class="n">thisqvec</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thisppvec</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span> <span class="n">thisppvec</span> <span class="o">=</span> <span class="n">thisppvec</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thispvec</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span> <span class="n">thispvec</span> <span class="o">=</span> <span class="n">thispvec</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">thisp</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="n">j</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">CreateEs</span><span class="p">(</span><span class="n">thispvec</span><span class="p">,</span><span class="n">thismass</span><span class="p">)]</span> <span class="o">+</span> <span class="n">thispvec</span> <span class="o">+</span> <span class="p">[</span><span class="mf">1.0</span><span class="n">j</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">CreateEs</span><span class="p">(</span><span class="n">thispvec</span><span class="p">,</span><span class="n">thismass</span><span class="p">)]</span>
+        <span class="n">thispp</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="n">j</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">CreateEs</span><span class="p">(</span><span class="n">thisppvec</span><span class="p">,</span><span class="n">thismass</span><span class="p">)]</span> <span class="o">+</span> <span class="n">thisppvec</span> <span class="o">+</span> <span class="p">[</span><span class="mf">1.0</span><span class="n">j</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">CreateEs</span><span class="p">(</span><span class="n">thisppvec</span><span class="p">,</span><span class="n">thismass</span><span class="p">)]</span>
+        <span class="n">thisq</span> <span class="o">=</span> <span class="p">[</span><span class="n">ipp</span><span class="o">-</span><span class="n">ip</span> <span class="k">for</span> <span class="n">ipp</span><span class="p">,</span><span class="n">ip</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">thispp</span><span class="p">,</span><span class="n">thisp</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">thisp</span><span class="p">,</span><span class="n">thisq</span><span class="p">,</span><span class="n">thispp</span></div>
+
+
+<div class="viewcode-block" id="CorrSpinTrace.ScalarFF"><a class="viewcode-back" href="../GammaMatricies.html#GammaMatricies.CorrSpinTrace.ScalarFF">[docs]</a>    <span class="k">def</span> <span class="nf">ScalarFF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">opp</span><span class="p">,</span><span class="n">thisqvec</span><span class="p">,</span><span class="n">thisppvec</span><span class="p">,</span><span class="n">thismass</span><span class="p">,</span><span class="n">Rfac</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+        <span class="n">thisp</span><span class="p">,</span><span class="n">thisq</span><span class="p">,</span><span class="n">thispp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Create4Mom</span><span class="p">(</span><span class="n">thisqvec</span><span class="p">,</span><span class="n">thisppvec</span><span class="p">,</span><span class="n">thismass</span><span class="p">)</span>
+        <span class="n">thisopp</span><span class="p">,</span><span class="n">iscmplx</span><span class="p">,</span><span class="n">isneg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">FormatOpp</span><span class="p">(</span><span class="n">opp</span><span class="p">)</span>
+        <span class="n">term1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TracedFFun</span><span class="p">(</span><span class="n">thisopp</span><span class="p">,</span><span class="n">thisp</span><span class="p">,</span><span class="n">thispp</span><span class="p">,</span><span class="n">thismass</span><span class="p">,</span><span class="n">Rfac</span><span class="o">=</span><span class="n">Rfac</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">iscmplx</span><span class="p">:</span>
+            <span class="n">term1</span> <span class="o">=</span> <span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">term1</span>
+        <span class="k">if</span> <span class="n">isneg</span><span class="p">:</span>
+            <span class="n">term1</span> <span class="o">=</span> <span class="o">-</span><span class="n">term1</span>
+        <span class="n">rcheck</span><span class="p">,</span><span class="n">ccheck</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">term1</span><span class="o">.</span><span class="n">real</span><span class="p">)</span><span class="o">&lt;</span><span class="n">myeps</span><span class="p">,</span><span class="nb">abs</span><span class="p">(</span><span class="n">term1</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span><span class="o">&lt;</span><span class="n">myeps</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">term1</span><span class="p">],</span><span class="ow">not</span> <span class="n">rcheck</span><span class="p">,</span> <span class="ow">not</span> <span class="n">ccheck</span></div>
+
+<div class="viewcode-block" id="CorrSpinTrace.VectorFF"><a class="viewcode-back" href="../GammaMatricies.html#GammaMatricies.CorrSpinTrace.VectorFF">[docs]</a>    <span class="k">def</span> <span class="nf">VectorFF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">opp</span><span class="p">,</span><span class="n">thisqvec</span><span class="p">,</span><span class="n">thisppvec</span><span class="p">,</span><span class="n">thismass</span><span class="p">,</span><span class="n">Rfac</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">PadF3</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+        <span class="n">thisp</span><span class="p">,</span><span class="n">thisq</span><span class="p">,</span><span class="n">thispp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Create4Mom</span><span class="p">(</span><span class="n">thisqvec</span><span class="p">,</span><span class="n">thisppvec</span><span class="p">,</span><span class="n">thismass</span><span class="p">)</span>
+        <span class="n">thisopp</span><span class="p">,</span><span class="n">iscmplx</span><span class="p">,</span><span class="n">isneg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">FormatOpp</span><span class="p">(</span><span class="n">opp</span><span class="p">)</span>
+        <span class="c1"># print &#39;calculating form factor coeffs for &#39; ,thisopp</span>
+        <span class="n">term1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TracedFFun</span><span class="p">(</span><span class="n">thisopp</span><span class="p">,</span><span class="n">thisp</span><span class="p">,</span><span class="n">thispp</span><span class="p">,</span><span class="n">thismass</span><span class="p">,</span><span class="n">Rfac</span><span class="o">=</span><span class="n">Rfac</span><span class="p">)</span>
+        <span class="n">term2</span> <span class="o">=</span> <span class="mf">0.0</span><span class="n">j</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">thisopp</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="n">sig_term</span> <span class="o">=</span> <span class="p">(</span><span class="n">thisopp</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="s1">&#39;sig&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">thisopp</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),)</span>
+                <span class="n">term2</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TracedFFun</span><span class="p">(</span><span class="n">sig_term</span><span class="p">,</span><span class="n">thisp</span><span class="p">,</span><span class="n">thispp</span><span class="p">,</span><span class="n">thismass</span><span class="p">,</span><span class="n">Rfac</span><span class="o">=</span><span class="n">Rfac</span><span class="p">)</span><span class="o">*</span><span class="n">thisq</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">term2</span> <span class="o">=</span> <span class="n">term2</span><span class="o">/</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">thismass</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">iscmplx</span><span class="p">:</span>
+            <span class="n">term2</span> <span class="o">=</span> <span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">term2</span>
+            <span class="n">term1</span> <span class="o">=</span> <span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">term1</span>
+        <span class="k">if</span> <span class="n">isneg</span><span class="p">:</span>
+            <span class="n">term2</span> <span class="o">=</span> <span class="o">-</span><span class="n">term2</span>
+            <span class="n">term1</span> <span class="o">=</span> <span class="o">-</span><span class="n">term1</span>
+        <span class="n">rcheck</span><span class="p">,</span><span class="n">ccheck</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">term1</span><span class="o">.</span><span class="n">real</span><span class="p">)</span><span class="o">&lt;</span><span class="n">myeps</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">term2</span><span class="o">.</span><span class="n">real</span><span class="p">)</span><span class="o">&lt;</span><span class="n">myeps</span><span class="p">,</span><span class="nb">abs</span><span class="p">(</span><span class="n">term1</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span><span class="o">&lt;</span><span class="n">myeps</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">term2</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span><span class="o">&lt;</span><span class="n">myeps</span>
+        <span class="k">if</span> <span class="n">PadF3</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">term1</span><span class="p">,</span><span class="n">term2</span><span class="p">,</span><span class="mf">0.0</span><span class="p">],</span><span class="ow">not</span> <span class="n">rcheck</span><span class="p">,</span> <span class="ow">not</span> <span class="n">ccheck</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">term1</span><span class="p">,</span><span class="n">term2</span><span class="p">],</span><span class="ow">not</span> <span class="n">rcheck</span><span class="p">,</span> <span class="ow">not</span> <span class="n">ccheck</span></div>
+
+
+<div class="viewcode-block" id="CorrSpinTrace.GeGmFF"><a class="viewcode-back" href="../GammaMatricies.html#GammaMatricies.CorrSpinTrace.GeGmFF">[docs]</a>    <span class="k">def</span> <span class="nf">GeGmFF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">opp</span><span class="p">,</span><span class="n">thisqvec</span><span class="p">,</span><span class="n">thisppvec</span><span class="p">,</span><span class="n">thismass</span><span class="p">,</span><span class="n">Rfac</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">PadF3</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+        <span class="n">termlist</span><span class="p">,</span><span class="n">rcheck</span><span class="p">,</span><span class="n">ccheck</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">VectorFF</span><span class="p">(</span><span class="n">opp</span><span class="p">,</span><span class="n">thisqvec</span><span class="p">,</span><span class="n">thisppvec</span><span class="p">,</span>
+                                               <span class="n">thismass</span><span class="p">,</span><span class="n">Rfac</span><span class="o">=</span><span class="n">Rfac</span><span class="p">,</span><span class="n">PadF3</span><span class="o">=</span><span class="n">PadF3</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">)</span>
+        <span class="n">thisp</span><span class="p">,</span><span class="n">thisq</span><span class="p">,</span><span class="n">thispp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Create4Mom</span><span class="p">(</span><span class="n">thisqvec</span><span class="p">,</span><span class="n">thisppvec</span><span class="p">,</span><span class="n">thismass</span><span class="p">)</span>
+        <span class="n">term1</span><span class="p">,</span><span class="n">term2</span> <span class="o">=</span> <span class="n">termlist</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+        <span class="c1">## QM = Q^2/4m^2</span>
+        <span class="c1">## Ge = F1 - QM F2</span>
+        <span class="c1">## Gm = F1 + F2</span>
+        <span class="c1">## reranged</span>
+        <span class="c1">## F1 = (QM Gm + Ge) / (QM + 1)</span>
+        <span class="c1">## F2 = (Gm - Ge) / (QM + 1)</span>
+
+        <span class="c1">## Ratio = term1 * F1 + term2 * F2</span>
+        <span class="c1">## Ratio = [( QM*term1 +term2) Gm + (term1-term2) Ge]/(QM+1)</span>
+        <span class="n">QM</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">thisq</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">thismass</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">QMP1</span> <span class="o">=</span> <span class="n">QM</span> <span class="o">+</span> <span class="mf">1.</span>
+        <span class="n">GeGmterm1</span> <span class="o">=</span> <span class="p">(</span><span class="n">term1</span><span class="o">-</span><span class="n">term2</span><span class="p">)</span><span class="o">/</span><span class="n">QMP1</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">term2</span><span class="o">.</span><span class="n">real</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">myeps</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">term2</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">myeps</span><span class="p">:</span>
+            <span class="n">GeGmterm2</span> <span class="o">=</span> <span class="n">term2</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># if opp == (&#39;P4&#39;,&#39;g4&#39;):</span>
+            <span class="c1">#     print &#39;debug&#39;</span>
+            <span class="c1">#     print opp,QM , term1, term2</span>
+            <span class="c1">#     print</span>
+            <span class="n">GeGmterm2</span> <span class="o">=</span> <span class="p">(</span><span class="n">QM</span><span class="o">*</span><span class="n">term1</span><span class="o">+</span><span class="n">term2</span><span class="p">)</span><span class="o">/</span><span class="n">QMP1</span>
+        <span class="n">rcheck</span><span class="p">,</span><span class="n">ccheck</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">GeGmterm1</span><span class="o">.</span><span class="n">real</span><span class="p">)</span><span class="o">&lt;</span><span class="n">myeps</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">GeGmterm2</span><span class="o">.</span><span class="n">real</span><span class="p">)</span><span class="o">&lt;</span><span class="n">myeps</span><span class="p">,</span><span class="nb">abs</span><span class="p">(</span><span class="n">GeGmterm1</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span><span class="o">&lt;</span><span class="n">myeps</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">GeGmterm2</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span><span class="o">&lt;</span><span class="n">myeps</span>
+        <span class="n">GeGmout</span> <span class="o">=</span> <span class="p">[</span><span class="n">GeGmterm1</span><span class="p">,</span><span class="n">GeGmterm2</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">PadF3</span><span class="p">:</span> <span class="n">GeGmout</span> <span class="o">+=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">GeGmout</span><span class="p">,</span><span class="ow">not</span> <span class="n">rcheck</span><span class="p">,</span><span class="ow">not</span> <span class="n">ccheck</span></div>
+
+    <span class="c1">## helper function used to pull out usefull stuff from opp</span>
+<div class="viewcode-block" id="CorrSpinTrace.FormatOpp"><a class="viewcode-back" href="../GammaMatricies.html#GammaMatricies.CorrSpinTrace.FormatOpp">[docs]</a>    <span class="k">def</span> <span class="nf">FormatOpp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">opp</span><span class="p">,</span><span class="n">combProjGamma</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">thisProj</span><span class="p">,</span><span class="n">thisopp</span><span class="p">,</span><span class="n">iscmplx</span><span class="p">,</span><span class="n">isneg</span> <span class="o">=</span> <span class="p">(),(),</span><span class="kc">False</span><span class="p">,</span><span class="kc">False</span>
+        <span class="k">for</span> <span class="n">iopp</span> <span class="ow">in</span> <span class="n">opp</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">iopp</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Top&#39;</span><span class="p">,</span><span class="s1">&#39;Wein&#39;</span><span class="p">,</span><span class="s1">&#39;cmplx&#39;</span><span class="p">,</span><span class="s1">&#39;neg&#39;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="s1">&#39;P&#39;</span> <span class="ow">in</span> <span class="n">iopp</span><span class="p">:</span>
+                    <span class="n">thisProj</span> <span class="o">=</span> <span class="p">(</span><span class="n">iopp</span><span class="p">,)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">thisopp</span> <span class="o">+=</span> <span class="p">(</span><span class="n">iopp</span><span class="p">,)</span>
+            <span class="k">elif</span> <span class="n">iopp</span> <span class="o">==</span> <span class="s1">&#39;cmplx&#39;</span><span class="p">:</span>
+                <span class="n">iscmplx</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">elif</span> <span class="n">iopp</span> <span class="o">==</span> <span class="s1">&#39;neg&#39;</span><span class="p">:</span>
+                <span class="n">isneg</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">combProjGamma</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">thisProj</span><span class="o">+</span><span class="n">thisopp</span><span class="p">,</span><span class="n">iscmplx</span><span class="p">,</span><span class="n">isneg</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">thisProj</span><span class="p">,</span><span class="n">thisopp</span><span class="p">,</span><span class="n">iscmplx</span><span class="p">,</span><span class="n">isneg</span></div>
+
+<div class="viewcode-block" id="CorrSpinTrace.VectorFFTop"><a class="viewcode-back" href="../GammaMatricies.html#GammaMatricies.CorrSpinTrace.VectorFFTop">[docs]</a>    <span class="k">def</span> <span class="nf">VectorFFTop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">opp</span><span class="p">,</span><span class="n">thisqvec</span><span class="p">,</span><span class="n">thisppvec</span><span class="p">,</span><span class="n">thismass</span><span class="p">,</span><span class="n">Rfac</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span><span class="n">alpha_rot</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">thisp</span><span class="p">,</span><span class="n">thisq</span><span class="p">,</span><span class="n">thispp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Create4Mom</span><span class="p">(</span><span class="n">thisqvec</span><span class="p">,</span><span class="n">thisppvec</span><span class="p">,</span><span class="n">thismass</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="s1">&#39;Top&#39;</span> <span class="ow">in</span> <span class="n">opp</span> <span class="ow">or</span> <span class="s1">&#39;Wein&#39;</span> <span class="ow">in</span> <span class="n">opp</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">VectorFF</span><span class="p">(</span><span class="n">opp</span><span class="p">,</span><span class="n">thisqvec</span><span class="p">,</span><span class="n">thisppvec</span><span class="p">,</span><span class="n">thismass</span><span class="p">,</span><span class="n">Rfac</span><span class="o">=</span><span class="n">Rfac</span><span class="p">,</span><span class="n">PadF3</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">thisopp</span><span class="p">,</span><span class="n">iscmplx</span><span class="p">,</span><span class="n">isneg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">FormatOpp</span><span class="p">(</span><span class="n">opp</span><span class="p">)</span>
+        <span class="n">term1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TracedFFunTop</span><span class="p">(</span><span class="n">thisopp</span><span class="p">,</span><span class="n">thisp</span><span class="p">,</span><span class="n">thispp</span><span class="p">,</span><span class="n">thismass</span><span class="p">,</span><span class="n">alpha</span><span class="p">,</span><span class="n">Rfac</span><span class="o">=</span><span class="n">Rfac</span><span class="p">)</span>
+        <span class="n">term2</span><span class="p">,</span><span class="n">term3</span> <span class="o">=</span> <span class="mf">0.0</span><span class="n">j</span><span class="p">,</span><span class="mf">0.0</span><span class="n">j</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">thisopp</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="n">sig_term</span> <span class="o">=</span> <span class="p">(</span><span class="n">thisopp</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="s1">&#39;sig&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">thisopp</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),)</span>
+                <span class="n">term2</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TracedFFunTop</span><span class="p">(</span><span class="n">sig_term</span><span class="p">,</span><span class="n">thisp</span><span class="p">,</span><span class="n">thispp</span><span class="p">,</span><span class="n">thismass</span><span class="p">,</span><span class="n">alpha</span><span class="p">,</span><span class="n">Rfac</span><span class="o">=</span><span class="n">Rfac</span><span class="p">)</span><span class="o">*</span><span class="n">thisq</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">term3</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TracedFFun</span><span class="p">(</span><span class="n">sig_term</span><span class="o">+</span><span class="p">(</span><span class="s1">&#39;g5&#39;</span><span class="p">,),</span><span class="n">thisp</span><span class="p">,</span><span class="n">thispp</span><span class="p">,</span><span class="n">thismass</span><span class="p">,</span><span class="n">Rfac</span><span class="o">=</span><span class="n">Rfac</span><span class="p">)</span><span class="o">*</span><span class="n">thisq</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">term2</span> <span class="o">=</span> <span class="n">term2</span><span class="o">/</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">thismass</span><span class="p">)</span>
+        <span class="n">term3</span> <span class="o">=</span> <span class="n">term3</span><span class="o">/</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">thismass</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">iscmplx</span><span class="p">:</span>
+            <span class="n">term1</span> <span class="o">=</span> <span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">term1</span>
+            <span class="n">term2</span> <span class="o">=</span> <span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">term2</span>
+            <span class="n">term3</span> <span class="o">=</span> <span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">term3</span>
+        <span class="k">if</span> <span class="n">isneg</span><span class="p">:</span>
+            <span class="n">term1</span> <span class="o">=</span> <span class="o">-</span><span class="n">term1</span>
+            <span class="n">term2</span> <span class="o">=</span> <span class="o">-</span><span class="n">term2</span>
+            <span class="n">term3</span> <span class="o">=</span> <span class="o">-</span><span class="n">term3</span>
+        <span class="k">if</span> <span class="n">alpha_rot</span><span class="p">:</span> <span class="n">term2</span><span class="p">,</span><span class="n">term3</span> <span class="o">=</span> <span class="n">AlphaRotCoeffs</span><span class="p">(</span><span class="n">term2</span><span class="p">,</span><span class="n">term3</span><span class="p">,</span><span class="n">alpha</span><span class="p">)</span>
+        <span class="n">rcheck</span><span class="p">,</span><span class="n">ccheck</span> <span class="o">=</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">term1</span><span class="o">.</span><span class="n">real</span><span class="p">)</span><span class="o">&lt;</span><span class="n">myeps</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">term2</span><span class="o">.</span><span class="n">real</span><span class="p">)</span><span class="o">&lt;</span><span class="n">myeps</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">term3</span><span class="o">.</span><span class="n">real</span><span class="p">)</span><span class="o">&lt;</span><span class="n">myeps</span><span class="p">,</span>
+                         <span class="nb">abs</span><span class="p">(</span><span class="n">term1</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span><span class="o">&lt;</span><span class="n">myeps</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">term2</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span><span class="o">&lt;</span><span class="n">myeps</span>  <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">term3</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span><span class="o">&lt;</span><span class="n">myeps</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">term1</span><span class="p">,</span><span class="n">term2</span><span class="p">,</span><span class="n">term3</span><span class="p">],</span><span class="ow">not</span> <span class="n">rcheck</span><span class="p">,</span> <span class="ow">not</span> <span class="n">ccheck</span></div>
+
+
+<div class="viewcode-block" id="CorrSpinTrace.PsVectorFF"><a class="viewcode-back" href="../GammaMatricies.html#GammaMatricies.CorrSpinTrace.PsVectorFF">[docs]</a>    <span class="k">def</span> <span class="nf">PsVectorFF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">opp</span><span class="p">,</span><span class="n">thisqvec</span><span class="p">,</span><span class="n">thisppvec</span><span class="p">,</span><span class="n">thismass</span><span class="p">,</span><span class="n">Rfac</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+        <span class="n">thisp</span><span class="p">,</span><span class="n">thisq</span><span class="p">,</span><span class="n">thispp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Create4Mom</span><span class="p">(</span><span class="n">thisqvec</span><span class="p">,</span><span class="n">thisppvec</span><span class="p">,</span><span class="n">thismass</span><span class="p">)</span>
+        <span class="n">thisopp</span><span class="p">,</span><span class="n">iscmplx</span><span class="p">,</span><span class="n">isneg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">FormatOpp</span><span class="p">(</span><span class="n">opp</span><span class="p">)</span>
+        <span class="n">term1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TracedFFun</span><span class="p">(</span><span class="n">thisopp</span><span class="p">,</span><span class="n">thisp</span><span class="p">,</span><span class="n">thispp</span><span class="p">,</span><span class="n">thismass</span><span class="p">,</span><span class="n">Rfac</span><span class="o">=</span><span class="n">Rfac</span><span class="p">)</span>
+        <span class="n">oppNoG</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">copy</span><span class="p">(</span><span class="n">thisopp</span><span class="p">))</span>
+        <span class="n">oppNoG</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;g5&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">iopp</span> <span class="ow">in</span> <span class="n">oppNoG</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;g&#39;</span> <span class="ow">in</span> <span class="n">iopp</span><span class="p">:</span>
+                <span class="n">index1</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">iopp</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                <span class="k">break</span>
+        <span class="n">term2</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span><span class="n">j</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">TracedFFun</span><span class="p">(</span><span class="n">oppNoG</span><span class="p">,</span><span class="n">thisp</span><span class="p">,</span><span class="n">thispp</span><span class="p">,</span><span class="n">thismass</span><span class="p">,</span><span class="n">Rfac</span><span class="o">=</span><span class="n">Rfac</span><span class="p">)</span><span class="o">*</span><span class="n">thisq</span><span class="p">[</span><span class="n">index1</span><span class="p">])</span><span class="o">/</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">thismass</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">iscmplx</span><span class="p">:</span>
+            <span class="n">term1</span> <span class="o">=</span> <span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">term1</span>
+            <span class="n">term2</span> <span class="o">=</span> <span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">term2</span>
+        <span class="k">if</span> <span class="n">isneg</span><span class="p">:</span>
+            <span class="n">term1</span> <span class="o">=</span> <span class="o">-</span><span class="n">term1</span>
+            <span class="n">term2</span> <span class="o">=</span> <span class="o">-</span><span class="n">term2</span>
+        <span class="n">rcheck</span><span class="p">,</span><span class="n">ccheck</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">term1</span><span class="o">.</span><span class="n">real</span><span class="p">)</span><span class="o">&lt;</span><span class="n">myeps</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">term2</span><span class="o">.</span><span class="n">real</span><span class="p">)</span><span class="o">&lt;</span><span class="n">myeps</span><span class="p">,</span><span class="nb">abs</span><span class="p">(</span><span class="n">term1</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span><span class="o">&lt;</span><span class="n">myeps</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">term2</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span><span class="o">&lt;</span><span class="n">myeps</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">term1</span><span class="p">,</span><span class="n">term2</span><span class="p">],</span><span class="ow">not</span> <span class="n">rcheck</span><span class="p">,</span> <span class="ow">not</span> <span class="n">ccheck</span></div>
+
+
+<div class="viewcode-block" id="CorrSpinTrace.TensorFF"><a class="viewcode-back" href="../GammaMatricies.html#GammaMatricies.CorrSpinTrace.TensorFF">[docs]</a>    <span class="k">def</span> <span class="nf">TensorFF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">opp</span><span class="p">,</span><span class="n">thisqvec</span><span class="p">,</span><span class="n">thisppvec</span><span class="p">,</span><span class="n">thismass</span><span class="p">,</span><span class="n">Rfac</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+        <span class="n">thisp</span><span class="p">,</span><span class="n">thisq</span><span class="p">,</span><span class="n">thispp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Create4Mom</span><span class="p">(</span><span class="n">thisqvec</span><span class="p">,</span><span class="n">thisppvec</span><span class="p">,</span><span class="n">thismass</span><span class="p">)</span>
+        <span class="c1">## P = pp + p = 2*pp -q</span>
+        <span class="n">thisP</span> <span class="o">=</span> <span class="p">[</span><span class="n">ip</span><span class="o">+</span><span class="n">ipp</span> <span class="k">for</span> <span class="n">ip</span><span class="p">,</span><span class="n">ipp</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">thisp</span><span class="p">,</span><span class="n">thispp</span><span class="p">)]</span>
+        <span class="n">Proj</span><span class="p">,</span><span class="n">gammalist</span><span class="p">,</span><span class="n">iscmplx</span><span class="p">,</span><span class="n">isneg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">FormatOpp</span><span class="p">(</span><span class="n">opp</span><span class="p">,</span><span class="n">combProjGamma</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">index1</span><span class="p">,</span><span class="n">index2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">gammalist</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span><span class="nb">int</span><span class="p">(</span><span class="n">gammalist</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">sigma</span> <span class="o">=</span> <span class="s1">&#39;sig&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">index1</span><span class="p">)</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">index2</span><span class="p">)</span>
+        <span class="c1">## most papers are in Minkowski, so you need to convert to Euclidiean (see notes)</span>
+        <span class="c1">## https://arxiv.org/pdf/1107.4584v1.pdf</span>
+        <span class="c1"># term1^M = i sigma_mu_nu H_T</span>
+        <span class="c1"># term1^E = i sigma_mu_nu H_T</span>
+        <span class="n">term1</span> <span class="o">=</span> <span class="mf">1.0</span><span class="n">j</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">TracedFFun</span><span class="p">(</span><span class="n">Proj</span><span class="o">+</span><span class="p">(</span><span class="n">sigma</span><span class="p">,),</span><span class="n">thisp</span><span class="p">,</span><span class="n">thispp</span><span class="p">,</span><span class="n">thismass</span><span class="p">,</span><span class="n">Rfac</span><span class="o">=</span><span class="n">Rfac</span><span class="p">)</span>
+
+        <span class="c1">## term2^M =    (gamma_mu q_nu - gamma_nu q_mu)/2m E_T</span>
+        <span class="c1">## term2^E = -i (gamma_mu q_nu - gamma_nu q_mu)/2m E_T</span>
+        <span class="n">term2</span> <span class="o">=</span> <span class="mf">1.0</span><span class="n">j</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">TracedFFun</span><span class="p">(</span><span class="n">Proj</span><span class="o">+</span><span class="p">(</span><span class="n">gammalist</span><span class="p">[</span><span class="mi">0</span><span class="p">],),</span><span class="n">thisp</span><span class="p">,</span><span class="n">thispp</span><span class="p">,</span><span class="n">thismass</span><span class="p">,</span><span class="n">Rfac</span><span class="o">=</span><span class="n">Rfac</span><span class="p">)</span><span class="o">*</span><span class="n">thisq</span><span class="p">[</span><span class="n">index2</span><span class="p">]</span> <span class="o">-</span>
+                 <span class="bp">self</span><span class="o">.</span><span class="n">TracedFFun</span><span class="p">(</span><span class="n">Proj</span><span class="o">+</span><span class="p">(</span><span class="n">gammalist</span><span class="p">[</span><span class="mi">1</span><span class="p">],),</span><span class="n">thisp</span><span class="p">,</span><span class="n">thispp</span><span class="p">,</span><span class="n">thismass</span><span class="p">,</span><span class="n">Rfac</span><span class="o">=</span><span class="n">Rfac</span><span class="p">)</span><span class="o">*</span><span class="n">thisq</span><span class="p">[</span><span class="n">index1</span><span class="p">]</span> <span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">thismass</span><span class="p">)</span>
+        <span class="c1">## term3^M = + (P_mu q_nu - P_nu q_mu)/2m tilde(H)_T</span>
+        <span class="c1">## term3^E = - (P_mu q_nu - P_nu q_mu)/2m tilde(H)_T</span>
+        <span class="n">term3</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">TracedFFun</span><span class="p">(</span><span class="n">Proj</span><span class="o">+</span><span class="p">(</span><span class="s1">&#39;I&#39;</span><span class="p">,),</span><span class="n">thisp</span><span class="p">,</span><span class="n">thispp</span><span class="p">,</span><span class="n">thismass</span><span class="p">,</span><span class="n">Rfac</span><span class="o">=</span><span class="n">Rfac</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">thisP</span><span class="p">[</span><span class="n">index1</span><span class="p">]</span><span class="o">*</span><span class="n">thisq</span><span class="p">[</span><span class="n">index2</span><span class="p">]</span> <span class="o">-</span>
+                                   <span class="n">thisP</span><span class="p">[</span><span class="n">index2</span><span class="p">]</span><span class="o">*</span><span class="n">thisq</span><span class="p">[</span><span class="n">index1</span><span class="p">]</span> <span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">thismass</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">iscmplx</span><span class="p">:</span>
+            <span class="n">term1</span> <span class="o">=</span> <span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">term1</span>
+            <span class="n">term2</span> <span class="o">=</span> <span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">term2</span>
+            <span class="n">term3</span> <span class="o">=</span> <span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">term3</span>
+        <span class="k">if</span> <span class="n">isneg</span><span class="p">:</span>
+            <span class="n">term1</span> <span class="o">=</span> <span class="o">-</span><span class="n">term1</span>
+            <span class="n">term2</span> <span class="o">=</span> <span class="o">-</span><span class="n">term2</span>
+            <span class="n">term3</span> <span class="o">=</span> <span class="o">-</span><span class="n">term3</span>
+        <span class="n">rcheck</span><span class="p">,</span><span class="n">ccheck</span> <span class="o">=</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">term1</span><span class="o">.</span><span class="n">real</span><span class="p">)</span><span class="o">&lt;</span><span class="n">myeps</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">term2</span><span class="o">.</span><span class="n">real</span><span class="p">)</span><span class="o">&lt;</span><span class="n">myeps</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">term3</span><span class="o">.</span><span class="n">real</span><span class="p">)</span><span class="o">&lt;</span><span class="n">myeps</span><span class="p">,</span>
+                         <span class="nb">abs</span><span class="p">(</span><span class="n">term1</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span><span class="o">&lt;</span><span class="n">myeps</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">term2</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span><span class="o">&lt;</span><span class="n">myeps</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">term3</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span><span class="o">&lt;</span><span class="n">myeps</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">term1</span><span class="p">,</span><span class="n">term2</span><span class="p">,</span><span class="n">term3</span><span class="p">],</span> <span class="ow">not</span> <span class="n">rcheck</span><span class="p">,</span><span class="ow">not</span> <span class="n">ccheck</span></div></div>
+
+<div class="viewcode-block" id="TestSystem"><a class="viewcode-back" href="../GammaMatricies.html#GammaMatricies.TestSystem">[docs]</a><span class="k">def</span> <span class="nf">TestSystem</span><span class="p">():</span>
+    <span class="kn">import</span> <span class="nn">MomParams</span> <span class="k">as</span> <span class="nn">mp</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+    <span class="kn">from</span> <span class="nn">QuantityLists</span> <span class="k">import</span> <span class="n">mpi570_ens</span>
+    <span class="n">mpi570_ens</span><span class="p">[</span><span class="s1">&#39;outdir&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;./test_mpi570&#39;</span>
+    <span class="n">mpi570_ens</span><span class="p">[</span><span class="s1">&#39;nxyzt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">mpi570_ens</span><span class="p">[</span><span class="s1">&#39;nxyzt&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">mpi570_ens</span><span class="p">[</span><span class="s1">&#39;nxyzt&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">mpi570_ens</span><span class="p">[</span><span class="s1">&#39;nxyzt&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">mpi570_ens</span><span class="p">[</span><span class="s1">&#39;nxyzt&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">mom_data</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">LatticeParameters</span><span class="p">(</span><span class="n">Info</span><span class="o">=</span><span class="n">mpi570_ens</span><span class="p">)</span>
+    <span class="c1"># this_cs = CorrSpinTrace()</span>
+    <span class="n">this_cs</span> <span class="o">=</span> <span class="n">CorrSpinTrace</span><span class="p">(</span><span class="s1">&#39;SZIN&#39;</span><span class="p">)</span>
+    <span class="c1"># this_cs = CorrSpinTrace(&#39;SZIN&#39;,space=&#39;Euclid&#39;)</span>
+    <span class="c1">## from file /mnt/scratch/dragosja/data/resultsFixedG2/RC32x64Kud01372700Ks01364000/FormFactors/Proton_qmax0_ppmax4/VectorTopBNL_t_f5.47_Rtsumfitr7-32_Afitr10-20_RFmin3_RChi50-100.xml</span>
+
+    <span class="c1">## from file /mnt/scratch/dragosja/data/resultsFixedG2/RC32x64Kud01372700Ks01364000/FormFactors/Neutron_qmax0_ppmax4/VectorTopBNL_t_f6.01_Rtsumfitr7-32_Afitr10-20_RFmin3_RChi50-100.xml</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.18980091089963902</span>
+    <span class="n">a_mN</span> <span class="o">=</span>  <span class="mf">0.6506026909719103</span>
+
+    <span class="n">Ep</span> <span class="o">=</span> <span class="n">this_cs</span><span class="o">.</span><span class="n">CreateEs</span><span class="p">(</span><span class="n">mom_data</span><span class="o">.</span><span class="n">TOpvec</span><span class="p">(</span><span class="s1">&#39;-100&#39;</span><span class="p">,</span><span class="n">actual</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span><span class="n">a_mN</span><span class="p">)</span>
+    <span class="c1"># a = mom_data.latspace</span>
+    <span class="n">gamma_mom_list</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;P3_g1_q0-10&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;P3_g3_Top_cmplx_q-100&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;P3_g3_Top_cmplx_q00-1&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;P3_g4_Top_q00-1&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;P4_g1_cmplx_q-100&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;P4_g4_q-100&#39;</span>
+    <span class="p">]</span>
+
+        <span class="c1"># imom_mu = this_cs.CreateEs(imom,a_mN)</span>
+    <span class="n">A_comp</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">cmplx_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">igamma_mom</span> <span class="ow">in</span> <span class="n">gamma_mom_list</span><span class="p">:</span>
+        <span class="n">ig_split</span> <span class="o">=</span> <span class="n">igamma_mom</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)</span>
+        <span class="n">igamma</span> <span class="o">=</span> <span class="n">ig_split</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s1">&#39;cmplx&#39;</span> <span class="ow">in</span> <span class="n">igamma</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">igamma</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">igamma</span><span class="p">)</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;cmplx&#39;</span><span class="p">)]</span>
+        <span class="c1"># imom = mom_data.TOpvec(ig_split[-1][1:],actual=True)</span>
+        <span class="n">imom</span> <span class="o">=</span> <span class="n">mom_data</span><span class="o">.</span><span class="n">TOpvec</span><span class="p">(</span><span class="n">ig_split</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">:],</span><span class="n">actual</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># imom_mu = this_cs.CreateEs(imom,a_mN)</span>
+        <span class="c1"># print(imom_mu)</span>
+        <span class="n">this_A</span><span class="p">,</span><span class="n">rcheck</span><span class="p">,</span><span class="n">ccheck</span> <span class="o">=</span> <span class="n">this_cs</span><span class="o">.</span><span class="n">VectorFFTop</span><span class="p">(</span> <span class="n">igamma</span><span class="p">,</span><span class="n">imom</span><span class="p">,</span>
+                                                    <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span><span class="n">a_mN</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
+                                                    <span class="n">alpha_rot</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># print igamma, imom</span>
+        <span class="k">if</span> <span class="n">rcheck</span><span class="p">:</span>
+            <span class="n">this_A</span> <span class="o">=</span> <span class="p">[</span><span class="n">ia</span><span class="o">.</span><span class="n">real</span> <span class="k">for</span> <span class="n">ia</span> <span class="ow">in</span> <span class="n">this_A</span><span class="p">]</span>
+            <span class="n">cmplx_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">ccheck</span><span class="p">:</span>
+            <span class="n">this_A</span> <span class="o">=</span> <span class="p">[</span><span class="n">ia</span><span class="o">.</span><span class="n">imag</span> <span class="k">for</span> <span class="n">ia</span> <span class="ow">in</span> <span class="n">this_A</span><span class="p">]</span>
+            <span class="n">cmplx_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;i&#39;</span><span class="p">)</span>
+        <span class="n">A_comp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_A</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; A computed&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">icmplx</span><span class="p">,</span><span class="n">iA_comp</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">cmplx_list</span><span class="p">,</span><span class="n">A_comp</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">icmplx</span><span class="p">,</span><span class="n">iA_comp</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">this_cs</span></div>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">TestSystem</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;data is in data&#39;</span><span class="p">)</span>
+    <span class="n">g_sz</span> <span class="o">=</span> <span class="n">GammaMat</span><span class="p">(</span><span class="s1">&#39;SZIN&#39;</span><span class="p">)</span>
+    <span class="n">g_sz</span><span class="p">[</span><span class="s1">&#39;g5&#39;</span><span class="p">]</span>
+    <span class="n">g_sz</span><span class="p">[</span><span class="s1">&#39;P3&#39;</span><span class="p">]</span>
+    <span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">g_sz</span><span class="o">.</span><span class="n">comutator</span><span class="p">(</span><span class="n">g_sz</span><span class="p">[</span><span class="s1">&#39;g1&#39;</span><span class="p">],</span><span class="n">g_sz</span><span class="p">[</span><span class="s1">&#39;g2&#39;</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
+    <span class="n">g_sz</span><span class="p">[</span><span class="s1">&#39;sig12&#39;</span><span class="p">]</span>
+    <span class="o">-</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="p">(</span><span class="n">g_sz</span><span class="p">[</span><span class="s1">&#39;g1&#39;</span><span class="p">,</span><span class="s1">&#39;g2&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">g_sz</span><span class="p">[</span><span class="s1">&#39;g3&#39;</span><span class="p">,</span><span class="s1">&#39;g5&#39;</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Jack Dragos
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
