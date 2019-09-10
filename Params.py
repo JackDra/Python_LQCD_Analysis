@@ -16,7 +16,7 @@ if sys.version_info[0] < 3:
 
 socket_name = socket.gethostname()
 this_dir = os.getcwd() + '/'
-if 'python_lqcd_analysis' not in this_dir:
+if 'Python_LQCD_Analysis' not in this_dir:
     raise EnvironmentError('Please run code from the script directory!')
 
 if 'jack' in socket_name.lower():
