@@ -682,58 +682,50 @@ def CreateAndreaTest(nt=64,boot=True):
             values.append(exp_fun(it,this_ncfg))
     return np.array(values)
 
+# %%
+
+
 if __name__ == '__main__':
+    # Creates test data and stores it in raw_data
     raw_data = CreateTestData()
-    test_class = VariationalMethod(matrix_corr=raw_data,symetrize=False)
-    test_class.PerformVarMeth(t0=1,dt=5)
-    test_class.PerformProny(t0=1,dt=5,ism=0)
-    # test_class.booted_mcorr
-    # test_class.eEnergy
-    # test_class.left_evec
-    # test_class.matrix_corr.sel(t_sep=0)
-    nt = 32
-    boot = True
-    raw_data = CreateAndreaTest(nt=nt,boot=boot)
+
+    # Creates Variational Method object which will be used for performing
+    # The variational method
+    test_class = VariationalMethod(matrix_corr=raw_data, symetrize=False)
+
+    # Perform Variationa method with t0 and dt
+    test_class.PerformVarMeth(t0=1, dt=5)
+
+    # Performs "Prony" method (single sided variational method)
+    # Picks source smearing to be the first index
+    test_class.PerformProny(t0=1, dt=5, ism=0)
+
+    # examples of how to access the information out of the variable
+    print()
+    print(test_class.booted_mcorr)
+    print()
+    print(test_class.eEnergy)
+    print()
+    print(test_class.left_evec)
+    print()
+    print(test_class.matrix_corr.sel(t_sep=0))
+
+    # This creates the information that will be used for the plotting
     this_info = pa.Series()
     this_info['save_file'] = this_dir+'/TestGraphs/TestVar.pdf'
     this_info['title'] = 'TestData'
     this_info['x_label'] = 't/a'
     this_info['y_label'] = 'EffMass'
+    # jpl.Plotting is the class that deals with the plotting
+    # of the data (within the user interface)
     data_plot = jpl.Plotting(plot_info=this_info)
 
-    # hold_series = null_series
-    # hold_series['x_data'] = list(range(nt))
-    # hold_series['type'] = 'error_bar'
-    # if boot:
-    #     hold_series['y_data'] = [ival.Avg for ival in raw_data]
-    #     hold_series['yerr_data'] = [ival.Std for ival in raw_data]
-    # else:
-    #     hold_series['y_data'] = [np.mean(ival) for ival in raw_data]
-    #     hold_series['yerr_data'] = [np.std(ival) for ival in raw_data]
-    # hold_series['label'] = 'test 2pt'
-    # data_plot.AppendData(hold_series)
-    #
-    # if boot:
-    #     eff_mass = [(ival/ivalp1).Log() for ival,ivalp1 in zip(raw_data[:-1],raw_data[1:])]
-    #     [ival.Stats() for ival in eff_mass]
-    # else:
-    #     eff_mass = [np.log(raw_data[:-1]/raw_data[1:])]
-    # hold_series = null_series
-    #
-    # hold_series['x_data'] = list(range(nt-1))
-    # hold_series['type'] = 'error_bar'
-    # if boot:
-    #     hold_series['y_data'] = [ival.Avg for ival in eff_mass]
-    #     hold_series['yerr_data'] = [ival.Std for ival in eff_mass]
-    # else:
-    #     hold_series['y_data'] = [np.mean(ival) for ival in eff_mass]
-    #     hold_series['yerr_data'] = [np.std(ival) for ival in eff_mass]
-    # hold_series['label'] = 'test effmass 2pt'
-    # data_plot.AppendData(hold_series)
-
-
+    # add the plot of the effective mass of the regular matrix of correlators
     data_plot = test_class.PlotEffMass(data_plot)
+    # adds the variational method effective masses
     data_plot = test_class.PlotEffMass_VarMeth(data_plot)
+    # add the Prony results to the plotter
     data_plot = test_class.PlotEffMass_Prony(data_plot)
+    # outputs all the data in the plot
     data_plot.PlotAll()
     print('Test variational method complete, see test_class variable')
